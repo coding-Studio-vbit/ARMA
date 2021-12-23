@@ -1,0 +1,1 @@
+#All Typescript interfaces
