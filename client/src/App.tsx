@@ -1,17 +1,10 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        {/* <img src={logo} className="App-logo" alt="logo" /> */}
-        <p>
-          Welcome to A.R.M.A :)
-        </p>
-        
-      </header>
+    <div className="App font-inter flex w-screen h-screen flex-col align-middle	">
+      <p className='text-4xl mt-auto text-center  ' >Welcome to ARMA</p>
+      <span className=' text-2xl mb-auto text-center'>2.0</span>
     </div>
   );
 }
