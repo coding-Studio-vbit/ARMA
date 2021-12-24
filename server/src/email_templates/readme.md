@@ -1,0 +1,1 @@
+#Contains all the email templates
