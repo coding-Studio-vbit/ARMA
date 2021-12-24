@@ -2,16 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer components {
+  .btn{
+    @apply py-3 px-10 bg-[#139BEB] mt-6 text-white font-semibold rounded-[25px] hover:bg-[#1386c9] ;
+  }
+  .outlineBtn{
+    @apply py-2 px-6 border-2 border-[#139BEB] mt-6 text-black text-base font-semibold rounded-[25px] hover:bg-[#139BEB] hover:text-white;
+  }
+  .btn-green {
+    @apply btn bg-arma-green hover:bg-[#35b860];
+  }
+  .btn-red{
+    @apply btn bg-arma-red hover:bg-[#ff4d4d];
+
+  }
+  .btn-yellow {
+    @apply btn bg-arma-yellow hover:bg-[#dfc90b] text-black;
+
+  }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
