@@ -1,9 +1,11 @@
 import express from 'express';
-import { Router} from 'express';
-
-export default ({ app }: { app: express.Application }) => {
-    app.get('/', (req:any, res:any) => {
+import { routes } from '../api';
+import { Router } from 'express';
+export const initializeExpress = async ({ app }: { app: express.Application }) => {
+    app.get('/', (req, res) => {
         console.log('Letsssgooo')
         res.json({Msg: 'Hi ARMA'})
       });
+    app.use('/api', routes())
+    
 }
