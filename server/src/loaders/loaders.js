@@ -1,7 +1,7 @@
-const expressLoader = require("./express")
+const expressLoader = require("./express");
 
-const loaders = (app) =>{
-    expressLoader(app)
-}
+const loaders = ({app}) => {
+  expressLoader(app);
+};
 
-module.exports = loaders
+module.exports = loaders;
