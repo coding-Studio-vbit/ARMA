@@ -1,7 +1,7 @@
 const faculty = (router) => {
-    router.get("/", (req,res) => {
-        res.send("Hiiiii")
-    })
-}
+  router.get("/", (req, res) => {
+    res.send("Hiiiii");
+  });
+};
 
-module.exports = faculty
+module.exports = faculty;

@@ -1,8 +1,7 @@
 const test = (router) => {
-    router.get("/", (req,res) => {
-        res.send("Hi ARMA")
-    })
-}
+  router.get("/", (req, res) => {
+    res.send("Hi ARMA");
+  });
+};
 
-module.exports = test
-
+module.exports = test;
