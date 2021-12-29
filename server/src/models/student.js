@@ -17,14 +17,14 @@ const student = new mongoose.Schema({
   rollNumber: {
     type: String,
     unique: true,
-	required:true,
-	validate:{
-		validator:(value)=>{
-			return true;
-			//PLEASEEEEEEEE ADDDDDDDDDD ROLL NUMBER VALIDATIONNNNNNNNNNNNN
-		},
-		message: "{VALUE} is not a valid roll number"
-	}
+    required: true,
+    validate: {
+      validator: (value) => {
+        return true;
+        //PLEASEEEEEEEE ADDDDDDDDDD ROLL NUMBER VALIDATIONNNNNNNNNNNNN
+      },
+      message: "{VALUE} is not a valid roll number",
+    },
   },
   year: {
     type: Number,
@@ -59,6 +59,7 @@ const student = new mongoose.Schema({
       message: `{VALUE} is not a valid Indian contact number.`,
     },
   },
+  attendedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "events" }],
 });
 
 const students = mongoose.model("students", student);
