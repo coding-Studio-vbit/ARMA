@@ -1,0 +1,100 @@
+.col-3 {
+  float: left;
+  width: min(100%,250px);
+  position: relative;
+}
+
+input[type="password"],
+input[type="text"] {
+  font: 15px/24px "Lato", Arial, sans-serif;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+  letter-spacing: 1px;
+  border-radius: 8px;
+  outline: none;
+}
+
+.effect-19,
+.effect-20,
+.effect-21 {
+  border: 1px solid #ccc;
+  padding: 7px 14px;
+  transition: 0.4s;
+  outline: none;
+  background: transparent;
+}
+
+.effect-20 ~ .focus-border:before,
+.effect-20 ~ .focus-border:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  border-radius: 8px;
+  
+  height: 2px;
+  background-color: #0b5b8a;
+  transition: 0.3s;
+}
+.effect-20 ~ .focus-border:after {
+  top: auto;
+  border-radius: 8px;
+
+  bottom: 0;
+  left: auto;
+  right: 0;
+}
+.effect-20 ~ .focus-border i:before,
+.effect-20 ~ .focus-border i:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 0;
+  background-color: #0b5b8a;
+  border-radius: 8px;
+  transition: 0.4s;
+}
+.effect-20 ~ .focus-border i:after {
+  left: auto;
+  right: 0;
+  top: auto;
+  bottom: 0;
+}
+.effect-20:focus ~ .focus-border:before,
+.effect-20:focus ~ .focus-border:after,
+.has-content.effect-20 ~ .focus-border:before,
+.has-content.effect-20 ~ .focus-border:after {
+  width: 100%;
+  transition: 0.3s;
+}
+.effect-20:focus ~ .focus-border i:before,
+.effect-20:focus ~ .focus-border i:after,
+.has-content.effect-20 ~ .focus-border i:before,
+.has-content.effect-20 ~ .focus-border i:after {
+  height: 100%;
+  transition: 0.4s;
+}
+.effect-20 ~ label {
+  position: absolute;
+  left: 14px;
+  width: 100%;
+  top: 10px;
+  color: #aaa;
+  transition: 0.3s;
+  z-index: -1;
+  letter-spacing: 0.5px;
+}
+.effect-20:focus ~ label,
+.has-content.effect-20 ~ label {
+  top: -18px;
+  left: 0;
+  font-size: 12px;
+  color: #0b5b8a;
+  border-radius: 8px;
+
+  transition: 0.3s;
+}
