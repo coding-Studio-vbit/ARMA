@@ -4,7 +4,7 @@ import {
     Route
   } from "react-router-dom";
 import { Login } from "../components/Auth/login";
-import Dashboard from "../components/dashboard";
+
 
   function AllRoutes() {
     return (
