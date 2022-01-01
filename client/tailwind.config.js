@@ -4,7 +4,6 @@ module.exports = {
     fontFamily: {
       inter: "Inter, sans-serif",
     },
-
     extend: {
       colors: {
         "arma-blue": "#139BEB",

@@ -8,7 +8,7 @@ const StatisticsCard = ({
   engagement,
 }: StatisticsCardProps) => {
   return (
-    <div className="arma-card-gradient p-3 rounded-lg w-60 drop-shadow-xl">
+    <div className="arma-card-gradient px-6 py-3 rounded-lg w-60 drop-shadow-xl">
       <div className="text-xl mb-2">Statistics</div>
       <div className="flex justify-between bg-white rounded-2xl p-2">
         <div className="pl-3 font-medium">Events</div>
