@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  .arma-card-gradient{
+    background-image: linear-gradient(130.58deg, #71C6F8 10.88%, #0F8BD1 78.7%);
+  }
+  .arma-text-gradient{
+    background-image: linear-gradient(130.58deg, #0F8BD1 0%, #71C6F8 100%);
+  }
+}
+
 @layer components {
   .btn{
     @apply py-3 px-10 bg-[#139BEB] text-white font-semibold rounded-[25px] hover:bg-[#1386c9] ;

@@ -8,12 +8,25 @@ interface EventCardProps {
 }
 
 const EventCard = ({ event }: EventCardProps) => {
+
+  let eventStatusColor:string = '';
+
+  switch(event.eventStatus)
+  {
+    case 'completed':
+    case 'approved': eventStatusColor = 'text-green-600';break;
+    case 'rejected': eventStatusColor = 'text-red-600';break;
+    case 'approval pending':
+    case 'requested changes': eventStatusColor = 'text-yellow-600';break;
+  }
+
   return (
-    <div className="h-48 w-52 border border-2 border-slate-300 rounded-xl bg-white">
+    <div className="mx-auto sm:mx-3 h-48 w-52 border border-2 border-slate-300 rounded-xl bg-white m-6 drop-shadow-xl">
       <div className="text-center align-text-middle font-bold text-lg mt-2 border border-slate-300 border-b-1 border-t-0 border-l-0 border-r-0">
         {event.name}
       </div>
-      <div className="text-center align-text-middle font-medium text-md mt-2">
+      {console.log(eventStatusColor)}
+      <div className={`text-center align-text-middle font-medium text-md mt-2 ${eventStatusColor}`}>
         {event.eventStatus}
       </div>
     </div>

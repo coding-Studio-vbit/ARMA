@@ -7,7 +7,7 @@ function AllRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/forum" element={<ForumRoutes />} />
+        <Route path="/forum/*" element={<ForumRoutes />} />
       </Routes>
     </BrowserRouter>
   );
