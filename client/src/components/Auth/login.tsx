@@ -1,31 +1,32 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { InputField } from "../InputField/InputField";
+import { login } from "./authService";
 
 function Login() {
   let navigate = useNavigate();
-  const [isFaculty, setIsFaculty] = useState<Boolean>(true);
-  const [emailError, setEmailError] = useState<String>();
-  const [passwordError, setPasswordError] = useState<String>();
-  const [email, setEmail] = useState<String>();
-  const [password, setPassword] = useState<String>();
+  const [isFaculty, setIsFaculty] = useState(true);
+  const [emailError, setEmailError] = useState<string>();
+  const [passwordError, setPasswordError] = useState<string>();
+  const [email, setEmail] = useState<String>("");
+  const [password, setPassword] = useState<String>("");
+
   const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    var email = e.target.value;
+    const email = e.target.value;
     setEmail(email);
     if (email.length === 0) {
       setEmailError("Email field is empty");
     } else {
       var validRegex =
         /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-      if (validRegex.test(email)) {
-        setEmailError("Valid Email :)");
-      } else {
+      if (!validRegex.test(email)) {
         setEmailError("Enter valid Email!");
       }
     }
   };
 
   const validatePass = (e: React.ChangeEvent<HTMLInputElement>) => {
-    var password:String = e.target.value;
+    var password = e.target.value;
     setPassword(password);
     if (password.length === 0) {
       setPasswordError("password field is empty");
@@ -42,6 +43,10 @@ function Login() {
         className="bg-[#F5F5F5] cursor-pointer pointer-events-auto flex w-max rounded-[24px] relative  mb-12 "
         onClick={() => {
           setIsFaculty(!isFaculty);
+          setEmail('')
+          setEmailError('')
+          setPassword('')
+          setPasswordError('')
         }}
       >
         <div
@@ -73,31 +78,34 @@ function Login() {
         </div>
       </div>
 
-      <div className="col-3 input-effect mb-8">
-        <input
-          className="effect-20 focus:rounded-[8px]"
-          type="text"
-          placeholder=""
-          onChange={(e) => validateEmail(e)}
-        />
-        <label>E-mail</label>
-        <span className="focus-border">
-          <i></i>
-        </span>
-      </div>
+      <InputField
+        className="mb-5"
+        name="Email"
+        error={emailError}
+        onChange={(e) => {
+          validateEmail(e);
+        }}
+      />
 
-      <div className="col-3 input-effect mb-12">
-        <input className="effect-20" type="password" placeholder="" />
-        <label>Password</label>
-        <span className="focus-border">
-          <i></i>
-        </span>
-      </div>
+      <InputField
+        name="Password"
+        error={passwordError}
+        onChange={(e) => {
+          validatePass(e);
+        }}
+      />
 
       <button
-        className="outlineBtn text-arma-blue border-[1px] rounded-[8px] mb-2"
-        onClick={() => {
-          navigate(`/forum`);
+        className="outlineBtn text-arma-blue border-[1px] mt-24 rounded-[8px] mb-2"
+        onClick={async () => {
+          const res = await login(
+            email,
+            password,
+            isFaculty ? "FACULTY" : "FORUM"
+          );
+          if (res.status === 1) {
+            navigate(isFaculty ? "/faculty" : "/forum");
+          }
         }}
       >
         Login
