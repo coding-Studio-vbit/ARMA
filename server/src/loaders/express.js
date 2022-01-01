@@ -7,8 +7,6 @@ const expressLoader = (app) => {
   app.use(express.urlencoded({extended:true}))
   app.use(express.json())
   app.use("/", api());
-  
-
 };
 
 module.exports = expressLoader;
