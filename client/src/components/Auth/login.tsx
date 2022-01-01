@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputField } from "../InputField/InputField";
+import { Spinner } from "../Spinner/Spinner";
 import { login } from "./authService";
 
 function Login() {
@@ -10,6 +11,7 @@ function Login() {
   const [passwordError, setPasswordError] = useState<string>();
   const [email, setEmail] = useState<String>("");
   const [password, setPassword] = useState<String>("");
+  const [error, setError] = useState<String>("")
 
   const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
@@ -21,6 +23,8 @@ function Login() {
         /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
       if (!validRegex.test(email)) {
         setEmailError("Enter valid Email!");
+      } else {
+        setEmailError("");
       }
     }
   };
@@ -29,12 +33,14 @@ function Login() {
     var password = e.target.value;
     setPassword(password);
     if (password.length === 0) {
-      setPasswordError("password field is empty");
+      setPasswordError("Password field is empty");
+    } else {
+      setPasswordError("");
     }
   };
 
   return (
-    <div className="mt-24 flex flex-col w-screen items-center">
+    <div className="mt-20 flex flex-col w-full overflow-hidden items-center">
       <p className="text-arma-title text-5xl font-medium mb-2">A.R.M.A</p>
       <p className="text-[#263238] mb-12 text-center">
         Automating and Digitalizing Event Organization
@@ -43,10 +49,10 @@ function Login() {
         className="bg-[#F5F5F5] cursor-pointer pointer-events-auto flex w-max rounded-[24px] relative  mb-12 "
         onClick={() => {
           setIsFaculty(!isFaculty);
-          setEmail('')
-          setEmailError('')
-          setPassword('')
-          setPasswordError('')
+          setEmail("");
+          setEmailError("");
+          setPassword("");
+          setPasswordError("");
         }}
       >
         <div
@@ -88,31 +94,53 @@ function Login() {
       />
 
       <InputField
+        className="mb-12"
         name="Password"
+        type="password"
         error={passwordError}
         onChange={(e) => {
           validatePass(e);
         }}
       />
-
-      <button
-        className="outlineBtn text-arma-blue border-[1px] mt-24 rounded-[8px] mb-2"
+      {error && <span className="text-arma-red">{error}</span>}
+      <LoginButton
         onClick={async () => {
           const res = await login(
             email,
             password,
             isFaculty ? "FACULTY" : "FORUM"
           );
+          console.log(res);
+          
+          
           if (res.status === 1) {
             navigate(isFaculty ? "/faculty" : "/forum");
+          }else{
+            setError(res.response)
           }
         }}
-      >
-        Login
-      </button>
+      />
       <p className="text-arma-title font-medium">Forgot Password?</p>
     </div>
   );
 }
+const LoginButton = (props: { onClick: () => Promise<void> }) => {
+  const [loading, setLoading] = useState(false);
+  return loading ? (
+    <Spinner className = 'mt-4 mb-2'/>
+  ) : (
+    <button
+      className="outlineBtn text-arma-blue border-[1px] mt-4 rounded-[8px] mb-2"
+      onClick={async () => {
+        setLoading(true);
+        await props.onClick();
+        setLoading(false);
+      }}
+    >
+      Login{" "}
+    </button>
+  );
+};
+
 
 export { Login };

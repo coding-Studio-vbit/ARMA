@@ -3,7 +3,7 @@ const login = async (email: String, password: String, userType: String) => {
   console.log(email, password, userType, userAgent);
 
   try {
-    const res = await fetch(process.env.REACT_APP_SERVER_URL + "/login", {
+    const res = await fetch(process.env.REACT_APP_SERVER_URL + "login", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -20,7 +20,12 @@ const login = async (email: String, password: String, userType: String) => {
     const data = await res.json()
     console.log(data.response.token)
     return data
-  } catch (error) {}
+  } catch (error) {
+    return {response: "Network not available", status: -1}
+  }
 };
 
 export { login };
+
+
+

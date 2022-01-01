@@ -4,6 +4,7 @@ const facultyModel = require("../../models/faculty");
 const forums = require("../../models/forum");
 const response = require("../util/response");
 const login = async (email, password, userAgent, userType) => {
+
   try {
     let user;
     if (userType === "FACULTY") {
@@ -11,6 +12,8 @@ const login = async (email, password, userAgent, userType) => {
     } else if (userType === "FORUM") {
       user = await forums.findOne({ email: email });
     }
+ 
+
     if (!user) {
       return response("User does not exist", process.env.FAILURE_CODE);
     }

@@ -4,7 +4,6 @@ import Navbar from "../components/CustomNavbar";
 import Dashboard from "../features/forum/main_dashboard/Dashboard";
 
 const ForumRoutes = () => {
-  console.log("hello");
   return (
     <div>
       <Navbar navItems={[]} userName="coding.Studio();"/>

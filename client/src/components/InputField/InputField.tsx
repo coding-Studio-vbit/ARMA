@@ -6,21 +6,23 @@ interface IFProps {
   value?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string | undefined;
+  type?: string 
 }
 
 const InputField: FC<IFProps> = ({
   className,
   name,
   value,
+  type,
   onChange,
   error,
-}: IFProps) => {
+}) => {
   return (
     <div className={`inputDiv ${error && "mb-10"} ${className}`}>
       <input
         className="inputField"
         value={value}
-        type="text"
+        type={!type ? "text" : type}
         required
         onChange={(e) => onChange(e)}
       />
@@ -29,7 +31,7 @@ const InputField: FC<IFProps> = ({
       </div>
       <br />
       {error && (
-        <span className={`absolute mt-1 text-red-600 pl-[8px]`}>{error}</span>
+        <span className={`absolute mt-1 text-red-600 text-sm pl-[8px]`}>{error}</span>
       )}
     </div>
   );

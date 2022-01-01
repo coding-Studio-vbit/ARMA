@@ -5,9 +5,10 @@ const auth = require("./routes/modules/auth/auth");
 const tokenAuth = require("./middleware/tokenAuth");
 
 const api = () => {
+
     const router = express.Router()
     auth(router)
-    router.use(tokenAuth)
+    //router.use(tokenAuth)
     faculty(router)
     test(router)
     return router

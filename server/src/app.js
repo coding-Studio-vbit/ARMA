@@ -7,7 +7,7 @@ const port = 5000 || process.env.PORT
 
 const startServer = () => {
   const app = express();
-  
+
   loaders({ app, mongoose });
 
   app.listen(port, () => {
