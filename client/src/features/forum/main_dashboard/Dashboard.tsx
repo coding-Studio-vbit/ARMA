@@ -37,15 +37,18 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="bg-[#F5F5F5]">
+    <div className="">
       <div id="forumCoverSection" className="h-[300px]">
         <img
           src="sky.jpg"
           className="w-full h-full object-cover rounded-sm opacity-60"
         />
       </div>
-      <div id="bottomSection" className="mx-16 sm:flex sm:flex-row-reverse">
-        <div id="sideSection" className="sm:w-1/5 my-3 mx-10 border border-2 border-gray-200 sm:pl-4 sm:border-t-0 sm:border-r-0 sm:border-b-0">
+      <div id="bottomSection" className=" sm:flex sm:flex-row-reverse">
+        <div
+          id="sideSection"
+          className="pb-6 w-max mx-auto sm:w-1/5 my-3 border border-2 border-gray-200 border-t-0 sm:border-t-0 border-l-0 sm:border-l-2 border-r-0 sm:border-r-0  sm:pl-4  sm:border-b-0 "
+        >
           {/* statistics and create event button */}
           <div className="w-max mx-auto mt-6">
             <button className="btn w-30 text-sm px-3">
@@ -66,7 +69,7 @@ const Dashboard = () => {
         </div>
         <div
           id="eventCardsSection"
-          className="sm:relative -top-28 ml-10 mt-4 mb-4 sm:w-4/5 sm:flex sm:flex-wrap "
+          className="sm:relative -top-20 mx-auto mt-4 mb-4 sm:ml-32 sm:w-2/3 sm:flex sm:flex-wrap "
         >
           {eventList.map((item) => {
             return <EventCard event={item} />;

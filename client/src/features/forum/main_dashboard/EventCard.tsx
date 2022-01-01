@@ -21,7 +21,7 @@ const EventCard = ({ event }: EventCardProps) => {
   }
 
   return (
-    <div className="mx-auto sm:mx-3 h-48 w-52  rounded-xl bg-white m-6 drop-shadow-xl">
+    <div className="mx-auto sm:mx-4 h-48 w-52 rounded-xl bg-white drop-shadow-xl">
       <div className="text-center align-text-middle font-bold text-lg mt-2 border border-slate-300 border-b-1 border-t-0 border-l-0 border-r-0">
         {event.name}
       </div>
