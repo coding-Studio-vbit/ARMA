@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require('validator');
 
 const faculty = new mongoose.Schema({
   name: {
@@ -38,5 +39,5 @@ const faculty = new mongoose.Schema({
   roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "roles" }],
 });
 
-const faculty1 = mongoose.model("faculty", faculty);
-mongoose.exports = faculty1;
+const facultyModel = mongoose.model("faculty", faculty);
+module.exports = facultyModel;

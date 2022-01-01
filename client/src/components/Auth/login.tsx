@@ -1,39 +1,46 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { InputField } from "../InputField/InputField";
+import { Spinner } from "../Spinner/Spinner";
+import { login } from "./authService";
 
 function Login() {
   let navigate = useNavigate();
-  const [isFaculty, setIsFaculty] = useState<Boolean>(true);
-  const [emailError, setEmailError] = useState<String>();
-  const [passwordError, setPasswordError] = useState<String>();
-  const [email, setEmail] = useState<String>();
-  const [password, setPassword] = useState<String>();
+  const [isFaculty, setIsFaculty] = useState(true);
+  const [emailError, setEmailError] = useState<string>();
+  const [passwordError, setPasswordError] = useState<string>();
+  const [email, setEmail] = useState<String>("");
+  const [password, setPassword] = useState<String>("");
+  const [error, setError] = useState<String>("")
+
   const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    var email = e.target.value;
+    const email = e.target.value;
     setEmail(email);
     if (email.length === 0) {
       setEmailError("Email field is empty");
     } else {
       var validRegex =
         /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-      if (validRegex.test(email)) {
-        setEmailError("Valid Email :)");
-      } else {
+      if (!validRegex.test(email)) {
         setEmailError("Enter valid Email!");
+      } else {
+        setEmailError("");
       }
     }
   };
 
   const validatePass = (e: React.ChangeEvent<HTMLInputElement>) => {
-    var password:String = e.target.value;
+    var password = e.target.value;
     setPassword(password);
     if (password.length === 0) {
-      setPasswordError("password field is empty");
+      setPasswordError("Password field is empty");
+    } else {
+      setPasswordError("");
     }
   };
 
   return (
-    <div className="mt-24 flex flex-col w-screen items-center">
+    <div className="mt-20 flex flex-col w-full overflow-hidden items-center">
       <p className="text-arma-title text-5xl font-medium mb-2">A.R.M.A</p>
       <p className="text-[#263238] mb-12 text-center">
         Automating and Digitalizing Event Organization
@@ -42,6 +49,10 @@ function Login() {
         className="bg-[#F5F5F5] cursor-pointer pointer-events-auto flex w-max rounded-[24px] relative  mb-12 "
         onClick={() => {
           setIsFaculty(!isFaculty);
+          setEmail("");
+          setEmailError("");
+          setPassword("");
+          setPasswordError("");
         }}
       >
         <div
@@ -73,38 +84,63 @@ function Login() {
         </div>
       </div>
 
-      <div className="col-3 input-effect mb-8">
-        <input
-          className="effect-20 focus:rounded-[8px]"
-          type="text"
-          placeholder=""
-          onChange={(e) => validateEmail(e)}
-        />
-        <label>E-mail</label>
-        <span className="focus-border">
-          <i></i>
-        </span>
-      </div>
-
-      <div className="col-3 input-effect mb-12">
-        <input className="effect-20" type="password" placeholder="" />
-        <label>Password</label>
-        <span className="focus-border">
-          <i></i>
-        </span>
-      </div>
-
-      <button
-        className="outlineBtn text-arma-blue border-[1px] rounded-[8px] mb-2"
-        onClick={() => {
-          navigate(`/forum`);
+      <InputField
+        className="mb-5"
+        name="Email"
+        error={emailError}
+        onChange={(e) => {
+          validateEmail(e);
         }}
-      >
-        Login
-      </button>
+      />
+
+      <InputField
+        className="mb-12"
+        name="Password"
+        type="password"
+        error={passwordError}
+        onChange={(e) => {
+          validatePass(e);
+        }}
+      />
+      {error && <span className="text-arma-red">{error}</span>}
+      <LoginButton
+        onClick={async () => {
+          const res = await login(
+            email,
+            password,
+            isFaculty ? "FACULTY" : "FORUM"
+          );
+          console.log(res);
+          
+          
+          if (res.status === 1) {
+            navigate(isFaculty ? "/faculty" : "/forum");
+          }else{
+            setError(res.response)
+          }
+        }}
+      />
       <p className="text-arma-title font-medium">Forgot Password?</p>
     </div>
   );
 }
+const LoginButton = (props: { onClick: () => Promise<void> }) => {
+  const [loading, setLoading] = useState(false);
+  return loading ? (
+    <Spinner className = 'mt-4 mb-2'/>
+  ) : (
+    <button
+      className="outlineBtn text-arma-blue border-[1px] mt-4 rounded-[8px] mb-2"
+      onClick={async () => {
+        setLoading(true);
+        await props.onClick();
+        setLoading(false);
+      }}
+    >
+      Login{" "}
+    </button>
+  );
+};
+
 
 export { Login };
