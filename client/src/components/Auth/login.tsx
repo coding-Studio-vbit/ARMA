@@ -1,19 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputField } from "../InputField/InputField";
 import { Spinner } from "../Spinner/Spinner";
 import { login } from "./authService";
 import { VisibilityOff, Visibility } from "@material-ui/icons";
+import { useUser } from "../../providers/auth/AuthProvider";
 
 function Login() {
   let navigate = useNavigate();
-  const [isFaculty, setIsFaculty] = useState<boolean | undefined>(true);
+  const { forum, faculty, setFaculty, setForum } = useUser();
+  const [isFaculty, setIsFaculty] = useState<boolean | undefined>(undefined);
   const [emailError, setEmailError] = useState<string>();
   const [passwordError, setPasswordError] = useState<string>();
   const [email, setEmail] = useState<String>("");
   const [password, setPassword] = useState<String>("");
-  const [error, setError] = useState<String>("")
-  const[showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState<String>("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (forum) {
+      navigate("/forum", { replace: true });
+    } else if (faculty) {
+      navigate("/faculty", { replace: true });
+
+    }
+  }, [forum, faculty]);
 
   const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
@@ -58,12 +69,14 @@ function Login() {
         }}
       >
         <div
-          className={` absolute ${!isFaculty && "userdiv"} ${(isFaculty === true) && "userdivback"}  bg-arma-blue rounded-[24px] w-6/12 h-full  cursor-pointer`}
+          className={` absolute ${isFaculty && "userdiv"} ${
+            isFaculty === false && "userdivback"
+          }  bg-arma-blue rounded-[24px] w-6/12 h-full  cursor-pointer`}
         ></div>
         <div className="py-1 pl-8 pr-8 shrink z-10 ">
           <span
             className={`${
-              isFaculty && "text-white"
+              !isFaculty && "text-white"
             }  font-medium pointer-events-auto cursor-pointer`}
           >
             Faculty
@@ -74,7 +87,7 @@ function Login() {
         >
           <span
             className={` ${
-              !isFaculty && "text-white"
+              isFaculty && "text-white"
             } font-medium cursor-pointer`}
           >
             Forum
@@ -90,37 +103,45 @@ function Login() {
           validateEmail(e);
         }}
       />
-    <div className="relative">
-      <InputField
-        className="mb-12"
-        name="Password"
-        type ={`${!showPassword && "password" }`}
-        error={passwordError}
-        onChange={(e) => {
-          validatePass(e);
-        }}
-      />
-      {
-        showPassword? <Visibility className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer" onClick = {() => setShowPassword(false)}/> : 
-        <VisibilityOff className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer" onClick = {() => setShowPassword(true)}/> 
-
-      }
+      <div className="relative">
+        <InputField
+          className="mb-12"
+          name="Password"
+          type={`${!showPassword && "password"}`}
+          error={passwordError}
+          onChange={(e) => {
+            validatePass(e);
+          }}
+        />
+        {showPassword ? (
+          <Visibility
+            className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
+            onClick={() => setShowPassword(false)}
+          />
+        ) : (
+          <VisibilityOff
+            className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
+            onClick={() => setShowPassword(true)}
+          />
+        )}
       </div>
       {error && <span className="text-arma-red">{error}</span>}
       <LoginButton
         onClick={async () => {
-          const res = await login(
-            email,
-            password,
-      (isFaculty)? "FACULTY" : "FORUM"
-          );
+          const userType =
+            isFaculty === true || isFaculty === undefined ? "FACULTY" : "FORUM";
+
+          const res = await login(email, password, userType);
           console.log(res);
-          
-          
+
           if (res.status === 1) {
-            navigate((isFaculty || isFaculty === undefined) ? "/faculty" : "/forum");
-          }else{
-            setError(res.response)
+            if (userType === "FACULTY") {
+              setFaculty(res.response.user);
+            } else {
+              setForum(res.response.user);
+            }
+          } else {
+            setError(res.response);
           }
         }}
       />
@@ -131,7 +152,7 @@ function Login() {
 const LoginButton = (props: { onClick: () => Promise<void> }) => {
   const [loading, setLoading] = useState(false);
   return loading ? (
-    <Spinner className = 'mt-4 mb-2'/>
+    <Spinner className="mt-4 mb-2" />
   ) : (
     <button
       className="outlineBtn text-arma-blue border-[1px] mt-4 rounded-[8px] mb-2"
@@ -145,6 +166,5 @@ const LoginButton = (props: { onClick: () => Promise<void> }) => {
     </button>
   );
 };
-
 
 export { Login };

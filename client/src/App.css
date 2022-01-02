@@ -6,13 +6,13 @@
 
 .userdiv{
     animation-name: slide;
-    animation-duration: 250ms ;
+    animation-duration: 180ms ;
     animation-fill-mode: forwards;
 
 }
 .userdivback{
     animation-name: sliderev;
-    animation-duration: 250ms ;
+    animation-duration: 180ms ;
     animation-fill-mode: forwards;
 
 }
