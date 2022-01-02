@@ -13,7 +13,8 @@ module.exports = {
         "arma-yellow": "#F0D90D",
         "arma-title": "#0B5B8A",
         "arma-light-gray": "#F5F5F5",
-        "arma-page-background": "#f5f5f5"
+        "arma-page-background": "#f5f5f5",
+        "arma-icon":"#808080",
       },
     },
   },

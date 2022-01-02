@@ -17,7 +17,6 @@ const login = async (email, password, userAgent, userType) => {
     if (!user) {
       return response("User does not exist", process.env.FAILURE_CODE);
     }
-    console.log(user);
     const result = bcrypt.compareSync(password, user.password);
     if (result) {
       const token = jwt.sign(
