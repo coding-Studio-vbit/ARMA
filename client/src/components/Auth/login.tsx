@@ -76,7 +76,7 @@ function Login() {
         <div className="py-1 pl-8 pr-8 shrink z-10 ">
           <span
             className={`${
-              isFaculty && "text-white"
+              !isFaculty && "text-white"
             }  font-medium pointer-events-auto cursor-pointer`}
           >
             Faculty
@@ -87,7 +87,7 @@ function Login() {
         >
           <span
             className={` ${
-              !isFaculty && "text-white"
+              isFaculty && "text-white"
             } font-medium cursor-pointer`}
           >
             Forum
