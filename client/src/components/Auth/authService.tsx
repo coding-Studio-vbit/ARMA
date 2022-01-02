@@ -1,7 +1,6 @@
 const login = async (email: String, password: String, userType: String) => {
   const userAgent = navigator.userAgent;
   console.log(email, password, userType, userAgent);
-
   try {
     const res = await fetch(process.env.REACT_APP_SERVER_URL + "login", {
       method: "POST",
