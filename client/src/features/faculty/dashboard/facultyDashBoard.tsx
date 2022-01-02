@@ -5,9 +5,10 @@ import { Spinner } from '../../../components/Spinner/Spinner';
 
 function FacultyDashBoard() {
     const navItems=[
-        {  label:'Dashboard',path:'' },
-        {  label:'Forums',path:'' },
-        {  label:'Students',path:'' },
+        {  label:'Dashboard',icon:"home",path:'/'},
+        {  label:'Forums',icon:"group",path:'/' },
+        {  label:'Students',icon:"person",path:'/' },
+        
     ];
     const [loading, setLoading] = useState(false);
 
@@ -22,9 +23,8 @@ function FacultyDashBoard() {
     }, [])
 
     return !loading?(
-        <div>
+        <div >
             <Navbar navItems={navItems} userName={"Prashanith"}/>
-            <p className='text-black'>rgegtg</p>
         </div>
         ):
         <div className='flex h-screen justify-center items-center'>

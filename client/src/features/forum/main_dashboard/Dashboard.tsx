@@ -1,4 +1,4 @@
-import { Add, AddCircle } from "@material-ui/icons";
+import { Add } from "@material-ui/icons";
 import EventCard from "./EventCard";
 import StatisticsCard from "./StatisticsCard";
 
@@ -37,7 +37,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="">
+    <div className="bg-arma-page-background">
       <div id="forumCoverSection" className="h-[300px]">
         <img
           src="sky.jpg"

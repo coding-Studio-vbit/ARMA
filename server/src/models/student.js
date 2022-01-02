@@ -54,7 +54,7 @@ const student = new mongoose.Schema({
     type: Number,
     validate: {
       validator: (value) => {
-        return validator.isMobilePhone(value, "en-IN");
+        return validator.isMobilePhone(String(value), "en-IN");
       },
       message: `{VALUE} is not a valid Indian contact number.`,
     },
@@ -63,4 +63,4 @@ const student = new mongoose.Schema({
 });
 
 const students = mongoose.model("students", student);
-mongoose.exports = students;
+module.exports = students;

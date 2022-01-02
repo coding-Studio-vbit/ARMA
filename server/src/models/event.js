@@ -13,10 +13,16 @@ const event = new mongoose.Schema({
       `Name must be max ${process.env.MAX_NAME_LENGTH} characters`,
     ],
   },
-  description:{
-	  type:String,
-	  minLength:[process.env.MIN_EVENT_DESCRIPTION_LENGTH, `description has to consist of minimum ${process.env.MIN_EVENT_DESCRIPTION_LENGTH} characters.`],
-	  maxLength:[process.env.MAX_EVENT_DESCRIPTION_LENGTH, `description has to consist of maximum ${process.env.MAX_EVENT_DESCRIPTION_LENGTH} characters.`]
+  description: {
+    type: String,
+    minLength: [
+      process.env.MIN_EVENT_DESCRIPTION_LENGTH,
+      `description has to consist of minimum ${process.env.MIN_EVENT_DESCRIPTION_LENGTH} characters.`,
+    ],
+    maxLength: [
+      process.env.MAX_EVENT_DESCRIPTION_LENGTH,
+      `description has to consist of maximum ${process.env.MAX_EVENT_DESCRIPTION_LENGTH} characters.`,
+    ],
   },
   forumID: {
     required: true,
@@ -60,10 +66,10 @@ const event = new mongoose.Schema({
   reportDocPath: {
     type: String,
   },
-  mediaFilePaths:[{type:String}],
-  FOComments:String,
-  SACComments:String,
+  mediaFilePaths: [{ type: String }],
+  FOComments: String,
+  SACComments: String,
 });
 
 const events = mongoose.model("events", evenst);
-mongoose.exports = events;
+module.exports = events;

@@ -31,4 +31,4 @@ const hall = new mongoose.Schema({
 });
 
 const halls = mongoose.model("halls", hall);
-mongoose.exports = halls;
+module.exports = halls;
