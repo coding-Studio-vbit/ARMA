@@ -1,4 +1,4 @@
-import { Add, AddCircle } from "@material-ui/icons";
+import { Add } from "@material-ui/icons";
 import EventCard from "./EventCard";
 import StatisticsCard from "./StatisticsCard";
 
