@@ -16,9 +16,9 @@ function AllRoutes() {
           path="/test"
           element={
             <Table
-              api="http://localhost:5000"
-              rowsPerPage={4}
-              buttonsCount={4}
+              api="http://localhost:5000/students"
+              rowsPerPage={3}
+              buttonsCount={2}
               headers={[
                 {
                   displayName: "Name",
