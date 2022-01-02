@@ -9,7 +9,7 @@ import { useUser } from "../../providers/auth/AuthProvider";
 function Login() {
   let navigate = useNavigate();
   const { forum, faculty, setFaculty, setForum } = useUser();
-  const [isFaculty, setIsFaculty] = useState<boolean | undefined>(undefined);
+  const [isFaculty, setIsFaculty] = useState<boolean | undefined>(true);
   const [emailError, setEmailError] = useState<string>();
   const [passwordError, setPasswordError] = useState<string>();
   const [email, setEmail] = useState<String>("");
@@ -69,14 +69,14 @@ function Login() {
         }}
       >
         <div
-          className={` absolute ${isFaculty && "userdiv"} ${
-            isFaculty === false && "userdivback"
+          className={` absolute ${!isFaculty && "userdiv"} ${
+            isFaculty === true && "userdivback"
           }  bg-arma-blue rounded-[24px] w-6/12 h-full  cursor-pointer`}
         ></div>
         <div className="py-1 pl-8 pr-8 shrink z-10 ">
           <span
             className={`${
-              !isFaculty && "text-white"
+              isFaculty && "text-white"
             }  font-medium pointer-events-auto cursor-pointer`}
           >
             Faculty
@@ -87,7 +87,7 @@ function Login() {
         >
           <span
             className={` ${
-              isFaculty && "text-white"
+              !isFaculty && "text-white"
             } font-medium cursor-pointer`}
           >
             Forum

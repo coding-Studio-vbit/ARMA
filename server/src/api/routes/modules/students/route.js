@@ -3,13 +3,15 @@ const students = require("../../../../models/student");
 const response = require("../../../../services/util/response");
 
 router.get("/", async (req, res) => {
-  let { page, limit } = req.params;
-  
+  let { page, limit } = req.query;
+  page = Number(page);
+  limit = Number(limit);
   const result = await students
-    .findAll()
+    .find()
     .skip((page - 1) * limit)
     .limit(limit);
-    res.json(response(result, process.env.SUCCESS_CODE));
+  const total = await students.count({});
+  res.json(response({ data: result, total: total }, process.env.SUCCESS_CODE));
 });
 
 module.exports = router;

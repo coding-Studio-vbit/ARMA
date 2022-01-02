@@ -12,6 +12,33 @@ function AllRoutes() {
         <Route path="/forum/*" element={<ForumRoutes />} />
         <Route path="/faculty/*" element={<FacultyRoutes />} />
 
+        <Route
+          path="/test"
+          element={
+            <Table
+              api="http://localhost:5000"
+              rowsPerPage={4}
+              buttonsCount={4}
+              headers={[
+                {
+                  displayName: "Name",
+                  dataPath: "name",
+                  sortable: true,
+                },
+                {
+                  displayName: "Roll Number",
+                  dataPath: "rollNumber",
+                  sortable: true,
+                },
+                {
+                  displayName: "Branch",
+                  dataPath: "branch",
+                  sortable: false,
+                },
+              ]}
+            />
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

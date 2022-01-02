@@ -1,20 +1,20 @@
 const express = require("express");
-const test = require("./routes/modules/test")
-const faculty = require("./routes/modules/faculty/faculty");
+const test = require("./routes/modules/test");
+const facultyRouter = require("./routes/modules/faculty/router");
 const auth = require("./routes/modules/auth/auth");
 const tokenAuth = require("./middleware/tokenAuth");
-const studentRouter = require("../api/routes/modules/students/route")
+const studentRouter = require("../api/routes/modules/students/route");
 
 const api = () => {
+  const router = express.Router();
+  router.use("/", auth);
+  
+  router.use("/students", studentRouter); //TEMP
 
-    const router = express.Router()
-    auth(router)
-    router.use("/students", studentRouter);
-    //router.use(tokenAuth)
-    faculty(router)
-    test(router)
-    return router
-}
+  router.use("/faculty", tokenAuth, facultyRouter);
+  //router.use(tokenAuth)
+  //test(router);
+  return router;
+};
 
-module.exports = api
-
+module.exports = api;
