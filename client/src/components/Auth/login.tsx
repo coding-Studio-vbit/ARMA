@@ -3,15 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { InputField } from "../InputField/InputField";
 import { Spinner } from "../Spinner/Spinner";
 import { login } from "./authService";
+import { VisibilityOff, Visibility } from "@material-ui/icons";
 
 function Login() {
   let navigate = useNavigate();
-  const [isFaculty, setIsFaculty] = useState(true);
+  const [isFaculty, setIsFaculty] = useState<boolean | undefined>(undefined);
   const [emailError, setEmailError] = useState<string>();
   const [passwordError, setPasswordError] = useState<string>();
   const [email, setEmail] = useState<String>("");
   const [password, setPassword] = useState<String>("");
   const [error, setError] = useState<String>("")
+  const[showPassword, setShowPassword] = useState(false)
 
   const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
@@ -56,27 +58,23 @@ function Login() {
         }}
       >
         <div
-          className={`absolute ${
-            isFaculty && "bg-arma-blue"
-          }  rounded-[24px] w-6/12 h-full  cursor-pointer`}
+          className={` absolute ${isFaculty && "userdiv"} ${(isFaculty === false) && "userdivback"}  bg-arma-blue rounded-[24px] w-6/12 h-full  cursor-pointer`}
         ></div>
         <div className="py-1 pl-8 pr-8 shrink z-10 ">
           <span
             className={`${
-              isFaculty && "text-white"
+              !isFaculty && "text-white"
             }  font-medium pointer-events-auto cursor-pointer`}
           >
             Faculty
           </span>
         </div>
         <div
-          className={`${
-            !isFaculty && "bg-arma-blue "
-          } rounded-[24px] py-1 pr-8 pl-8 pointer-events-auto cursor-pointer z-10`}
+          className={`rounded-[24px] py-1 pr-8 pl-8 pointer-events-auto cursor-pointer z-10`}
         >
           <span
             className={` ${
-              !isFaculty && "text-white"
+              isFaculty && "text-white"
             } font-medium cursor-pointer`}
           >
             Forum
@@ -92,29 +90,35 @@ function Login() {
           validateEmail(e);
         }}
       />
-
+    <div className="relative">
       <InputField
         className="mb-12"
         name="Password"
-        type="password"
+        type ={`${!showPassword && "password" }`}
         error={passwordError}
         onChange={(e) => {
           validatePass(e);
         }}
       />
+      {
+        showPassword? <Visibility className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer" onClick = {() => setShowPassword(false)}/> : 
+        <VisibilityOff className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer" onClick = {() => setShowPassword(true)}/> 
+
+      }
+      </div>
       {error && <span className="text-arma-red">{error}</span>}
       <LoginButton
         onClick={async () => {
           const res = await login(
             email,
             password,
-            isFaculty ? "FACULTY" : "FORUM"
+      (isFaculty || isFaculty === undefined)? "FACULTY" : "FORUM"
           );
           console.log(res);
           
           
           if (res.status === 1) {
-            navigate(isFaculty ? "/faculty" : "/forum");
+            navigate((isFaculty || isFaculty === undefined) ? "/faculty" : "/forum");
           }else{
             setError(res.response)
           }
