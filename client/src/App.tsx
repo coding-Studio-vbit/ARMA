@@ -1,15 +1,15 @@
 import './App.css';
-//import FacultyDashBoard from './features/faculty/dashboard/facultyDashBoard';
-import { UserProvider } from './providers/auth/AuthProvider';
-import AllRoutes from './routes/routes';
+import FacultyDashBoard from './features/faculty/dashboard/facultyDashBoard';
+// import { UserProvider } from './providers/auth/AuthProvider';
+// import AllRoutes from './routes/routes';
 
 function App() {
   return (
     <div className="App font-inter">
-      <UserProvider>
+      {/* <UserProvider>
       <AllRoutes />
-      </UserProvider>
-      {/* <FacultyDashBoard/> */}      
+      </UserProvider> */}
+      <FacultyDashBoard/>      
     </div>
   );
 }
