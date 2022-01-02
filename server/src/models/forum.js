@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const forum = new mongoose.Schema({
   name: {
@@ -29,7 +30,7 @@ const forum = new mongoose.Schema({
       studentID: { type: mongoose.Schema.Types.ObjectId, ref: "students" },
     },
   ],
-  password: String,
+  password: {type:String, required:true},
   email: {
     type: String,
     required: true,
@@ -53,4 +54,4 @@ const forum = new mongoose.Schema({
 });
 
 const forums = mongoose.model("forums", forum);
-mongoose.exports = forums;
+module.exports = forums;

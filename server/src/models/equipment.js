@@ -17,4 +17,4 @@ const equipment = new mongoose.Schema({
 });
 
 const equipments = mongoose.model("equipments", equipment);
-mongoose.exports = roles;
+module.exports = roles;
