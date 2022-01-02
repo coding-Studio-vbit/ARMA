@@ -7,7 +7,7 @@ interface NavItem {
 }
 
 interface NavbarProps {
-  navItems: [NavItem] | [],
+  navItems:(NavItem) [] | [],
   userName: string
 }
 
