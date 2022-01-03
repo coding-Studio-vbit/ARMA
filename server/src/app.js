@@ -1,16 +1,18 @@
-const express = require('express');
-const loaders = require('./loaders/loaders');
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const loaders = require("./loaders/loaders");
 
-
-
-const port = process.env.PORT || 6000 ;
+const port = 5000 || process.env.PORT
 
 const startServer = () => {
-    const app = express();
-    loaders(app)
-    app.listen(port, () => {
-        console.log(`Listening at http://localhost:${port}`)
-      })
-}
+  const app = express();
 
-startServer()
+  loaders({ app, mongoose });
+
+  app.listen(port, () => {
+    console.log(`Listening at http://localhost:${port}`);
+  });
+};
+
+startServer();
