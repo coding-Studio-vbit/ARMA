@@ -3,14 +3,30 @@ const students = require("../../../../models/student");
 const response = require("../../../../services/util/response");
 
 router.get("/", async (req, res) => {
-  let { page, limit } = req.query;
-  page = Number(page);
-  limit = Number(limit);
-  const result = await students
-    .find()
+
+  //For pagination
+  let page = req.query.page ? Number(req.query.page) : 1;
+  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+
+  //For filters
+  let where = {};
+  if (req.query.name) where.name = req.query.name;
+  if (req.query.rollNumber) where.rollNumber = req.query.rollNumber;
+  if (req.query.branch) where.branch = req.query.branch;
+  if (req.query.section) where.section = req.query.section;
+
+  //For sorting
+  let sort = {};
+  if (req.query.orderBy && req.query.order)
+    sort[req.query.orderBy] = req.query.order;
+  else sort = { name: "asc" };
+
+  result = await students
+    .find(where)
     .skip((page - 1) * limit)
-    .limit(limit);
-  const total = await students.count({});
+    .limit(limit)
+    .sort(sort);
+  const total = await students.count(where);
   res.json(response({ data: result, total: total }, process.env.SUCCESS_CODE));
 });
 
