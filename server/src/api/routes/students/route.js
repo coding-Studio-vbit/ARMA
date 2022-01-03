@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const students = require("../../../../models/student");
-const response = require("../../../../services/util/response");
+const students = require("../../../models/student");
+const response = require("../../../services/util/response");
 
 router.get("/", async (req, res) => {
 
