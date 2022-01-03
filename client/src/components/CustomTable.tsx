@@ -100,7 +100,7 @@ const Table = ({
         setData(newData);
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error.response.message);
       });
   }, [currentPage, totalPages, rowsPerPage, order, orderBy]);
 

@@ -21,13 +21,20 @@ router.get("/", async (req, res) => {
     sort[req.query.orderBy] = req.query.order;
   else sort = { name: "asc" };
 
-  result = await students
-    .find(where)
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .sort(sort);
-  const total = await students.count(where);
-  res.json(response({ data: result, total: total }, process.env.SUCCESS_CODE));
+  try
+  {
+    result = await students
+      .find(where)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort(sort);
+    const total = await students.count(where);
+    res.json(response({ data: result, total: total }, process.env.SUCCESS_CODE));
+  }
+  catch(error)
+  {
+    res.json(response({message: "Student data fetch error"}, process.env.FAILURE_CODE));
+  }
 });
 
 module.exports = router;
