@@ -33,13 +33,17 @@ export const Dialog = ({ show, setShow,children,title }: DialogProps) => {
           >
               {!children && 
               <div className="flex justify-end">
-                  <Close className="cursor-pointer" onClick={()=>{
+                  <Close className="cursor-pointer hover:bg-black/10 rounded-full    " onClick={()=>{
                     setShow(false)
                   }} /> 
               </div>
               }
             <p className="text-center p-4 text-xl mb-8 "  >{title}</p>
-            {children}
+            { 
+                <div className="flex justify-around">
+                    {children}
+                </div>
+            }
           </div>
         </div>,
         document.body
