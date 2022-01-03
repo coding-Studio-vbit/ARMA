@@ -36,7 +36,7 @@ const [show,setShow] = useState(false)
 <Dialog show={show} setShow={setShow} title='Welcome ARMA'/> 
 
 ```  
-[<h4>Table</h4>](https://github.com/coding-Studiovbit/ARMA/blob/master/client/src/components/CustomTable.tsx)
+[<h4>Table</h4>](https://github.com/coding-Studio-vbit/ARMA/blob/master/client/src/components/CustomTable.tsx)
 ```
 <Table
     api="<backend data source url>"
