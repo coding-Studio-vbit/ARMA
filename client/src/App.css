@@ -8,12 +8,15 @@
     animation-name: slide;
     animation-duration: 180ms ;
     animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
 }
 .userdivback{
     animation-name: sliderev;
     animation-duration: 180ms ;
     animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
 
 }
 @keyframes slide {

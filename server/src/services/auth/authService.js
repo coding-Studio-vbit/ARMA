@@ -3,13 +3,14 @@ const bcrypt = require("bcrypt");
 const facultyModel = require("../../models/faculty");
 const forums = require("../../models/forum");
 const students = require("../../models/student");
+const role = require("../../models/role");
 const response = require("../util/response");
 
 const login = async (email, password, userAgent, userType) => {
   try {
     let user;
     if (userType === "FACULTY") {
-      user = await facultyModel.findOne({ email: email });
+      user = await facultyModel.findOne({ email: email }).populate('roles');
     } else if (userType === "FORUM") {
       user = await forums.findOne({ email: email });
     }
@@ -64,4 +65,15 @@ const addStudent = async (data) => {
   }
 };
 
-module.exports = { login, register, addStudent };
+const addRole = async (data) => {
+  try {
+    let newRole = new role(data);
+    await newRole.save();
+    return response("Success", process.env.SUCCESS_CODE);
+  } catch (error) {
+    console.log(error);
+    return response("failure", process.env.FAILURE_CODE);
+  }
+};
+
+module.exports = { login, register, addStudent, addRole };

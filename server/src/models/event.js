@@ -42,7 +42,7 @@ const event = new mongoose.Schema({
       "REQUESTED CHANGES",
       "APPROVED",
       "REJECTED",
-      "COMPLETE",
+      "COMPLETED",
     ],
   },
   hasBudget: {

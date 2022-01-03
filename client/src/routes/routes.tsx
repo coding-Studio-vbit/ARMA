@@ -3,6 +3,7 @@ import { Login } from "../components/Auth/login";
 import FacultyRoutes from "./FacultyRoutes";
 import ForumRoutes from "./ForumRoutes";
 import Table from "../components/CustomTable";
+import RequestsPage from "../features/faculty/requests_view/RequestsPage";
 
 function AllRoutes() {
   return (
@@ -11,14 +12,14 @@ function AllRoutes() {
         <Route path="/" element={<Login />} />
         <Route path="/forum/*" element={<ForumRoutes />} />
         <Route path="/faculty/*" element={<FacultyRoutes />} />
-
-        <Route
+        <Route path="/test" element={<RequestsPage/>} />
+        {/* <Route
           path="/test"
           element={
             <Table
               api="http://localhost:5000/students"
               rowsPerPage={3}
-              buttonsCount={2}
+              buttonsCount={1}
               headers={[
                 {
                   displayName: "Name",
@@ -38,7 +39,7 @@ function AllRoutes() {
               ]}
             />
           }
-        />
+        /> */}
       </Routes>
     </BrowserRouter>
   );
