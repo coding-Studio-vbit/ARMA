@@ -28,6 +28,7 @@ const faculty = new mongoose.Schema({
   },
   email: {
     type: String,
+    unique:true,
     validate: {
       validator: (value) => {
         return validator.isEmail(value);
@@ -36,6 +37,15 @@ const faculty = new mongoose.Schema({
     },
   },
   password: String,
+  phone: {
+    type: Number,
+    validate: {
+      validator: (value) => {
+        return validator.isMobilePhone(String(value), "en-IN");
+      },
+      message: `{VALUE} is not a valid Indian contact number.`,
+    },
+  },
   roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "roles" }],
 });
 

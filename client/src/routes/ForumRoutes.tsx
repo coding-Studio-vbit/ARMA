@@ -8,7 +8,7 @@ const ForumRoutes = () => {
     <div>
       <Navbar navItems={[]} userName="coding.Studio();"/>
         <Routes>
-          <Route path="*" element={<Dashboard/>} />
+          <Route path="/" element={<Dashboard/>} />
         </Routes>
       <Footer />
     </div>
