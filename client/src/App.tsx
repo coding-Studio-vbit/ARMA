@@ -1,5 +1,5 @@
 import './App.css';
-import { UserProvider } from './providers/auth/AuthProvider';
+import { UserProvider } from './providers/user/UserProvider';
 import AllRoutes from './routes/routes';
 
 function App() {

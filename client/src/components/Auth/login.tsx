@@ -4,7 +4,7 @@ import { InputField } from "../InputField/InputField";
 import { Spinner } from "../Spinner/Spinner";
 import { login } from "./authService";
 import { VisibilityOff, Visibility } from "@material-ui/icons";
-import { useUser } from "../../providers/auth/AuthProvider";
+import { useUser } from "../../providers/user/UserProvider";
 
 function Login() {
   let navigate = useNavigate();
