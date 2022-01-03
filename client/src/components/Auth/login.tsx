@@ -22,7 +22,6 @@ function Login() {
       navigate("/forum", { replace: true });
     } else if (faculty) {
       navigate("/faculty", { replace: true });
-
     }
   }, [forum, faculty]);
 
@@ -59,36 +58,43 @@ function Login() {
         Automating and Digitalizing Event Organization
       </p>
       <div
-        className="bg-[#F5F5F5] cursor-pointer pointer-events-auto flex w-max rounded-[24px] relative  mb-12 "
-        onClick={() => {
-          setIsFaculty(!isFaculty);
-          setEmail("");
-          setEmailError("");
-          setPassword("");
-          setPasswordError("");
-        }}
+        className="bg-[#F5F5F5] cursor-pointer flex w-max rounded-[24px] relative  mb-12 "
+        
       >
         <div
           className={` absolute ${!isFaculty && "userdiv"} ${
             isFaculty === true && "userdivback"
-          }  bg-arma-blue rounded-[24px] w-6/12 h-full  cursor-pointer`}
+          }  bg-arma-blue rounded-[24px] w-6/12 h-full `}
         ></div>
-        <div className="py-1 pl-8 pr-8 shrink z-10 ">
+        <div className="py-1 pl-8 pr-8 shrink z-10 " onClick={() => {
+          setIsFaculty(true);
+        
+          setEmailError("");
+         
+          setPasswordError("");
+        }}>
           <span
             className={`${
               isFaculty && "text-white"
-            }  font-medium pointer-events-auto cursor-pointer`}
+            }  font-medium`}
           >
             Faculty
           </span>
         </div>
         <div
-          className={`rounded-[24px] py-1 pr-8 pl-8 pointer-events-auto cursor-pointer z-10`}
+          className={`rounded-[24px] py-1 pr-8 pl-8 z-10`}
+          onClick={() => {
+            setIsFaculty(false);
+          
+            setEmailError("");
+           
+            setPasswordError("");
+          }}
         >
           <span
             className={` ${
               !isFaculty && "text-white"
-            } font-medium cursor-pointer`}
+            } font-medium`}
           >
             Forum
           </span>

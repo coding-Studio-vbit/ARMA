@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Footer from "../components/CustomFooter";
 import Navbar from "../components/CustomNavbar";
 import Dashboard from "../features/forum/main_dashboard/Dashboard";

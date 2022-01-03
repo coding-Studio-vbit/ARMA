@@ -41,13 +41,14 @@ const Dashboard = () => {
       <div id="forumCoverSection" className="h-[300px]">
         <img
           src="sky.jpg"
+          alt="forum-cover"
           className="w-full h-full object-cover rounded-sm opacity-60"
         />
       </div>
       <div id="bottomSection" className=" sm:flex sm:flex-row-reverse">
         <div
           id="sideSection"
-          className="pb-6 w-max mx-auto sm:w-1/5 my-3 border border-2 border-gray-200 border-t-0 sm:border-t-0 border-l-0 sm:border-l-2 border-r-0 sm:border-r-0  sm:pl-4  sm:border-b-0 "
+          className="pb-6 w-max mx-auto sm:w-1/5 my-3 border-2 border-gray-200 border-t-0 sm:border-t-0 border-l-0 sm:border-l-2 border-r-0 sm:border-r-0  sm:pl-4  sm:border-b-0 "
         >
           {/* statistics and create event button */}
           <div className="w-max mx-auto mt-6">
@@ -58,7 +59,7 @@ const Dashboard = () => {
           <div className="mt-3 mx-auto w-max">
             <StatisticsCard numberOfEvents={3} engagement={10} />
           </div>
-          <div className="mt-3 mx-auto w-60 bg-gray-200 rounded-md p-3 drop-shadow-xl border border-2">
+          <div className="mt-3 mx-auto w-60 bg-gray-200 rounded-md p-3 drop-shadow-xl border-2">
             <h2 className="text-arma-blue pl-2">Active Events</h2>
             <ul className="pl-8 list-disc">
               {eventList.map((item) => {

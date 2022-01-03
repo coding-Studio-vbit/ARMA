@@ -1,5 +1,4 @@
 import './App.css';
-//import FacultyDashBoard from './features/faculty/dashboard/facultyDashBoard';
 import { UserProvider } from './providers/auth/AuthProvider';
 import AllRoutes from './routes/routes';
 
@@ -9,7 +8,6 @@ function App() {
       <UserProvider>
       <AllRoutes />
       </UserProvider>
-      {/* <FacultyDashBoard/> */}      
     </div>
   );
 }
