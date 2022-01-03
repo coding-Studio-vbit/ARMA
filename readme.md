@@ -28,4 +28,10 @@ btn-yellow
 <Spinner/> 
 ```  
 
+[<h4>Dialog</h4>](https://github.com/coding-Studiovbit/ARMA/blob/master/client/src/components/Dialog/Dialog.tsx)
+
+```
+const [show,setShow] = useState(false)
+<Dialog show={show} setShow={setShow} title='Welcome ARMA'/> 
+```  
 
