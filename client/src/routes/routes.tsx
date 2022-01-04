@@ -12,8 +12,7 @@ function AllRoutes() {
         <Route path="/" element={<Login />} />
         <Route path="/forum/*" element={<ForumRoutes />} />
         <Route path="/faculty/*" element={<FacultyRoutes />} />
-        <Route path="/test" element={<RequestsPage/>} />
-        {/* <Route
+        <Route
           path="/test"
           element={
             <Table
@@ -39,7 +38,7 @@ function AllRoutes() {
               ]}
             />
           }
-        /> */}
+        />
       </Routes>
     </BrowserRouter>
   );

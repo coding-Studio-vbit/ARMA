@@ -23,7 +23,7 @@ function Login() {
     } else if (faculty) {
       navigate("/faculty", { replace: true });
     }
-  }, [forum, faculty]);
+  }, [forum, faculty, navigate]);
 
   const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
