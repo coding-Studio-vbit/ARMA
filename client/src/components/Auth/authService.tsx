@@ -20,7 +20,7 @@ const login = async (email: String, password: String, userType: String) => {
     console.log(data.response.token)
     return data
   } catch (error) {
-    return {response: "Network not available", status: -1}
+    return {response: "Server not available. Try again later", status: -1}
   }
 };
 
