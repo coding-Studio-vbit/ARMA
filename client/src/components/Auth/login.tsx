@@ -18,11 +18,11 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    // if (forum) {
-    //   navigate("/forum", { replace: true });
-    // } else if (faculty) {
-    //   navigate("/faculty", { replace: true });
-    // }
+    if (forum) {
+      navigate("/forum", { replace: true });
+    } else if (faculty) {
+      navigate("/faculty", { replace: true });
+    }
   }, [forum, faculty]);
 
   const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,9 +69,6 @@ function Login() {
         <div className="py-1 pl-8 pr-8 shrink z-10 " onClick={() => {
           setIsFaculty(true);
         
-          setEmailError("");
-         
-          setPasswordError("");
         }}>
           <span
             className={`${
@@ -86,9 +83,6 @@ function Login() {
           onClick={() => {
             setIsFaculty(false);
           
-            setEmailError("");
-           
-            setPasswordError("");
           }}
         >
           <span
