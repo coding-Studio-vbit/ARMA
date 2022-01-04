@@ -8,7 +8,7 @@ export const useLocalStorageState = <T extends unknown>(key:string,initialValue:
         const value = localStorage.getItem(key)
         console.log(value);
         
-        if(value === 'undefined')
+        if(!value || value === 'undefined')
         return initialValue
         return JSON.parse(value?value:'')
     })
@@ -33,7 +33,7 @@ export const useSessionStorageState = <T extends unknown>(key:string,initialValu
 
     const [data,setData] = useState<T>(()=>{
         const value = sessionStorage.getItem(key)
-        if(value === 'undefined')
+        if(!value || value === 'undefined')
         return initialValue
         return JSON.parse(value?value:'')
     })
