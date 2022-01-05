@@ -15,6 +15,23 @@
     border-radius: 8px;
 }
 
+input[type=file]::file-selector-button {
+    background-color: #139BEB;
+    color: white;
+    border: none;
+    outline: none;
+}
+input[type=file]::file-selector-button:hover {
+    background-color:grey;
+    color: black;
+    border: none;
+    outline: none;
+}
+
+input[type=file]::file-selector-button:focus {
+    background-color:grey;
+    color: black;
+}
 
 .userdiv{
     animation-name: slide;
