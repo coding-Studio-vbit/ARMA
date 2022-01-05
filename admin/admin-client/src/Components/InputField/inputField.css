@@ -1,5 +1,6 @@
 .inputDiv {
   position: relative;
+  width: 100%;
 }
 .inputField {
   @apply px-6 py-[0.75rem];

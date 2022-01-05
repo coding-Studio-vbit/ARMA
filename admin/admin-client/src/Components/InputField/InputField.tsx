@@ -18,12 +18,12 @@ const InputField: FC<IFProps> = ({
   error,
 }) => {
   return (
-    <div className={`inputDiv ${error && "mb-10"} ${className}`}>
+    <div className={`inputDiv ${error && "mb-10"} ${className}` } key={name}>
       <input
-        className="inputField"
+        className="inputField !w-full"
         value={value}
         type={!type ? "text" : type}
-        required
+        required  
         onChange={(e) => onChange(e)}
       />
       <div className="label flex items-center 	">
