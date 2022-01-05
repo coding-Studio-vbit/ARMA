@@ -23,7 +23,7 @@ function Login() {
     } else if (faculty) {
       navigate("/faculty", { replace: true });
     }
-  }, [forum, faculty]);
+  }, [forum, faculty, navigate]);
 
   const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
@@ -96,7 +96,7 @@ function Login() {
           </span>
         </div>
       </div>
-
+      <form className="flex flex-col items-center" >
       <InputField
         className="mb-5"
         name="Email"
@@ -130,6 +130,11 @@ function Login() {
       {error && <span className="text-arma-red mb-3">{error}</span>}
       <LoginButton
         onClick={async () => {
+
+          if(!email || !password || emailError || passwordError ){
+            setError('Fill the details !')
+            return
+          }
           const userType =
             isFaculty === true || isFaculty === undefined ? "FACULTY" : "FORUM";
 
@@ -147,6 +152,7 @@ function Login() {
           }
         }}
       />
+        </form>
       <p className="text-arma-title font-medium">Forgot Password?</p>
     </div>
   );
@@ -157,7 +163,8 @@ const LoginButton = (props: { onClick: () => Promise<void> }) => {
     <Spinner className="mt-4 mb-2" />
   ) : (
     <button
-      className={`outlineBtn text-arma-blue border-[1px] rounded-[8px] mb-2`}
+      className="outlineBtn text-arma-blue border-[1px] rounded-[8px] mb-2"
+      type="submit"
       onClick={async () => {
         setLoading(true);
         await props.onClick();

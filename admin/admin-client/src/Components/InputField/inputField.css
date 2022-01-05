@@ -1,0 +1,40 @@
+.inputDiv {
+  position: relative;
+  width: 100%;
+}
+.inputField {
+  @apply px-6 py-[0.75rem];
+  outline: none;
+  transition: border 0.15s ease-out;
+  border: 2px solid rgb(200, 200, 200);
+  border-radius: 0.5rem;
+}
+.label {
+  @apply px-6 py-[0.75rem];
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  color: #575757e1;
+  transition: 0.1s;
+  top: 0;
+  bottom: 0;
+}
+.label > label {
+  background-color: white;
+  @apply px-1;
+}
+
+.inputField:focus {
+  border: 2px solid #0b5b8a;
+}
+
+.inputField:valid ~ .label {
+  top: -3.25rem;
+  @apply px-4;
+  color: #222222e1;
+}
+.inputField:focus ~ .label {
+  top: -3.25rem;
+  @apply px-4;
+  color: #222222e1;
+}
