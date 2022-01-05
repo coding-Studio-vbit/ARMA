@@ -14,6 +14,10 @@ module.exports = {
       inter: "Inter, sans-serif",
     },
     extend: {
+      screens:{
+        sm: '420px',
+
+      },
       colors: {
         "arma-blue": "#139BEB",
         "arma-dark-blue":"#0B5B8A",

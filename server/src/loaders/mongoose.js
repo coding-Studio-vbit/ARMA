@@ -5,7 +5,7 @@ const mongooseLoader = (mongoose) => {
       console.log("Connected to database.");
     })
     .on("error", (error) => {
-      console.err(error);
+      console.error(error);
     });
 };
 module.exports = mongooseLoader;

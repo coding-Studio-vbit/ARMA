@@ -31,7 +31,7 @@ const event = new mongoose.Schema({
   },
   attendanceDocID: {
     required: true,
-    type: mongoose.Schema.Typses.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "attendance",
   },
   eventStatus: {
@@ -42,7 +42,7 @@ const event = new mongoose.Schema({
       "REQUESTED CHANGES",
       "APPROVED",
       "REJECTED",
-      "COMPLETE",
+      "COMPLETED",
     ],
   },
   hasBudget: {
@@ -71,5 +71,5 @@ const event = new mongoose.Schema({
   SACComments: String,
 });
 
-const events = mongoose.model("events", evenst);
+const events = mongoose.model("events", event);
 module.exports = events;

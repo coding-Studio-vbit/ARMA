@@ -13,10 +13,10 @@
 
 @layer components {
   .btn {
-    @apply py-3 px-10 bg-[#139BEB] text-white font-semibold rounded-[25px] hover:bg-[#1386c9];
+    @apply py-[0.5rem] px-8 bg-[#139BEB] text-white font-semibold rounded-[25px] hover:bg-[#1386c9];
   }
   .outlineBtn {
-    @apply py-2 px-6 border-2 border-[#139BEB] text-black text-base font-semibold rounded-[25px] hover:bg-[#139BEB] hover:text-white;
+    @apply py-[0.5rem] px-8 border-2 border-[#139BEB] text-black text-base font-semibold rounded-[25px] hover:bg-[#139BEB] hover:text-white;
   }
   .btn-green {
     @apply btn bg-arma-green hover:bg-[#35b860];
