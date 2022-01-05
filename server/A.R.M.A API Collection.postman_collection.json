@@ -8,14 +8,77 @@
 		{
 			"name": "Forum login",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
-				"url": null
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userData\":{\n        \"name\":\"coding.Studio();\",\n        \n    },\n    \"userType\":\"FORUM\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serverBaseUrl}}/register",
+					"host": [
+						"{{serverBaseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "Add student - Dev",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"Sai Kiran\",\n    \"rollNumber\":\"18P61A05J1\",\n    \"year\":4,\n    \"branch\":\"CSE\",\n    \"section\":\"D\",\n    \"email\":\"bsaikiran618@gmail.com\",\n    \"phone\":8790805406\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serverBaseUrl}}addStudent",
+					"host": [
+						"{{serverBaseUrl}}addStudent"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Forum - Dev",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"coding.Studio();\",\n    \"forumHeads\":[\"61d1476a36a4f545a1acab11\", \"61d146f036a4f545a1acab0b\"],\n    \"password\":\"1234567890\",\n    \"email\":\"executives@codingstudio.club\",\n    \"description\":\"The coolest club of VBIT.\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serverBaseUrl}}addForum",
+					"host": [
+						"{{serverBaseUrl}}addForum"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch Students - Dev",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -24,7 +87,25 @@
 			"response": []
 		},
 		{
-			"name": "Add Forum - Dev",
+			"name": "Add Faculty - Dev",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		},
+		{
+			"name": "Add Role - Dev",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		},
+		{
+			"name": "get",
 			"request": {
 				"method": "GET",
 				"header": [],
