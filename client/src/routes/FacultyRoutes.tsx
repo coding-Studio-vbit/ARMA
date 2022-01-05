@@ -1,4 +1,4 @@
-import { useUser } from "../providers/auth/AuthProvider";
+import { useUser } from "../providers/user/UserProvider";
 import Navbar from "../components/CustomNavbar";
 import Footer from "../components/CustomFooter";
 import { Routes, Route } from "react-router-dom";

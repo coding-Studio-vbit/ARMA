@@ -1,6 +1,5 @@
-const login = async (email: String, password: String, userType: String) => {
+const login = async (email: String, password: String) => {
   const userAgent = navigator.userAgent;
-  console.log(email, password, userType, userAgent);
   try {
     const res = await fetch(process.env.REACT_APP_SERVER_URL + "login", {
       method: "POST",
@@ -12,7 +11,6 @@ const login = async (email: String, password: String, userType: String) => {
       body: JSON.stringify({
         email: email,
         password: password,
-        userType: userType,
         userAgent: userAgent,
       }),
     });
@@ -20,7 +18,7 @@ const login = async (email: String, password: String, userType: String) => {
     console.log(data.response.token)
     return data
   } catch (error) {
-    return {response: "Server not available. Try again later", status: -1}
+    return {response: "Network not available", status: -1}
   }
 };
 

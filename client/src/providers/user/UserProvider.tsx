@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import { useLocalStorageState } from "../../hooks/useStateStorage";
 import { Faculty, Forum } from "../../interfaces/user";
 
 interface User {
@@ -15,8 +16,8 @@ const useUser = () => useContext(UserContext)
 
 
 const UserProvider = ({children}:any)=>{
-    const [forum,setforum] = useState< Forum|undefined >()
-    const [faculty,setfaculty] = useState< Faculty|undefined >()
+    const [forum,setforum] = useLocalStorageState< Forum|undefined >('forum',undefined)
+    const [faculty,setfaculty] = useLocalStorageState< Faculty|undefined >('faculty',undefined)
 
     return (
         <UserContext.Provider value={{faculty:faculty,forum:forum,setFaculty:setfaculty,setForum:setforum}} >

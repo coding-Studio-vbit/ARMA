@@ -21,7 +21,7 @@ const login = async (email, password, userAgent, userType) => {
     const result = bcrypt.compareSync(password, user.password);
     if (result) {
       const token = jwt.sign(
-        { email: email, password: password, userAgent: userAgent },
+        { email: email, _id: user._id, userAgent: userAgent },
         process.env.JWT_SECRET_KEY
       );
       user.password = "";

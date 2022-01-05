@@ -4,7 +4,7 @@ import { InputField } from "../InputField/InputField";
 import { Spinner } from "../Spinner/Spinner";
 import { login } from "./authService";
 import { VisibilityOff, Visibility } from "@material-ui/icons";
-import { useUser } from "../../providers/auth/AuthProvider";
+import { useUser } from "../../providers/user/UserProvider";
 
 function Login() {
   let navigate = useNavigate();
@@ -23,7 +23,7 @@ function Login() {
     } else if (faculty) {
       navigate("/faculty", { replace: true });
     }
-  }, [forum, faculty]);
+  }, [forum, faculty, navigate]);
 
   const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
@@ -69,9 +69,6 @@ function Login() {
         <div className="py-1 pl-8 pr-8 shrink z-10 " onClick={() => {
           setIsFaculty(true);
         
-          setEmailError("");
-         
-          setPasswordError("");
         }}>
           <span
             className={`${
@@ -86,9 +83,6 @@ function Login() {
           onClick={() => {
             setIsFaculty(false);
           
-            setEmailError("");
-           
-            setPasswordError("");
           }}
         >
           <span
@@ -100,7 +94,7 @@ function Login() {
           </span>
         </div>
       </div>
-
+      <form className="flex flex-col items-center" >
       <InputField
         className="mb-5"
         name="Email"
@@ -131,9 +125,15 @@ function Login() {
           />
         )}
       </div>
+    
       {error && <span className="text-arma-red">{error}</span>}
       <LoginButton
         onClick={async () => {
+
+          if(!email || !password || emailError || passwordError ){
+            setError('Fill the details !')
+            return
+          }
           const userType =
             isFaculty === true || isFaculty === undefined ? "FACULTY" : "FORUM";
 
@@ -151,6 +151,7 @@ function Login() {
           }
         }}
       />
+        </form>
       <p className="text-arma-title font-medium">Forgot Password?</p>
     </div>
   );
@@ -162,6 +163,7 @@ const LoginButton = (props: { onClick: () => Promise<void> }) => {
   ) : (
     <button
       className="outlineBtn text-arma-blue border-[1px] mt-4 rounded-[8px] mb-2"
+      type="submit"
       onClick={async () => {
         setLoading(true);
         await props.onClick();
