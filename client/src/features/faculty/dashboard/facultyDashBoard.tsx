@@ -28,7 +28,7 @@ function FacultyDashBoard() {
         day: 5,
       };
     
-      const [selectedDay, setSelectedDay] = useState(defaultValue);
+    const [selectedDay, setSelectedDay] = useState(defaultValue);
 
     async function fetchData(){
         setTimeout(() => {
@@ -59,7 +59,9 @@ function FacultyDashBoard() {
             <div style={loading?{cursor:'pointer'}:{cursor:'no-drop'}}></div>
 
             {/* Page Content */}
-            <div className='flex flex-col items-center'>            
+
+           
+            <div className='flex flex-col items-center display:hidden'>            
                 <div className='md:w-10/12 flex flex-col justify-start items-center mt-10 gap-10'>
                     {/* First Row */}
                     <div className='flex flex-row justify-around w-9/12 gap-10'>

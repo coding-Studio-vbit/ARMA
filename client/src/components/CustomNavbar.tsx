@@ -14,9 +14,11 @@ interface NavbarProps {
 const Navbar = ({ navItems, userName }: NavbarProps) => {
   let nav = useNavigate();
   return (
-    <div className="flex justify-between px-3 shadow-md h-20 items-center">
+    <div className="flex justify-between px-3 md:shadow h-16 items-center border-b-2 md:border-0">
       {/* {ARMA Title} */}
-      <div id="ARMA-Logo" className="text-2xl font-medium pl-2 text-arma-dark-blue cursor-pointer">
+      
+      <div id="ARMA-Logo" className="text-xl md:text-2xl font-medium pl-2 text-arma-dark-blue cursor-pointer">
+        <span className="material-icons align-middle md:hidden mr-2 ">menu</span>
         A.R.M.A
       </div>
       {/* Navigation Items */}
