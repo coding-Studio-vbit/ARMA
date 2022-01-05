@@ -4,15 +4,16 @@ import FacultyRoutes from "./FacultyRoutes";
 import ForumRoutes from "./ForumRoutes";
 import Table from "../components/CustomTable";
 import RequestsPage from "../features/faculty/requests_view/RequestsPage";
+import { ForgotPassword } from "../components/Auth/forgotPassword";
 
 function AllRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Login/>} />
         <Route path="/forum/*" element={<ForumRoutes />} />
         <Route path="/faculty/*" element={<FacultyRoutes />} />
-        <Route path="/test" element={<RequestsPage/>} />
+        <Route path="/test" element={<ForgotPassword/>} />
         {/* <Route
           path="/test"
           element={

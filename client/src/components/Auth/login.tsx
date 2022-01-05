@@ -54,11 +54,11 @@ function Login() {
   return (
     <div className="mt-20 flex flex-col w-full overflow-hidden items-center">
       <p className="text-arma-title text-5xl font-medium mb-2">A.R.M.A</p>
-      <p className="text-[#263238] mb-12 text-center">
+      <p className="text-[#263238] mb-8 text-center">
         Automating and Digitalizing Event Organization
       </p>
       <div
-        className="bg-[#F5F5F5] cursor-pointer flex w-max rounded-[24px] relative  mb-12 "
+        className="bg-[#F5F5F5] cursor-pointer flex w-max rounded-[24px] relative  mb-8 "
         
       >
         <div
@@ -68,9 +68,7 @@ function Login() {
         ></div>
         <div className="py-1 pl-8 pr-8 shrink z-10 " onClick={() => {
           setIsFaculty(true);
-        
           setEmailError("");
-         
           setPasswordError("");
         }}>
           <span
@@ -85,9 +83,7 @@ function Login() {
           className={`rounded-[24px] py-1 pr-8 pl-8 z-10`}
           onClick={() => {
             setIsFaculty(false);
-          
             setEmailError("");
-           
             setPasswordError("");
           }}
         >
@@ -111,7 +107,7 @@ function Login() {
       />
       <div className="relative">
         <InputField
-          className="mb-12"
+          className="mb-3"
           name="Password"
           type={`${!showPassword && "password"}`}
           error={passwordError}
@@ -131,7 +127,7 @@ function Login() {
           />
         )}
       </div>
-      {error && <span className="text-arma-red">{error}</span>}
+      {error && <span className="text-arma-red mb-3">{error}</span>}
       <LoginButton
         onClick={async () => {
           const userType =
@@ -161,7 +157,7 @@ const LoginButton = (props: { onClick: () => Promise<void> }) => {
     <Spinner className="mt-4 mb-2" />
   ) : (
     <button
-      className="outlineBtn text-arma-blue border-[1px] mt-4 rounded-[8px] mb-2"
+      className={`outlineBtn text-arma-blue border-[1px] rounded-[8px] mb-2`}
       onClick={async () => {
         setLoading(true);
         await props.onClick();

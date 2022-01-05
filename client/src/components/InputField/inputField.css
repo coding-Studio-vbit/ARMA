@@ -2,7 +2,7 @@
   position: relative;
 }
 .inputField {
-  @apply px-6 py-[0.75rem];
+  @apply px-6 py-[0.5rem];
   outline: none;
   transition: border 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 2px solid rgb(200, 200, 200);
