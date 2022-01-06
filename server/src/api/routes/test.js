@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const authService = require("../../../services/auth/authService");
+const authService = require("../../services/auth/authService");
 
 // Temp endpoints -- To be removed after development
 router.post("/addForum", async (req, res) => {

@@ -1,9 +1,7 @@
-const router = require("express").Router();
-const students = require("../../../../models/student");
-const response = require("../../../../services/util/response");
+const students = require("../../models/student");
+const response = require("../util/response");
 
-router.get("/", async (req, res) => {
-
+const getStudentsList = async (req, res) => {
   //For pagination
   let page = req.query.page ? Number(req.query.page) : 1;
   let limit = req.query.limit ? Number(req.query.limit) : 1000000;
@@ -21,20 +19,24 @@ router.get("/", async (req, res) => {
     sort[req.query.orderBy] = req.query.order;
   else sort = { name: "asc" };
 
-  try
-  {
+  try {
     result = await students
       .find(where)
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort);
     const total = await students.count(where);
-    res.json(response({ data: result, total: total }, process.env.SUCCESS_CODE));
+    res.json(
+      response({ data: result, total: total }, process.env.SUCCESS_CODE)
+    );
+  } catch (error) {
+    res.json(
+      response(
+        { message: "Student data fetch error" },
+        process.env.FAILURE_CODE
+      )
+    );
   }
-  catch(error)
-  {
-    res.json(response({message: "Student data fetch error"}, process.env.FAILURE_CODE));
-  }
-});
+};
 
-module.exports = router;
+module.exports = {getStudentsList}

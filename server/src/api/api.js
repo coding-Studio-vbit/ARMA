@@ -1,15 +1,18 @@
 const express = require("express");
-const testRouter = require("./routes/modules/test");
-const facultyRouter = require("./routes/modules/faculty/router");
-const auth = require("./routes/modules/auth/auth");
+const testRouter = require("./routes/test");
+const facultyRouter = require("./routes/faculty/router");
+const auth = require("./routes/auth/auth");
 const tokenAuth = require("./middleware/tokenAuth");
-const studentRouter = require("../api/routes/modules/students/route");
+const studentRouter = require("./routes/students/router");
+const forumRouter = require("../api/routes/forum/router");
+const { getMaxListeners } = require("../models/faculty");
 
 const api = () => {
   const router = express.Router();
   router.use("/", auth);
   router.use("/students", studentRouter); //TEMP
   router.use("/faculty", tokenAuth, facultyRouter);
+  router.use("/forum", tokenAuth, forumRouter);
   router.use("/test", testRouter);
   return router;
 };

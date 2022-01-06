@@ -18,7 +18,7 @@ const InputField: FC<IFProps> = ({
   error,
 }) => {
   return (
-    <div className={`inputDiv ${error && "mb-10"} ${className}`}>
+    <div className={`inputDiv min-w-max ${error && "mb-10"}  ${className}`}>
       <input
         className="inputField"
         value={value}
