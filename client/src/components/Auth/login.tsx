@@ -52,108 +52,110 @@ function Login() {
   };
 
   return (
-    <div className="mt-20 flex flex-col w-full overflow-hidden items-center">
-      <p className="text-arma-title text-5xl font-medium mb-2">A.R.M.A</p>
-      <p className="text-[#263238] mb-8 text-center">
-        Automating and Digitalizing Event Organization
-      </p>
-      <div
-        className="bg-[#F5F5F5] cursor-pointer flex w-max rounded-[24px] relative  mb-8 "
-        
-      >
+    <div className="flex flex-col w-full h-screen overflow-hidden justify-center">
+      <div className="flex flex-col items-center">
+        <p className="text-arma-title text-5xl font-medium mb-4">A.R.M.A</p>
+        <p className="text-[#263238] mb-8 text-center">
+          Automating and Digitalizing Event Organizationsss
+        </p>
         <div
-          className={` absolute ${!isFaculty && "userdiv"} ${
-            isFaculty === true && "userdivback"
-          }  bg-arma-blue rounded-[24px] w-6/12 h-full `}
-        ></div>
-        <div className="py-1 pl-8 pr-8 shrink z-10 " onClick={() => {
-          setIsFaculty(true);
-          setEmailError("");
-          setPasswordError("");
-        }}>
-          <span
-            className={`${
-              isFaculty && "text-white"
-            }  font-medium`}
-          >
-            Faculty
-          </span>
-        </div>
-        <div
-          className={`rounded-[24px] py-1 pr-8 pl-8 z-10`}
-          onClick={() => {
-            setIsFaculty(false);
+          className="bg-[#F5F5F5] cursor-pointer flex w-max rounded-[24px] relative mb-[50px]"
+          
+        >
+          <div
+            className={` absolute ${!isFaculty && "userdiv"} ${
+              isFaculty === true && "userdivback"
+            }  bg-arma-blue rounded-[24px] w-6/12 h-full `}
+          ></div>
+          <div className="py-1 pl-8 pr-8 shrink z-10 " onClick={() => {
+            setIsFaculty(true);
             setEmailError("");
             setPasswordError("");
-          }}
-        >
-          <span
-            className={` ${
-              !isFaculty && "text-white"
-            } font-medium`}
+          }}>
+            <span
+              className={`${
+                isFaculty && "text-white"
+              }  font-medium`}
+            >
+              Faculty
+            </span>
+          </div>
+          <div
+            className={`rounded-[24px] py-1 pr-8 pl-8 z-10`}
+            onClick={() => {
+              setIsFaculty(false);
+              setEmailError("");
+              setPasswordError("");
+            }}
           >
-            Forum
-          </span>
+            <span
+              className={` ${
+                !isFaculty && "text-white"
+              } font-medium`}
+            >
+              Forum
+            </span>
+          </div>
         </div>
-      </div>
-      <form className="flex flex-col items-center" >
-      <InputField
-        className="mb-5"
-        name="Email"
-        error={emailError}
-        onChange={(e) => {
-          validateEmail(e);
-        }}
-      />
-      <div className="relative">
+        <form className="flex flex-col items-center" >
         <InputField
-          className="mb-3"
-          name="Password"
-          type={`${!showPassword && "password"}`}
-          error={passwordError}
+          className="mb-[35px]"
+          name="Email"
+          error={emailError}
           onChange={(e) => {
-            validatePass(e);
+            validateEmail(e);
           }}
         />
-        {showPassword ? (
-          <Visibility
-            className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
-            onClick={() => setShowPassword(false)}
+        <div className="relative">
+          <InputField
+            className={`mb-[${error?"20px":"40px"}]`}
+            name="Password"
+            type={`${!showPassword && "password"}`}
+            error={passwordError}
+            onChange={(e) => {
+              validatePass(e);
+            }}
           />
-        ) : (
-          <VisibilityOff
-            className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
-            onClick={() => setShowPassword(true)}
-          />
-        )}
-      </div>
-      {error && <span className="text-arma-red mb-3">{error}</span>}
-      <LoginButton
-        onClick={async () => {
+          {showPassword ? (
+            <Visibility
+              className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
+              onClick={() => setShowPassword(false)}
+            />
+          ) : (
+            <VisibilityOff
+              className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
+              onClick={() => setShowPassword(true)}
+            />
+          )}
+        </div>
+        {error && <span className="text-arma-red mb-3">{error}</span>}
+        <LoginButton
+          onClick={async () => {
 
-          if(!email || !password || emailError || passwordError ){
-            setError('Fill the details !')
-            return
-          }
-          const userType =
-            isFaculty === true || isFaculty === undefined ? "FACULTY" : "FORUM";
-
-          const res = await login(email, password, userType);
-          console.log(res);
-
-          if (res.status === 1) {
-            if (userType === "FACULTY") {
-              setFaculty(res.response.user);
-            } else {
-              setForum(res.response.user);
+            if(!email || !password || emailError || passwordError ){
+              setError('Fill the details !')
+              return
             }
-          } else {
-            setError(res.response);
-          }
-        }}
-      />
-        </form>
-      <p className="text-arma-title font-medium">Forgot Password?</p>
+            const userType =
+              isFaculty === true || isFaculty === undefined ? "FACULTY" : "FORUM";
+
+            const res = await login(email, password, userType);
+            console.log(res);
+
+            if (res.status === 1) {
+              if (userType === "FACULTY") {
+                setFaculty(res.response.user);
+              } else {
+                setForum(res.response.user);
+              }
+            } else {
+              setError(res.response);
+            }
+          }}
+        />
+          </form>
+        <p className="text-arma-title font-medium mt-3">Forgot Password?</p>
+      </div>
     </div>
   );
 }
