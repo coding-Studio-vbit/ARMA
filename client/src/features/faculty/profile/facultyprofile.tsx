@@ -6,7 +6,7 @@ function FacultyProfile() {
         <body className='min-h-screen  bg-[#E5E5EA]'>
         <div>
             <div className='flex justify-end mt-14 pr-10 mb-20'>
-            <button className='outlineBtn '>LOGOUT</button>
+            <button className='outlineBtn'>LOGOUT</button>
             </div>
             <div className='flex flex-col w-[542px] items-center m-auto'>
             <p className='text-center item-center text-3xl text-arma-blue'>Siddharth Malladi</p>
