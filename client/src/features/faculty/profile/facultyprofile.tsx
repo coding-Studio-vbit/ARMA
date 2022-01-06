@@ -1,6 +1,6 @@
+import { Edit } from "@material-ui/icons";
 import React from "react";
 import { InputField } from "../../../components/InputField/InputField";
-
 function FacultyProfile() {
   return (
     <body className="min-h-screen">
@@ -11,7 +11,7 @@ function FacultyProfile() {
         <div className="flex flex-col w-[542px] items-center m-auto">
           <p className="text-center item-center text-3xl text-arma-blue">
             Siddharth Malladi
-
+            <Edit className="ml-3" />
           </p>
 
           <p className="text-black mt-4 mb-10 text-lg">Faculty</p>
