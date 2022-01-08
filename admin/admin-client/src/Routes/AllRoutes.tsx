@@ -7,6 +7,7 @@ import { useUser } from "../Provider/userProvider";
 import AdminRoutes from "./AdminRoutes";
 import FacultyRoutes from "./FacultyRoutes";
 import HallsRoutes from "./HallsRoutes";
+import RolesRoutes from "./RolesRoutes";
 
 function AllRoutes() {
   return (
@@ -34,6 +35,8 @@ const ProtectedRoutes = () => {
         <Route path="/Admins/*" element={<AdminRoutes />} />
         <Route path="/Faculty/*" element={<FacultyRoutes />} />
         <Route path="/Halls/*" element={<HallsRoutes />} />
+        <Route path="/Roles/*" element={<RolesRoutes />} />
+
       </Routes>
       </div>
       
