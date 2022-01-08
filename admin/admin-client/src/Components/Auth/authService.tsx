@@ -12,10 +12,10 @@ const login = async (email: String, password: String) => {
         email: email,
         password: password,
         userAgent: userAgent,
+        userType:'ADMIN'
       }),
     });
     const data = await res.json()
-    console.log(data.response.token)
     return data
   } catch (error) {
     console.log("Faking the login :)");

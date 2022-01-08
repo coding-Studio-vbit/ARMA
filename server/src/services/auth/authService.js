@@ -5,7 +5,7 @@ const forums = require("../../models/forum");
 const students = require("../../models/student");
 const role = require("../../models/role");
 const response = require("../util/response");
-
+const admin = require('../../models/admin')
 const login = async (email, password, userAgent, userType) => {
   try {
     let user;
@@ -13,6 +13,8 @@ const login = async (email, password, userAgent, userType) => {
       user = await facultyModel.findOne({ email: email }).populate('roles');
     } else if (userType === "FORUM") {
       user = await forums.findOne({ email: email });
+    } else { //Admin
+      user = await admin.findOne({email:email})
     }
 
     if (!user) {
