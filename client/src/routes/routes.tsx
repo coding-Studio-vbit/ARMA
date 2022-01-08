@@ -6,6 +6,7 @@ import Table from "../components/CustomTable";
 import RequestsPage from "../features/faculty/requests_view/RequestsPage";
 import { ForgotPassword } from "../components/Auth/forgotPassword";
 import { ReportAndMedia } from "../features/forum/event_reports_and_media/reportsAndMedia";
+import StudentsList from "../features/faculty/students/StudentsList";
 
 function AllRoutes() {
   return (
@@ -14,7 +15,7 @@ function AllRoutes() {
         <Route path="/" element={<Login/>} />
         <Route path="/forum/*" element={<ForumRoutes />} />
         <Route path="/faculty/*" element={<FacultyRoutes />} />
-        <Route path="/test" element={<ReportAndMedia/>} />
+        <Route path="/test" element={<StudentsList/>} />
        
       
       </Routes>
