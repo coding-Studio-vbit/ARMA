@@ -126,7 +126,7 @@ const Table = ({
     )
       buttonList.push(
         <button
-          className={`btn ${
+          className={`btn px-4 text-white rounded-full ${
             i == currentPage ? "bg-arma-dark-blue" : "bg-arma-blue"
           }`}
           onClick={() => {
@@ -140,10 +140,11 @@ const Table = ({
   };
 
   return (
-    <div className="w-full">
-      <table className="w-full">
-        <thead className="bg-white border border-2 rounded ">
-          <tr>
+    <>
+    <div className="w-full border-2 shadow-md  rounded-[16px] overflow-clip">
+      <table className="w-full ">
+        <thead className="bg-white border-b-2 rounded-[8px] border-black/30  ">
+          <tr className="rounded-[16px]" >
             {headers.map((header) => {
               return (
                 <th
@@ -164,7 +165,7 @@ const Table = ({
             })}
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-white divide-y divide-gray-300">
           {data.map((item, index) => {
             return (
               <tr key={index} className="odd:bg-white even:bg-arma-light-gray">
@@ -180,7 +181,9 @@ const Table = ({
           })}
         </tbody>
       </table>
-      <div id="paginationButtonsSection" className="w-max mx-auto ">
+      
+    </div>
+    <div id="paginationButtonsSection" className="w-max mx-auto mt-8 flex gap-2  ">
         {currentPage > buttonsCount ? (
           <button
             onClick={prevPage}
@@ -194,13 +197,14 @@ const Table = ({
         (Math.ceil(totalPages / buttonsCount) - 1) * buttonsCount ? (
           <button
             onClick={nextPage}
-            className=" p-2 text-arma-dark-blue bg-white "
+            className=" p-2 text-arma-dark-blue "
           >
             <ArrowForwardIos />
           </button>
         ) : null}
       </div>
-    </div>
+    </>
+
   );
 };
 

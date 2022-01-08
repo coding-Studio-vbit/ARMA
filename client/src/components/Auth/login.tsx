@@ -97,7 +97,17 @@ function Login() {
             </span>
           </div>
         </div>
-        <form className="flex flex-col items-center" >
+      </div>
+      <form className="flex flex-col items-center" >
+      <InputField
+        className="mb-5"
+        name="Email"
+        error={emailError}
+        onChange={(e) => {
+          validateEmail(e);
+        }}
+      />
+      <div className="relative max-h-max mb-16">
         <InputField
           className="mb-[35px]"
           name="Email"
@@ -106,31 +116,21 @@ function Login() {
             validateEmail(e);
           }}
         />
-        <div className="relative">
-          <InputField
-            className={`mb-[${error?"20px":"40px"}]`}
-            name="Password"
-            type={`${!showPassword && "password"}`}
-            error={passwordError}
-            onChange={(e) => {
-              validatePass(e);
-            }}
+        {showPassword ? (
+          <Visibility
+            className="absolute top-[0.67rem] right-3 text-arma-title cursor-pointer"
+            onClick={() => setShowPassword(false)}
           />
-          {showPassword ? (
-            <Visibility
-              className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
-              onClick={() => setShowPassword(false)}
-            />
-          ) : (
-            <VisibilityOff
-              className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
-              onClick={() => setShowPassword(true)}
-            />
-          )}
-        </div>
-        {error && <span className="text-arma-red mb-3">{error}</span>}
-        <LoginButton
-          onClick={async () => {
+        ) : (
+          <VisibilityOff
+            className="absolute top-[0.67rem] right-3 text-arma-title cursor-pointer"
+            onClick={() => setShowPassword(true)}
+          />
+        )}
+      </div>
+      <span className="text-arma-red mb-3 ">{error}</span>
+      <LoginButton
+        onClick={async () => {
 
             if(!email || !password || emailError || passwordError ){
               setError('Fill the details !')
