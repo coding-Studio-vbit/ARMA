@@ -5,7 +5,7 @@ const forums = require("../../models/forum");
 const students = require("../../models/student");
 const role = require("../../models/role");
 const response = require("../util/response");
-const admin = require('../../models/admin')
+const admins = require('../../models/admin')
 const login = async (email, password, userAgent, userType) => {
   try {
     let user;
