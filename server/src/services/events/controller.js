@@ -39,7 +39,6 @@ const getEvents = async (req, res) => {
 const createEvent = async (req, res) => {
   try
   {
-
     let newAttendanceDoc = new attendance();
     let newEvent = new events({forumID: req.user._id, name: req.body.name, description: req.body.description, eventProposalDocPath: req.files.eventDocument[0].path, budgetDocPath: req.files.budgetDocument[0].path, hasBudget: req.files.budgetDocument !== null});
     newAttendanceDoc.eventID = String(newEvent._id);

@@ -12,7 +12,7 @@ const login = async (email, password, userAgent, userType) => {
     if (userType === "FACULTY") {
       user = await facultyModel.findOne({ email: email }).populate('roles');
     } else if (userType === "FORUM") {
-      user = await forums.findOne({ email: email });
+      user = await forums.findOne({ email: email }).populate('roles');
     } else { //Admin
       user = await admin.findOne({email:email})
     }
@@ -23,7 +23,7 @@ const login = async (email, password, userAgent, userType) => {
     const result = bcrypt.compareSync(password, user.password);
     if (result) {
       const token = jwt.sign(
-        { email: email, _id: user._id, userAgent: userAgent },
+        { email: email, _id: user._id, userAgent: userAgent, roles: user.roles },
         process.env.JWT_SECRET_KEY
       );
       user.password = "";

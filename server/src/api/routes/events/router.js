@@ -14,6 +14,16 @@ router.get(
   controller.getEvents
 );
 
-router.post("/", upload.fields([{name: "eventDocument", maxCount: 1}, {name: 'budgetDocument', maxCount: 1}]), controller.createEvent);
+router.post(
+  "/",
+  (req, res, next) => {
+    checkRolePermissions(req, res, next, "CREATE_EVENTS");
+  },
+  upload.fields([
+    { name: "eventDocument", maxCount: 1 },
+    { name: "budgetDocument", maxCount: 1 },
+  ]),
+  controller.createEvent
+);
 
 module.exports = router;
