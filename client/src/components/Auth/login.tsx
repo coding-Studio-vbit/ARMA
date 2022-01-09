@@ -52,50 +52,48 @@ function Login() {
   };
 
   return (
-    <div className="flex flex-col w-full h-screen overflow-hidden justify-center">
-      <div className="flex flex-col items-center">
-        <p className="text-arma-title text-5xl font-medium mb-4">A.R.M.A</p>
-        <p className="text-[#263238] mb-8 text-center">
-          Automating and Digitalizing Event Organizationsss
-        </p>
+    <div className="mt-20 flex flex-col w-full overflow-hidden items-center">
+      <p className="text-arma-title text-5xl font-medium mb-2">A.R.M.A</p>
+      <p className="text-[#263238] mb-8 text-center">
+        Automating and Digitalizing Event Organization
+      </p>
+      <div
+        className="bg-[#F5F5F5] cursor-pointer flex w-max rounded-[24px] relative  mb-8 "
+        
+      >
         <div
-          className="bg-[#F5F5F5] cursor-pointer flex w-max rounded-[24px] relative mb-[50px]"
-          
-        >
-          <div
-            className={` absolute ${!isFaculty && "userdiv"} ${
-              isFaculty === true && "userdivback"
-            }  bg-arma-blue rounded-[24px] w-6/12 h-full `}
-          ></div>
-          <div className="py-1 pl-8 pr-8 shrink z-10 " onClick={() => {
-            setIsFaculty(true);
+          className={` absolute ${!isFaculty && "userdiv"} ${
+            isFaculty === true && "userdivback"
+          }  bg-arma-blue rounded-[24px] w-6/12 h-full `}
+        ></div>
+        <div className="py-1 pl-8 pr-8 shrink z-10 " onClick={() => {
+          setIsFaculty(true);
+          setEmailError("");
+          setPasswordError("");
+        }}>
+          <span
+            className={`${
+              isFaculty && "text-white"
+            }  font-medium`}
+          >
+            Faculty
+          </span>
+        </div>
+        <div
+          className={`rounded-[24px] py-1 pr-8 pl-8 z-10`}
+          onClick={() => {
+            setIsFaculty(false);
             setEmailError("");
             setPasswordError("");
-          }}>
-            <span
-              className={`${
-                isFaculty && "text-white"
-              }  font-medium`}
-            >
-              Faculty
-            </span>
-          </div>
-          <div
-            className={`rounded-[24px] py-1 pr-8 pl-8 z-10`}
-            onClick={() => {
-              setIsFaculty(false);
-              setEmailError("");
-              setPasswordError("");
-            }}
+          }}
+        >
+          <span
+            className={` ${
+              !isFaculty && "text-white"
+            } font-medium`}
           >
-            <span
-              className={` ${
-                !isFaculty && "text-white"
-              } font-medium`}
-            >
-              Forum
-            </span>
-          </div>
+            Forum
+          </span>
         </div>
       </div>
       <form className="flex flex-col items-center" >
@@ -109,11 +107,12 @@ function Login() {
       />
       <div className="relative max-h-max mb-16">
         <InputField
-          className="mb-[35px]"
-          name="Email"
-          error={emailError}
+          className="mb-3"
+          name="Password"
+          type={`${!showPassword && "password"}`}
+          error={passwordError}
           onChange={(e) => {
-            validateEmail(e);
+            validatePass(e);
           }}
         />
         {showPassword ? (
@@ -132,30 +131,29 @@ function Login() {
       <LoginButton
         onClick={async () => {
 
-            if(!email || !password || emailError || passwordError ){
-              setError('Fill the details !')
-              return
-            }
-            const userType =
-              isFaculty === true || isFaculty === undefined ? "FACULTY" : "FORUM";
+          if(!email || !password || emailError || passwordError ){
+            setError('Fill the details !')
+            return
+          }
+          const userType =
+            isFaculty === true || isFaculty === undefined ? "FACULTY" : "FORUM";
 
-            const res = await login(email, password, userType);
-            console.log(res);
+          const res = await login(email, password, userType);
+          console.log(res);
 
-            if (res.status === 1) {
-              if (userType === "FACULTY") {
-                setFaculty(res.response.user);
-              } else {
-                setForum(res.response.user);
-              }
+          if (res.status === 1) {
+            if (userType === "FACULTY") {
+              setFaculty(res.response.user);
             } else {
-              setError(res.response);
+              setForum(res.response.user);
             }
-          }}
-        />
-          </form>
-        <p className="text-arma-title font-medium mt-3">Forgot Password?</p>
-      </div>
+          } else {
+            setError(res.response);
+          }
+        }}
+      />
+        </form>
+      <p className="text-arma-title font-medium">Forgot Password?</p>
     </div>
   );
 }
