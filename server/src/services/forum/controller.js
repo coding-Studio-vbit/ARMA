@@ -1,7 +1,9 @@
 const {welcomeTemplate} = require("../../email_templates/templates");
 const events = require("../../models/event");
-const response = require("../../services/util/response");
 const forums = require('../../models/forum')
+const response = require("../util/response");
+
+
 const dashboard = async (req, res) => {
     try {
         let myEvents = await events.find({ forumID: req.user._id });
@@ -17,12 +19,6 @@ const dashboard = async (req, res) => {
         console.log(err);
         res.json(response(error, process.env.FAILURE_CODE));
       }
-}
-
-const updateBudget = async (req, res) => {
-  //update the budget here.
-  console.log(req.files);
-  res.json(response("hi", process.env.SUCCESS_CODE));
 }
 
 const getForumsList = async (req, res) => {
@@ -60,4 +56,4 @@ const getForumsList = async (req, res) => {
   }
 };
 
-module.exports = {dashboard,getForumsList,updateBudget}
+module.exports = {dashboard,getForumsList}

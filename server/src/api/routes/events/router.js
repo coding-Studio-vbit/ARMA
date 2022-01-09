@@ -6,6 +6,7 @@ const multerStorage = require("../../../services/util/multerStorage");
 
 const upload = multer({ storage: multerStorage });
 
+//GET EVENTS
 router.get(
   "/",
   (req, res, next) => {
@@ -14,6 +15,7 @@ router.get(
   controller.getEvents
 );
 
+//CREATE EVENT
 router.post(
   "/",
   (req, res, next) => {
@@ -25,5 +27,7 @@ router.post(
   ]),
   controller.createEvent
 );
+
+router.post("/updateBudget", upload.fields([{name: "budgetDocument", maxCount:1}]), controller.updateBudgetDoc);
 
 module.exports = router;
