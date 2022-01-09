@@ -20,11 +20,7 @@ export const AddForums = () => {
   const [showError, setShowError] = useState<String>("");
   const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
 
-  const options = [
-    { value: "Create ", label: "Create" },
-    { value: "Edit ", label: "Edit" },
-    { value: "Delete", label: "Delete" },
-  ];
+
   
    const [selectHead, setSelectHead] = useState<(string | undefined) []>([])
    const [selectCoord, setSelectCoord] = useState<(string | undefined) []>([])
@@ -134,12 +130,12 @@ export const AddForums = () => {
         </div>
 
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
-        <div className="flex flex-col">
+        <div className="flex flex-col shrink">
         <Select
             name="Forum Head"
             placeholder="Forum Head"
             value ={{value: "Forum Head", label: "Forum Head"}}
-            options={options}
+            options={[]}
             onChange={(e) => {
               for(let i = 0; i < selectHead.length; i++){
                  if(e?.value === selectHead[i]) return        
@@ -166,7 +162,7 @@ export const AddForums = () => {
                 }) 
             }}
             
-            className="basic-multi-select w-full h-full"
+            className="basic-multi-select"
            
           /> 
           <div className="flex flex-col mr-auto w-[270px]">
@@ -187,12 +183,13 @@ export const AddForums = () => {
 
          </div>
          </div>
-         <div className="flex flex-col">
+         
+         <div className="flex flex-col shrink">
           <Select
             name="Faculty Coordinator"
             placeholder="Faculty Coordinator"
             value ={{value: "Faculty Coordinator", label: "Faculty Coordinator"}}
-            options={options}
+            options={[]}
             onChange={(e) => {
               for(let i = 0; i < selectCoord.length; i++){
                  if(e?.value === selectCoord[i]) return        
@@ -219,7 +216,7 @@ export const AddForums = () => {
                 }) 
             }}
             
-            className="basic-multi-select w-full h-full"
+            className="basic-multi-select "
            
           /> 
            <div className="flex flex-col ml-auto w-[270px]">
