@@ -5,9 +5,12 @@ import { Sidebar } from "../Components/Sidebar";
 import { Topnav } from "../Components/Topnav";
 import { useUser } from "../Provider/userProvider";
 import AdminRoutes from "./AdminRoutes";
+import FacilitiesRoutes from "./FacilitiesRoutes";
 import FacultyRoutes from "./FacultyRoutes";
+import ForumsRoutes from "./ForumsRoutes";
 import HallsRoutes from "./HallsRoutes";
 import RolesRoutes from "./RolesRoutes";
+import StudentsRoutes from "./StudentsRoutes";
 
 function AllRoutes() {
   return (
@@ -36,6 +39,11 @@ const ProtectedRoutes = () => {
         <Route path="/Faculty/*" element={<FacultyRoutes />} />
         <Route path="/Halls/*" element={<HallsRoutes />} />
         <Route path="/Roles/*" element={<RolesRoutes />} />
+        <Route path="/Facilities/*" element={<FacilitiesRoutes />} />
+        <Route path="/Forums/*" element={<ForumsRoutes />} />
+        <Route path="/Students/*" element={<StudentsRoutes />} />
+
+        
 
       </Routes>
       </div>

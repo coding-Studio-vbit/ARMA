@@ -13,9 +13,9 @@ export const AddRoles = () => {
   const [showError, setShowError] = useState<string>("");
 
   const options = [
-    { value: "Forum Head", label: "Forum Head" },
-    { value: "Faculty Coordinator", label: "Faculty Coordinator" },
-    { value: "SAC", label: "SAC" },
+    { value: "Create ", label: "Create" },
+    { value: "Edit ", label: "Edit" },
+    { value: "Delete", label: "Delete" },
   ];
   
    const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])

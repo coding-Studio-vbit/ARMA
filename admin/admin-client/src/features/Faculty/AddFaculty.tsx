@@ -11,6 +11,7 @@ export const AddFaculty = () => {
   const [uniqueid, setuniqueid] = useState("");
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("");
+  const [span, setSpan] = useState(false)
   const [uniqueidError, setUniqueidError] = useState<string>();
   const [nameError, setNameError] = useState<string>();
   const [designationError, setDesignationError] = useState<string>();
@@ -19,8 +20,8 @@ export const AddFaculty = () => {
   const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
 
   const options = [
-    { value: "Forum Head", label: "Forum Head" },
-    { value: "Faculty Coordinator", label: "Faculty Coordinator" },
+    { value: "Create Event", label: "Create Event" },
+    { value: "Edit Event", label: "Edit Event" },
     { value: "SAC", label: "SAC" },
   ];
 
@@ -122,6 +123,7 @@ export const AddFaculty = () => {
                    if(e?.value === selectRoles[i]) return        
                 }
                 setSelectRoles([...selectRoles, e?.value])
+                setSpan(true)
             }}
             styles={{
                 control: (base) => ({
@@ -148,7 +150,10 @@ export const AddFaculty = () => {
           /> 
         </div>
         <div className="flex flex-col w-full sm:w-[50%] mx-auto">
+          
+          {span &&
           <span className="text-arma-title mb-2">Roles:</span>
+           }
              {
                  selectRoles.map((r,i) => {
                      return(
@@ -158,12 +163,13 @@ export const AddFaculty = () => {
                                  let temp = [...selectRoles]
                                  temp.splice(i,1)
                                  setSelectRoles(temp)
+                                 {(selectRoles.length === 1) && setSpan(false)}
                              }}/>
                          </div>
                      )
                  })
              }
-
+          
          </div>
 
         <Dialog show={show} setShow={setShow} title="Added">
