@@ -86,12 +86,14 @@ export const AddAdmin = () => {
             onChange={(e) =>{validatePass(e)}}
             />
             </div>
+            <div className=" w-full sm:w-[270px] ">
             <InputField 
             name="Confirm Password"
             type="text"
             error={passwordConfirmError}
             onChange={(e) =>{validateConfirmPass(e)}}
             />
+            </div>
             <Dialog show={show} setShow={setShow} title="Added"> </Dialog>
 
 
