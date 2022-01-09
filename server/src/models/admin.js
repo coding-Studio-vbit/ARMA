@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const role = new mongoose.Schema({
+const Admin = new mongoose.Schema({
   email: {
     type: String,
     validate: {
@@ -25,5 +25,5 @@ const role = new mongoose.Schema({
   },
 });
 
-const roles = mongoose.model("roles", role);
-module.exports = roles;
+const admins = mongoose.model("Admins", Admin);
+module.exports = admins;

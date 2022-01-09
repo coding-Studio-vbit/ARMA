@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputField } from "../InputField/InputField";
-import { Spinner } from "../Spinner/Spinner";
 import { login } from "./authService";
 import { VisibilityOff, Visibility } from "@material-ui/icons";
-import { useUser } from "../../providers/user/UserProvider";
+import { useUser } from "../../Provider/userProvider";
+import Spinner  from "../Spinner/Spinner";
 
 function Login() {
   let navigate = useNavigate();
-  const { forum, faculty, setFaculty, setForum } = useUser();
-  const [isFaculty, setIsFaculty] = useState<boolean | undefined>(true);
+  const { user,setUser } = useUser();
   const [emailError, setEmailError] = useState<string>();
   const [passwordError, setPasswordError] = useState<string>();
   const [email, setEmail] = useState<String>("");
@@ -18,12 +17,10 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    if (forum) {
-      navigate("/forum", { replace: true });
-    } else if (faculty) {
-      navigate("/faculty", { replace: true });
-    }
-  }, [forum, faculty, navigate]);
+    if (user) {
+      navigate("/Admins", { replace: true });
+    } 
+  }, [user]);
 
   const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
@@ -52,50 +49,14 @@ function Login() {
   };
 
   return (
-    <div className="mt-20 flex flex-col w-full overflow-hidden items-center">
+    <div className="mt-32 flex flex-col w-full overflow-hidden items-center">
       <p className="text-arma-title text-5xl font-medium mb-2">A.R.M.A</p>
-      <p className="text-[#263238] mb-8 text-center">
+      <p className="text-[#263238] mb-8 text-xl text-center">
         Automating and Digitalizing Event Organization
       </p>
-      <div
-        className="bg-[#F5F5F5] cursor-pointer flex w-max rounded-[24px] relative  mb-8 "
-        
-      >
-        <div
-          className={` absolute ${!isFaculty && "userdiv"} ${
-            isFaculty === true && "userdivback"
-          }  bg-arma-blue rounded-[24px] w-6/12 h-full `}
-        ></div>
-        <div className="py-1 pl-8 pr-8 shrink z-10 " onClick={() => {
-          setIsFaculty(true);
-          setEmailError("");
-          setPasswordError("");
-        }}>
-          <span
-            className={`${
-              isFaculty && "text-white"
-            }  font-medium`}
-          >
-            Faculty
-          </span>
-        </div>
-        <div
-          className={`rounded-[24px] py-1 pr-8 pl-8 z-10`}
-          onClick={() => {
-            setIsFaculty(false);
-            setEmailError("");
-            setPasswordError("");
-          }}
-        >
-          <span
-            className={` ${
-              !isFaculty && "text-white"
-            } font-medium`}
-          >
-            Forum
-          </span>
-        </div>
-      </div>
+     
+       
+      <p className="text-4xl mb-8 text-[#6FB4DC]" >Admin Portal</p>
       <form className="flex flex-col items-center" >
       <InputField
         className="mb-5"
@@ -105,7 +66,7 @@ function Login() {
           validateEmail(e);
         }}
       />
-      <div className="relative max-h-max mb-16">
+      <div className="relative mb-8">
         <InputField
           className="mb-3"
           name="Password"
@@ -117,17 +78,17 @@ function Login() {
         />
         {showPassword ? (
           <Visibility
-            className="absolute top-[0.67rem] right-3 text-arma-title cursor-pointer"
+            className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
             onClick={() => setShowPassword(false)}
           />
         ) : (
           <VisibilityOff
-            className="absolute top-[0.67rem] right-3 text-arma-title cursor-pointer"
+            className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
             onClick={() => setShowPassword(true)}
           />
         )}
       </div>
-      <span className="text-arma-red mb-3 ">{error}</span>
+      {error && <span className="text-arma-red mb-3">{error}</span>}
       <LoginButton
         onClick={async () => {
 
@@ -135,18 +96,12 @@ function Login() {
             setError('Fill the details !')
             return
           }
-          const userType =
-            isFaculty === true || isFaculty === undefined ? "FACULTY" : "FORUM";
+  
 
-          const res = await login(email, password, userType);
-          console.log(res);
+          const res = await login(email, password);
 
           if (res.status === 1) {
-            if (userType === "FACULTY") {
-              setFaculty(res.response.user);
-            } else {
-              setForum(res.response.user);
-            }
+            setUser(res.response.user)
           } else {
             setError(res.response);
           }
@@ -171,7 +126,7 @@ const LoginButton = (props: { onClick: () => Promise<void> }) => {
         setLoading(false);
       }}
     >
-      Login{" "}
+      Login
     </button>
   );
 };

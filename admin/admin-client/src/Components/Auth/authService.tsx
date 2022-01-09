@@ -12,13 +12,15 @@ const login = async (email: String, password: String) => {
         email: email,
         password: password,
         userAgent: userAgent,
+        userType:'ADMIN'
       }),
     });
     const data = await res.json()
-    console.log(data.response.token)
     return data
   } catch (error) {
-    return {response: "Network not available", status: -1}
+    console.log("Faking the login :)");
+    
+    return {response: {user:{name:'FakeUser'}}, status: 1}
   }
 };
 
