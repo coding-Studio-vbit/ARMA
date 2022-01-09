@@ -1,3 +1,5 @@
+const JWT = require("jsonwebtoken")
+
 const tokenAuth = (req, res, next) => {
     if (!req.headers['authorization']) { return res.json({ status: process.env.FAILURE_CODE, response: "No authorization header found." }) }
     const authHeader = req.headers['authorization']

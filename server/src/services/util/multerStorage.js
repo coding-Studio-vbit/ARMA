@@ -1,6 +1,7 @@
 const md5 = require("md5");
 const path = require("path")
 const fs = require("fs")
+const multer = require("multer")
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -28,7 +29,6 @@ const storage = multer.diskStorage({
     cb(null, pathValue);
   },
   filename: function (req, file, cb) {
-    console.log(file);
     fileName =
       md5(file.originalname + String(Date.now())) +
       "." +
