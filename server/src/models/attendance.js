@@ -4,7 +4,6 @@ const attendance = new mongoose.Schema({
   eventID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "events",
-    required: true,
   },
   registrantsList: [
     {

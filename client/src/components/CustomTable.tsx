@@ -1,11 +1,11 @@
 import { ReactElement, useState, useEffect } from "react";
-import axios from "axios";
 import {
   ArrowBackIos,
   ArrowDownward,
   ArrowForwardIos,
   ArrowUpward,
 } from "@material-ui/icons";
+import axiosInstance from "../utils/axios";
 
 interface header {
   displayName: string; //Display header name
@@ -70,7 +70,7 @@ const Table = ({
   const [order, setOrder] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-
+  
   //every time some filter is changed, reset the page number.
   useEffect(()=>{
     setCurrentPage(1);
@@ -89,8 +89,9 @@ const Table = ({
 
     //Adding the filter
     params = {...params, ...filter};
-
-    axios
+    
+    
+    axiosInstance
       .get(api, {
         params: params
       })
@@ -102,12 +103,14 @@ const Table = ({
         if (transformer) {
           newData = newData.map(transformer);
         }
+        console.log(response);
+        
         setData(newData);
       })
       .catch((error) => {
         console.log(error.response.message);
       });
-  }, [currentPage, totalPages, rowsPerPage, order, orderBy]);
+  }, [currentPage, totalPages, rowsPerPage, order, orderBy,filter]);
 
   const nextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -126,8 +129,9 @@ const Table = ({
     )
       buttonList.push(
         <button
+          key={i}
           className={`btn px-4 text-white rounded-full ${
-            i == currentPage ? "bg-arma-dark-blue" : "bg-arma-blue"
+            i === currentPage ? "bg-arma-dark-blue" : "bg-arma-blue"
           }`}
           onClick={() => {
             setCurrentPage(i);
@@ -148,6 +152,7 @@ const Table = ({
             {headers.map((header) => {
               return (
                 <th
+                  key={header.displayName}
                   scope="col"
                   className="px-6 py-3 text-center font-medium text-arma-dark-blue uppercase tracking-wider"
                 >
@@ -171,7 +176,7 @@ const Table = ({
               <tr key={index} className="odd:bg-white even:bg-arma-light-gray">
                 {headers.map((header) => {
                   return (
-                    <td className=" px-6 py-4 text-center whitespace-nowrap">
+                    <td key={header.displayName} className=" px-6 py-4 text-center whitespace-nowrap">
                       {getValueFromPath(item, header.dataPath)}
                     </td>
                   );
