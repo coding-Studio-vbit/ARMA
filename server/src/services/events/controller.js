@@ -1,4 +1,4 @@
-const events = require("../../../models/event");
+const events = require("../../models/event");
 const response = require("../util/response");
 
 const getEvents = async (req, res) => {
@@ -36,7 +36,16 @@ const getEvents = async (req, res) => {
 };
 
 const createEvent = async (req, res) => {
-    
+  try
+  {
+    let newEvent = new events({forumID: req.user._id, name: req.body.name, description: req.body.description});
+    await newEvent.save();
+    res.json(response({message: "new event created"}, process.env.SUCCESS_CODE))
+  }
+  catch(e)
+  {
+    res.json(response({message: "error"}, process.env.FAILURE_CODE))
+  }
 }
 
 module.exports = { getEvents, createEvent };
