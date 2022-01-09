@@ -1,11 +1,11 @@
 import { ReactElement, useState, useEffect } from "react";
-import axios from "axios";
 import {
   ArrowBackIos,
   ArrowDownward,
   ArrowForwardIos,
   ArrowUpward,
 } from "@material-ui/icons";
+import axiosInstance from "../utils/axios";
 
 interface header {
   displayName: string; //Display header name
@@ -91,7 +91,7 @@ const Table = ({
     params = {...params, ...filter};
     
     
-    axios
+    axiosInstance
       .get(api, {
         params: params
       })
@@ -103,6 +103,7 @@ const Table = ({
         if (transformer) {
           newData = newData.map(transformer);
         }
+        console.log(response);
         
         setData(newData);
       })

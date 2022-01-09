@@ -1,16 +1,15 @@
 import axios from 'axios';
 
-const instance = axios.create({
+const axiosInstance = axios.create({
 	baseURL: process.env.REACT_APP_SERVER_URL,
 	headers: {
 		'Content-Type': 'application/json',
 	},
 });
 
-instance.interceptors.request.use(
+axiosInstance.interceptors.request.use(
 	(config) => {
-		const user = localStorage.getItem('armaUser');
-		const token = user.token;
+		const token = localStorage.getItem('idk');
 		if (token) {
 			config.headers.Authorization = `Bearer ${token}`;
 		}
@@ -21,4 +20,4 @@ instance.interceptors.request.use(
 	},
 );
 
-export default instance;
+export default axiosInstance;
