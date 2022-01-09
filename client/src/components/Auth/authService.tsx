@@ -17,7 +17,8 @@ const login = async (email: String, password: String, userType: String) => {
       }),
     });
     const data = await res.json()
-    console.log(data.response.token)
+    localStorage.setItem('idk',data.response.token)
+   
     return data
   } catch (error) {
     return {response: "Server not available. Try again later", status: -1}
