@@ -19,4 +19,10 @@ const dashboard = async (req, res) => {
       }
 }
 
-module.exports = {dashboard}
+const updateBudget = async (req, res) => {
+  //update the budget here.
+  console.log(req.files);
+  res.json(response("hi", process.env.SUCCESS_CODE));
+}
+
+module.exports = {dashboard, updateBudget}

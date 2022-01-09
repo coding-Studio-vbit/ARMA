@@ -1,4 +1,4 @@
-const checkRole = (req, res, next, requiredPermission) => {
+const checkPermissions = (req, res, next, requiredPermission) => {
   let flag = false;
 
   for (let a = 0; a < req.user.roles.length; a++) {
@@ -14,4 +14,4 @@ const checkRole = (req, res, next, requiredPermission) => {
   }
 };
 
-module.exports = hasRole;
+module.exports = checkPermissions;
