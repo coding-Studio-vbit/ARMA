@@ -2,7 +2,7 @@ const {welcomeTemplate} = require("../../email_templates/templates");
 const events = require("../../models/event");
 const forums = require('../../models/forum')
 const response = require("../util/response");
-
+const students = require('../../models/student')
 
 const dashboard = async (req, res) => {
     try {
@@ -56,4 +56,48 @@ const getForumsList = async (req, res) => {
   }
 };
 
-module.exports = {dashboard,getForumsList}
+const addNewForumMembers = async (req, res) => {
+  try {
+      const {forumName, ...stuser} = req.body;
+      let stu = await students.findOne({ rollNumber: stuser.rollNumber });
+      if(stu){
+        await forums.findOneAndUpdate({name: forumName}, {"$push":{"forumMembers": stu}})
+      }else{
+      let student = new students(stuser);
+      await student.save()
+      await forums.findOneAndUpdate({name: forumName}, {"$push":{"forumMembers": student}})
+      }
+      res.json(
+        response("New Forum Member Added", process.env.SUCCESS_CODE)
+      );
+    } catch (err) {
+      console.log(err);
+      res.json(
+        response("New Forum Member could not be added" , process.env.FAILURE_CODE)
+      );
+    }
+}
+
+const addNewCoreForumMember = async (req, res) => {
+  try {
+      const {forumName,designation, ...stuser} = req.body;
+      let stu = await students.findOne({ rollNumber: stuser.rollNumber });
+      if(stu){
+        await forums.findOneAndUpdate({name: forumName}, {"$push":{"forumCoreTeamMembers": {designation: designation, studentID: stu}}})
+      }else{
+      let student = new students(stuser);
+      await student.save()
+      await forums.findOneAndUpdate({name: forumName}, {"$push":{"forumCoreTeamMembers": {designation: designation, studentID: student}}})
+      }
+      res.json(
+        response("New Core Forum Member Added", process.env.SUCCESS_CODE)
+      );
+    } catch (err) {
+      console.log(err);
+      res.json(
+        response("New Forum Member could not be added",process.env.FAILURE_CODE)
+      );
+    }
+}
+
+module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember}
