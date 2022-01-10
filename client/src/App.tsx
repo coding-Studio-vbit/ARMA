@@ -4,7 +4,7 @@ import AllRoutes from './routes/routes';
 
 function App() {
   return (
-    <div className="App font-inter">
+    <div className="App font-inter overflow-scroll sm:overflow-auto">
       <UserProvider>
       <AllRoutes />
       </UserProvider>

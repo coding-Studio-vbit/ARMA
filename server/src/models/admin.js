@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
+const validator = require("validator")
 
-const role = new mongoose.Schema({
+const Admin = new mongoose.Schema({
   email: {
     type: String,
+    unique: true,
     validate: {
       validator: (value) => {
         return validator.isEmail(value);
@@ -25,5 +27,5 @@ const role = new mongoose.Schema({
   },
 });
 
-const roles = mongoose.model("roles", role);
-module.exports = roles;
+const admins = mongoose.model("Admins", Admin);
+module.exports = admins;

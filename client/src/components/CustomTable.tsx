@@ -1,11 +1,11 @@
 import { ReactElement, useState, useEffect } from "react";
-import axios from "axios";
 import {
   ArrowBackIos,
   ArrowDownward,
   ArrowForwardIos,
   ArrowUpward,
 } from "@material-ui/icons";
+import axiosInstance from "../utils/axios";
 
 interface header {
   displayName: string; //Display header name
@@ -70,7 +70,7 @@ const Table = ({
   const [order, setOrder] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-
+  
   //every time some filter is changed, reset the page number.
   useEffect(()=>{
     setCurrentPage(1);
@@ -89,8 +89,9 @@ const Table = ({
 
     //Adding the filter
     params = {...params, ...filter};
-
-    axios
+    
+    
+    axiosInstance
       .get(api, {
         params: params
       })
@@ -102,12 +103,14 @@ const Table = ({
         if (transformer) {
           newData = newData.map(transformer);
         }
+        console.log(response);
+        
         setData(newData);
       })
       .catch((error) => {
         console.log(error.response.message);
       });
-  }, [currentPage, totalPages, rowsPerPage, order, orderBy]);
+  }, [currentPage, totalPages, rowsPerPage, order, orderBy,filter]);
 
   const nextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -126,8 +129,9 @@ const Table = ({
     )
       buttonList.push(
         <button
-          className={`btn ${
-            i == currentPage ? "bg-arma-dark-blue" : "bg-arma-blue"
+          key={i}
+          className={`btn px-4 text-white rounded-full ${
+            i === currentPage ? "bg-arma-dark-blue" : "bg-arma-blue"
           }`}
           onClick={() => {
             setCurrentPage(i);
@@ -140,13 +144,15 @@ const Table = ({
   };
 
   return (
-    <div className="w-full">
-      <table className="w-full">
-        <thead className="bg-white border border-2 rounded ">
-          <tr>
+    <>
+    <div className="w-full border-2 shadow-md  rounded-[16px] overflow-clip">
+      <table className="w-full ">
+        <thead className="bg-white border-b-2 rounded-[8px] border-black/30  ">
+          <tr className="rounded-[16px]" >
             {headers.map((header) => {
               return (
                 <th
+                  key={header.displayName}
                   scope="col"
                   className="px-6 py-3 text-center font-medium text-arma-dark-blue uppercase tracking-wider"
                 >
@@ -164,13 +170,13 @@ const Table = ({
             })}
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-white divide-y divide-gray-300">
           {data.map((item, index) => {
             return (
               <tr key={index} className="odd:bg-white even:bg-arma-light-gray">
                 {headers.map((header) => {
                   return (
-                    <td className=" px-6 py-4 text-center whitespace-nowrap">
+                    <td key={header.displayName} className=" px-6 py-4 text-center whitespace-nowrap">
                       {getValueFromPath(item, header.dataPath)}
                     </td>
                   );
@@ -180,7 +186,9 @@ const Table = ({
           })}
         </tbody>
       </table>
-      <div id="paginationButtonsSection" className="w-max mx-auto ">
+      
+    </div>
+    <div id="paginationButtonsSection" className="w-max mx-auto mt-8 flex gap-2  ">
         {currentPage > buttonsCount ? (
           <button
             onClick={prevPage}
@@ -194,13 +202,14 @@ const Table = ({
         (Math.ceil(totalPages / buttonsCount) - 1) * buttonsCount ? (
           <button
             onClick={nextPage}
-            className=" p-2 text-arma-dark-blue bg-white "
+            className=" p-2 text-arma-dark-blue "
           >
             <ArrowForwardIos />
           </button>
         ) : null}
       </div>
-    </div>
+    </>
+
   );
 };
 

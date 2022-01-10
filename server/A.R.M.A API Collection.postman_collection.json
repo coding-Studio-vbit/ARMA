@@ -6,32 +6,6 @@
 	},
 	"item": [
 		{
-			"name": "Forum login",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"userData\":{\n        \"name\":\"coding.Studio();\",\n        \n    },\n    \"userType\":\"FORUM\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{serverBaseUrl}}/register",
-					"host": [
-						"{{serverBaseUrl}}"
-					],
-					"path": [
-						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Add student - Dev",
 			"request": {
 				"method": "POST",
@@ -106,6 +80,24 @@
 		},
 		{
 			"name": "get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		},
+		{
+			"name": "Forum - create event",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		},
+		{
+			"name": "Forum Login",
 			"request": {
 				"method": "GET",
 				"header": [],

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
 import { useLocalStorageState } from "../../hooks/useStateStorage";
 import { Faculty, Forum } from "../../interfaces/user";
 

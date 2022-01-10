@@ -105,7 +105,7 @@ function Login() {
           validateEmail(e);
         }}
       />
-      <div className="relative">
+      <div className="relative max-h-max mb-16">
         <InputField
           className="mb-3"
           name="Password"
@@ -117,17 +117,17 @@ function Login() {
         />
         {showPassword ? (
           <Visibility
-            className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
+            className="absolute top-[0.67rem] right-3 text-arma-title cursor-pointer"
             onClick={() => setShowPassword(false)}
           />
         ) : (
           <VisibilityOff
-            className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
+            className="absolute top-[0.67rem] right-3 text-arma-title cursor-pointer"
             onClick={() => setShowPassword(true)}
           />
         )}
       </div>
-      {error && <span className="text-arma-red mb-3">{error}</span>}
+      <span className="text-arma-red mb-3 ">{error}</span>
       <LoginButton
         onClick={async () => {
 
