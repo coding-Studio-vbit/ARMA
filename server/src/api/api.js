@@ -6,6 +6,7 @@ const tokenAuth = require("./middleware/tokenAuth");
 const studentRouter = require("./routes/students/router");
 const forumRouter = require("./routes/forum/router");
 const eventRouter = require("./routes/events/router")
+const adminRouter = require("./routes/admin/router")
 
 const api = () => {
   const router = express.Router();
@@ -15,6 +16,7 @@ const api = () => {
   router.use("/forum", tokenAuth, forumRouter);
   router.use("/events", eventRouter);
   router.use("/test", testRouter);
+  router.use("/admin", adminRouter)
   return router;
 };
 
