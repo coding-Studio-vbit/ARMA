@@ -6,4 +6,9 @@ const upload = multer({storage: multerStorage});
 
 router.get("/dashboard", controller.dashboard);
 
+router.post("/addNewForumMembers" , controller.addNewForumMembers);
+
+router.post("/addNewCoreForumMember" , controller.addNewCoreForumMember);
+
+
 module.exports = router;

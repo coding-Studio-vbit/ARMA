@@ -13,7 +13,7 @@ const api = () => {
   router.use("/", auth);
   router.use("/students", studentRouter); //TEMP
   router.use("/faculty", tokenAuth, facultyRouter);
-  router.use("/forum", tokenAuth, forumRouter);
+  router.use("/forum",  forumRouter);
   router.use("/events", tokenAuth, eventRouter);
   router.use("/test", testRouter);
   router.use("/admin", adminRouter)
