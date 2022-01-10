@@ -38,10 +38,10 @@ export const Sidebar: FC<SidebarProps> = ({showSidebar, setShowSidebar}) => {
         <span className="text-white">SITE ADMINISTRATION</span>
       </div>
       {options.map((value) => (
-        <div className={`flex mb-3 mx-2 gap-2 px-4 py-1 cursor-pointer ${value === activeOption && "bg-[#57C3D8]"} `} onClick={() => {setActiveOption(value) 
+        <div key={value} className={`flex mb-3 mx-2 gap-2 px-4 py-1 cursor-pointer ${value === activeOption && "bg-[#57C3D8]"} `} onClick={() => {setActiveOption(value) 
           localStorage.setItem("Active", value)
           navigate(`/${value}/`)
-        }} >
+        }} > 
           <School className="text-white" />
           <span className="text-white font-normal ">{value}</span>
         </div>
