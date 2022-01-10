@@ -4,6 +4,12 @@ const welcomeTemplate = {
   subject: "Welcome from A.R.M.A",
 };
 
+const budgetDocUpdateTemplate = {
+  template:"Dear ${FOName}, ${forumName} has updated the budget document for event ${eventName}",
+  subject: "Budget Document Update",
+}
+
 module.exports = {
   welcomeTemplate,
+  budgetDocUpdateTemplate
 };

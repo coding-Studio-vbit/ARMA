@@ -14,7 +14,7 @@ const api = () => {
   router.use("/students", studentRouter); //TEMP
   router.use("/faculty", tokenAuth, facultyRouter);
   router.use("/forum", tokenAuth, forumRouter);
-  router.use("/events", eventRouter);
+  router.use("/events", tokenAuth, eventRouter);
   router.use("/test", testRouter);
   router.use("/admin", adminRouter)
   return router;

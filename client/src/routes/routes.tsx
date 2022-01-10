@@ -16,6 +16,7 @@ function AllRoutes() {
         <Route path="/" element={<Login/>} />
         <Route path="/forum/*" element={<ForumRoutes />} />
         <Route path="/faculty/*" element={<FacultyRoutes />} />
+        <Route path="/forgot-password" element={<ForgotPassword/>} />
         <Route path="/test" element={<ForumsList/>} />
        
       

@@ -28,7 +28,6 @@ const storage = multer.diskStorage({
     cb(null, pathValue);
   },
   filename: function (req, file, cb) {
-    console.log(file);
     fileName =
       md5(file.originalname + String(Date.now())) +
       "." +

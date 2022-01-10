@@ -6,6 +6,7 @@ const multerStorage = require("../../../services/util/multerStorage");
 
 const upload = multer({ storage: multerStorage });
 
+//GET EVENTS
 router.get(
   "/",
   (req, res, next) => {
@@ -14,6 +15,19 @@ router.get(
   controller.getEvents
 );
 
-router.post("/", upload.fields([{name: "eventDocument", maxCount: 1}, {name: 'budgetDocument', maxCount: 1}]), controller.createEvent);
+//CREATE EVENT
+router.post(
+  "/",
+  (req, res, next) => {
+    checkRolePermissions(req, res, next, "CREATE_EVENTS");
+  },
+  upload.fields([
+    { name: "eventDocument", maxCount: 1 },
+    { name: "budgetDocument", maxCount: 1 },
+  ]),
+  controller.createEvent
+);
+
+router.post("/updateBudget", upload.fields([{name: "budgetDocument", maxCount:1}]), controller.updateBudgetDoc);
 
 module.exports = router;
