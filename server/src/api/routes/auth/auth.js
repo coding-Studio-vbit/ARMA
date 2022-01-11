@@ -7,6 +7,11 @@ router.post("/login", async (req, res) => {
   res.json(result);
 });
 
+router.post("/register", async (req, res) => {
+  const {userType, ...user} = req.body
+  const result = await authService.register(user, userType);
+  res.json(result);
+});
 
 
 module.exports = router;
