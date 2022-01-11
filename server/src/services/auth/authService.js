@@ -13,7 +13,7 @@ const login = async (email, password, userAgent, userType) => {
       user = await facultyModel.findOne({ email: email }).populate('roles');
     } else if (userType === "FORUM") {
       user = await forums.findOne({ email: email }).populate('roles');
-    } else { //Admin
+    } else if(userType === "ADMIN") { //Admin
       user = await admins.findOne({email:email})
     }
 
@@ -28,6 +28,9 @@ const login = async (email, password, userAgent, userType) => {
       );
       user.password = "";
       return response({ token: token, user: user }, process.env.SUCCESS_CODE);
+    }else{
+      return response("Invalid Credentials!", process.env.SUCCESS_CODE);
+
     }
   } catch (error) {
     console.log(error);
