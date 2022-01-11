@@ -5,7 +5,7 @@ import {
   CloudUploadTwoTone,
   ImageTwoTone,
 } from "@material-ui/icons";
-import { FC, useRef, useState } from "react";
+import { FC, useState } from "react";
 ///Only UI
 export const ReportAndMedia = () => {
   const location = useLocation();
@@ -25,7 +25,7 @@ export const ReportAndMedia = () => {
           return (
             <div
               key={v.imageUrl}
-              className="relative grow   rounded-[2em] shrink basis-[150px]  sm:basis-[30%] overflow-hidden   "
+              className="relative grow max-h-[300px]   rounded-[2em] shrink basis-[150px]  sm:basis-[30%] overflow-hidden   "
             >
               <img
                 className="w-full h-full rounded-[2em] object-cover transition-all hover:scale-110 	"

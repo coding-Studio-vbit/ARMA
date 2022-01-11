@@ -5,11 +5,10 @@ const getStudentsList = async (req, res) => {
   //For pagination
   let page = req.query.page ? Number(req.query.page) : 1;
   let limit = req.query.limit ? Number(req.query.limit) : 1000000;
-
   //For filters
   let where = {};
-  if (req.query.name) where.name = req.query.name;
-  if (req.query.rollNumber) where.rollNumber = req.query.rollNumber;
+  if (req.query.name) where.name = {$regex: req.query.name,$options: 'i'};
+  if (req.query.rollNumber) where.rollNumber = {$regex: req.query.rollNumber,$options: 'i'};
   if (req.query.branch) where.branch = req.query.branch;
   if (req.query.section) where.section = req.query.section;
 
