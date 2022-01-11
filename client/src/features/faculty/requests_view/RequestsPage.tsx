@@ -7,7 +7,8 @@ const RequestsPage = () => {
   const [requestStatus, setRequestStatus] = useState<any>({label:"ALL"});
 
   return (
-    <h1>requests</h1>
+    <div>
+        <h1>requests</h1>
     <div>
       <p className="text-3xl text-arma-dark-blue">Requests</p>
       <div id="requestsTable">
@@ -30,6 +31,7 @@ const RequestsPage = () => {
         api=""
         /> */}
       </div>
+    </div>
     </div>
   );
 };
