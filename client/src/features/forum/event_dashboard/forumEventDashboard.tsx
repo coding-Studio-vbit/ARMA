@@ -20,7 +20,6 @@ function ForumEventDashboard() {
         (
             <div id="forumEventPage">
 
-                <Navbar navItems={[]} userName={username}/>
 
                 <div id='forumEventPageContent' className='w-screen mx-auto my-5'>
 
