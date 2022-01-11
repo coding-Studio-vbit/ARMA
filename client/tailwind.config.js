@@ -18,7 +18,8 @@ module.exports = {
         "arma-light-gray": "#F5F5F5",
         "arma-page-background": "#f5f5f5",
         "arma-icon":"#808080",
-        "arma-toggle":"#bababa"
+        "arma-toggle":"#bababa",
+        "arma-gray":"#757575",
       },
     },
   },
