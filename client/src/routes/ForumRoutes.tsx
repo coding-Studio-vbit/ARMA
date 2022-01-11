@@ -7,7 +7,7 @@ import { EventVenue } from "../features/forum/event_venue";
 const ForumRoutes = () => {
   return (
     <div>
-      <Navbar navItems={[]} userName="coding.Studio();"/>
+      <Navbar navItems={[]}/>
         <Routes>
           <Route path="/" element={<Dashboard/>} />
           <Route path="/event-venue" element={<EventVenue/>} />

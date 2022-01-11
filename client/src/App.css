@@ -2,6 +2,11 @@
     border: 2px solid red;
 } */
 
+body{
+    background-color: #f5f5f5;
+}
+
+
 /* rev says don't touch [he will refactor later] */
 
 .currentRequest::-webkit-scrollbar {
