@@ -3,23 +3,27 @@ import React from "react";
 import { InputField } from "../../../components/InputField/InputField";
 function FacultyProfile() {
   return (
-    <body className="min-h-screen">
-      <div>
-        <div className="flex justify-end mt-14 pr-10 mb-20">
-          <button className="outlineBtn">LOGOUT</button>
-        </div>
-        <div className="flex flex-col w-[542px] items-center m-auto">
-          <p className="text-center item-center text-3xl text-arma-blue">
-            Siddharth Malladi
-            <Edit className="ml-3" />
-          </p>
+    <div className="bg-arma-page-background h-screen">
+      <div className=" grid justify-end pt-20 mb-20 mr-3">
+        <button className="outlineBtn">LOGOUT</button>
+      </div>
+      <div className="flex flex-col items-center m-auto">
+        <p className="text-center item-center text-3xl text-arma-blue">
+          Siddharth Malladi
+          <Edit className="ml-3" />
+        </p>
+        <p className="text-black mt-4 mb-10 text-lg">Faculty</p>
+        <div>
+          <div className="flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+            <InputField
+              className="mb-5"
+              name="RollNumber"
+              onChange={(e) => {}}
+            />
 
-          <p className="text-black mt-4 mb-10 text-lg">Faculty</p>
-          <div className="flex gap-x-10 mb-10 w-full">
             <InputField className="mb-5" name="Email" onChange={(e) => {}} />
-            <InputField className="mb-5" name="Name" onChange={(e) => {}} />
           </div>
-          <div className="flex gap-x-10 mb-10 w-full">
+          <div className="flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
             <InputField
               className="mb-5"
               name="Designation"
@@ -31,7 +35,7 @@ function FacultyProfile() {
               onChange={(e) => {}}
             />
           </div>
-          <div className="w-full	">
+          <div className="mx-auto">
             <InputField
               className="mb-5"
               name="Phone Number"
@@ -40,7 +44,7 @@ function FacultyProfile() {
           </div>
         </div>
       </div>
-    </body>
+    </div>
   );
 }
 
