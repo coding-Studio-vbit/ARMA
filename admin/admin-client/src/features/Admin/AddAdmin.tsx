@@ -1,16 +1,43 @@
 import { ChangeEvent, useState } from "react"
+import { useLocation } from "react-router-dom"
 import { Dialog } from "../../Components/Dialog/Dialog"
 import { InputField } from "../../Components/InputField/InputField"
+
+
+const adminAdd = async (name:string, email: string, password: string) => {
+  try {
+    const res = await fetch(process.env.REACT_APP_SERVER_URL + "admin/addAdmin", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        name:name,
+        email: email,
+        password: password,
+      }),
+    });
+    const data = await res.json()   
+    return data
+  } catch (error) {
+    return {response: "Server not available. Try again later", status: -1}
+  }
+};
 
 
 export const AddAdmin = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPass, setConfirmPass] = useState("")
+    const [name, setName] = useState("");
     const [emailError, setEmailError] = useState<string>();
     const [passwordError, setPasswordError] = useState<string>();
     const [passwordConfirmError, setConfirmPassError] = useState<string>();
+    const [nameError, setNameError] = useState<string>();
     const [show, setShow] = useState(false)
+    const [response, setResponse] = useState("")
     const [showError, setShowError] = useState<String>("")
 
 
@@ -43,7 +70,17 @@ export const AddAdmin = () => {
           setPasswordError("")
       }
       }
-      
+      const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const name = e.target.value;
+        setName(name);
+        if (name.length === 0) {
+          setNameError("Name field is empty");
+        } 
+        else {
+            setNameError("");
+          }
+        
+      };
 
       const validateConfirmPass = (e: ChangeEvent<HTMLInputElement>) => {
         const pass = e.target.value;
@@ -57,13 +94,23 @@ export const AddAdmin = () => {
         }
         }
          
-        const loginValidate = () => {
+        const loginValidate = async() => {
         if((email.length === 0) ||  (password.length === 0)  || (confirmPass.length === 0) || (emailError?.length !== 0)  || (passwordError?.length !== 0) || (passwordConfirmError?.length !== 0))
         {
             setShowError("Fill details appropriately")
          }else{
-             setShow(true)
              setShowError("")
+             const res = await adminAdd(name,email, password);
+             console.log(res);
+          
+          if (res.status === 1) {
+            setResponse("New Admin Added")
+            setShow(true)
+          } else {
+              setResponse(res.response)
+              setShow(true)
+              
+          }
         }
 
         }
@@ -74,30 +121,40 @@ export const AddAdmin = () => {
             <p className= 'text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 '>ADD ADMIN</p>
 
             <div className=' flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8'>
+            <InputField
+            name="Name"
+            type="text"
+            error={nameError}
+            onChange={(e) => {
+              validateName(e);
+            }}
+          />
             <InputField 
-            name="Email"   
-            error={emailError}                      
+            name="Email"  
+            error={emailError}                       
             onChange={(e) =>{validateEmail(e)}}
             />
+            
+            </div>
+            <div className=' flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8'>
             <InputField 
             name="Password"
-            type="text"   
+            type="password"   
             error={passwordError} 
             onChange={(e) =>{validatePass(e)}}
             />
-            </div>
-            <div className=" w-full sm:w-[270px] ">
             <InputField 
             name="Confirm Password"
-            type="text"
+            type="password"
             error={passwordConfirmError}
             onChange={(e) =>{validateConfirmPass(e)}}
             />
+            
             </div>
-            <Dialog show={show} setShow={setShow} title="Added"> </Dialog>
+            <Dialog show={show} setShow={setShow} title= {response}> </Dialog>
 
 
-            <button className='btn  bg-arma-title rounded-[8px] px-6 py-2 mt-12 ml-auto mr-auto flex justify-center' onClick={() => { loginValidate()}} >ADD</button>
+            <button className='btn  bg-arma-title rounded-[8px] px-6 py-2 mt-12 ml-auto mr-auto flex justify-center' onClick={async() => { loginValidate()}} >ADD</button>
             {(showError.length !== 0) && <span className="text-red-500 text-sm flex justify-center mt-2">{showError}</span> }
 
             </div>

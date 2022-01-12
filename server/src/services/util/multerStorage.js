@@ -2,7 +2,6 @@ const md5 = require("md5");
 const path = require("path")
 const fs = require("fs")
 const multer = require("multer")
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let hashValue = md5(file.originalname + Date.now());

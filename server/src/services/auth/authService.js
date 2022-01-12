@@ -13,8 +13,8 @@ const login = async (email, password, userAgent, userType) => {
       user = await facultyModel.findOne({ email: email }).populate('roles');
     } else if (userType === "FORUM") {
       user = await forums.findOne({ email: email }).populate('roles');
-    } else { //Admin
-      user = await admin.findOne({email:email})
+    } else if(userType === "ADMIN") { //Admin
+      user = await admins.findOne({email:email})
     }
 
     if (!user) {
@@ -28,6 +28,9 @@ const login = async (email, password, userAgent, userType) => {
       );
       user.password = "";
       return response({ token: token, user: user }, process.env.SUCCESS_CODE);
+    }else{
+      return response("Invalid Credentials!", process.env.SUCCESS_CODE);
+
     }
   } catch (error) {
     console.log(error);
@@ -47,12 +50,19 @@ const register = async (user, userType) => {
       let forum = new forums(user);
       forum.password = password;
       await forum.save();
+    }else if(userType === "ADMIN") {
+      let admin = new admins(user)
+      admin.password = password
+      await admin.save()
     }
 
     return response("Success", process.env.SUCCESS_CODE);
   } catch (error) {
     console.log(error);
-    return response("failure", process.env.FAILURE_CODE);
+    if(error.code === 11000){
+     return response("Email Already Exists.",  process.env.FAILURE_CODE)
+    }else
+    return response(error, process.env.FAILURE_CODE);
   }
 };
 
