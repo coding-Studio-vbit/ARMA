@@ -6,15 +6,7 @@ import {
 const CreateEvent =()=>{
     const [pdf1, setPdf1] = useState<File>();
     const [pdf2, setPdf2] = useState<File>();
-    const [budget,setBudget]=useState(0);
-    const getDoc =()=>{
-        if(budget ===0){
-            setBudget(1);
-        }
-        else{
-            setBudget(0);
-        }
-    }
+    const [budget,setBudget]=useState(false);
     return(
         <div>
             <Navbar navItems={[]} userName="Kalyan" />
@@ -92,7 +84,7 @@ const CreateEvent =()=>{
                             {pdf1 && <p className="m-0 p-0 truncate">{pdf1.name}</p>}
                         </div>
                         <div className="flex flex-col items-start gap-4 md:w-1/3">
-                            <div className="flex">
+                            <div className="flex">  
                                 <div className="form-check form-switch">
                                     <input className="form-check-input appearance-none w-9 -ml-10 rounded-full float-left h-5 align-top  bg-no-repeat bg-contain checked:bg-gray-300 focus:outline-none cursor-pointer shadow-sm" type="checkbox" role="switch" id="flexSwitchCheckDefault" />
                                     <label className="form-check-label inline-block text-gray-800" htmlFor="flexSwitchCheckDefault">Budget Document</label>
