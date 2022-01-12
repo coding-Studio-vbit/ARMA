@@ -8,35 +8,28 @@ import ForumsList from "../features/faculty/forums/ForumsList";
 import { useUser } from "../providers/user/UserProvider";
 
 function AllRoutes() {
+  const { faculty, forum } = useUser();
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword/>} />
         <Route path="/reset-password/:id" element={<ResetPassword/>} />
-        <Route
-          path="/*"
-          element={
-            <ProtectedRoutes>
-              <Route path="/forum/*" element={<ForumRoutes />} />
-              <Route path="/faculty/*" element={<FacultyRoutes />} />
-            </ProtectedRoutes>
-          }
-        />
+        
+          {
+            forum && <Route path="/forum/*" element={<ForumRoutes />} />
+          }    
+           { faculty &&    <Route path="/faculty/*" element={<FacultyRoutes />} />}
+           
         <Route path="/test" element={<ForumsList />} />
+        <Route path="*" element={<div>Page Not found! We will do this later :)</div>} />
+
       </Routes>
     </BrowserRouter>
   );
 }
 
-const ProtectedRoutes = (props: { children: any }) => {
-  const { faculty, forum } = useUser();
- 
 
-  if (faculty || forum) {
-    return <Routes>{props.children}</Routes>;
-  }
-  return <Navigate to={"/"} />;
-};
 
 export default AllRoutes;
