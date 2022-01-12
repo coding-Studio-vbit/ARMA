@@ -10,11 +10,13 @@ import { BusinessCenter, Close } from "@material-ui/icons";
 
 function EventEquip()
 {
-    const navItems=[ ];
+    const [name, setName] = useState("");
     const [loading, setLoading] = useState<boolean>(true);
     const [event, setEvent] = useState<string>("");
     const [username,setUsername] = useState<string>("")
     const [equipment, setEquipment] = useState("")
+    const [nameError, setNameError] = useState<string>();
+    const [quantityError, setQuantityError] = useState<string>();
     const [quantity, setQuantity] = useState("")
     const [list, setList] = useState<{equipment:string, quantity: string} []>([])
     let temp = [...list]
@@ -26,6 +28,32 @@ function EventEquip()
             setEvent("SoC");         
         }, 2000);        
     }, [])
+
+    const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const name = e.target.value;
+        setName(name);
+        if (name.length === 0) {
+          setNameError("Name field is empty");
+        } 
+        else {
+            setNameError("");
+          }
+        
+      };
+    
+      
+      const validateQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const quantity = e.target.value;
+        setQuantity(quantity);
+        if (quantity.length === 0) {
+          setQuantityError("Quantity field is empty");
+        } 
+        else {
+            setQuantityError("");
+          }
+        
+      };
+
     return !loading?((
        
         <div id='eventEquipmentPage'>
@@ -47,8 +75,8 @@ function EventEquip()
                     <Select
                             name="Choose Equipment"
                             placeholder="Equipment"
-                            value ={{value: "Equipment", label: "Equipment"}}
-                            options={[]}
+                            
+                            options={[{value:"Mic", label:"Mic"},{value:"Speaker", label:"Speaker"}]}
                             styles={{
                             control: (base) => ({
                             ...base,
@@ -68,25 +96,36 @@ function EventEquip()
                             color: '#575757e1'
                             }) 
                             }}
+                            onChange={(e:any) =>{setEquipment(e.value)}}
             
                             className="basic-multi-select w-full h-full"
                         />
                         <InputField
                             name="Quantity"
                             type="text"
-                            //error={quantityError}
-                            onChange={(e) => {
-                            //validateQuantity(e);
-                            }}
+                            error={quantityError}
+                            onChange={(e) =>{setQuantity(e.target.value)}}
                         />
                         <button className='btn  bg-arma-title rounded-[8px]  ml-auto mr-auto flex justify-right' 
                         onClick={() => {
                             setList([...list, {equipment: equipment, quantity: quantity}])
                         }} >ADD</button>
                     </div>
-                    
+                    <div className="flex flex-col w-max ml-8">
+                {
+                    list.map((p,i) => {
+                    return(
+                        <div className="flex gap-16 shrink px-6 py-4 bg-white border-2 rounded">
+                            <span className="font-semibold">{p.equipment}</span>
+                            <span className="font-semibold">{p.quantity}</span>
+                            <Close className="cursor-pointer" onClick={() => {temp.splice(i,1);  setList(temp); console.log(temp);}} />
+                        </div>
+                    )
+                    })
+                }
+            </div>
 
-                    <div className=" w-full sm:w-[270px] ">
+                    <div className="  ">
                         
                         </div>
 
