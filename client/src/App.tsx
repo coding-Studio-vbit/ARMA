@@ -5,7 +5,7 @@ import EventEquip from '../src/features/forum/event_equipment/EventEquip';
 
 function App() {
   return (
-    <div className="App font-inter overflow-scroll sm:overflow-auto">
+    <div className="App font-inter">
       {/* <UserProvider> */}
       {/* <AllRoutes />
       </UserProvider> */}
