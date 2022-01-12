@@ -1,4 +1,4 @@
-import Navbar from "../../../components/CustomNavbar";
+// import Navbar from "../../../components/CustomNavbar";
 import { useState } from "react";
 import {
     CloudUploadTwoTone,
@@ -9,7 +9,7 @@ const CreateEvent =()=>{
     const [budget,setBudget]=useState(false);
     return(
         <div>
-            <Navbar navItems={[]} userName="Kalyan" />
+            {/* <Navbar navItems={[]} userName="Kalyan" /> */}
             <div>
                 <span className="material-icons mt-10 ml-2 md:ml-6 justify-between">chevron_left</span>
                 <h1 className="font-sans justify-between text-arma-dark-blue font-semibold text-2xl md:text-4xl inline-block ml-4 md:ml-24">Create Event</h1>    
