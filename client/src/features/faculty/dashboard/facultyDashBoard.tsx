@@ -10,11 +10,7 @@ interface EventInfo {
 
 
 function FacultyDashBoard() {
-    const navItems=[
-        {  label:'Dashboard',icon:"home",path:'/'},
-        {  label:'Forums',icon:"group",path:'/' },
-        {  label:'Students',icon:"person",path:'/' },        
-    ];
+    
 
     const [loading, setLoading] = useState(true);
     const [username, setUsername] = useState("");
@@ -55,7 +51,7 @@ function FacultyDashBoard() {
     return !loading?(
         <div>
             {/* Navbar */}
-            <Navbar navItems={navItems} userName={username}/>
+            
             <div style={loading?{cursor:'pointer'}:{cursor:'no-drop'}}></div>
 
             {/* Page Content */}           

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useUser } from "../providers/user/UserProvider";
 
 // import { useNavigate } from "react-router-dom";
 
@@ -9,13 +10,12 @@ interface NavItem {
 }
 
 interface NavbarProps {
-  navItems:NavItem[] | [],
-  userName: string
+  navItems:NavItem[] | []
 }
 
-const Navbar = ({ navItems, userName }: NavbarProps) => {
+const Navbar = ({ navItems}: NavbarProps) => {
   // let nav = useNavigate();
-
+  const {forum, faculty} = useUser()
   const [showSideNav, setshowSideNav] = useState<boolean>(false);
 
   return (
@@ -78,7 +78,7 @@ const Navbar = ({ navItems, userName }: NavbarProps) => {
           </div>
           {/* Profile Button */}
           <div id="profile-button" className="cursor-pointer">
-              <span className="text-lg mr-2 align-middle ">Hi, {userName}</span>
+              <span className="text-lg mr-2 align-middle ">Hi, {forum?.name ?? faculty?.name}</span>
               <span className="material-icons text-arma-dark-blue/70 md-48 align-middle text-3xl">account_circle</span>
           </div>      
         </div>
