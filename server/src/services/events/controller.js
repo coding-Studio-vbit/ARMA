@@ -87,4 +87,19 @@ const updateBudgetDoc = async (req, res) => {
   }
 };
 
-module.exports = { getEvents, createEvent, updateBudgetDoc };
+const reportAndMedia = async(req,res) => {
+    try {
+      let event = await events.findById(req.body.eventID)
+      event.reportDocPath =  req.files.eventReport[0].path
+      let temp = []
+      for(let p = 0; p < req.files.eventImages.length ; p++){
+        temp.push(req.files.eventImages[p].path)
+      }  
+      event.mediaFilePaths= temp
+      await event.save();
+      res.json(response("updated Event Report and Media files", process.env.SUCCESS_CODE))
+    } catch (error) {
+      res.json(response("updated Event Report and Media failed", process.env.FAILURE_CODE))    
+    }
+}
+module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia };
