@@ -6,6 +6,7 @@ import { ForgotPassword } from "../components/Auth/forgotPassword";
 import {ResetPassword} from "../components/Auth/ResetPassword";
 import ForumsList from "../features/faculty/forums/ForumsList";
 import { useUser } from "../providers/user/UserProvider";
+import EventEquip from "../features/forum/event_equipment/EventEquip";
 
 function AllRoutes() {
   const { faculty, forum } = useUser();
@@ -22,7 +23,6 @@ function AllRoutes() {
           }    
            { faculty &&    <Route path="/faculty/*" element={<FacultyRoutes />} />}
            
-        <Route path="/test" element={<ForumsList />} />
         <Route path="*" element={ <PageNotFound/> } />
 
       </Routes>

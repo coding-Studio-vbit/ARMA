@@ -203,7 +203,7 @@ export const AddStudents = () => {
                 }) 
             }}
             
-            className="basic-multi-select w-full h-full"
+            className="basic-multi-select"
            
           /> 
           <InputField

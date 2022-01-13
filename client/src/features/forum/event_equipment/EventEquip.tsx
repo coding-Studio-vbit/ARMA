@@ -1,144 +1,113 @@
-import React, { useEffect, useState } from 'react'
-import Navbar from '../../../components/CustomNavbar';
-import { Spinner } from '../../../components/Spinner/Spinner';
-import { ChangeEvent } from "react";
-import { Dialog } from "../../../components/Dialog/Dialog";
-import { InputField } from "../../../components/InputField/InputField";
+import { BusinessCenter, Close } from '@material-ui/icons'
+import React, { useState } from 'react'
 import Select from "react-select";
-import { containerCSS } from "react-select/dist/declarations/src/components/containers";
-import { BusinessCenter, Close } from "@material-ui/icons";
+import { InputField } from '../../../components/InputField/InputField'
 
-function EventEquip()
-{
-    const [name, setName] = useState("");
-    const [loading, setLoading] = useState<boolean>(true);
-    const [event, setEvent] = useState<string>("");
-    const [username,setUsername] = useState<string>("")
+export default function EventEquip() {
     const [equipment, setEquipment] = useState("")
-    const [nameError, setNameError] = useState<string>();
-    const [quantityError, setQuantityError] = useState<string>();
     const [quantity, setQuantity] = useState("")
-    const [list, setList] = useState<{equipment:string, quantity: string} []>([])
-    let temp = [...list]
+    const [addError, setAddError] = useState("")
+    const [list, setList] = useState<{}[]>([])
 
-    useEffect(() => {
-        setTimeout(() => {
-            setLoading(false);
-            setUsername("coding.Studio();");
-            setEvent("SoC");         
-        }, 2000);        
-    }, [])
 
-    const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const name = e.target.value;
-        setName(name);
-        if (name.length === 0) {
-          setNameError("Name field is empty");
-        } 
-        else {
-            setNameError("");
-          }
-        
-      };
-    
-      
-      const validateQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const quantity = e.target.value;
-        setQuantity(quantity);
-        if (quantity.length === 0) {
-          setQuantityError("Quantity field is empty");
-        } 
-        else {
-            setQuantityError("");
-          }
-        
-      };
+    return (
+        <div className="flex flex-col sm:mx-24 mt-8 md:items-start items-center ">
+      <span className='text-arma-title sm:text-4xl  text-2xl mb-8 font-semibold'>[eventname] -  Equipment</span>
+        <div className='flex gap-2'>
+        <span className = 'text-arma-gray text-lg mb-8 font-semibold'>Choose Equipment</span>
+        <BusinessCenter className="text-arma-title" />
+          </div>
+          <div className='flex flex-col md:flex-row gap-y-6 items-center sm:gap-x-6 '>
+          <div className=" flex flex-col gap-y-6  md:flex-row sm:gap-x-8">
+          <Select
+            name="Equipment"
+            placeholder="Equipment"
+            options={[{value:"speaker", label:"speaker"}, {value:"mic", label:"mic"}]}
+            onChange={(e:any) => {setEquipment(e.value)}}
+            styles={{
+                control: (base) => ({
+                ...base,
+                minHeight: 52,
+                minWidth: 270,
+                borderRadius: "0.5rem",
+                border: "2px solid rgb(200, 200, 200)",
+                }),
 
-    return !loading?((
-       
-        <div id='eventEquipmentPage'>
+                placeholder: (base) => ({
+                  ...base,
+                  paddingLeft: '16px'
+                }),
+                singleValue: (base) => ({
+                    ...base,
+                    paddingLeft: '16px',
+                    color: '#575757e1'
+                }) 
+            }}
             
-            <div id='forumEventEquipmentPage' className='w-screen mx-auto my-5 mt-13 w-11/12 '>
-
-                
-
-                <div className='mx-auto'>
-                    <div className='flex flex-row justify-start items-center mb-12'>
-                        <span className=' font-normal md:font-semibold text-arma-dark-blue text-xl md:text-2xl '>{username+" "+event}-Equipment</span>
-                    </div>
-                    <div className= "flex justify-left items-center mb-12">
-                        <span className="font-normal text-arma-title text-xl font-medium ml-2">Choose Equipment</span>
-                        <BusinessCenter className="material-icons text-arma-dark-blue ml-2"></BusinessCenter>
-                    </div>
-
-                    <div className=" flex flex-col sm:flex-row gap-6 mb-6 w-1/2 ml-5">
-                    <Select
-                            name="Choose Equipment"
-                            placeholder="Equipment"
-                            
-                            options={[{value:"Mic", label:"Mic"},{value:"Speaker", label:"Speaker"}]}
-                            styles={{
-                            control: (base) => ({
-                            ...base,
-                            minHeight: 44,
-                            minWidth: 272,
-                            borderRadius: "0.5rem",
-                            border: "2px solid rgb(200, 200, 200)",
-                            }),
-
-                            placeholder: (base) => ({
-                            ...base,
-                            paddingLeft: '16px'
-                            }),
-                            singleValue: (base) => ({
-                            ...base,
-                            paddingLeft: '16px',
-                            color: '#575757e1'
-                            }) 
-                            }}
-                            onChange={(e:any) =>{setEquipment(e.value)}}
-            
-                            className="basic-multi-select w-full h-full"
-                        />
-                        <InputField
-                            name="Quantity"
-                            type="text"
-                            error={quantityError}
-                            onChange={(e) =>{setQuantity(e.target.value)}}
-                        />
-                        <button className='btn  bg-arma-title rounded-[8px]  ml-auto mr-auto flex justify-right' 
-                        onClick={() => {
-                            setList([...list, {equipment: equipment, quantity: quantity}])
-                        }} >ADD</button>
-                    </div>
-                    <div className="flex flex-col w-max ml-8">
-                {
-                    list.map((p,i) => {
-                    return(
-                        <div className="flex gap-16 shrink px-6 py-4 bg-white border-2 rounded">
-                            <span className="font-semibold">{p.equipment}</span>
-                            <span className="font-semibold">{p.quantity}</span>
-                            <Close className="cursor-pointer" onClick={() => {temp.splice(i,1);  setList(temp); console.log(temp);}} />
-                        </div>
-                    )
-                    })
-                }
-            </div>
-
-                    <div className="  ">
-                        
-                        </div>
-
-                {/* <Dialog show={show} setShow={setShow} title="Added">{" "}</Dialog> */}
-                </div>
-            </div>
+            className="basic-multi-select "
+           
+          /> 
         </div>
-    )
-        
-    ):
-    <div className='flex h-screen justify-center items-center'>
-        <Spinner className=''/>
-    </div>
-}
+        <div className=" flex flex-col gap-y-6  md:flex-row sm:gap-x-8">
+          <InputField
+            name="Quantity"
+            type="text"
+            onChange={(e:any) => setQuantity(e.target.value)}
+          />
+        </div>
+        <button
+          className="btn  bg-arma-title rounded-[8px] px-6 py-2 my-auto"
+          onClick={()=>{
+            if(!equipment || !quantity){setAddError("Please fill details"); return}
+            if(list.find((eqi:any) => eqi.equipment === equipment)){setAddError("Equipment already added"); return}
+            setList([...list, {equipment:equipment,quantity:quantity}])
+            }}
+        >
+          ADD
+        </button>
+          </div>
+         <span className='text-red-500 ml-2 mt-4 mb-4 h-6 '>{addError}</span>
+          
+          <div className='flex gap-6 flex-wrap w-[80%] sm:w-[600px]'>
+             {
+                   list.map((li:any,i) => {
+                   return(
+                      <div className='flex justify-between bg-white shadow-lg py-5 px-4 w-max gap-6 rounded-[8px] basis-[100px] shrink'>
+                               <span>{li.equipment}</span>
+                              <span>{li.quantity}</span>
+                              <Close className="cursor-pointer"onClick ={() => {
+                                 let temp = [...list]
+                                 temp.splice(i,1)
+                                 setList(temp)
+                             }}/>
+                           </div>
+                     )
+                   })
+                 }
+            </div>
 
-export default EventEquip;
+        
+         
+         {/* <div className="flex flex-col sm:w-[40%]">
+             {
+                 list.map((r:any,i) => {
+                     return(
+                         <div className="flex justify-between shadow-md px-4 py-2 hover:bg-black/[0.05]">
+                             <span>{r.equipment}</span>
+                             <span>{r.quantity}</span>
+                             <Close className="cursor-pointer"onClick ={() => {
+                                 let temp = [...list]
+                                 temp.splice(i,1)
+                                 setList(temp)
+                             }}/>
+                         </div>
+                     )
+                 })
+             }
+
+         </div> */}
+      </div>
+    )
+    
+            }
+
