@@ -1,7 +1,7 @@
 import './App.css';
-import { UserProvider } from './providers/user/UserProvider';
-import AllRoutes from './routes/routes';
-import EventEquip from '../src/features/forum/event_equipment/EventEquip';
+import FacultyDashBoard from './features/faculty/dashboard/facultyDashBoard';
+// import { UserProvider } from './providers/user/UserProvider';
+// import AllRoutes from './routes/routes';
 
 function App() {
   return (
@@ -9,7 +9,7 @@ function App() {
       {/* <UserProvider> */}
       {/* <AllRoutes />
       </UserProvider> */}
-      <EventEquip/>
+      <FacultyDashBoard/>
     </div>
   );
 }

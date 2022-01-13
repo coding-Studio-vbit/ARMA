@@ -20,8 +20,6 @@ const Navbar = ({ navItems}: NavbarProps) => {
   const [showSideNav, setshowSideNav] = useState<boolean>(false);
   const [showLogout,setShowLogout ] = useState(false)
 
-  
-
   return (
     <div className="flex flex-row">
 
