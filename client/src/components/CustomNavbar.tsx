@@ -1,10 +1,11 @@
 import { PowerSettingsNewTwoTone } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { useUser } from "../providers/user/UserProvider";
+import { Sidebar } from "./Sidebar";
 
 // import { useNavigate } from "react-router-dom";
 
-interface NavItem {
+export interface NavItem {
   label: string;
   icon:string;
   path: string;
@@ -21,41 +22,12 @@ const Navbar = ({ navItems}: NavbarProps) => {
   const [showLogout,setShowLogout ] = useState(false)
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row bg-white z-[11] fixed w-full">
 
         {/* side navigation bar */}
-        <div>
-          {
-            showSideNav &&
-            <div className="transition ease-in-out delay-150 h-screen w-64 bg-arma-dark-blue z-30 fixed px-4 py-6">
-
-              <div id="ARMA-Logo" className="flex justify-between text-xl md:text-2xl font-medium pl-2 text-white cursor-pointer">
-                  A.R.M.A
-                  <span className="material-icons align-middle md:hidden mr-2"
-                  onClick={()=>setshowSideNav(!showSideNav)}
-                  >menu_open</span>
-              </div>
-
-              <div className="py-6">
-                  {
-                    navItems.map((item: NavItem, index: Number) => {
-                      return (
-                        <div className="h-12 p-3 flex justify-between items-center 
-                        text-white
-                        hover:bg-gray-400 hover:text-gray-800 hover:rounded-xl"  key={item.label}>  
-                            <span className=" text-xl font-medium ml-1">{item.label}</span>
-                            <span className="material-icons">{item.icon}</span>          
-                        </div>
-                      );
-                    })
-                  }
-              </div>
-
-            </div>
-          }
-        </div>
-
-        <div className="flex-1 flex justify-between px-3 shadow-md h-20 items-center">
+        
+        {showSideNav && <Sidebar show={showSideNav} setShow={setshowSideNav} navItems={navItems}  />}
+        <div className="flex-1 flex justify-between px-3 md:px-8 lg:px-16 shadow-md h-20 items-center">
 
           {/* {ARMA Title} */}
           <div id="ARMA-Logo" className="text-xl md:text-2xl font-medium pl-2 text-arma-dark-blue cursor-pointer">

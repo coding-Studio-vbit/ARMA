@@ -15,9 +15,9 @@ const FacultyRoutes = () => {
     {  label:'Students',icon:"person",path:'/' },        
 ];
   return (
-    <div>
-      <div>
+    <div className="min-h-screen flex flex-col"> 
         <Navbar navItems={navItems}/>
+        <div className="flex-1 mt-[80px]">
         <Routes>
         <Route path="/studentsList" element={<StudentsList/>} />
         <Route path="/forumsList" element={<ForumsList/>} />
@@ -26,8 +26,8 @@ const FacultyRoutes = () => {
 
 
         </Routes>
-        {/* <Footer /> */}
       </div>
+        <Footer />
     </div>
   );
 };

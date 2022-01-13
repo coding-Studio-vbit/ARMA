@@ -145,7 +145,7 @@ export const AddFaculty = () => {
                 }) 
             }}
             
-            className="basic-multi-select w-full h-full"
+            className="basic-multi-select "
            
           /> 
         </div>
