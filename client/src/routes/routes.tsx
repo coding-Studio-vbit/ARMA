@@ -23,13 +23,21 @@ function AllRoutes() {
            { faculty &&    <Route path="/faculty/*" element={<FacultyRoutes />} />}
            
         <Route path="/test" element={<ForumsList />} />
-        <Route path="*" element={<div>Page Not found! We will do this later :)</div>} />
+        <Route path="*" element={ <PageNotFound/> } />
 
       </Routes>
     </BrowserRouter>
   );
 }
 
+const PageNotFound = ()=>{
+  const {forum,faculty} = useUser()
+  if(!forum || !faculty) {
+    return <Navigate to={'/'}/>
+  }else{
+    return <div>Page Not found! We will do this later :)</div>
+  }
+}
 
 
 export default AllRoutes;

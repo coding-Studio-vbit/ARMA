@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { PowerSettingsNewTwoTone } from "@material-ui/icons";
+import { useEffect, useState } from "react";
 import { useUser } from "../providers/user/UserProvider";
 
 // import { useNavigate } from "react-router-dom";
@@ -15,8 +16,11 @@ interface NavbarProps {
 
 const Navbar = ({ navItems}: NavbarProps) => {
   // let nav = useNavigate();
-  const {forum, faculty} = useUser()
+  const {forum, faculty,logout} = useUser()
   const [showSideNav, setshowSideNav] = useState<boolean>(false);
+  const [showLogout,setShowLogout ] = useState(false)
+
+  
 
   return (
     <div className="flex flex-row">
@@ -57,7 +61,9 @@ const Navbar = ({ navItems}: NavbarProps) => {
 
           {/* {ARMA Title} */}
           <div id="ARMA-Logo" className="text-xl md:text-2xl font-medium pl-2 text-arma-dark-blue cursor-pointer">
-            <span className="material-icons align-middle md:hidden mr-2 " onClick={()=>setshowSideNav(!showSideNav)}>menu</span>
+            {
+              navItems.length > 0 && <span className="material-icons align-middle md:hidden mr-2 " onClick={()=>setshowSideNav(!showSideNav)}>menu</span>
+            }
             A.R.M.A
           </div>
 
@@ -77,9 +83,30 @@ const Navbar = ({ navItems}: NavbarProps) => {
             }
           </div>
           {/* Profile Button */}
-          <div id="profile-button" className="cursor-pointer">
-              <span className="text-lg mr-2 align-middle ">Hi, {forum?.name ?? faculty?.name}</span>
-              <span className="material-icons text-arma-dark-blue/70 md-48 align-middle text-3xl">account_circle</span>
+          <div id="profile-button" 
+          tabIndex={1}
+          onBlur={()=>{
+            
+            setShowLogout(false)
+          }}
+          className={`cursor-pointer relative `} onClick={()=>{
+            
+            setShowLogout(!showLogout)
+          }} 
+             >
+              <span  className="text-lg mr-2 align-middle ">Hi, {forum?.name ?? faculty?.name}</span>
+              <span   className="material-icons text-arma-dark-blue/70 md-48 align-middle text-3xl">account_circle</span>
+              {
+                showLogout && (
+                  <div onClick={()=>{
+                    logout()
+                    
+                  }}  className="absolute flex cursor-pointer gap-4 justify-center   bg-white z-10 py-4 hover:bg-[#eeeeee] right-0 px-4 rounded-[12px] top-[3rem] shadow-xl" >
+                <PowerSettingsNewTwoTone  />
+               <span className="my-auto h-[1.29rem] " >LOGOUT</span>
+              </div>
+                )
+              }
           </div>      
         </div>
     </div>
