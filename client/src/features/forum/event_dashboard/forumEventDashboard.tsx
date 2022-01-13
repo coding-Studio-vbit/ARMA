@@ -19,7 +19,7 @@ function ForumEventDashboard() {
     return !loading?(
         (
             <div id="forumEventPage">
-                <Navbar navItems={[]}/>
+                {/* <Navbar navItems={[]}/> */}
 
                 <div id='forumEventPageContent' className='w-screen mx-auto my-5'>
 
