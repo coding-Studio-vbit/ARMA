@@ -6,7 +6,7 @@ module.exports = {
     },
     extend: {
       screens:{
-
+        "xsm":'420px'
       },
       colors: {
         "arma-blue": "#139BEB",
