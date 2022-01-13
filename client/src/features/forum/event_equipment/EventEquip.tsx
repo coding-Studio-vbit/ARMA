@@ -11,7 +11,7 @@ export default function EventEquip() {
 
 
     return (
-        <div className="flex flex-col sm:mx-24 mt-8 md:items-start items-center ">
+        <div className="flex flex-col sm:mx-24 mt-8 md:items-start items-center mb-8 ">
       <span className='text-arma-title sm:text-4xl  text-2xl mb-8 font-semibold'>[eventname] -  Equipment</span>
         <div className='flex gap-2'>
         <span className = 'text-arma-gray text-lg mb-8 font-semibold'>Choose Equipment</span>

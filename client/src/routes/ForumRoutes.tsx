@@ -9,9 +9,10 @@ import EventEquip from "../features/forum/event_equipment/EventEquip";
 
 const ForumRoutes = () => {
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Navbar navItems={[]}/>
-        <Routes>
+      <div className="flex-1">
+      <Routes>
           <Route path="/" element={<Dashboard/>} />
           <Route path="/eventDashboard" element={<ForumEventDashboard/>} />
           <Route path="/eventEquipment" element={<EventEquip />} />
@@ -19,6 +20,7 @@ const ForumRoutes = () => {
           <Route path="/reportAndMedia" element={<ReportAndMedia/>} />
           
         </Routes>
+      </div>
       <Footer />
     </div>
   );
