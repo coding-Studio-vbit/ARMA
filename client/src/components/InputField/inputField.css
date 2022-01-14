@@ -9,6 +9,11 @@
   border: 2px solid rgb(200, 200, 200);
   border-radius: 0.5rem;
 }
+.inputField:disabled ~ .label {
+  top: -3.25rem;
+  @apply px-4;
+  color: #222222e1;
+}
 .label {
   @apply px-6 py-[0.75rem];
   pointer-events: none;
