@@ -63,6 +63,6 @@ export default FileUploader;
 //   const [error, setError] = useState<string>("");
 //   const [fileObject, setfileObject] = useState<File|undefined>();
 {/* <FileUploader 
-      fileName={fileName} setFileName={setfileName} 
-      error={error} setError={setError}
-      fileSizeLimit={2000000} fileTypes={[]} fileObject={fileObject} setFileObject={setfileObject} /> */}
+fileName={fileName} setFileName={setfileName} 
+error={error} setError={setError}
+fileSizeLimit={2000000} fileTypes={[]} fileObject={fileObject} setFileObject={setfileObject} /> */}
