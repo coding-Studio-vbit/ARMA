@@ -109,12 +109,12 @@ function Login() {
           />
           {showPassword ? (
             <Visibility
-              className="absolute top-[0.67rem] right-3 text-arma-title cursor-pointer"
+              className="absolute top-[0.89rem] right-3 text-arma-title cursor-pointer"
               onClick={() => setShowPassword(false)}
             />
           ) : (
             <VisibilityOff
-              className="absolute top-[0.67rem] right-3 text-arma-title cursor-pointer"
+              className="absolute top-[0.89rem] right-3 text-arma-title cursor-pointer"
               onClick={() => setShowPassword(true)}
             />
           )}
