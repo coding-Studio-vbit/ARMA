@@ -3,10 +3,12 @@ module.exports = {
   theme: {
     fontFamily: {
       inter: "Inter, sans-serif",
+      poppins:'Poppins, sans-serif',
+      caveat:'Caveat, cursive'
     },
     extend: {
       screens:{
-
+        "xsm":'420px'
       },
       colors: {
         "arma-blue": "#139BEB",

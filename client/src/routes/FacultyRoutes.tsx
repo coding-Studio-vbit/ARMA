@@ -6,6 +6,7 @@ import StudentsList from "../features/faculty/students/StudentsList";
 import ForumsList from "../features/faculty/forums/ForumsList";
 import RequestsView from "../features/faculty/requests_view/RequestsView";
 import FacultyDashBoard from "../features/faculty/dashboard/facultyDashBoard";
+import { FacultyProfile } from "../features/faculty/profile/facultyprofile";
 
 const FacultyRoutes = () => {
   const { faculty } = useUser();
@@ -15,19 +16,21 @@ const FacultyRoutes = () => {
     {  label:'Students',icon:"person",path:'/' },        
 ];
   return (
-    <div>
-      <div>
+    <div className="min-h-screen flex flex-col"> 
         <Navbar navItems={navItems}/>
+        <div className="flex-1 mt-[80px]">
         <Routes>
         <Route path="/studentsList" element={<StudentsList/>} />
         <Route path="/forumsList" element={<ForumsList/>} />
         <Route path="/" element={<FacultyDashBoard/>} />
         <Route path="/requestsView" element={<RequestsView/>} />
+        <Route path="/profile" element={<FacultyProfile/>} />
+
 
 
         </Routes>
-        {/* <Footer /> */}
       </div>
+        <Footer />
     </div>
   );
 };

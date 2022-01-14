@@ -29,7 +29,7 @@ const login = async (email, password, userAgent, userType) => {
       user.password = "";
       return response({ token: token, user: user }, process.env.SUCCESS_CODE);
     }else{
-      return response("Invalid Credentials!", process.env.SUCCESS_CODE);
+      return response("Invalid Credentials!", process.env.FAILURE_CODE);
 
     }
   } catch (error) {
