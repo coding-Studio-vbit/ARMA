@@ -96,7 +96,7 @@ const reportAndMedia = async(req,res) => {
         temp.push(req.files.eventImages[p].path)
       }  
       event.mediaFilePaths= temp
-      event.eventStatus = "APPROVED"
+      event.eventStatus = "COMPLETED"
       await event.save();
       res.json(response("updated Event Report and Media files", process.env.SUCCESS_CODE))
     } catch (error) {

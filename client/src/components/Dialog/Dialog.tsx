@@ -71,8 +71,6 @@ export const Dialog = ({ show, setShow, children, title }: DialogProps) => {
   </motion.div>
         )
       }
-
-  
   </AnimatePresence>
   )
 };
