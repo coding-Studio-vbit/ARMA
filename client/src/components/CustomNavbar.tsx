@@ -1,5 +1,5 @@
 import { PowerSettingsNewTwoTone } from "@material-ui/icons";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useUser } from "../providers/user/UserProvider";
 import { Sidebar } from "./Sidebar";
 
@@ -26,7 +26,7 @@ const Navbar = ({ navItems}: NavbarProps) => {
 
         {/* side navigation bar */}
         
-        {showSideNav && <Sidebar show={showSideNav} setShow={setshowSideNav} navItems={navItems}  />}
+       <Sidebar show={showSideNav} setShow={setshowSideNav} navItems={navItems}  />
         <div className="flex-1 flex justify-between px-3 md:px-8 lg:px-16 shadow-md h-20 items-center">
 
           {/* {ARMA Title} */}
