@@ -1,15 +1,16 @@
-// import Navbar from "../../../components/CustomNavbar";
+import Navbar from "../../../components/CustomNavbar";
 import { useState } from "react";
 import {
     CloudUploadTwoTone,
   } from "@material-ui/icons";
+import ToggleSwitch from "../../../components/CustomToggleSwitch";
 const CreateEvent =()=>{
     const [pdf1, setPdf1] = useState<File>();
     const [pdf2, setPdf2] = useState<File>();
     const [budget,setBudget]=useState(false);
     return(
-        <div>
-            {/* <Navbar navItems={[]} userName="Kalyan" /> */}
+        <div className="mb-10">
+            <Navbar navItems={[]}  />
             <div>
                 <span className="material-icons mt-10 ml-2 md:ml-6 justify-between">chevron_left</span>
                 <h1 className="font-sans justify-between text-arma-dark-blue font-semibold text-2xl md:text-4xl inline-block ml-4 md:ml-24">Create Event</h1>    
@@ -84,15 +85,9 @@ const CreateEvent =()=>{
                             {pdf1 && <p className="m-0 p-0 truncate">{pdf1.name}</p>}
                         </div>
                         <div className="flex flex-col items-start gap-4 md:w-1/3">
-                            <div className="flex">  
-                                <div className="form-check form-switch">
-                                    <input className="form-check-input appearance-none w-9 -ml-10 rounded-full float-left h-5 align-top  bg-no-repeat bg-contain checked:bg-gray-300 focus:outline-none cursor-pointer shadow-sm" type="checkbox" role="switch" id="flexSwitchCheckDefault" />
-                                    <label className="form-check-label inline-block text-gray-800" htmlFor="flexSwitchCheckDefault">Budget Document</label>
-                                </div>
-                                {/* <label htmlFor="toogle-switch">
-                                    <input type="checkbox" id="toogle-switch" className="cursor-pointer h-5 w-9 rounded-full appearance-none bg-white bg-opacity-5 border-2 border-arma-blue checked:bg-gray-500 tarnsition duration-200" />
-                                </label> */}
-                                {/* <span className="text-lg md:text-xl text-gray-600 md:ml-12 mt-5 md:mt-0">Budget Document</span> */}
+                            <div className="flex mt-5 md:mt-0">  
+                                <ToggleSwitch isEnabled={budget} toggleSwitch={setBudget}  />
+                                <span className="text-lg md:text-xl text-gray-600">Event Budget</span>
 
                             </div>
                             {budget && <label className="md:ml-12 rounded-[8px] hover:bg-slate-500/10 !cursor-pointer px-12 py-6 outline-dashed outline-gray-500">

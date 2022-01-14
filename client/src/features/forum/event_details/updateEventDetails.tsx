@@ -6,8 +6,8 @@ import {
 const UpdateEventDetails=()=>{
     const [pdf1, setPdf1] = useState<File>();
     return(
-        <div className="bg-gray-100 h-full">
-            <Navbar navItems={[]} userName="Kalyan" />
+        <div className="bg-gray-100 h-full mb-10">
+            <Navbar navItems={[]}  />
             <h1 className="font-sans text-arma-dark-blue font-semibold text-xl md:text-4xl inline-block ml-4 md:ml-28 mt-2">c.S(); SoC - Event Details</h1>    
             <div className="mx-4 md:mx-28 mt-12 md:mt-20">
                 <div>
@@ -39,7 +39,7 @@ const UpdateEventDetails=()=>{
                             <h1 className="text-gray-500 text-md md:text-xl ">Event Proposal Document</h1>
                             <span className="material-icons text-arma-blue ml-3">library_books</span>
                         </div>
-                        <div className=" border border-solid rounded-2xl border-white mt-3 p-5 h-fit text-xs md:text-sm justify-center">
+                        <div className="flex p-5 h-fit text-xs md:text-sm  justify-center">
                             <div className="flex flex-col items-start gap-4 md:w-1/3 ">                    
                                 <span className="text-xs md:text-md  text-gray-400">Upload New Document</span>
                                 <label className="rounded-[8px] hover:bg-slate-500/10 !cursor-pointer px-12 py-6 outline-dashed outline-gray-500">
