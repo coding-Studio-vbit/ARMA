@@ -4,7 +4,7 @@ const controller = require("../../../services/roles/controller")
 
 // ADD ROLES
 
-router.post("/addRole",(req,res,next)=>{
+router.post("/addRoles",(req,res,next)=>{
     return checkRolePermissions(req, res, next, "ADD_ROLE")
     },
     controller.addRoles
