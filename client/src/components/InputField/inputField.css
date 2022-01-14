@@ -3,7 +3,7 @@
   width: 100%;
 }
 .inputField {
-  @apply px-6 py-[0.75rem];
+  @apply px-4 py-[0.75rem];
   outline: none;
   transition: border 0.15s ease-out;
   border: 2px solid rgb(200, 200, 200);
@@ -15,7 +15,7 @@
   color: #222222e1;
 }
 .label {
-  @apply px-6 py-[0.75rem];
+  @apply px-5 py-[0.75rem];
   pointer-events: none;
   position: absolute;
   text-align: center;
