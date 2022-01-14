@@ -30,10 +30,7 @@ router.post(
 
 router.post("/updateBudget", upload.fields([{name: "budgetDocument", maxCount:1}]), controller.updateBudgetDoc);
 
-<<<<<<< HEAD
-module.exports = router;
-=======
 router.post("/reportAndMedia" , upload.fields([{name: "eventReport", maxCount:1} , {name:"eventImages", maxCount:10}]), controller.reportAndMedia)
-
 module.exports = router;
->>>>>>> bb14a1e6283d8f5f0d7deaa3e8d79ff27774a8ff
+
+

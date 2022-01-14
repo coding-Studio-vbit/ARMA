@@ -18,6 +18,11 @@ const forum = new mongoose.Schema({
     required: true,
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: "students" }],
   },
+  facultyCoordinatorID: {
+    required:true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "faculty",
+  },
   forumMembers: [
     {
       type: mongoose.Schema.Types.ObjectId,
