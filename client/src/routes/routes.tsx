@@ -6,8 +6,8 @@ import { ForgotPassword } from "../components/Auth/forgotPassword";
 import {ResetPassword} from "../components/Auth/ResetPassword";
 import ForumsList from "../features/faculty/forums/ForumsList";
 import { useUser } from "../providers/user/UserProvider";
-import CreateEvent from "../features/forum/create_event/createEvent";
-import UpdateEventDetails from "../features/forum/event_details/updateEventDetails";
+import EventEquip from "../features/forum/event_equipment/EventEquip";
+
 function AllRoutes() {
   const { faculty, forum } = useUser();
 
@@ -23,14 +23,21 @@ function AllRoutes() {
           }    
            { faculty &&    <Route path="/faculty/*" element={<FacultyRoutes />} />}
            
-        <Route path="/test" element={<UpdateEventDetails />} />
-        <Route path="*" element={<div>Page Not found! We will do this later :)</div>} />
+        <Route path="*" element={ <PageNotFound/> } />
 
       </Routes>
     </BrowserRouter>
   );
 }
 
+const PageNotFound = ()=>{
+  const {forum,faculty} = useUser()
+  if(!forum || !faculty) {
+    return <Navigate to={'/'}/>
+  }else{
+    return <div>Page Not found! We will do this later :)</div>
+  }
+}
 
 
 export default AllRoutes;
