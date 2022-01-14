@@ -4,6 +4,9 @@ export interface Faculty {
   name: string;
   rollNumber: string;
   email: string;
+  designation: string;
+  department: string;
+  phone: string;
   roles: Role[];
 }
 interface Role {

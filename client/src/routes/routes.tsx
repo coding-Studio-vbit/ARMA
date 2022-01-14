@@ -7,6 +7,7 @@ import {ResetPassword} from "../components/Auth/ResetPassword";
 import ForumsList from "../features/faculty/forums/ForumsList";
 import { useUser } from "../providers/user/UserProvider";
 import EventEquip from "../features/forum/event_equipment/EventEquip";
+import FacultyDashBoard from "../features/faculty/dashboard/facultyDashBoard";
 
 function AllRoutes() {
   const { faculty, forum } = useUser();
@@ -14,7 +15,7 @@ function AllRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Login/>} />
         <Route path="/forgot-password" element={<ForgotPassword/>} />
         <Route path="/reset-password/:id" element={<ResetPassword/>} />
         

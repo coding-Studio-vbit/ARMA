@@ -3,8 +3,7 @@ import { useState } from "react";
 import { useUser } from "../providers/user/UserProvider";
 import { Sidebar } from "./Sidebar";
 import { motion, AnimatePresence } from "framer-motion";
-
-// import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export interface NavItem {
   label: string;
@@ -17,7 +16,8 @@ interface NavbarProps {
 }
 
 const Navbar = ({ navItems }: NavbarProps) => {
-  // let nav = useNavigate();
+  let nav = useNavigate();
+  const location = useLocation();
   const { forum, faculty, logout } = useUser();
   const [showSideNav, setshowSideNav] = useState<boolean>(false);
   const [showLogout, setShowLogout] = useState(false);
@@ -95,15 +95,18 @@ const Navbar = ({ navItems }: NavbarProps) => {
                 transition={{ ease: "easeOut", duration: 0.1 }}
               >
                 <div className="flex flex-col rounded-[12px]  shadow-xl bg-white absolute right-0">
-                <div
-                    onClick={() => {
-                      
-                    }}
-                    className=" flex cursor-pointer gap-4 justify-center  rounded-[12px] z-10 py-4 hover:bg-[#eeeeee]  px-4 "
-                  >
-                    <AccountCircle />
-                    <span className="my-auto h-[1.29rem] ">Profile</span>
-                  </div>
+                  {!location.pathname.includes("profile") && (
+                    <div
+                      onClick={() => {
+                        if (faculty) nav("/faculty/profile");
+                        else if (forum) nav("forum/profile");
+                      }}
+                      className=" flex cursor-pointer gap-4 justify-center  rounded-[12px] z-10 py-4 hover:bg-[#eeeeee]  px-4 "
+                    >
+                      <AccountCircle />
+                      <span className="my-auto h-[1.29rem] ">Profile</span>
+                    </div>
+                  )}
                   <div
                     onClick={() => {
                       logout();
@@ -113,7 +116,6 @@ const Navbar = ({ navItems }: NavbarProps) => {
                     <PowerSettingsNewTwoTone />
                     <span className="my-auto h-[1.29rem] ">Logout</span>
                   </div>
-                 
                 </div>
               </motion.div>
             )}
