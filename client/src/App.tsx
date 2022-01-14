@@ -4,10 +4,10 @@ import AllRoutes from './routes/routes';
 
 function App() {
   return (
-    <div className="App font-inter">
-      <UserProvider> 
-       <AllRoutes />
-      </UserProvider>
+    <div className="App font-inter p-80">
+        <UserProvider> 
+        <AllRoutes />
+        </UserProvider>      
     </div>
   );
 }
