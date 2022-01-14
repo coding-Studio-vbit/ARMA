@@ -10,13 +10,13 @@ const CreateEvent = () => {
   return (
     <div className="flex flex-col  mx-6 sm:mx-8 md:mx-32 lg:mx-48 ">
       <div
-        className="mt-8 flex items-center  
+        className="mt-8 mb-4 flex items-center  
                 "
       >
         <span className="mr-8  material-icons scale-100 md:scale-150">
           chevron_left
         </span>
-        <h1 className=" text-arma-dark-blue font-semibold text-2xl md:text-4xl">
+        <h1 className=" font-poppins text-arma-dark-blue  text-2xl md:text-4xl">
           Create Event
         </h1>
       </div>
@@ -29,7 +29,7 @@ const CreateEvent = () => {
         <div className="w-full flex flex-col my-6">
           <label
             htmlFor="eventName"
-            className="form-label inline-block mb-2 text-lg md:text-xl lg:text-2xl text-gray-600"
+            className="form-label inline-block mb-2 text-lg md:text-xl  text-gray-600"
           >
             Event Name
           </label>
@@ -39,7 +39,7 @@ const CreateEvent = () => {
                         form-control
                         block
                         lg:w-3/4
-
+                        shadow-md
                         h-6
                         px-4
                         py-6
@@ -48,7 +48,6 @@ const CreateEvent = () => {
                         font-normal
                         text-gray-700
                         bg-white bg-clip-padding
-                        border border-solid border-gray-500/40
                         rounded-xl
                         transition
                         ease-in-out
@@ -62,7 +61,7 @@ const CreateEvent = () => {
 
           <label
             htmlFor="description"
-            className="form-label inline-block mb-2 text-lg md:text-xl lg:text-2xl text-gray-600 mt-6"
+            className="form-label mt-6 inline-block mb-2 text-lg md:text-xl  text-gray-600"
           >
             Description
           </label>
@@ -73,6 +72,8 @@ const CreateEvent = () => {
                         lg:w-3/4
                         h-32
                         px-4
+                        shadow-md
+
                         py-3
                         mb-8
                         text-lg
@@ -80,7 +81,6 @@ const CreateEvent = () => {
                         font-normal
                         text-gray-700
                         bg-white bg-clip-padding
-                        border border-solid border-gray-500/40
                         rounded-xl
                         transition
                         ease-in-out
@@ -168,9 +168,11 @@ const CreateEvent = () => {
         </div>
         
       </div>
-      <button className="btn tracking mx-auto my-8" onClick={() => {}}>
-              Create
-            </button>
+      <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
+          <button className="btn px-8 py-3   text-xl tracking-wide  ml-auto my-8" onClick={() => {}}>
+                  CREATE
+                </button>
+      </div>
     </div>
   );
 };
