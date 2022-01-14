@@ -5,6 +5,7 @@ import ToggleSwitch from './components/CustomToggleSwitch';
 import { UserProvider } from './providers/user/UserProvider';
 import AllRoutes from './routes/routes';
 import {useState} from 'react'
+import CreateEvent from './features/forum/create_event/createEvent';
 
 function App() {
 
@@ -15,12 +16,7 @@ function App() {
       {/* <UserProvider> 
        <AllRoutes />
       </UserProvider> */}
-
-      {/* <div className='p-20'>
-      <ToggleSwitch isEnabled={toggle} toggleSwitch={setToggle} />
-
-
-      </div> */}
+      <CreateEvent/>
     </div>
   );
 }

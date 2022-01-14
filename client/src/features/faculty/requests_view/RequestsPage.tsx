@@ -8,6 +8,8 @@ const RequestsPage = () => {
 
   return (
     <div>
+        <h1>requests</h1>
+    <div>
       <p className="text-3xl text-arma-dark-blue">Requests</p>
       <div id="requestsTable">
         <Select
@@ -29,6 +31,7 @@ const RequestsPage = () => {
         api=""
         /> */}
       </div>
+    </div>
     </div>
   );
 };
