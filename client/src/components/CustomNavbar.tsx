@@ -99,7 +99,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
                     <div
                       onClick={() => {
                         if (faculty) nav("/faculty/profile");
-                        else if (forum) nav("forum/profile");
+                        else if (forum) nav("/forum/profile");
                       }}
                       className=" flex cursor-pointer gap-4 justify-center  rounded-[12px] z-10 py-4 hover:bg-[#eeeeee]  px-4 "
                     >
