@@ -1,15 +1,16 @@
 import { AccountCircle, Edit } from "@material-ui/icons";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Table from "../../../components/CustomTable";
 import { InputField } from "../../../components/InputField/InputField";
+import { TextArea } from "../../../components/InputField/TextArea";
 import { useUser } from "../../../providers/user/UserProvider";
 
 export default function ForumProfile() {
   const navigate = useNavigate()
   const { forum } = useUser();
   const [isEdit, setIsEdit] = useState(false);
-  const [forumName, setForumName] = useState<string>(forum?.name ?? " ")
   const [description, setDescription] = useState<string>(forum?.description ?? " ")
   const [facultycoordinator, setFacultycoordinator] = useState<string>(forum?.facultyCoordinator ?? " ")
   const [forumEmail, setForumEmail] = useState<string>(forum?.email ?? " ")
@@ -17,20 +18,38 @@ export default function ForumProfile() {
     <div className="mt-8 overflow-x-auto">
       <div className="flex flex-col items-center m-auto sm:w-[80%] md:w-max w-[90%] ">
         <AccountCircle className="!text-7xl text-arma-title"/>
-          <p className="text-center item-center text-2xl font-semibold text-arma-blue">
+        <span className="text-center  item-center text-2xl font-semibold text-arma-blue">
           {forum?.name}
+          <AnimatePresence
+          initial={false}
+          exitBeforeEnter
+          >
+
           {!isEdit && (
+            <motion.span
+            className="inline-block"
+            
+            initial={{ rotate:180, opacity: 0 }}
+            animate={{ rotate:0, opacity: 1 }}
+            exit={{ rotate:360, opacity: 0 }}
+            transition={{ ease: "easeOut", duration: 0.45 }}
+
+            >
+
             <Edit
               className="ml-3 text-black !text-xl cursor-pointer"
               onClick={() => {
                 setIsEdit(true);
               }}
-            />
+              />
+              </motion.span>
           )}
-        </p>
+                    </AnimatePresence>
+
+        </span>
         <p className="text-black mb-10 text-lg">Forum</p>
         <div className="mx-auto w-full">
-            <InputField
+            <TextArea
               className="mb-5"
               name="Forum Description"
               value={description}
@@ -54,14 +73,31 @@ export default function ForumProfile() {
               onChange={(e) =>{setForumEmail(e.target.value)}}
             />
           </div>
+          <div className="h-12">
+            <AnimatePresence
+            initial={false}
+            exitBeforeEnter
+            >
+
+            
           {isEdit && (
+            <motion.div
+            initial={{ y: "-1vh", opacity: 0 }}
+            animate={{ y: "0", opacity: 1 }}
+            exit={{ y: "-0.5vh", opacity: 0 }}
+            transition={{ ease: "easeOut", duration: 0.1 }}
+            >
+
           <button
             className="btn  bg-arma-title rounded-[8px] px-6 py-2 m-auto"
             onClick={() => setIsEdit(false)}
-          >
+            >
             SAVE
           </button>
+            </motion.div>
         )}
+        </AnimatePresence>
+          </div>
       </div>
           <div className="md:mx-[5rem] lg:mx-[8rem] xl:mx-[12rem] sm:mx-[2rem] mx-4  mt-4">
           <div className="flex flex-col  gap-2 sm:flex-row  mb-4">
