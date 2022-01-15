@@ -103,13 +103,11 @@ const Table = ({
         if (transformer) {
           newData = newData.map(transformer);
         }
-        console.log(response.data);
+        console.log(response);
         
         setData(newData);
       })
       .catch((error) => {
-        console.log(error);
-        
         console.log(error.response.message);
       });
   }, [currentPage, totalPages, rowsPerPage, order, orderBy,filter]);
@@ -147,9 +145,9 @@ const Table = ({
 
   return (
     <>
-    <div className="w-full border-2 shadow-md  rounded-[16px] overflow-x-auto ">
+    <div className="w-full border-2 shadow-md rounded-[16px] overflow-clip">
       <table className="w-full ">
-        <thead className="bg-white border-b-2 rounded-[8px] border-black/30  ">
+        <thead className="bg-white border-b-2 rounded-[8px] border-black/30">
           <tr className="rounded-[16px]" >
             {headers.map((header) => {
               return (

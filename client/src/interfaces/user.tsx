@@ -33,6 +33,8 @@ export interface Forum {
   name: string;
   email:string
   roles:[]
+  description:string;
+  facultyCoordinator:string;
   profileCoverPath: string;
   forumHeads: Student[];
   forumMembers: Student[];

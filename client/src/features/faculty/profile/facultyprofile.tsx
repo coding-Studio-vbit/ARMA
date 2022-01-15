@@ -14,7 +14,7 @@ function FacultyProfile() {
   const [phone, setPhone] = useState<string>(faculty?.phone ?? " ");
 
   return (
-    <div className="bg-arma-page-background h-screen mt-24">
+    <div className="mt-12">
       <div className="flex flex-col items-center m-auto">
         <p className="text-center item-center text-2xl font-semibold text-arma-blue">
           {faculty?.name}
@@ -28,8 +28,8 @@ function FacultyProfile() {
           )}
         </p>
         <p className="text-black mt-4 mb-10 text-lg">Faculty</p>
-        <div>
-          <div className="flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+        <div className="sm:w-[80%] md:w-max w-[90%]">
+          <div className="flex flex-col gap-y-6 mb-6 w-full  md:flex-row sm:gap-x-8">
             <InputField
               className="mb-5"
               name="RollNumber"
@@ -46,7 +46,7 @@ function FacultyProfile() {
               disabled={!isEdit}
             />
           </div>
-          <div className="flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+          <div className="flex flex-col gap-y-6 mb-6 w-full md:flex-row sm:gap-x-8">
             <InputField
               className="mb-5"
               name="Designation"
@@ -62,7 +62,7 @@ function FacultyProfile() {
               disabled={!isEdit}
             />
           </div>
-          <div className="mx-auto">
+          <div className="mx-auto w-full">
             <InputField
               className="mb-5"
               name="Phone Number"

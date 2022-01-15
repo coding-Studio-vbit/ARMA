@@ -11,9 +11,9 @@ import { FacultyProfile } from "../features/faculty/profile/facultyprofile";
 const FacultyRoutes = () => {
   const { faculty } = useUser();
   const navItems=[
-    {  label:'Dashboard',icon:"home",path:'/'},
-    {  label:'Forums',icon:"group",path:'/' },
-    {  label:'Students',icon:"person",path:'/' },        
+    {  label:'Dashboard',icon:"home",path:'/faculty'},
+    {  label:'Forums',icon:"group",path:'/faculty/forumsList' },
+    {  label:'Students',icon:"person",path:'/faculty/studentsList' },        
 ];
   return (
     <div className="min-h-screen flex flex-col"> 
