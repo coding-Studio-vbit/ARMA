@@ -8,7 +8,7 @@ import ForumEventDashboard from "../features/forum/event_dashboard/forumEventDas
 import EventEquip from "../features/forum/event_equipment/EventEquip";
 import CreateEvent from "../features/forum/create_event/createEvent";
 import ForumProfile from "../features/forum/profile/ForumProfile";
-import Test from "../features/forum/profile/test";
+import EventAttendance from "../features/forum/event_attendance/event_attendance";
 
 const ForumRoutes = () => {
   return (
@@ -23,7 +23,7 @@ const ForumRoutes = () => {
           <Route path="/reportAndMedia" element={<ReportAndMedia/>} />
           <Route path="/createEvent" element={<CreateEvent/>} />
           <Route path="/profile" element={<ForumProfile/>} />
-          <Route path="/test" element={<Test/>} />
+          <Route path="/eventAttendance" element={<EventAttendance/>} />
 
 
 
