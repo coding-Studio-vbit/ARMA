@@ -116,4 +116,77 @@ const addNewCoreForumMember = async (req, res) => {
     }
 }
 
-module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getEquipments}
+const getCoreForumMembers = async (req, res) => {
+  //For pagination
+  let page = req.query.page ? Number(req.query.page) : 1;
+  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+
+  //For filters
+  let where = {};
+  console.log(req.query.name);
+  if (req.query.name) where.name = req.query.name
+
+  //For sorting
+  let sort = {};
+  if (req.query.orderBy && req.query.order)
+    sort[req.query.orderBy] = req.query.order;
+  else sort = { name: "asc" };
+  try {
+    result = await forums
+      .findOne({name:req.query.name})
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort(sort).select('-password')
+      .populate({path: 'forumCoreTeamMembers.studentID'})
+    res.json(
+      response({ data: result.forumCoreTeamMembers, total: result.forumCoreTeamMembers.length }, process.env.SUCCESS_CODE)
+    );
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response(
+        { message: "Forum Core Team Members data fetch error" },
+        process.env.FAILURE_CODE
+      )
+    );
+  }
+};
+
+const getForumMembers = async (req, res) => {
+  //For pagination
+  let page = req.query.page ? Number(req.query.page) : 1;
+  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+
+  //For filters
+  let where = {};
+  console.log(req.query.name);
+  if (req.query.name) where.name = req.query.name
+
+  //For sorting
+  let sort = {};
+  if (req.query.orderBy && req.query.order)
+    sort[req.query.orderBy] = req.query.order;
+  else sort = { name: "asc" };
+  try {
+    result = await forums
+      .findOne({name:req.query.name})
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort(sort).select('-password')
+      .populate({path: 'forumMembers'})
+    res.json(
+      response({ data: result.forumMembers, total: result.forumMembers.length }, process.env.SUCCESS_CODE)
+    );
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response(
+        { message: "Forum Team Members data fetch error" },
+        process.env.FAILURE_CODE
+      )
+    );
+  }
+};
+
+
+module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getCoreForumMembers, getForumMembers, getEquipments}

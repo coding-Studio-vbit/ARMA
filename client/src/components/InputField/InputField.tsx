@@ -7,6 +7,7 @@ interface IFProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string | undefined;
   type?: string 
+  disabled?:boolean
 }
 
 const InputField: FC<IFProps> = ({
@@ -16,17 +17,19 @@ const InputField: FC<IFProps> = ({
   type,
   onChange,
   error,
+  disabled = false
 }) => {
   return (
     <div>
 
     <div className={`inputDiv  ${error && "mb-10"}  ${className}`}>
       <input
-        className="inputField"
+        className="inputField !w-full"
         value={value}
         type={!type ? "text" : type}
         required
         onChange={(e) => onChange(e)}
+        disabled = {disabled}
       />
       <div className="label flex items-center 	">
         <label>{name}</label>

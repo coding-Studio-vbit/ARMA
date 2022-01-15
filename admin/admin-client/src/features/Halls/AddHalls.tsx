@@ -11,29 +11,33 @@ const [list, setList] = useState<{equipment:string, quantity: string} []>([])
 let temp = [...list]
     return(
             <div className="flex flex-col grow items-center">
-            <div className="mt-12 w-[90%] sm:w-[60%] md:w-[80%] lg:w-[60%]">
+            <div className="mt-12 w-[80%] sm:w-[60%] md:w-[70%] lg:w-[50%] xl:w-[40%]">
             <p className= 'text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 '>ADD HALL</p>
-           
-            <InputField
+           <div>
+           <InputField
             className="mb-6"
             name="Name"
             onChange={(e) =>{}}
             />
-
-            <div className=' flex flex-col gap-y-6 mb-12  md:flex-row sm:gap-x-8'>
+           </div>
+            <div className=' flex flex-col w-full gap-y-6 mb-12  md:flex-row sm:gap-x-6'>
+            <div className="basis-full">
             <InputField 
             name="Block"                         
             onChange={(e) =>{}}
             />
+            </div>
+            <div className="basis-full">
             <InputField 
             name="Capacity"
             onChange={(e) =>{}}
             />
             </div>
+            </div>
             
             <p className= 'text-center lg:text-left text-arma-title text-lg font-medium mb-4 ml-2 '>Equipment</p>
 
-            <div className=' flex flex-col gap-y-6 mb-6  w-full md:w-[100%] lg:w-[90%] sm:w-[100%] align-middle md:flex-row sm:gap-x-4'>
+            <div className=' flex flex-col gap-y-6 mb-6 align-middle md:flex-row sm:gap-x-4'>
 
             <InputField 
             name="Equipment"                         
