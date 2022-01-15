@@ -15,7 +15,7 @@ export default function ForumProfile() {
     <div className="mt-8 overflow-x-auto">
       <div className="flex flex-col items-center m-auto sm:w-[80%] md:w-max w-[90%] ">
         <AccountCircle className="!text-7xl text-arma-title"/>
-        <p className="text-center item-center text-2xl font-semibold text-arma-blue">
+          <p className="text-center item-center text-2xl font-semibold text-arma-blue">
           {forum?.name}
           {!isEdit && (
             <Edit
@@ -86,7 +86,7 @@ export default function ForumProfile() {
           ]}
         />
         </div>
-        <div className="flex flex-col  gap-2 sm:flex-row  mb-4">
+        <div className="flex flex-col  gap-2 sm:flex-row  mb-4 mt-2">
               <span className="text-arma-gray font-semibold text-lg">Forum Members</span>
               <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 ">ADD</button>
               <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1">GENERATE CERTIFICATE</button>
