@@ -10,7 +10,9 @@ router.post("/addNewForumMembers" , controller.addNewForumMembers);
 
 router.post("/addNewCoreForumMember" , controller.addNewCoreForumMember);
 
+router.get("/getCoreForumMembers" , controller.getCoreForumMembers)
 
+router.get("/getForumMembers" , controller.getForumMembers)
 
 
 module.exports = router;
