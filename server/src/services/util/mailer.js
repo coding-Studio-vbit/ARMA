@@ -3,7 +3,6 @@ const nodemailer = require("nodemailer");
 const fillTemplateWithData = (template, data) => {
   let temp = template;
   for (property in data) {
-    console.log(`\${${property}}`)
     temp = temp.replace(`\${${property}}`, data[property]);
   }
 

@@ -8,5 +8,4 @@ router.post("/addAdmin", async (req, res) => {
 });
 
 
-
 module.exports = router;

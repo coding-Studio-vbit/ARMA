@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useUser } from "../providers/user/UserProvider";
 import { Sidebar } from "./Sidebar";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 export interface NavItem {
   label: string;
@@ -23,7 +23,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
   const [showLogout, setShowLogout] = useState(false);
 
   return (
-    <div className="flex flex-row bg-white z-[11] fixed w-full">
+    <div className="flex h-20  flex-row bg-white z-[11] fixed w-full">
       {/* side navigation bar */}
 
       <Sidebar
@@ -31,7 +31,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
         setShow={setshowSideNav}
         navItems={navItems}
       />
-      <div className="flex-1 flex justify-between px-3 md:px-8 lg:px-16 shadow-md h-20 items-center">
+      <div className="flex-1 flex justify-between px-3 md:px-8 lg:px-16 shadow-md  items-center">
         {/* {ARMA Title} */}
         <div
           id="ARMA-Logo"
@@ -49,22 +49,29 @@ const Navbar = ({ navItems }: NavbarProps) => {
         </div>
 
         {/* Navigation Items */}
-        <div id="Nav-Items" className="hidden sm:hidden md:flex flex-row ">
+        <div id="Nav-Items" className="hidden  md:justify-items-center gap-10	  sm:hidden md:flex flex-row ">
           {navItems.map((item: NavItem, index: Number) => {
             return (
-              <div
-                key={item.label}
-                className="w-36 mx-0 h-20 
-                  flex justify-center items-center 
-                  cursor-pointer border-b-4 hover:border-arma-blue border-white"
+              <NavLink 
+              end
+              to={item.path}
+              className={({isActive})=>isActive?'border-b-4 border-arma-blue':'border-white'}
+              
               >
-                <span className="material-icons text-arma-icon ">
+                <div
+                key={item.label}
+                className=" h-20
+                  flex justify-center items-center 
+                  cursor-pointer border-b-4 border-white"
+              >
+                <span className="material-icons !text-[1.25rem] text-arma-icon ">
                   {item.icon}
                 </span>
-                <span className="text-black text-xl font-medium ml-1">
+                <span className="text-black font-poppins  ml-1">
                   {item.label}
                 </span>
               </div>
+              </NavLink>
             );
           })}
         </div>
