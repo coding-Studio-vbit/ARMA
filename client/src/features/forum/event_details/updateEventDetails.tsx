@@ -8,24 +8,31 @@ const UpdateEventDetails=()=>{
     const [desc,setDesc]=useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat")
     const [comments,setComments]=useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat")
     return(
-        <div className="bg-arma-page-background h-screen pt-12">
-            <div className="pl-[10%]">
-                <h1 className="text-arma-blue font-semibold text-xl md:text-4xl">
-                    c.S(); SoC - Event Details
-                    {!isEdit && (
-                        <Edit
-                        className="ml-3 text-black !text-xl cursor-pointer"
-                        onClick={() => {
-                          setIsedit(true);
-                        }}
-                      />
-                    )}
-                </h1>    
-                <div className="mt-20">
-                    <div className="mt-4 md:mt-8">
-                        <div className="flex">
-                            <h1 className="text-gray-500 text-md md:text-2xl">Event Description</h1>
-                            <span className="material-icons text-arma-blue ml-3">help</span>
+        <div className="my-8 ">
+            <h1 className="font-sans text-arma-dark-blue font-semibold text-xl md:text-4xl inline-block ml-4 md:ml-28 mt-2">c.S(); SoC - Event Details</h1>    
+            <div className="mx-auto mt-12 w-[85%] sm:w-[70%] flex flex-col ">
+                <div>
+                    <div className="flex items-center">
+                        <h1 className="text-gray-500 text-md md:text-xl">Event Description</h1>
+                        <span className="material-icons text-arma-blue ml-3">help</span>
+                    </div>
+                    <textarea className="bg-white border border-solid shadow-xl w-full min-h-max outline-none rounded-2xl border-white mt-3 p-6 h-fit text-xs md:text-sm" rows={5}>
+                        
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos doloribus corrupti quod nostrum eius distinctio consequuntur, et inventore tenetur cum ipsum accusantium sapiente dolor magni voluptates excepturi non impedit nihil.
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis voluptates at perspiciatis aperiam alias consectetur ex? Eos culpa rem ipsa ducimus accusamus mollitia laudantium. Quibusdam corrupti ullam omnis cupiditate maiores.
+                        
+                    </textarea>
+                </div>
+                <div className="md:flex md:flex-col-2 justify-evenly ">
+                    <div className="md:w-1/2 md:mr-2  mt-6 md:mt-12">
+                        <div className="flex items-center ">
+                            <h1 className="text-gray-500 text-md md:text-xl">SAC Comments</h1>
+                            <span className="material-icons ml-3 text-arma-blue">feedback</span>
+                        </div>
+                        <div className="bg-white border shadow-xl border-solid rounded-2xl border-white mt-3 p-6 h-fit text-xs md:text-sm">
+                            <p className="text-justify">
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis voluptates at perspiciatis aperiam alias consectetur ex? Eos culpa rem ipsa ducimus accusamus mollitia laudantium. Quibusdam corrupti ullam omnis cupiditate maiores.
+                            </p>
                         </div>
                         <textarea 
                             value={desc} name="desc" 
