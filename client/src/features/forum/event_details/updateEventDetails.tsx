@@ -9,12 +9,14 @@ const UpdateEventDetails=()=>{
     return(
         <div className="my-8 ">
             <h1 className="font-sans text-arma-dark-blue font-semibold text-xl md:text-4xl inline-block ml-4 md:ml-28 mt-2">c.S(); SoC - Event Details
+            {!isEdit && (
             <Edit
               className="ml-3 text-black !text-xl md:!text-3xl cursor-pointer"
               onClick={() => {
                 setIsEdit(true);
               }}
             />
+            )}
             </h1>    
             <div className="mx-auto mt-12 w-[85%] sm:w-[70%] flex flex-col ">
                 <div className="mb-8">
