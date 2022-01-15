@@ -10,8 +10,7 @@ const CreateEvent = () => {
   return (
     <div className="flex flex-col  mx-6 sm:mx-8 md:mx-32 lg:mx-48 ">
       <div
-        className="mt-8 mb-4 flex items-center  
-                "
+        className="mt-8 mb-4 flex items-center"
       >
         <span className="mr-8  material-icons scale-100 md:scale-150">
           chevron_left
@@ -22,9 +21,7 @@ const CreateEvent = () => {
       </div>
 
       <div
-        className="flex flex-col justify-center items-center
-                 
-                w-full "
+        className="flex flex-col justify-center items-center w-full "
       >
         <div className="w-full flex flex-col my-6">
           <label
