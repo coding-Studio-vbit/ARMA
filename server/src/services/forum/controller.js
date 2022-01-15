@@ -3,6 +3,7 @@ const events = require("../../models/event");
 const forums = require('../../models/forum')
 const response = require("../util/response");
 const students = require('../../models/student')
+const equipments =require('../../models/equipment')
 
 const dashboard = async (req, res) => {
     try {
@@ -19,6 +20,21 @@ const dashboard = async (req, res) => {
         console.log(err);
         res.json(response(error, process.env.FAILURE_CODE));
       }
+}
+const getEquipments = async (req, res) => {
+  try {
+    let myEquip= await equipments.find({});
+    res.json(
+      response(
+        myEquip,
+        process.env.SUCCESS_CODE
+      )
+    );
+      
+    } catch (err) {
+      console.log(err);
+      res.json(response(error, process.env.FAILURE_CODE));
+    }
 }
 
 const getForumsList = async (req, res) => {
@@ -100,4 +116,4 @@ const addNewCoreForumMember = async (req, res) => {
     }
 }
 
-module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember}
+module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getEquipments}

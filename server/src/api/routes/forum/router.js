@@ -4,11 +4,12 @@ const multerStorage = require("../../../services/util/multerStorage");
 const multer = require("multer");
 const upload = multer({storage: multerStorage});
 
+
 router.get("/dashboard", controller.dashboard);
 
 router.post("/addNewForumMembers" , controller.addNewForumMembers);
 
 router.post("/addNewCoreForumMember" , controller.addNewCoreForumMember);
 
-
+router.get("/getEquipments", controller.getEquipments);
 module.exports = router;
