@@ -10,6 +10,7 @@ module.exports = {
    
     extend: {
       colors:{
+        'arma-gray':'#766C6C',
         'arma-blue':'#139BEB',
         'arma-green':'#55D380',
         'arma-red':'#FC6262',
