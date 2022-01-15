@@ -9,6 +9,7 @@ import EventEquip from "../features/forum/event_equipment/EventEquip";
 import CreateEvent from "../features/forum/create_event/createEvent";
 import ForumProfile from "../features/forum/profile/ForumProfile";
 import EventAttendance from "../features/forum/event_attendance/event_attendance";
+import UpdateEventDetails from "../features/forum/event_details/updateEventDetails";
 
 const ForumRoutes = () => {
   return (
@@ -22,6 +23,7 @@ const ForumRoutes = () => {
           <Route path="/event-venue" element={<EventVenue/>} />
           <Route path="/reportAndMedia" element={<ReportAndMedia/>} />
           <Route path="/createEvent" element={<CreateEvent/>} />
+          <Route path="/updateEvent" element={<UpdateEventDetails/>} />
           <Route path="/profile" element={<ForumProfile/>} />
           <Route path="/eventAttendance" element={<EventAttendance/>} />
 
