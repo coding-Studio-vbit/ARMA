@@ -133,7 +133,7 @@ const EventAttendance = ()=>{
                   c.S( );SoC - Attendance</h1>
                   </div>
                 <div className = 'pl-10 pb-10 mt-12'>
-                  <label htmlFor = 'upload' className = 'btn'>
+                  <label htmlFor = 'upload' className = 'btn cursor-pointer'>
                     Upload New Students list
                   </label>
                   <input type = 'file' id = 'upload' accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
