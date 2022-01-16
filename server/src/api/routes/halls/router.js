@@ -3,17 +3,12 @@ const checkRolePermissions = require("../../../services/util/checkRole");
 const controller = require("../../../services/halls/controller");
 
 //GET HALLS
+// will have to add checkRolePermissions after listing out all the permissions
 
-router.get("/getHalls",(req,res,next)=>{
-    checkRolePermissions(req,res,next,"GET_HALLS")
-        },
-    controller.getHalls)
+router.get("/getHalls",controller.getHalls)
 
 // ADD HALLS
 
-router.post("/addHall",(req,res,next)=>{
-    checkRolePermissions(req,res,next,"GET_HALLS")
-    },
-    controller.addHall)
+router.post("/addHall", controller.addHall)
 
 module.exports = router

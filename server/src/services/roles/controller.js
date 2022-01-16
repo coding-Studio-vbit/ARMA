@@ -4,6 +4,8 @@ const response = require("../../services/util/response");
 //ADD ROLES
 const addRoles = async(req,res)=>{
     try{
+        let data = await role.find({name:req.body.name})
+        if(data) return res.json(response({message:"Role already exists"},process.env.SUCCESS_CODE));
         let newRole = new role({
             name : req.body.name,
             permissions : req.body.permissions
@@ -28,7 +30,7 @@ const getRoles = async(req,res)=>{
     let limit = req.query.limit? Number(req.query.limit):1000000;
 
     let where = {}
-    if (req.query.name) where.name = req.query.name;
+    if (req.query.name) where.name = {$regex: req.query.name,$options: 'i'};
 
     let sort = {};
     if (req.query.orderBy && req.query.order)

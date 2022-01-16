@@ -8,7 +8,7 @@ const getHalls = async(req,res)=>{
     let limit = req.query.limit? Number(req.query.limit):1000000;
 
     let where = {}
-    if (req.query.name) where.name = req.query.name;
+    if (req.query.name) where.name = {$regex: req.query.name,$options: 'i'};
     if (req.query.capacity) where.capacity = req.query.capacity;
 
     let sort = {};
@@ -42,6 +42,8 @@ const getHalls = async(req,res)=>{
 
 const addHall = async(req,res)=>{
     try{
+        let data = halls.find({name:req.body.name})
+        if(data) return res.json(response({message:"Hall already exists"},process.env.SUCCESS_CODE));
         let newHall = new halls({
             name :  req.body.name,
             hallInfo : req.body.hallInfo,
