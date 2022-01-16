@@ -1,6 +1,7 @@
 const role = require("../../models/role");
 const response = require("../../services/util/response");
 
+//ADD ROLES
 const addRoles = async(req,res)=>{
     try{
         let newRole = new role({
@@ -19,6 +20,8 @@ const addRoles = async(req,res)=>{
     }
     
 }
+
+//GET ROLES
 
 const getRoles = async(req,res)=>{
     let page = req.query.page? Number(req.query.page): 1;

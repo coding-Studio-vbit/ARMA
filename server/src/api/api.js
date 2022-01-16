@@ -9,6 +9,7 @@ const eventRouter = require("./routes/events/router")
 const adminRouter = require("./routes/admin/router")
 const addRoles = require("./routes/roles/router")
 const getRoles = require("./routes/roles/router")
+const getHalls = require("./routes/halls/router")
 const api = () => {
   const router = express.Router();
   router.use("/", auth);
@@ -17,8 +18,9 @@ const api = () => {
   router.use("/forum",  forumRouter);
   router.use("/events", eventRouter);
   router.use("/test", testRouter);
-  router.use("/admin", adminRouter)
-  router.use("/roles",getRoles)
+  router.use("/admin", adminRouter);
+  router.use("/roles",getRoles);
+  router.use("/halls",getHalls);
   return router;
 };
 
