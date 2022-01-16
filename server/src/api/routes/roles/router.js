@@ -10,4 +10,12 @@ router.post("/addRoles",(req,res,next)=>{
     controller.addRoles
 )
 
+// GET ROLES
+
+router.get("/getRoles",(req,res,next)=>{
+    return checkRolePermissions(req, res, next, "FETCH_ROLE")
+    },
+    controller.getRoles
+)
+
 module.exports = router;

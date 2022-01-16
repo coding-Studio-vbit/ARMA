@@ -20,4 +20,39 @@ const addRoles = async(req,res)=>{
     
 }
 
-module.exports = { addRoles }
+const getRoles = async(req,res)=>{
+    let page = req.query.page? Number(req.query.page): 1;
+    let limit = req.query.limit? Number(req.query.limit):1000000;
+
+    let where = {}
+    if (req.query.name) where.name = req.query.name;
+
+    let sort = {};
+    if (req.query.orderBy && req.query.order)
+      sort[req.query.orderBy] = req.query.order;
+    else sort = { name: "asc" };
+
+    try {
+        result = await role
+            .find(where)
+            .skip((page-1)*limit)
+            .limit(limit)
+            .sort(sort);
+        const total = await role.count(where);
+
+        res.json(
+            response({data:result,total : total}, process.env.SUCCESS_CODE)
+        );
+    } catch (error){
+        console.log(error);
+        res.json(
+            response({message: "Roles cannot be fetched at this moment"},
+            process.env.FAILURE_CODE
+            )
+        )
+
+    }
+
+}
+
+module.exports = { addRoles, getRoles }
