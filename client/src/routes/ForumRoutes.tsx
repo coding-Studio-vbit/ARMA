@@ -16,21 +16,23 @@ import AddNewForumMember from "../features/forum/profile/AddNewForumMember";
 const ForumRoutes = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar navItems={[]}/>
+      <Navbar navItems={[]} />
       <div className="flex-1 mt-[80px]">
-      <Routes>
-          <Route path="/" element={<Dashboard/>} />
-          <Route path="/eventDashboard" element={<ForumEventDashboard/>} />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/eventDashboard" element={<ForumEventDashboard />} />
           <Route path="/eventEquipment" element={<EventEquip />} />
-          <Route path="/event-venue" element={<EventVenue/>} />
-          <Route path="/reportAndMedia" element={<ReportAndMedia/>} />
-          <Route path="/createEvent" element={<CreateEvent/>} />
-          <Route path="/updateEventDetails" element={<UpdateEventDetails/>} />
-          <Route path="/profile" element={<ForumProfile/>} />
-          <Route path="/eventAttendance" element={<EventAttendance/>} />
-          <Route path="/addNewCoreTeamMember" element={<AddNewCoreTeamMember/>} />
-          <Route path="/addNewForumMember" element={<AddNewForumMember/>} />
-
+          <Route path="/event-venue" element={<EventVenue />} />
+          <Route path="/reportAndMedia" element={<ReportAndMedia />} />
+          <Route path="/createEvent" element={<CreateEvent />} />
+          <Route path="/updateEventDetails" element={<UpdateEventDetails />} />
+          <Route path="/profile" element={<ForumProfile />} />
+          <Route path="/eventAttendance" element={<EventAttendance />} />
+          <Route
+            path="/addNewCoreTeamMember"
+            element={<AddNewCoreTeamMember />}
+          />
+          <Route path="/addNewForumMember" element={<AddNewForumMember />} />
         </Routes>
       </div>
       <Footer />
