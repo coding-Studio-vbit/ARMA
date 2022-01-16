@@ -1,10 +1,12 @@
 import { AccountCircle, Edit } from "@material-ui/icons";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Table from "../../../components/CustomTable";
 import { InputField } from "../../../components/InputField/InputField";
 import { useUser } from "../../../providers/user/UserProvider";
 
 export default function ForumProfile() {
+  const navigate = useNavigate()
   const { forum } = useUser();
   const [isEdit, setIsEdit] = useState(false);
   const [forumName, setForumName] = useState<string>(forum?.name ?? " ")
@@ -64,7 +66,7 @@ export default function ForumProfile() {
           <div className="md:mx-[5rem] lg:mx-[8rem] xl:mx-[12rem] sm:mx-[2rem] mx-4  mt-4">
           <div className="flex flex-col  gap-2 sm:flex-row  mb-4">
               <span className="text-arma-gray font-semibold text-lg">Forum Core Team</span>
-              <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 ">ADD</button>
+              <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 " onClick = {() => {navigate('/forum/addNewCoreTeamMember')}}>ADD</button>
               <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1">GENERATE CERTIFICATE</button>
           </div>
           <div className="l">
@@ -88,7 +90,7 @@ export default function ForumProfile() {
         </div>
         <div className="flex flex-col  gap-2 sm:flex-row  mb-4">
               <span className="text-arma-gray font-semibold text-lg">Forum Members</span>
-              <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 ">ADD</button>
+              <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 " onClick = {() => {navigate('/forum/addNewForumMember')}}>ADD</button>
               <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1">GENERATE CERTIFICATE</button>
           </div>
           <div className="">

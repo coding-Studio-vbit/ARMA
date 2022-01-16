@@ -10,6 +10,8 @@ import CreateEvent from "../features/forum/create_event/createEvent";
 import ForumProfile from "../features/forum/profile/ForumProfile";
 import EventAttendance from "../features/forum/event_attendance/event_attendance";
 import UpdateEventDetails from "../features/forum/event_details/updateEventDetails";
+import AddNewCoreTeamMember from "../features/forum/profile/AddNewCoreTeamMember";
+import AddNewForumMember from "../features/forum/profile/AddNewForumMember";
 
 const ForumRoutes = () => {
   return (
@@ -26,8 +28,8 @@ const ForumRoutes = () => {
           <Route path="/updateEventDetails" element={<UpdateEventDetails/>} />
           <Route path="/profile" element={<ForumProfile/>} />
           <Route path="/eventAttendance" element={<EventAttendance/>} />
-
-
+          <Route path="/addNewCoreTeamMember" element={<AddNewCoreTeamMember/>} />
+          <Route path="/addNewForumMember" element={<AddNewForumMember/>} />
 
         </Routes>
       </div>
