@@ -26,7 +26,12 @@ const getEvents = async (req, res) => {
       .find(where)
       .skip((page - 1) * limit)
       .limit(limit)
-      .sort(sort);
+      .sort(sort)
+      .populate({
+        path: "forumID",
+        select: "name facultyCoordinatorID",
+        populate: { path: "facultyCoordinatorID", select: "name" },
+      });
     const total = await events.count(where);
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
@@ -76,7 +81,7 @@ const updateBudgetDoc = async (req, res) => {
     await mailer.sendMail(element.email, budgetDocUpdateTemplate, {
       FOName: FO,
       forumName: req.user.name,
-      eventName: event.name
+      eventName: event.name,
     });
     res.json(response("updated budget document", process.env.SUCCESS_CODE));
   } catch (e) {
@@ -87,20 +92,28 @@ const updateBudgetDoc = async (req, res) => {
   }
 };
 
-const reportAndMedia = async(req,res) => {
-    try {
-      let event = await events.findById(req.body.eventID)
-      event.reportDocPath =  req.files.eventReport[0].path
-      let temp = []
-      for(let p = 0; p < req.files.eventImages.length ; p++){
-        temp.push(req.files.eventImages[p].path)
-      }  
-      event.mediaFilePaths= temp
-      event.eventStatus = "COMPLETED"
-      await event.save();
-      res.json(response("updated Event Report and Media files", process.env.SUCCESS_CODE))
-    } catch (error) {
-      res.json(response("updated Event Report and Media failed", process.env.FAILURE_CODE))    
+const reportAndMedia = async (req, res) => {
+  try {
+    let event = await events.findById(req.body.eventID);
+    event.reportDocPath = req.files.eventReport[0].path;
+    let temp = [];
+    for (let p = 0; p < req.files.eventImages.length; p++) {
+      temp.push(req.files.eventImages[p].path);
     }
-}
+    event.mediaFilePaths = temp;
+    event.eventStatus = "COMPLETED";
+    await event.save();
+    res.json(
+      response("updated Event Report and Media files", process.env.SUCCESS_CODE)
+    );
+  } catch (error) {
+    res.json(
+      response(
+        "updated Event Report and Media failed",
+        process.env.FAILURE_CODE
+      )
+    );
+  }
+};
+
 module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia };
