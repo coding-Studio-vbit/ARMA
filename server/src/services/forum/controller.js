@@ -123,7 +123,6 @@ const getCoreForumMembers = async (req, res) => {
 
   //For filters
   let where = {};
-  console.log(req.query.name);
   if (req.query.name) where.name = req.query.name
 
   //For sorting
