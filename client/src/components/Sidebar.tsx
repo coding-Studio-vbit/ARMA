@@ -73,7 +73,10 @@ export const Sidebar = ({ show, setShow, navItems }: SidebarProps) => {
                         text-black
                         hover:bg-gray-400/20 hover:text-gray-800 hover:rounded-xl"
                       key={item.label}
-                      onClick={()=>navigate(item.path)}
+                      onClick={()=>{
+                        navigate(item.path)
+                        setShow(false)
+                      }}
                     >
                       <span className=" text-xl font-medium ml-1">
                         {item.label}
