@@ -1,5 +1,6 @@
 import { NavItem } from "./CustomNavbar";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   show: boolean;
@@ -18,6 +19,7 @@ export const Sidebar = ({ show, setShow, navItems }: SidebarProps) => {
     hidden: { x: "-100vw" },
     exit: { x: "-100vw" },
   };
+  const navigate = useNavigate()
   return (
     <AnimatePresence initial={false} exitBeforeEnter={true}>
       {show && (
@@ -71,6 +73,7 @@ export const Sidebar = ({ show, setShow, navItems }: SidebarProps) => {
                         text-black
                         hover:bg-gray-400/20 hover:text-gray-800 hover:rounded-xl"
                       key={item.label}
+                      onClick={()=>navigate(item.path)}
                     >
                       <span className=" text-xl font-medium ml-1">
                         {item.label}
