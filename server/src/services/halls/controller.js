@@ -42,7 +42,7 @@ const getHalls = async(req,res)=>{
 
 const addHall = async(req,res)=>{
     try{
-        let data = halls.find({name:req.body.name})
+        let data = halls.findOne({name:req.body.name})
         if(data) return res.json(response({message:"Hall already exists"},process.env.SUCCESS_CODE));
         let newHall = new halls({
             name :  req.body.name,

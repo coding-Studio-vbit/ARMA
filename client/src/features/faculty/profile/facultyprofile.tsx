@@ -1,8 +1,8 @@
 import { Edit } from "@material-ui/icons";
-import { userInfo } from "os";
 import React, { useState } from "react";
 import { InputField } from "../../../components/InputField/InputField";
 import { useUser } from "../../../providers/user/UserProvider";
+import { AnimatePresence, motion } from "framer-motion";
 
 function FacultyProfile() {
   const [isEdit, setIsedit] = useState(false);
@@ -18,14 +18,31 @@ function FacultyProfile() {
       <div className="flex flex-col items-center m-auto">
         <p className="text-center item-center text-2xl font-semibold text-arma-blue">
           {faculty?.name}
+          <AnimatePresence
+          initial={false}
+          exitBeforeEnter
+          >
+
           {!isEdit && (
+            <motion.span
+            className="inline-block"
+            
+            initial={{ rotate:180, opacity: 0 }}
+            animate={{ rotate:0, opacity: 1 }}
+            exit={{ rotate:360, opacity: 0 }}
+            transition={{ ease: "easeOut", duration: 0.45 }}
+
+            >
+
             <Edit
               className="ml-3 text-black !text-xl cursor-pointer"
               onClick={() => {
                 setIsedit(true);
               }}
-            />
+              /> 
+              </motion.span>
           )}
+                    </AnimatePresence>
         </p>
         <p className="text-black mt-4 mb-10 text-lg">Faculty</p>
         <div className="sm:w-[80%] md:w-max w-[90%]">

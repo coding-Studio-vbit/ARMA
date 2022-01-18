@@ -38,4 +38,9 @@ const getStudentsList = async (req, res) => {
   }
 };
 
-module.exports = {getStudentsList}
+const uploadStudentsList = async(req,res)=>{
+  console.log(req.body)
+
+};
+
+module.exports = {getStudentsList, uploadStudentsList}

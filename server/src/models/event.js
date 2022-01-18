@@ -71,5 +71,5 @@ const event = new mongoose.Schema({
   SACComments: String,
 });
 
-const events = mongoose.model("events", event);
+const  events = mongoose.model("events", event);
 module.exports = events;

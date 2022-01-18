@@ -43,3 +43,21 @@
   @apply px-4;
   color: #222222e1;
 }
+.inputDivTA textarea:disabled ~ .label {
+  top: -8.35rem;
+  left: 0;
+  @apply px-4;
+  color: #222222e1;
+}
+.inputDivTA textarea:focus ~ .label {
+  top: -8.35rem;
+  left: 0;
+  @apply px-4;
+  color: #222222e1;
+}
+.inputDivTA textarea:valid ~ .label {
+  top: -8.35rem;
+  left: 0;
+  @apply px-4;
+  color: #222222e1;
+}
