@@ -22,7 +22,7 @@ export default function ForumProfile() {
   console.log("Rebuild Profile");
   
   const [forumEmail, setForumEmail] = useState<string>(forum?.email ?? " ");
-  const [headers,setHeaders] = useState<any[]>([
+  const headers:any[] = [
     {
       displayName: "Roll Number",
       dataPath: "studentID.rollNumber",
@@ -34,8 +34,8 @@ export default function ForumProfile() {
     { displayName: "Section", dataPath: "studentID.section", sortable: false },
     { displayName: "Designation", dataPath: "designation", sortable: false },
 
-  ]);
-  const [memHeaders,setMemHeaders] = useState<any[]>( [
+  ];
+  const memHeaders:any[] =[
     {
       displayName: "Roll Number",
       dataPath: "rollNumber",
@@ -45,7 +45,7 @@ export default function ForumProfile() {
     { displayName: "Department", dataPath: "branch", sortable: true },
     { displayName: "Year", dataPath: "year", sortable: true },
     { displayName: "Section", dataPath: "section", sortable: false },
-  ]);
+  ];
   const handelCheckbox = (item: any, i: number, core = true) => {
     console.log(item?.studentID?.name);
     
@@ -77,23 +77,20 @@ export default function ForumProfile() {
 
       if (core)
         {
-          let temp = [...headers]
-        temp.push({
+          headers.push({
           displayName: displayName,
           dataPath: "dataPath",
           sortable: false,
         });
-        setHeaders(temp)
+   
         }
       else{
 
-        let temp = [...memHeaders]
-        temp.push({
+        memHeaders.push({
           displayName: displayName,
           dataPath: "dataPath",
           sortable: false,
         });
-        setMemHeaders(temp)
       }
     }
 
