@@ -62,6 +62,6 @@ const addEquipment = async(req,res)=>{
     }
 }
 
-const addEventEquipment = async()
+
 
 module.exports = { addEquipment, getEquipment }
