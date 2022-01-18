@@ -57,9 +57,9 @@ const Navbar = ({ navItems }: NavbarProps) => {
               to={item.path}
               className={({isActive})=>isActive?'border-b-4 border-arma-blue':'border-white'}
               
+                key={item.label}
               >
                 <div
-                key={item.label}
                 className=" h-20
                   flex justify-center items-center 
                   cursor-pointer border-b-4 border-white"
