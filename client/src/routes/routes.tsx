@@ -11,7 +11,7 @@ import FacultyDashBoard from "../features/faculty/dashboard/facultyDashBoard";
 
 function AllRoutes() {
   const { faculty, forum } = useUser();
-
+  
   return (
     <BrowserRouter>
       <Routes>
