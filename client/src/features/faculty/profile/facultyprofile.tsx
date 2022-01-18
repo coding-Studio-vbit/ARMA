@@ -39,7 +39,7 @@ function FacultyProfile() {
               onClick={() => {
                 setIsedit(true);
               }}
-              />
+              /> 
               </motion.span>
           )}
                     </AnimatePresence>

@@ -1,4 +1,4 @@
-import { ReactElement, useState, useEffect } from "react";
+import React, { ReactElement, useState, useEffect } from "react";
 import {
   ArrowBackIos,
   ArrowDownward,
@@ -19,7 +19,7 @@ interface TableProps {
   buttonsCount: number;
   headers: Array<header>;
   filter?: any;
-  transformer?: (item: any) => any;
+  transformer?: (item: any,i:number) => any;
 }
 
 interface sortButtonProps {
@@ -56,7 +56,7 @@ const SortButton = ({ callBack }: sortButtonProps) => {
   );
 };
 
-const Table = ({
+const Table = React.memo(({
   api,
   rowsPerPage,
   buttonsCount,
@@ -98,10 +98,11 @@ const Table = ({
 
         //The transformer function is called on each object of the response.
         if (transformer) {
+          
           newData = newData.map(transformer);
         }
-        console.log(response.data);
-
+        
+        
         setData(newData);
       })
       .catch((error) => {
@@ -213,6 +214,6 @@ const Table = ({
       </div>
     </>
   );
-};
+});
 
 export default Table;
