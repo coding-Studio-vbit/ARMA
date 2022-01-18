@@ -22,6 +22,7 @@ const faculty = new mongoose.Schema({
       validator: (value) => {
         return true;
         //PLEASEEEEEEEE ADDDDDDDDDD ROLL NUMBER VALIDATIONNNNNNNNNNNNN
+        // WILL NOT
       },
     },
     message: "{VALUE} is not a valid faculty roll number!",
