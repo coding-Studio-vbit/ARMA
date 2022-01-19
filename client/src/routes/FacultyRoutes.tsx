@@ -7,6 +7,7 @@ import ForumsList from "../features/faculty/forums/ForumsList";
 import RequestsList from "../features/faculty/requests_view/RequestsList";
 import FacultyDashBoard from "../features/faculty/dashboard/facultyDashBoard";
 import { FacultyProfile } from "../features/faculty/profile/facultyprofile";
+import { Students_View } from "../features/faculty/students_view/Students_View";
 
 const FacultyRoutes = () => {
   const { faculty } = useUser();
@@ -24,6 +25,8 @@ const FacultyRoutes = () => {
           <Route path="/profile" element={<FacultyProfile />} />
           <Route path="/forums" element={<ForumsList />} />
           <Route path="/students" element={<StudentsList />} />
+          <Route path="/students/:id" element={<Students_View />} />
+
           <Route path="/requests" element={<RequestsList />} />
         </Routes>
       </div>
