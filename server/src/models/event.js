@@ -49,6 +49,14 @@ const event = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  equipment:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "equipments",
+  }],
+  halls:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "halls",
+  }],
   budgetStatus: {
     type: String,
     default: "APPROVAL PENDING",
