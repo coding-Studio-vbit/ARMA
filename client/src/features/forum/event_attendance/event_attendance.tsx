@@ -81,7 +81,7 @@ const EventAttendance = () => {
               phone: Number(item[6]),
             };
             list.push(newObj);
-            console.log(list);
+            console.log("data ",list);
           });
         })
         .catch((e: any) => {

@@ -39,7 +39,25 @@ const getStudentsList = async (req, res) => {
 };
 
 const uploadStudentsList = async(req,res)=>{
-  console.log(req.body)
+  try{
+    for ( let i = 0; i<req.body.length;i++){
+      let data = req.body[i];
+      console.log(data)
+      let value = await students.findOne({rollNumber:data.rollNumber})
+      console.log(value)
+      if(!value){
+        console.log(data)
+        let newStudent = students(data)
+        await newStudent.save()
+      }
+    }
+    res.json(response({message:"Students added successfully"},process.env.SUCCESS_CODE))
+
+  }catch(error){
+    console.log(error);
+    res.json(response({message:"Internal Server Error"}, process.env.SUCCESS_CODE));
+  }
+  
 
 };
 
