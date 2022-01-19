@@ -4,7 +4,7 @@ module.exports = {
     fontFamily: {
       inter: "Inter, sans-serif",
       poppins:'Poppins, sans-serif',
-      caveat:'Caveat, cursive'
+      rock:'Rock Salt, cursive'
     },
     extend: {
       screens:{
