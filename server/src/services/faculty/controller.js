@@ -38,4 +38,14 @@ const getFacultyList = async(req,res)=>{
     }
 }
 
-module.exports = {getFacultyList}
+const editProfile = async(req,res) => {
+try {
+    const {email,designation,phone } = req.body;
+    const user = await faculty.findOneAndUpdate({email:email}, { $set: {designation: designation, phone:phone}}, {new:true} )
+    res.json(response(user, process.env.SUCCESS_CODE))
+} catch (error) {
+    res.json(response("Details could not be updated", process.env.FAILURE_CODE))
+}
+}
+
+module.exports = {getFacultyList, editProfile}
