@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useUser } from "../providers/user/UserProvider";
 import { Sidebar } from "./Sidebar";
 import { motion, AnimatePresence } from "framer-motion";
-import { Navigate, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export interface NavItem {
   label: string;
@@ -23,7 +23,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
   const [showLogout, setShowLogout] = useState(false);
 
   return (
-    <div className="flex  flex-row bg-white z-[11] fixed w-full">
+    <div className="flex  flex-row bg-white z-[11] fixed w-full h-16 md:h-auto">
       {/* side navigation bar */}
 
       <Sidebar
