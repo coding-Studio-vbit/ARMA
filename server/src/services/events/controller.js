@@ -121,13 +121,13 @@ const getRequests = async (req,res) =>{
     const result = await events
       .find({eventStatus:{ $nin:["COMPLETED","REJECTED"]} });
     res.json(
-      response({ data: result }, process.env.SUCCESS_CODE)
+      response(result,process.env.SUCCESS_CODE)
     );
     console.log("Get",result);
   } catch (error) {
     console.log(error);
     res.json(
-      response("Unable to Load the Dashboard", process.env.FAILURE_CODE)
+      response("Unable to Load the Dashboard",process.env.FAILURE_CODE)
     );    
   }
 }
