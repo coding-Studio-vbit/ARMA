@@ -82,6 +82,25 @@ const addStudent = async (data) => {
   }
 };
 
+const editAdmin = async(email, newEmail, newpassword) => {
+  try {
+    const admin = await admins.findOne({email:email})
+    if(admin){
+      const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
+      const newPassword = await bcrypt.hash(newpassword, salt);
+      admin.email = newEmail;
+      admin.password = newPassword;
+      await admin.save();
+      return response("Password changed Successfully", process.env.SUCCESS_CODE);
+    }else{
+      return response("Email Does not exist", process.env.FAILURE_CODE);
+    }
+  } catch (error) {
+    console.log(error);
+    return response("failure", process.env.FAILURE_CODE);
+  }
+}
+
 const addRole = async (data) => {
   try {
     let newRole = new role(data);
@@ -93,4 +112,4 @@ const addRole = async (data) => {
   }
 };
 
-module.exports = { login, register, addStudent, addRole };
+module.exports = { login, register, addStudent, addRole, editAdmin };

@@ -1,3 +1,4 @@
+const facultyModel = require("../../models/faculty");
 const faculty = require("../../models/faculty");
 const response = require("../util/response");
 
@@ -48,4 +49,17 @@ try {
 }
 }
 
-module.exports = {getFacultyList, editProfile}
+const editFaculty = async(req,res)=>{
+    try {
+        const {id, name, designation, roles} = req.body
+        await faculty.findOneAndUpdate({_id: id},{$set:{name:name, designation: designation, roles:roles}}, {new:true})
+        res.json(
+         response("Faculty Details edited successfully!",process.env.SUCCESS_CODE)
+     )
+    } catch (error) {
+     console.log(error);
+     res.json(response(error,process.env.FAILURE_CODE))}
+ }
+ 
+
+module.exports = {getFacultyList, editProfile, editFaculty}

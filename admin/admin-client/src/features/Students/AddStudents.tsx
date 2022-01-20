@@ -18,7 +18,6 @@ export const AddStudents = () => {
   const [phoneError, setPhoneError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
-  const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
 
 
   const validateUniqueid = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +110,7 @@ export const AddStudents = () => {
             }}
           />
           <InputField
-            name="Unique ID"
+            name="Roll Number"
             type="text"
             error={uniqueidError}
             onChange={(e) => {
@@ -178,10 +177,10 @@ export const AddStudents = () => {
           /> 
         </div>
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
-          <Select
-            name="Roles"
-            placeholder="Roles"
-            value ={{value: "Roles", label: "Roles"}}
+        <Select
+            name="Section"
+            placeholder="Section"
+            value ={{value: "Section", label: "Section"}}
             options={[]}
             styles={{
                 control: (base) => ({
@@ -215,15 +214,14 @@ export const AddStudents = () => {
             }}
           />
         </div>
-        <div className=" w-full sm:w-[270px] ">
-            <InputField 
+        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+        <InputField 
             name="Phone"
             type="text"
             error={phoneError}
             onChange={(e) =>{validatePhone(e)}}
             />
-            </div>
-
+        </div>
         <Dialog show={show} setShow={setShow} title="Added">
           {" "}
         </Dialog>

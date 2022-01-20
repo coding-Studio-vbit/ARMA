@@ -42,13 +42,13 @@ const getHalls = async(req,res)=>{
 
 const addHall = async(req,res)=>{
     try{
-        let data = halls.find({name:req.body.name})
+        let data = halls.findOne({name:req.body.name})
         if(data) return res.json(response({message:"Hall already exists"},process.env.SUCCESS_CODE));
         let newHall = new halls({
             name :  req.body.name,
             hallInfo : req.body.hallInfo,
-            capacity: req.body.capacity,
-            bookings: req.body.bookings
+            block: req.body.block,
+            capacity: req.body.capacity
         })
         await newHall.save()
         res.json(
@@ -63,4 +63,17 @@ const addHall = async(req,res)=>{
     }
 }
 
-module.exports = { getHalls, addHall }
+const editHall = async(req,res)=>{
+   try {
+       const {id, name, block, hallInfo, capacity} = req.body
+       await halls.findOneAndUpdate({_id: id},{$set:{name:name, block:block, hallInfo:hallInfo, capacity:capacity}}, {new:true})
+       res.json(
+        response("Hall edited successfully!",process.env.SUCCESS_CODE)
+    )
+   } catch (error) {
+    console.log(error);
+    res.json(response(error,process.env.FAILURE_CODE))}
+}
+
+
+module.exports = { getHalls, addHall,editHall }

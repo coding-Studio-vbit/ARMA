@@ -61,4 +61,16 @@ const addEquipment = async(req,res)=>{
     }
 }
 
-module.exports = { addEquipment, getEquipment }
+const editEquipment = async(req,res)=>{
+    try {
+        const {id, name,totalCount} = req.body
+        await equipment.findOneAndUpdate({_id: id},{$set:{name:name, totalCount:totalCount}}, {new:true})
+        res.json(
+         response("Equipment edited successfully!",process.env.SUCCESS_CODE)
+     )
+    } catch (error) {
+     console.log(error);
+     res.json(response(error,process.env.FAILURE_CODE))}
+ }
+
+module.exports = { addEquipment, getEquipment,editEquipment }

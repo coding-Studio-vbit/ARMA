@@ -12,7 +12,11 @@ export const AddFaculty = () => {
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("");
   const [span, setSpan] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [uniqueidError, setUniqueidError] = useState<string>();
+  const [passwordError, setPasswordError] = useState<string>();
+  const [emailError, setEmailError] = useState<string>();
   const [nameError, setNameError] = useState<string>();
   const [designationError, setDesignationError] = useState<string>();
   const [show, setShow] = useState(false);
@@ -48,7 +52,35 @@ export const AddFaculty = () => {
       }
     
   };
+  
+  const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const email = e.target.value;
+    setEmail(email);
+    if (email.length === 0) {
+      setEmailError("Email field is empty");
+    } else {
+      var validRegex =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+      if (!validRegex.test(email)) {
+        setEmailError("Enter valid Email!");
+      } else {
+        setEmailError("");
+      }
+    }
+  };
 
+  const validatePass = (e: ChangeEvent<HTMLInputElement>) => {
+    const password = e.target.value;
+    setPassword(password)
+    const p = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)/
+    if(password.length < 6){  
+       setPasswordError("Minimum Password Length should be 6")
+    }else if(!p.test(password)){
+       setPasswordError("Password should have atleast one capital letter, one digit and one symbol")
+    }else{
+        setPasswordError("")
+    }
+    }
   
   const validateDesignation = (e: React.ChangeEvent<HTMLInputElement>) => {
     const designation = e.target.value;
@@ -66,9 +98,13 @@ export const AddFaculty = () => {
     if (
       uniqueid.length === 0 ||
       name.length === 0 ||
+      password.length === 0 ||
+      email.length === 0 ||
       designation.length === 0 ||
       uniqueidError?.length !== 0 ||
       nameError?.length !== 0 ||
+      passwordError?.length !==0 ||
+      emailError?.length !==0 ||
       designationError?.length !== 0
     ) {
       setShowError("Fill details appropriately");
@@ -149,6 +185,7 @@ export const AddFaculty = () => {
            
           /> 
         </div>
+
         <div className="flex flex-col w-full sm:w-[50%] mx-auto">
           
           {span &&
@@ -157,7 +194,7 @@ export const AddFaculty = () => {
              {
                  selectRoles.map((r,i) => {
                      return(
-                         <div className="flex justify-between shadow-md px-4 py-2 hover:bg-black/[0.05]">
+                         <div className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]">
                              <span>{r}</span>
                              <Close className="cursor-pointer"onClick ={() => {
                                  let temp = [...selectRoles]
@@ -171,6 +208,24 @@ export const AddFaculty = () => {
              }
           
          </div>
+         <div className=" flex flex-col mt-2 gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+         <InputField
+            name="Login Email"
+            type="text"
+            error={emailError}
+            onChange={(e) => {
+              validateEmail(e);
+            }}
+          />
+          <InputField
+            name="Password"
+            type="password"
+            error={passwordError}
+            onChange={(e) => {
+              validatePass(e);
+            }}
+          />
+        </div>
 
         <Dialog show={show} setShow={setShow} title="Added">
           {" "}

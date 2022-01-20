@@ -12,7 +12,6 @@ function FacultyProfile() {
   const [rollNumber, setrollNumber] = useState<string>(faculty?.rollNumber ?? " ");
   const [email, setEmail] = useState<string>(faculty?.email ?? " ");
   const [designation, setDesignation] = useState<string>(faculty?.designation ?? " ");
-  const [department, setDepartment] = useState<string>(faculty?.department ?? " ");
   const [phone, setPhone] = useState<string>(faculty?.phone ?? " ");
   const [message, setMessage] = useState("")
   const [show, setShow] = useState(false)
@@ -88,22 +87,13 @@ function FacultyProfile() {
               onChange={(e) => {setDesignation(e.target.value)}}
               disabled={!isEdit}
             />
-            <InputField
-              className="mb-5"
-              name="Department"
-              value={department}
-              onChange={(e) => {setDepartment(e.target.value)}}
-              disabled={!isEdit}
-            />
-          </div>
-          <div className="mx-auto w-full">
-            <InputField
+              <InputField
               className="mb-5"
               name="Phone Number"
               value={phone}
               onChange={(e) => {setPhone(e.target.value)}}
               disabled={!isEdit}
-            />
+            />  
           </div>
         </div>
         {isEdit && (

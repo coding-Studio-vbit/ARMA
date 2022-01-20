@@ -11,4 +11,7 @@ router.get("/getHalls",controller.getHalls)
 
 router.post("/addHall", controller.addHall)
 
+router.put("/editHall", controller.editHall)
+
+
 module.exports = router

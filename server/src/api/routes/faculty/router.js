@@ -8,5 +8,7 @@ router.get("/dashboardInfo",eventController.getRequests);
 router.get("/getForums", controller.getForumsList);
 router.get("/getFaculty",facultyController.getFacultyList);
 router.put("/editProfile", facultyController.editProfile)
+router.put("/editFaculty", facultyController.editFaculty)
+
 
 module.exports = router;
