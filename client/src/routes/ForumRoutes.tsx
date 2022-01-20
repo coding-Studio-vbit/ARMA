@@ -12,6 +12,7 @@ import EventAttendance from "../features/forum/event_attendance/event_attendance
 import UpdateEventDetails from "../features/forum/event_details/updateEventDetails";
 import AddNewCoreTeamMember from "../features/forum/profile/AddNewCoreTeamMember";
 import AddNewForumMember from "../features/forum/profile/AddNewForumMember";
+import EventBudget from "../features/forum/event_budget/EventBudget";
 
 const ForumRoutes = () => {
   return (
@@ -32,6 +33,8 @@ const ForumRoutes = () => {
             path="/addNewCoreTeamMember"
             element={<AddNewCoreTeamMember />}
           />
+          <Route path="/budget" element={<EventBudget />} />
+
           <Route path="/addNewForumMember" element={<AddNewForumMember />} />
         </Routes>
       </div>

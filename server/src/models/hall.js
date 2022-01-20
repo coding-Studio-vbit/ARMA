@@ -22,12 +22,7 @@ const hall = new mongoose.Schema({
     type: Number,
     min: [10, "Min. Hall Capacity has to be 10"],
   },
-  bookings: [
-    {
-      date: Date,
-      slots: [{ type: String, enum: ["MORNING", "AFTERNOON"] }],
-    },
-  ],
+  
 });
 
 const halls = mongoose.model("halls", hall);
