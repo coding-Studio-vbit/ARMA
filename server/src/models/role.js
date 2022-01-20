@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const role = new mongoose.Schema({
-	name: {type: String, required: true, unique:true},
+	name: {type: String, required: true, uppercase:true,unique:true},
 	//arbitrary list of strings that make sense only to the server code
 	permissions:[String]
 });

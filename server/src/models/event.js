@@ -36,10 +36,12 @@ const event = new mongoose.Schema({
   },
   eventStatus: {
     type: String,
-    default: "APPROVAL PENDING",
     enum: [
-      "APPROVAL PENDING",
-      "REQUESTED CHANGES",
+      "AWAITING BUDGET APPROVAL",
+      "REQUESTED BUDGET CHANGES",
+      "BUDGET REJECTED",
+      "AWAITING SAC APPROVAL",
+      "REQUESTED CHANGES BY SAC",
       "APPROVED",
       "REJECTED",
       "COMPLETED",
@@ -75,7 +77,9 @@ const event = new mongoose.Schema({
     type: String,
   },
   mediaFilePaths: [{ type: String }],
+
   FOComments: String,
+  
   SACComments: String,
 });
 

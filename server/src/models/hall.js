@@ -12,6 +12,12 @@ const hall = new mongoose.Schema({
       process.env.MAX_NAME_LENGTH,
       `Name must be max ${process.env.MAX_NAME_LENGTH} characters`,
     ],
+    uppercase:true,
+    unique:true,
+  },
+  block: {
+    type:String,
+    required: true
   },
   hallInfo: {
     type: String,

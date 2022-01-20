@@ -1,35 +1,33 @@
 import { FC } from "react";
 import "./inputField.css";
-interface IFProps {
+interface TAprops {
   name: string;
   className?: string;
   value?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   error?: string | undefined;
-  type?: string 
   disabled?:boolean
 }
 
-const InputField: FC<IFProps> = ({
+const TextArea: FC<TAprops> = ({
   className,
   name,
   value,
-  type,
   onChange,
   error,
   disabled = false
 }) => {
   return (
-    <div className="!w-[270px]">
+    <div>
 
-    <div className={`inputDiv  ${error && "mb-10"}  ${className}`}>
-      <input
+    <div className={`inputDivTA inputDiv  ${error && "mb-10"}  ${className}`}>
+      <textarea
         className="inputField !w-full"
         value={value}
-        type={!type ? "text" : type}
         required
+        rows={4}
         onChange={(e) => onChange(e)}
-        disabled={disabled}
+        disabled = {disabled}
       />
       <div className="label flex items-center 	">
         <label>{name}</label>
@@ -44,4 +42,4 @@ const InputField: FC<IFProps> = ({
   );
 };
 
-export { InputField };
+export { TextArea };

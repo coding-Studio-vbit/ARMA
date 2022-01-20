@@ -41,6 +41,7 @@ const getEquipment = async(req,res)=>{
 
 const addEquipment = async(req,res)=>{
     try{
+
         let data = await equipment.findOne({name:req.body.name})
         console.log(data)
         if(data) return res.json(response({message:"Equipment already exists"},process.env.SUCCESS_CODE));
@@ -62,6 +63,17 @@ const addEquipment = async(req,res)=>{
     }
 }
 
+const editEquipment = async(req,res)=>{
+    try {
+        const {id, name,totalCount} = req.body
+        await equipment.findOneAndUpdate({_id: id},{$set:{name:name, totalCount:totalCount}}, {new:true})
+        res.json(
+         response("Equipment edited successfully!",process.env.SUCCESS_CODE)
+     )
+    } catch (error) {
+     console.log(error);
+     res.json(response(error,process.env.FAILURE_CODE))}
+ }
 
+module.exports = { addEquipment, getEquipment,editEquipment }
 
-module.exports = { addEquipment, getEquipment }
