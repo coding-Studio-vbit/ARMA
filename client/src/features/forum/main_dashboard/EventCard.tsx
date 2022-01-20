@@ -13,11 +13,15 @@ const EventCard = ({ event }: EventCardProps) => {
 
   switch(event.eventStatus)
   {
-    case 'completed':
-    case 'approved': eventStatusColor = 'text-green-600';break;
-    case 'rejected': eventStatusColor = 'text-red-600';break;
-    case 'approval pending':
-    case 'requested changes': eventStatusColor = 'text-yellow-600';break;
+    case 'COMPLETED':
+    case 'APPROVED': eventStatusColor = 'text-green-600';break;
+    case 'REJECTED': eventStatusColor = 'text-red-600';break;
+    case 'AWAITING SAC APPROVAL':
+    case 'AWAITING BUDGET APPROVAL':
+    case 'REQUESTED BUDGET CHANGES':
+    case 'BUDGET REJECTED':
+    case 'REQUESTED CHANGES BY SAC': eventStatusColor = 'text-yellow-600';break;
+
   }
 
   return (

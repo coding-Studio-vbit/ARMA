@@ -1,13 +1,32 @@
 import { BusinessCenter, Close } from '@material-ui/icons'
-import React, { useState } from 'react'
+import { userInfo } from 'os';
+import React, { useEffect, useState } from 'react'
 import Select from "react-select";
 import { InputField } from '../../../components/InputField/InputField'
+import { useUser } from '../../../providers/user/UserProvider';
+import axiosInstance from '../../../utils/axios';
 
 export default function EventEquip() {
     const [equipment, setEquipment] = useState("")
     const [quantity, setQuantity] = useState("")
     const [addError, setAddError] = useState("")
     const [list, setList] = useState<{}[]>([])
+    const {forum} = useUser()
+    const [myequip, setMyequip] = useState<{}[]>()
+    
+    useEffect(() => {
+      const getequip = async () => {
+        const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"forum/getEquipments");
+        console.log(res.data);
+        const data = res.data.response;
+        let arr = []
+        for(let i = 0; i < data.length; i++){
+            arr.push({value:data[i].name, label:data[i].name})
+        }
+        setMyequip(arr)
+      }
+      getequip();
+    },[])
 
 
     return (
@@ -22,7 +41,7 @@ export default function EventEquip() {
           <Select
             name="Equipment"
             placeholder="Equipment"
-            options={[{value:"speaker", label:"speaker"}, {value:"mic", label:"mic"}]}
+            options={myequip}
             onChange={(e:any) => {setEquipment(e.value)}}
             styles={{
                 control: (base) => ({
@@ -111,3 +130,23 @@ export default function EventEquip() {
     
             }
 
+
+          //   data.response -> [{name:"mic", totalCount:8}, {name:"speaker"}]
+          //   ar=[]
+          //   loop i
+          //   ar.push({value:i.name, label:i.name})
+          //   options={ar}
+            
+          //   const res = await axiosInstance.get(env+'forum/getEquipments')
+          //   user 
+          //   const res = await axiosInstance.post(env+'forum/profile',{
+          //     name: user.name
+          //   })
+
+          //  const data = await res.data
+
+          //   {
+          //     "name": "name"
+          //   }
+
+            
