@@ -11,5 +11,8 @@ router.get("/getEquipment",controller.getEquipment);
 
 router.post("/addEquipment",controller.addEquipment);
 
+router.put("/editEquipment",controller.editEquipment);
+
+
 
 module.exports = router;

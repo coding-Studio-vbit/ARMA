@@ -1,18 +1,34 @@
-import { Edit } from "@material-ui/icons";
+import { Edit, ShopTwoTone } from "@material-ui/icons";
 import React, { useState } from "react";
 import { InputField } from "../../../components/InputField/InputField";
 import { useUser } from "../../../providers/user/UserProvider";
 import { AnimatePresence, motion } from "framer-motion";
+import axiosInstance from "../../../utils/axios";
+import { Dialog } from "../../../components/Dialog/Dialog";
 
 function FacultyProfile() {
   const [isEdit, setIsedit] = useState(false);
-  const { faculty } = useUser();
+  const { faculty, setFaculty } = useUser();
   const [rollNumber, setrollNumber] = useState<string>(faculty?.rollNumber ?? " ");
   const [email, setEmail] = useState<string>(faculty?.email ?? " ");
   const [designation, setDesignation] = useState<string>(faculty?.designation ?? " ");
-  const [department, setDepartment] = useState<string>(faculty?.department ?? " ");
   const [phone, setPhone] = useState<string>(faculty?.phone ?? " ");
-
+  const [message, setMessage] = useState("")
+  const [show, setShow] = useState(false)
+  const save = async() =>{
+    const res = await axiosInstance.put(process.env.REACT_APP_SERVER_URL + "faculty/editProfile", {email:email, designation:designation, phone:phone})
+    const data = res.data
+    if(data.status === 1)
+    {
+      setFaculty(data.response)
+      setMessage("Details Updated")
+    }else
+    {
+      setMessage(data.response)
+    }
+    setShow(true)
+    setIsedit(false)
+  }
   return (
     <div className="mt-12">
       <div className="flex flex-col items-center m-auto">
@@ -71,33 +87,27 @@ function FacultyProfile() {
               onChange={(e) => {setDesignation(e.target.value)}}
               disabled={!isEdit}
             />
-            <InputField
-              className="mb-5"
-              name="Department"
-              value={department}
-              onChange={(e) => {setDepartment(e.target.value)}}
-              disabled={!isEdit}
-            />
-          </div>
-          <div className="mx-auto w-full">
-            <InputField
+              <InputField
               className="mb-5"
               name="Phone Number"
               value={phone}
               onChange={(e) => {setPhone(e.target.value)}}
               disabled={!isEdit}
-            />
+            />  
           </div>
         </div>
         {isEdit && (
           <button
             className="btn  bg-arma-title rounded-[8px] px-6 py-2 m-auto"
-            onClick={() => setIsedit(false)}
+            onClick={save}
           >
             SAVE
           </button>
         )}
       </div>
+
+      <Dialog show={show} setShow={setShow} title = {message}
+      /> 
     </div>
   );
 }

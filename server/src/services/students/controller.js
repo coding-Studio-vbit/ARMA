@@ -62,13 +62,20 @@ const uploadStudentsList = async(req,res)=>{
   }
   
 
-};
+const editStudent = async(req,res)=>{
+  try {
+      const {id, name, rollNumber, year, branch, section, email, phone} = req.body
+      await students.findOneAndUpdate({_id: id},{$set:{name:name, rollNumber: rollNumber, year:year, branch:branch, section:section, email:email, phone:phone}}, {new:true})
+      res.json(
+       response("Student Details edited successfully!",process.env.SUCCESS_CODE)
+   )
+  } catch (error) {
+   console.log(error);
+   res.json(response(error,process.env.FAILURE_CODE))}
+}
+}
 
-
-
-
-module.exports = {getStudentsList, uploadStudentsList}
-
+module.exports = {getStudentsList, editStudent,uploadStudentsList}
 
 
 

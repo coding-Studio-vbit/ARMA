@@ -10,4 +10,7 @@ router.post("/addRoles",controller.addRoles)
 
 router.get("/getRoles", controller.getRoles)
 
+router.put("/editRoles", controller.editRole)
+
+
 module.exports = router;

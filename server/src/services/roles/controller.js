@@ -60,4 +60,16 @@ const getRoles = async(req,res)=>{
 
 }
 
-module.exports = { addRoles, getRoles }
+const editRole = async(req,res)=>{
+    try {
+        const {id, name, permissions} = req.body
+        await role.findOneAndUpdate({_id: id},{$set:{name:name, permissions:permissions}}, {new:true})
+        res.json(
+         response("Role edited successfully!",process.env.SUCCESS_CODE)
+     )
+    } catch (error) {
+     console.log(error);
+     res.json(response(error,process.env.FAILURE_CODE))}
+ }
+
+module.exports = { addRoles, getRoles, editRole }

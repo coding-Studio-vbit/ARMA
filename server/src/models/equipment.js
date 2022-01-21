@@ -4,6 +4,8 @@ const equipment = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    uppercase:true,
+    unique:true,
     minLength: [
       process.env.MIN_NAME_LENGTH,
       `Name must be minimum ${process.env.MIN_NAME_LENGTH} characters`,

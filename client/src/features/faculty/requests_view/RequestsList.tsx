@@ -30,8 +30,11 @@ const RequestsList = () => {
         <Select
           options={[
             { value: null, label: "ALL" },
-            { value: "APPROVAL PENDING", label: "PENDING" },
-            { value: "REQUESTED CHANGES", label: "REQUESTED CHANGES" },
+            { value: "AWAITING BUDGET APPROVAL", label: "AWAITING BUDGET APPROVAL" },
+            { value: "REQUESTED BUDGET CHANGES", label: "REQUESTED BUDGET CHANGES" },
+            { value: "BUDGET REJECTED", label: "BUDGET REJECTED" },
+            { value: "AWAITING SAC APPROVAL", label: "AWAITING SAC APPROVAL" },
+            { value: "REQUESTED CHANGES BY SAC", label: "REQUESTED CHANGES BY SAC" },
             { value: "APPROVED", label: "APPROVED" },
             { value: "REJECTED", label: "REJECTED" },
             { value: "COMPLETED", label: "COMPLETED" },

@@ -6,4 +6,7 @@ const controller = require("../../../services/students/controller")
 router.get("/", controller.getStudentsList);
 
 router.post("/uploadStudentsList",controller.uploadStudentsList);
+router.put("/editStudent", controller.editStudent);
+
+
 module.exports = router;
