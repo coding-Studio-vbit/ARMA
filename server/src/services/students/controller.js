@@ -11,7 +11,7 @@ const getStudentsList = async (req, res) => {
   if (req.query.rollNumber) where.rollNumber = {$regex: req.query.rollNumber,$options: 'i'};
   if (req.query.branch) where.branch = req.query.branch;
   if (req.query.section) where.section = req.query.section;
-
+  if (req.query.attendedEvents) where.attendedEvents = req.query.attendedEvents;
   //For sorting
   let sort = {};
   if (req.query.orderBy && req.query.order)
@@ -38,17 +38,20 @@ const getStudentsList = async (req, res) => {
   }
 };
 
+// ENDPOINT FOR ADDING STUDENTS VIA EXCEL SHEET
+
 const uploadStudentsList = async(req,res)=>{
   try{
     for ( let i = 0; i<req.body.length;i++){
       let data = req.body[i];
-      console.log(data)
       let value = await students.findOne({rollNumber:data.rollNumber})
-      console.log(value)
       if(!value){
         console.log(data)
         let newStudent = students(data)
         await newStudent.save()
+      }
+      else if (data.attendedEvents.length>0){
+        await students.findOneAndUpdate({rollNumber:data.rollNumber},{$addToSet:{attendedEvents:[data.attendedEvents]}});
       }
     }
     res.json(response({message:"Students added successfully"},process.env.SUCCESS_CODE))
@@ -61,4 +64,13 @@ const uploadStudentsList = async(req,res)=>{
 
 };
 
+
+
+
 module.exports = {getStudentsList, uploadStudentsList}
+
+
+
+
+
+//eventID 61da9c41ee32a8e65373fcc4

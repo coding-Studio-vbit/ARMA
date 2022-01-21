@@ -1,9 +1,8 @@
 import Table from "../../../components/CustomTable";
-import Navbar from "../../../components/CustomNavbar";
 import { useState } from "react";
 import readXlsxFile from "read-excel-file";
 import { Dialog } from "../../../components/Dialog/Dialog";
-
+import { useParams } from "react-router-dom"
 const EventAttendance = () => {
   enum branch {
     CSE = "CSE",
@@ -16,6 +15,7 @@ const EventAttendance = () => {
     ECE = "ECE",
     IT = "IT",
   }
+  const { eventID  } = useParams() as any;
 
   interface Student {
     Name: string;
@@ -23,10 +23,11 @@ const EventAttendance = () => {
     Year: Number;
     Branch: Function | String;
     section: String;
-    email: String | undefined;
-    phone: Number | null;
+    email: String | Function;
+    phone?: Number;
+    attendedEvents : [string];
   }
-
+  
   let data;
   let indx: Number;
   let NumberOfDays: number = 5;
@@ -53,13 +54,22 @@ const EventAttendance = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [dataUploaded, setDataUploaded] = useState(false);
 
-  function checkBranch(val: any, indx: Number) {
+  function checkBranch(val: any) {
     console.log(val);
     if (Object.values(branch).includes(val.toUpperCase())) {
       return String(val);
     } else {
       throw Error;
     }
+  }
+  function validateEmail(email:any){
+    var validRegex =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+      if (validRegex.test(email)) {
+        return String(email)
+      }else{
+        throw Error;
+      }
   }
   const handelFileToJson = (e: { target: { files: any } }) => {
     data = e.target.files;
@@ -71,20 +81,38 @@ const EventAttendance = () => {
         .then((row: any) => {
           row.slice(1).map((item: any) => {
             indx = row.indexOf(item) + 1;
-            let newObj: Student = {
-              Name: String(item[0]),
-              RollNumber: String(item[1]),
-              Year: Number(item[2]),
-              Branch: checkBranch(item[3], indx),
-              section: String(item[4]),
-              email: String(item[5]),
-              phone: Number(item[6]),
-            };
-            list.push(newObj);
+            if(item[6]){
+              let newObj: Student = {
+                Name: String(item[0]),
+                RollNumber: String(item[1]),
+                Year: Number(item[2]),
+                Branch: checkBranch(item[3]),
+                section: String(item[4]),
+                email: validateEmail(item[5]),
+                phone: Number(item[6]),
+                attendedEvents : [eventID]
+              };
+              list.push(newObj);
+            }
+            else{
+              let newObj: Student = {
+                Name: String(item[0]),
+                RollNumber: String(item[1]),
+                Year: Number(item[2]),
+                Branch: checkBranch(item[3]),
+                section: String(item[4]),
+                email: validateEmail(item[5]),
+                attendedEvents : [eventID]
+              };
+              list.push(newObj);
+            }  
             console.log("data ",list);
           });
         })
-        .catch((e: any) => {
+        .catch((error: any) => {
+          data = null
+          list = []
+          setDataUploaded(false);
           setShow(true);
           setErrorMessage("Theres an error in row " + indx);
         });
@@ -153,7 +181,7 @@ const EventAttendance = () => {
         <>
           <div className="w-full min-w-max ">
             <Table
-              api={`${process.env.REACT_APP_SERVER_URL + "students"}`}
+              api={`${process.env.REACT_APP_SERVER_URL + "students/?attendedEvents=61da9c41ee32a8e65373fcc4"}`}
               rowsPerPage={12}
               buttonsCount={2}
               headers={header}
