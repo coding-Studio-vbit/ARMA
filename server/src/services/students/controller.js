@@ -38,6 +38,7 @@ const getStudentsList = async (req, res) => {
   }
 };
 
+
 const editStudent = async(req,res)=>{
   try {
       const {id, name, rollNumber, year, branch, section, email, phone} = req.body
@@ -52,3 +53,4 @@ const editStudent = async(req,res)=>{
 
 
 module.exports = {getStudentsList, editStudent}
+

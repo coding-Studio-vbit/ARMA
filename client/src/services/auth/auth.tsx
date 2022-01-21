@@ -4,6 +4,7 @@ export class AuthService {
         const userAgent = navigator.userAgent;
         console.log(email, password, userType, userAgent);
         try {
+          console.log(process.env.REACT_APP_SERVER_URL);
           const res = await fetch(process.env.REACT_APP_SERVER_URL + "login", {
             method: "POST",
             headers: {

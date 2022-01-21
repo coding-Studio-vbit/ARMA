@@ -41,7 +41,9 @@ const getEquipment = async(req,res)=>{
 
 const addEquipment = async(req,res)=>{
     try{
-        let data = equipment.findOne({name:req.body.name})
+
+        let data = await equipment.findOne({name:req.body.name})
+        console.log(data)
         if(data) return res.json(response({message:"Equipment already exists"},process.env.SUCCESS_CODE));
         let newEquipment = new equipment({
             name: req.body.name,
@@ -74,3 +76,4 @@ const editEquipment = async(req,res)=>{
  }
 
 module.exports = { addEquipment, getEquipment,editEquipment }
+
