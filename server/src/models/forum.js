@@ -18,6 +18,11 @@ const forum = new mongoose.Schema({
     required: true,
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: "students" }],
   },
+  facultyCoordinatorID: {
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "faculty",
+  },
   forumMembers: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -30,11 +35,11 @@ const forum = new mongoose.Schema({
       studentID: { type: mongoose.Schema.Types.ObjectId, ref: "students" },
     },
   ],
-  password: {type:String, required:true},
+  password: { type: String, required: true },
   email: {
     type: String,
     required: true,
-    unique:true,
+    unique: true,
     validate: {
       validator: (value) => {
         return validator.isEmail(value);
@@ -52,6 +57,7 @@ const forum = new mongoose.Schema({
   forumLogoPath: {
     type: String,
   },
+  roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "roles" }],
 });
 
 const forums = mongoose.model("forums", forum);

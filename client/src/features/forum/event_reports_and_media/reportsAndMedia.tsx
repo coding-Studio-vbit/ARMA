@@ -1,19 +1,27 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   AssignmentTwoTone,
   Close,
   CloudUploadTwoTone,
   ImageTwoTone,
 } from "@material-ui/icons";
-import { FC, useRef, useState } from "react";
+import { FC, useState } from "react";
+import { uploadReportAndMedia } from "../../../services/events/event";
+import { Spinner } from "../../../components/Spinner/Spinner";
+import { Dialog } from "../../../components/Dialog/Dialog";
 ///Only UI
 export const ReportAndMedia = () => {
   const location = useLocation();
+  const eventID :any = location.state ?? '61da9c41ee32a8e65373fcc4'
+  const [error,setError] = useState("")
+  const [loading,setLoading] = useState(false)
+  const [show,setShow] = useState(false)
+  const navigate = useNavigate()
   const [images, setImages] = useState<{ imageUrl: string; image: File }[]>([]);
   const [pdf, setPdf] = useState<File>();
   return (
-    <div className="flex flex-col mt-16 md:px-[10%] px-[5%]">
-      <span className="text-arma-title mb-24 text-3xl md:text-left text-center">
+    <div className="flex flex-col mt-8 md:px-[10%] px-[5%]">
+      <span className="text-arma-title mb-12 text-3xl md:text-left text-center">
         {"Report & Media"}
       </span>
       <div className="flex text-center w-[80%] flex-wrap mx-auto justify-center  gap-x-24 gap-y-12 ">
@@ -25,7 +33,7 @@ export const ReportAndMedia = () => {
           return (
             <div
               key={v.imageUrl}
-              className="relative grow   rounded-[2em] shrink basis-[150px]  sm:basis-[30%] overflow-hidden   "
+              className="relative grow max-h-[300px]   rounded-[2em] shrink basis-[150px]  sm:basis-[30%] overflow-hidden   "
             >
               <img
                 className="w-full h-full rounded-[2em] object-cover transition-all hover:scale-110 	"
@@ -44,7 +52,34 @@ export const ReportAndMedia = () => {
           );
         })}
       </div>
-      <button className="btn mx-auto my-8 "> Upload </button>
+      <Dialog show={show} setShow={setShow} title={error}  >
+        <button className="btn" onClick={()=>{
+          navigate('/forum/eventDashboard',{replace:true})
+        }} >Okay</button>
+        </Dialog>
+      <span className={`mt-8 text-center mb-2 h-6 text-red-600  `} > {error }</span>
+      {
+        loading? <Spinner className="mx-auto mb-8 " />:
+      <button onClick={async ()=>{
+        if(!pdf || images.length === 0 ){
+          setError('Please upload files')
+        }
+        else{
+          setError('')
+          setLoading(true)
+          const res = await uploadReportAndMedia(eventID,pdf,images)
+          if(res.status === 1){
+          setError('Files uploaded successfully')
+          }else{
+            setError(res.response)
+
+          }
+          setShow(true)
+
+          setLoading(false)
+        }
+      }} className="btn mx-auto mb-8 "> Upload </button>
+    }
     </div>
   );
 };
@@ -60,7 +95,7 @@ const EventReport: FC<{
         <AssignmentTwoTone />
       </div>
       <span>Upload new document</span>
-      <label className="rounded-[8px] hover:bg-slate-500/10 !cursor-pointer px-12 py-6 outline-dashed outline-arma-dark-blue ">
+      <label className="rounded-[8px] hover:bg-slate-500/10 !cursor-pointer px-20 py-6 outline-dashed outline-arma-dark-blue ">
         <CloudUploadTwoTone className="!w-16 !h-16 text-arma-blue" />
 
         <input
@@ -68,14 +103,14 @@ const EventReport: FC<{
           accept="application/pdf"
           onChange={(e: any) => {
             console.log(e.target.files[0].size);
-            
+
             setPdf(e.target.files[0]);
           }}
           className="hidden"
           type="file"
         ></input>
       </label>
-      {pdf && <p className="m-0 p-0 truncate	">{pdf.name}</p>}
+    <p className="m-0 p-0 truncate text-arma-gray text-[14px]">{pdf?.name ?? 'You can select one document'}</p>
     </div>
   );
 };
@@ -98,14 +133,15 @@ const EventImages: FC<{
         <ImageTwoTone />
       </div>
       <span>Upload new Image</span>
-      <label className="rounded-[8px] hover:bg-slate-500/10 !cursor-pointer px-12 py-6 outline-dashed outline-arma-dark-blue ">
+      <label className="rounded-[8px] hover:bg-slate-500/10 !cursor-pointer px-20 py-6 outline-dashed outline-arma-dark-blue ">
         <CloudUploadTwoTone className="!w-16 !h-16 text-arma-blue" />
 
         <input
           id="file-upload"
           accept="image/*"
           className="file-upload hidden"
-          onChange={(e: any) => {
+          onChange={(e:any) => {
+            if(images.length < 10)
             setImages([
               ...images,
               {
@@ -117,6 +153,7 @@ const EventImages: FC<{
           type="file"
         ></input>
       </label>
+      <p className="m-0 p-0 truncate text-arma-gray text-[14px] " >You can add upto 10 images only</p>
     </div>
   );
 };

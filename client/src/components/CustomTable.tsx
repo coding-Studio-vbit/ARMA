@@ -1,11 +1,11 @@
-import { ReactElement, useState, useEffect } from "react";
-import axios from "axios";
+import React, { ReactElement, useState, useEffect } from "react";
 import {
   ArrowBackIos,
   ArrowDownward,
   ArrowForwardIos,
   ArrowUpward,
 } from "@material-ui/icons";
+import axiosInstance from "../utils/axios";
 
 interface header {
   displayName: string; //Display header name
@@ -19,7 +19,7 @@ interface TableProps {
   buttonsCount: number;
   headers: Array<header>;
   filter?: any;
-  transformer?: (item: any) => any;
+  transformer?: (item: any,i:number) => any;
 }
 
 interface sortButtonProps {
@@ -56,7 +56,7 @@ const SortButton = ({ callBack }: sortButtonProps) => {
   );
 };
 
-const Table = ({
+const Table = React.memo(({
   api,
   rowsPerPage,
   buttonsCount,
@@ -64,7 +64,6 @@ const Table = ({
   filter,
   transformer,
 }: TableProps): ReactElement => {
-
   const [data, setData] = useState([]);
   const [orderBy, setOrderBy] = useState<string | null>(null);
   const [order, setOrder] = useState<string | null>(null);
@@ -72,27 +71,26 @@ const Table = ({
   const [totalPages, setTotalPages] = useState(0);
 
   //every time some filter is changed, reset the page number.
-  useEffect(()=>{
+  useEffect(() => {
     setCurrentPage(1);
-  }, [filter])
+  }, [filter]);
 
   useEffect(() => {
-
     //params object.
     let params = {
       page: currentPage,
       limit: rowsPerPage,
       orderBy: orderBy,
       order: order,
-      filter:null
+      filter: null,
     };
 
     //Adding the filter
-    params = {...params, ...filter};
+    params = { ...params, ...filter };
 
-    axios
+    axiosInstance
       .get(api, {
-        params: params
+        params: params,
       })
       .then((response) => {
         let newData = response.data.response.data;
@@ -100,14 +98,17 @@ const Table = ({
 
         //The transformer function is called on each object of the response.
         if (transformer) {
+          
           newData = newData.map(transformer);
         }
+        
+        
         setData(newData);
       })
       .catch((error) => {
-        console.log(error.response.message);
+        console.log(error);
       });
-  }, [currentPage, totalPages, rowsPerPage, order, orderBy]);
+  }, [currentPage, totalPages, rowsPerPage, order, orderBy, filter]);
 
   const nextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -117,6 +118,7 @@ const Table = ({
     if (currentPage !== 1) setCurrentPage(currentPage - 1);
   };
   const currentPageButtons = () => {
+    if(totalPages == 1) return [];
     let slice = Math.ceil(currentPage / buttonsCount);
     let buttonList = [];
     for (
@@ -126,8 +128,9 @@ const Table = ({
     )
       buttonList.push(
         <button
-          className={`btn ${
-            i == currentPage ? "bg-arma-dark-blue" : "bg-arma-blue"
+          key={i}
+          className={`px-1 text-sm text-white rounded-full ${
+            i === currentPage ? "bg-arma-dark-blue" : "bg-arma-blue"
           }`}
           onClick={() => {
             setCurrentPage(i);
@@ -140,47 +143,59 @@ const Table = ({
   };
 
   return (
-    <div className="w-full">
-      <table className="w-full">
-        <thead className="bg-white border border-2 rounded ">
-          <tr>
-            {headers.map((header) => {
+    <>
+      <div className="w-full border-2 shadow-md  rounded-[16px] overflow-x-auto ">
+        <table className="w-full ">
+          <thead className="bg-white border-b-2 rounded-[8px] border-black/30  ">
+            <tr className="rounded-[16px]">
+              {headers.map((header) => {
+                return (
+                  <th
+                    key={header.displayName}
+                    scope="col"
+                    className="px-6 py-3 text-center font-medium text-arma-dark-blue uppercase tracking-wider"
+                  >
+                    {header.displayName}
+                    {header.sortable ? (
+                      <SortButton
+                        callBack={(order: boolean) => {
+                          setOrderBy(header.dataPath);
+                          setOrder(order ? "asc" : "desc");
+                        }}
+                      />
+                    ) : null}
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-300">
+            {data.map((item, index) => {
               return (
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-center font-medium text-arma-dark-blue uppercase tracking-wider"
+                <tr
+                  key={index}
+                  className="odd:bg-white even:bg-arma-light-gray"
                 >
-                  {header.displayName}
-                  {header.sortable ? (
-                    <SortButton
-                      callBack={(order: boolean) => {
-                        setOrderBy(header.dataPath);
-                        setOrder(order ? "asc" : "desc");
-                      }}
-                    />
-                  ) : null}
-                </th>
+                  {headers.map((header) => {
+                    return (
+                      <td
+                        key={header.displayName}
+                        className=" px-6 py-4 text-center whitespace-nowrap"
+                      >
+                        {getValueFromPath(item, header.dataPath)}
+                      </td>
+                    );
+                  })}
+                </tr>
               );
             })}
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {data.map((item, index) => {
-            return (
-              <tr key={index} className="odd:bg-white even:bg-arma-light-gray">
-                {headers.map((header) => {
-                  return (
-                    <td className=" px-6 py-4 text-center whitespace-nowrap">
-                      {getValueFromPath(item, header.dataPath)}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <div id="paginationButtonsSection" className="w-max mx-auto ">
+          </tbody>
+        </table>
+      </div>
+      <div
+        id="paginationButtonsSection"
+        className="w-max mx-auto mt-8 flex gap-2  "
+      >
         {currentPage > buttonsCount ? (
           <button
             onClick={prevPage}
@@ -192,16 +207,13 @@ const Table = ({
         {currentPageButtons()}
         {currentPage <=
         (Math.ceil(totalPages / buttonsCount) - 1) * buttonsCount ? (
-          <button
-            onClick={nextPage}
-            className=" p-2 text-arma-dark-blue bg-white "
-          >
+          <button onClick={nextPage} className=" p-2 text-arma-dark-blue ">
             <ArrowForwardIos />
           </button>
         ) : null}
       </div>
-    </div>
+    </>
   );
-};
+});
 
 export default Table;

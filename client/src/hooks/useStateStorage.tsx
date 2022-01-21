@@ -1,23 +1,21 @@
 import { useEffect, useState } from "react";
 
+export const useLocalStorageState = <T extends unknown>(
+  key: string,
+  initialValue: T
+): [T, React.Dispatch<React.SetStateAction<T>>] => {
+  const [data, setData] = useState<T>(() => {
+    const value = localStorage.getItem(key);
 
+    if (!value) return initialValue;
+    return JSON.parse(value ? value : "");
+  });
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(data));
+  }, [data]);
 
-export const useLocalStorageState = <T extends unknown>(key:string,initialValue:T) :[T,React.Dispatch<React.SetStateAction<T>>] => {
-
-    const [data,setData] = useState<T>(()=>{
-        const value = localStorage.getItem(key)
-        console.log(value);
-        
-        if(!value || value === 'undefined')
-        return initialValue
-        return JSON.parse(value?value:'')
-    })
-    useEffect(()=>{
-        localStorage.setItem(key,JSON.stringify(data))
-    },[data])
-
-    return [data,setData];
-}
+  return [data, setData];
+};
 /**
  * 
  * @param {string} key Any unqiue key
@@ -29,17 +27,18 @@ export const useLocalStorageState = <T extends unknown>(key:string,initialValue:
     
     const [data,setData] = useSessionStorageState("data","")
  */
-export const useSessionStorageState = <T extends unknown>(key:string,initialValue:T):[T,React.Dispatch<React.SetStateAction<T>>]  => {
+export const useSessionStorageState = <T extends unknown>(
+  key: string,
+  initialValue: T
+): [T, React.Dispatch<React.SetStateAction<T>>] => {
+  const [data, setData] = useState<T>(() => {
+    const value = sessionStorage.getItem(key);
+    if (!value) return initialValue;
+    return JSON.parse(value ? value : "");
+  });
+  useEffect(() => {
+    sessionStorage.setItem(key, JSON.stringify(data));
+  }, [data]);
 
-    const [data,setData] = useState<T>(()=>{
-        const value = sessionStorage.getItem(key)
-        if(!value || value === 'undefined')
-        return initialValue
-        return JSON.parse(value?value:'')
-    })
-    useEffect(()=>{
-        sessionStorage.setItem(key,JSON.stringify(data))
-    },[data])
-
-    return [data,setData];
-}
+  return [data, setData];
+};

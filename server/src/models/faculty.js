@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const validator = require('validator');
+const validator = require("validator");
 
 const faculty = new mongoose.Schema({
   name: {
@@ -22,13 +22,14 @@ const faculty = new mongoose.Schema({
       validator: (value) => {
         return true;
         //PLEASEEEEEEEE ADDDDDDDDDD ROLL NUMBER VALIDATIONNNNNNNNNNNNN
+        // WILL NOT
       },
     },
     message: "{VALUE} is not a valid faculty roll number!",
   },
   email: {
     type: String,
-    unique:true,
+    unique: true,
     validate: {
       validator: (value) => {
         return validator.isEmail(value);
@@ -36,6 +37,7 @@ const faculty = new mongoose.Schema({
       message: `{VALUE} is not a valid email`,
     },
   },
+  designation: String,
   password: String,
   phone: {
     type: Number,

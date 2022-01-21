@@ -7,6 +7,7 @@ interface IFProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string | undefined;
   type?: string 
+  disabled?:boolean
 }
 
 const InputField: FC<IFProps> = ({
@@ -16,15 +17,19 @@ const InputField: FC<IFProps> = ({
   type,
   onChange,
   error,
+  disabled = false
 }) => {
   return (
-    <div className={`inputDiv min-w-max ${error && "mb-10"}  ${className}`}>
+    <div>
+
+    <div className={`inputDiv  ${error && "mb-10"}  ${className}`}>
       <input
-        className="inputField"
+        className="inputField !w-full"
         value={value}
         type={!type ? "text" : type}
         required
         onChange={(e) => onChange(e)}
+        disabled = {disabled}
       />
       <div className="label flex items-center 	">
         <label>{name}</label>
@@ -34,6 +39,8 @@ const InputField: FC<IFProps> = ({
         <span className={`absolute mt-1 text-red-600 text-sm pl-[8px]`}>{error}</span>
       )}
     </div>
+    </div>
+
   );
 };
 

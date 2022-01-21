@@ -12,6 +12,12 @@ const hall = new mongoose.Schema({
       process.env.MAX_NAME_LENGTH,
       `Name must be max ${process.env.MAX_NAME_LENGTH} characters`,
     ],
+    uppercase:true,
+    unique:true,
+  },
+  block: {
+    type:String,
+    required: true
   },
   hallInfo: {
     type: String,
@@ -22,12 +28,7 @@ const hall = new mongoose.Schema({
     type: Number,
     min: [10, "Min. Hall Capacity has to be 10"],
   },
-  bookings: [
-    {
-      date: Date,
-      slots: [{ type: String, enum: ["MORNING", "AFTERNOON"] }],
-    },
-  ],
+  
 });
 
 const halls = mongoose.model("halls", hall);

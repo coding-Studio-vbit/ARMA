@@ -1,11 +1,13 @@
-import "./App.css";
-import { FacultyProfile } from "./features/faculty/profile/facultyprofile";
-import { Students_View } from "./features/faculty/students_view/Students_View";
+import './App.css';
+import { UserProvider } from './providers/user/UserProvider';
+import AllRoutes from './routes/routes';
 
 function App() {
   return (
     <div className="App font-inter">
-      <FacultyProfile />
+        <UserProvider> 
+        <AllRoutes />
+        </UserProvider>      
     </div>
   );
 }
