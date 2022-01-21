@@ -24,7 +24,7 @@ const InputField: FC<IFProps> = ({
 
     <div className={`inputDiv  ${error && "mb-10"}  ${className}`}>
       <input
-        className="inputField !w-full"
+        className="inputField"
         value={value}
         type={!type ? "text" : type}
         required

@@ -14,5 +14,9 @@ router.get("/getCoreForumMembers" , controller.getCoreForumMembers)
 
 router.get("/getForumMembers" , controller.getForumMembers)
 
+router.post("/forumEventNumber",controller.forumEventNumber);
+
+
+
 
 module.exports = router;

@@ -4,6 +4,7 @@ const attendance = require("../../models/attendance");
 const roles = require("../../models/role");
 const mailer = require("../util/mailer");
 const { budgetDocUpdateTemplate } = require("../../email_templates/templates");
+const equipments = require("../../models/equipment");
 
 const getEvents = async (req, res) => {
   //For pagination
@@ -47,6 +48,12 @@ const getEvents = async (req, res) => {
 const createEvent = async (req, res) => {
   try {
     let newAttendanceDoc = new attendance();
+    let equipment = []
+    for (let i = 0; i < req.body.equipment.length; i++) {
+      const {name,totalCount} = req.body.equipment[i];
+      const eq = await equipments.findOne({name:name})
+      equipment.push(eq)
+    }
     let newEvent = new events({
       forumID: req.user._id,
       name: req.body.name,
@@ -54,6 +61,7 @@ const createEvent = async (req, res) => {
       eventProposalDocPath: req.files.eventDocument[0].path,
       budgetDocPath: req.files.budgetDocument[0].path,
       hasBudget: req.files.budgetDocument !== null,
+      equipment:equipment,
     });
     newAttendanceDoc.eventID = String(newEvent._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
@@ -62,12 +70,12 @@ const createEvent = async (req, res) => {
     res.json(
       response({ message: "new event created" }, process.env.SUCCESS_CODE)
     );
+
   } catch (e) {
     console.log(e);
     res.json(response({ message: "error" }, process.env.FAILURE_CODE));
   }
-};
-
+}
 const updateBudgetDoc = async (req, res) => {
   //update the budget here.
   console.log(req.files);
@@ -132,19 +140,6 @@ const getRequests = async (req,res) =>{
   }
 }
 
-const forumEventNumber = async(req,res) => {
-  try {
-    const {forumID} = req.body
-     const result = await events.find({forumID:forumID, eventStatus:{$nin:["REJECTED", "APPROVED", "COMPLETED"]}}).count()
-     res.json(
-      response(result,process.env.SUCCESS_CODE)
-    );
-  } catch (error) {
-    console.log(error);
-    res.json(
-      response(error,process.env.FAILURE_CODE)
-    ); 
-  }
-}
 
-module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia , getRequests,forumEventNumber};
+
+module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia , getRequests};
