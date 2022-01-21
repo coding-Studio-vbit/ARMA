@@ -132,5 +132,19 @@ const getRequests = async (req,res) =>{
   }
 }
 
+const forumEventNumber = async(req,res) => {
+  try {
+    const {forumID} = req.body
+     const result = await events.find({forumID:forumID, eventStatus:{$nin:["REJECTED", "APPROVED", "COMPLETED"]}}).count()
+     res.json(
+      response(result,process.env.SUCCESS_CODE)
+    );
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response(error,process.env.FAILURE_CODE)
+    ); 
+  }
+}
 
-module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia , getRequests};
+module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia , getRequests,forumEventNumber};
