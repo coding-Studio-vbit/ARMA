@@ -9,8 +9,8 @@ function Students_View() {
         Personal Details
       </div>
       <div className="w-4/5 px-14 rounded-[8px]">
-        <div className="w-full border-2 shadow-md  rounded-[16px] overflow-clip">
-          <div className="grid grid-cols-4 gap-4 m-8">
+        <div className="w-full border-2 shadow-md  rounded-[16px] overflow-clip ">
+          <div className="grid sm:grid-cols-2 gap-0.5 lg:grid-cols-4 gap-4">
             <div>
               <div className="flex space-x-4">
                 <p className="text-arma-grey mb-5 text-xl">First Name:</p>
@@ -73,15 +73,13 @@ function Students_View() {
                 <p className="text-arma mb-5 text-xl">9902917558</p>
               </div>
             </div>
-            
-
-          
-
           </div>
         </div>
       </div>
 
-      <div className="text-arma-dark-blue pt-16 px-14 text-lg ">Memberships</div>
+      <div className="text-arma-dark-blue pt-16 px-14 text-lg ">
+        Memberships
+      </div>
       <div className=" px-14">
         <Table
           api="http://localhost:5000/students"
