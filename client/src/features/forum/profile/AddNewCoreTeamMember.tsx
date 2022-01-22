@@ -308,7 +308,7 @@ export default function AddNewCoreTeamMember() {
             onChange={(e) => {validateDesignation(e)}}
           />
         </div>
-        <Dialog show={show} setShow={setShow} title="Added">
+        <Dialog show={show} setShow={setShow} title={response}>
           {" "}
         </Dialog>
         <button

@@ -51,6 +51,20 @@ const editStudent = async(req,res)=>{
    res.json(response(error,process.env.FAILURE_CODE))}
 }
 
-
-module.exports = {getStudentsList, editStudent}
+const fetchStudents = async (req, res) => {
+  try {
+    let student= await students.find({});
+    res.json(
+      response(
+        student,
+        process.env.SUCCESS_CODE
+      )
+    );
+      
+    } catch (err) {
+      console.log(err);
+      res.json(response(error, process.env.FAILURE_CODE));
+    }
+}
+module.exports = {getStudentsList, editStudent, fetchStudents}
 

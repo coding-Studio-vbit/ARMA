@@ -1,9 +1,10 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
+import axiosInstance from "../../utils/axios";
 
 
 
@@ -22,12 +23,22 @@ export const AddFaculty = () => {
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
   const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
+  const [myrole, setMyRole] = useState<{}[]>()
 
-  const options = [
-    { value: "Create Event", label: "Create Event" },
-    { value: "Edit Event", label: "Edit Event" },
-    { value: "SAC", label: "SAC" },
-  ];
+
+  useEffect(() => {
+    const role = async () => {
+      const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"roles/fetchRoles");
+      console.log(res.data);
+      const data = res.data.response;
+      let arr = []
+      for(let i = 0; i < data.length; i++){
+          arr.push({value:data[i].name , label:data[i].name })
+      }
+      setMyRole(arr)
+    }
+    role();
+  },[])
 
   const validateUniqueid = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uniqueid = e.target.value;
@@ -152,9 +163,8 @@ export const AddFaculty = () => {
           <Select
             name="Roles"
             placeholder="Roles"
-            value ={{value: "Roles", label: "Roles"}}
-            options={options}
-            onChange={(e) => {
+            options={myrole}
+            onChange={(e:any) => {
                 for(let i = 0; i < selectRoles.length; i++){
                    if(e?.value === selectRoles[i]) return        
                 }
