@@ -61,5 +61,20 @@ const editFaculty = async(req,res)=>{
      res.json(response(error,process.env.FAILURE_CODE))}
  }
  
+ const fetchFaculty = async (req, res) => {
+    try {
+      let fac= await faculty.find({});
+      res.json(
+        response(
+          fac,
+          process.env.SUCCESS_CODE
+        )
+      );
+        
+      } catch (err) {
+        console.log(err);
+        res.json(response(error, process.env.FAILURE_CODE));
+      }
+  }
 
-module.exports = {getFacultyList, editProfile, editFaculty}
+module.exports = {getFacultyList, editProfile, editFaculty, fetchFaculty}

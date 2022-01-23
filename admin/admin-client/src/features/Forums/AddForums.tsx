@@ -1,9 +1,10 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
+import axiosInstance from "../../utils/axios";
 
 
 
@@ -21,6 +22,10 @@ export const AddForums = () => {
   const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])  
    const [selectHead, setSelectHead] = useState<(string | undefined) []>([])
    const [selectCoord, setSelectCoord] = useState<(string | undefined) []>([])
+   const [mystu, setMyStu] = useState<{}[]>()
+   const [myfac, setMyFac] = useState<{}[]>()
+
+
 
 
   const validateforumID = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,6 +105,35 @@ export const AddForums = () => {
     }
   };
 
+      
+  useEffect(() => {
+    const students = async () => {
+      const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"students/fetchStudents");
+      console.log(res.data);
+      const data = res.data.response;
+      let arr = []
+      for(let i = 0; i < data.length; i++){
+          arr.push({value:data[i].name + "  -  "  +  data[i].rollNumber, label:data[i].name + "  -  " + data[i].rollNumber})
+      }
+      setMyStu(arr)
+    }
+    students();
+  },[])
+
+  useEffect(() => {
+    const faculty = async () => {
+      const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty");
+      console.log(res.data);
+      const data = res.data.response;
+      let arr = []
+      for(let i = 0; i < data.length; i++){
+          arr.push({value:data[i].name + "  -  "  +  data[i].rollNumber, label:data[i].name + "  -  " + data[i].rollNumber})
+      }
+      setMyFac(arr)
+    }
+    faculty();
+  },[])
+
   return (
     <div className="flex flex-col grow items-center">
       <div className="mt-12 w-max">
@@ -131,9 +165,8 @@ export const AddForums = () => {
         <Select
             name="Forum Head"
             placeholder="Forum Head"
-            value ={{value: "Forum Head", label: "Forum Head"}}
-            options={[]}
-            onChange={(e) => {
+            options={mystu}
+            onChange={(e:any) => {
               for(let i = 0; i < selectHead.length; i++){
                  if(e?.value === selectHead[i]) return        
               }
@@ -185,9 +218,8 @@ export const AddForums = () => {
           <Select
             name="Faculty Coordinator"
             placeholder="Faculty Coordinator"
-            value ={{value: "Faculty Coordinator", label: "Faculty Coordinator"}}
-            options={[]}
-            onChange={(e) => {
+            options={myfac}
+            onChange={(e:any) => {
               for(let i = 0; i < selectCoord.length; i++){
                  if(e?.value === selectCoord[i]) return        
               }

@@ -12,5 +12,8 @@ router.get("/getRoles", controller.getRoles)
 
 router.put("/editRoles", controller.editRole)
 
+router.get("/fetchRoles", controller.fetchRoles)
+
+
 
 module.exports = router;

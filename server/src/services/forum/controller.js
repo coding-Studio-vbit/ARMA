@@ -202,4 +202,21 @@ const editForum = async(req,res)=>{
 }
 
 
-module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getCoreForumMembers, getForumMembers, getEquipments,editForum}
+const forumEventNumber = async(req,res) => {
+  try {
+    const {forumID} = req.body
+     const result = await events.find({forumID:forumID, eventStatus:{$nin:["REJECTED", "APPROVED", "COMPLETED"]}}).count()
+     res.json(
+      response(result,process.env.SUCCESS_CODE)
+    );
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response(error,process.env.FAILURE_CODE)
+    ); 
+  }
+}
+
+
+
+module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getCoreForumMembers, getForumMembers, getEquipments,editForum,forumEventNumber}

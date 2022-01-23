@@ -1,9 +1,10 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
+import axiosInstance from "../../utils/axios";
 
 
 
@@ -14,7 +15,9 @@ export const AddEquip = () => {
   const [quantityError, setQuantityError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
-  const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
+  const [incharge, setSelectIncharge] = useState("");
+  const [myfac, setMyFac] = useState<{}[]>()
+
 
 
 
@@ -56,6 +59,19 @@ export const AddEquip = () => {
       setShowError("");
     }
   };
+  useEffect(() => {
+    const faculty = async () => {
+      const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty");
+      console.log(res.data);
+      const data = res.data.response;
+      let arr = []
+      for(let i = 0; i < data.length; i++){
+          arr.push({value:data[i].name + "  -  "  +  data[i].rollNumber, label:data[i].name + "  -  " + data[i].rollNumber})
+      }
+      setMyFac(arr)
+    }
+    faculty();
+  },[])
 
   return (
     <div className="flex flex-col grow items-center">
@@ -87,8 +103,10 @@ export const AddEquip = () => {
           <Select
             name="Faculty Incharge"
             placeholder="Faculty Incharge"
-            value ={{value: "Faculty Incharge", label: "Faculty Incharge"}}
-            options={[]}
+            options={myfac}
+            onChange={(e:any) => {
+              setSelectIncharge(e?.value)
+          }}
             styles={{
                 control: (base) => ({
                 ...base,

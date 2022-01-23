@@ -1,3 +1,4 @@
+const roles = require("../../models/role");
 const role = require("../../models/role");
 const response = require("../../services/util/response");
 
@@ -72,4 +73,19 @@ const editRole = async(req,res)=>{
      res.json(response(error,process.env.FAILURE_CODE))}
  }
 
-module.exports = { addRoles, getRoles, editRole }
+ const fetchRoles = async (req, res) => {
+    try {
+      let role= await roles.find({});
+      res.json(
+        response(
+          role,
+          process.env.SUCCESS_CODE
+        )
+      );
+        
+      } catch (err) {
+        console.log(err);
+        res.json(response(error, process.env.FAILURE_CODE));
+      }
+  }
+module.exports = { addRoles, getRoles, editRole, fetchRoles }
