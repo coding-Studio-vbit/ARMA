@@ -55,16 +55,22 @@ const event = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "equipments",
   }],
-  halls:[{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "halls",
-  }],
   budgetStatus: {
     type: String,
     default: "APPROVAL PENDING",
     enum: ["APPROVAL PENDING", "REQUESTED CHANGES", "APPROVED", "REJECTED"],
   },
-  eventDates: [Date],
+  halls: [{
+    date:{type:Date},
+    timeSlot: [{
+      type:String,
+      enum:["Morning","Afternoon"]
+    }],
+    hall:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "halls",
+    }
+  }],
   eventProposalDocPath: {
     type: String,
     required: true,
