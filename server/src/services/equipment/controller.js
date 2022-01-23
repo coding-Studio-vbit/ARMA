@@ -1,5 +1,6 @@
 const equipment = require("../../models/equipment");
 const response = require("../util/response");
+const mongoose = require('mongoose')
 
 // GET EQUIPMENT
 
@@ -45,9 +46,11 @@ const addEquipment = async(req,res)=>{
         let data = await equipment.findOne({name:req.body.name})
         console.log(data)
         if(data) return res.json(response({message:"Equipment already exists"},process.env.SUCCESS_CODE));
+
         let newEquipment = new equipment({
             name: req.body.name,
-            totalCount : req.body.totalCount
+            totalCount : req.body.totalCount,
+            facultyIncharge:mongoose.Types.ObjectId(req.body.facultyIncharge)
         })
         await newEquipment.save();
         res.json(

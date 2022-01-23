@@ -16,7 +16,9 @@ export const AddEquip = () => {
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
   const [incharge, setSelectIncharge] = useState("");
-  const [myfac, setMyFac] = useState<{}[]>()
+  const [myfac, setMyFac] = useState<{value:string, label:string}[]>()
+  const [response, setResponse] = useState("")
+
 
 
 
@@ -46,7 +48,7 @@ export const AddEquip = () => {
     
   };
 
-  const loginValidate = () => {
+  const loginValidate = async() => {
     if (
       name.length === 0 ||
       quantity.length === 0 ||
@@ -55,8 +57,16 @@ export const AddEquip = () => {
     ) {
       setShowError("Fill details appropriately");
     } else {
-      setShow(true);
       setShowError("");
+      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "equipment/addEquipment", {name:name, totalCount:quantity, facultyIncharge:incharge})
+      const data = res.data
+      if (data.status === 1) {
+        setResponse("New Equipment Added")
+        setShow(true)
+      } else {
+          setResponse(data.response)
+          setShow(true)             
+      }   
     }
   };
   useEffect(() => {
@@ -66,7 +76,7 @@ export const AddEquip = () => {
       const data = res.data.response;
       let arr = []
       for(let i = 0; i < data.length; i++){
-          arr.push({value:data[i].name + "  -  "  +  data[i].rollNumber, label:data[i].name + "  -  " + data[i].rollNumber})
+          arr.push({value:data[i]._id, label:data[i].name + "  -  " + data[i].rollNumber})
       }
       setMyFac(arr)
     }
@@ -119,12 +129,20 @@ export const AddEquip = () => {
                 placeholder: (base) => ({
                   ...base,
                   paddingLeft: '16px'
+                  
                 }),
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
-                }) 
+                    color: 'black',
+                    width: '80%',
+                    textOverflow:'ellipsis'
+                }) ,
+                input: (base) => ({
+                  ...base,
+                  paddingLeft: '16px',
+                  color: 'black'
+              }) 
             }}
             
             className="basic-multi-select w-full h-full"
@@ -132,7 +150,7 @@ export const AddEquip = () => {
           /> 
         </div>
 
-        <Dialog show={show} setShow={setShow} title="Added">
+        <Dialog show={show} setShow={setShow} title={response}>
           {" "}
         </Dialog>
 

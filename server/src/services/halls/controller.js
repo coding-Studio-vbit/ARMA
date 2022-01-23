@@ -42,8 +42,9 @@ const getHalls = async(req,res)=>{
 
 const addHall = async(req,res)=>{
     try{
-        let data = halls.findOne({name:req.body.name})
-        if(data) return res.json(response({message:"Hall already exists"},process.env.SUCCESS_CODE));
+        console.log("dgduk");
+        let data = await halls.findOne({name:req.body.name})
+        if(data) return res.json(response({message:"Hall already exists"},process.env.FAILURE_CODE));
         let newHall = new halls({
             name :  req.body.name,
             hallInfo : req.body.hallInfo,
@@ -57,7 +58,7 @@ const addHall = async(req,res)=>{
     }catch(error){
         console.log(error);
         res.json(
-            response({message:"Sorry! Hall cannot be added at this moment"},
+            response(error,
             process.env.FAILURE_CODE)
         )
     }
@@ -72,7 +73,7 @@ const editHall = async(req,res)=>{
     )
    } catch (error) {
     console.log(error);
-    res.json(response(error,process.env.FAILURE_CODE))}
+    res.json(response(error._message,process.env.FAILURE_CODE))}
 }
 
 

@@ -22,9 +22,12 @@ export const AddForums = () => {
   const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])  
    const [selectHead, setSelectHead] = useState<(string | undefined) []>([])
    const [selectCoord, setSelectCoord] = useState<(string | undefined) []>([])
+   const [selectHeadLabel, setSelectHeadLabel] = useState<(string | undefined) []>([])
+   const [selectCoordLabel, setSelectCoordLabel] = useState<(string | undefined) []>([])
    const [mystu, setMyStu] = useState<{}[]>()
    const [myfac, setMyFac] = useState<{}[]>()
-
+   const [response, setResponse] = useState("")
+  
 
 
 
@@ -86,7 +89,7 @@ export const AddForums = () => {
 
   
 
-  const loginValidate = () => {
+  const loginValidate = async() => {
     if (
       forumID.length === 0 ||
       password.length === 0 ||
@@ -100,8 +103,16 @@ export const AddForums = () => {
     ) {
       setShowError("Fill details appropriately");
     } else {
-      setShow(true);
       setShowError("");
+      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "admin/addForum", {name:forumID, phone:phone, facultyCoordinatorID:selectCoord, forumHeads:selectHead,email:email, password:password})
+      const data = res.data
+      if (data.status === 1) {
+        setResponse("New Forum Added")
+        setShow(true)
+      } else {
+          setResponse(data.response)
+          setShow(true)             
+      }   
     }
   };
 
@@ -113,7 +124,7 @@ export const AddForums = () => {
       const data = res.data.response;
       let arr = []
       for(let i = 0; i < data.length; i++){
-          arr.push({value:data[i].name + "  -  "  +  data[i].rollNumber, label:data[i].name + "  -  " + data[i].rollNumber})
+          arr.push({value:data[i]._id, label:data[i].name + "  -  " + data[i].rollNumber})
       }
       setMyStu(arr)
     }
@@ -127,7 +138,7 @@ export const AddForums = () => {
       const data = res.data.response;
       let arr = []
       for(let i = 0; i < data.length; i++){
-          arr.push({value:data[i].name + "  -  "  +  data[i].rollNumber, label:data[i].name + "  -  " + data[i].rollNumber})
+          arr.push({value:data[i]._id, label:data[i].name + "  -  " + data[i].rollNumber})
       }
       setMyFac(arr)
     }
@@ -171,6 +182,7 @@ export const AddForums = () => {
                  if(e?.value === selectHead[i]) return        
               }
               setSelectHead([...selectHead, e?.value])
+              setSelectHeadLabel([...selectHeadLabel,e?.label])
           }}
             styles={{
                 control: (base) => ({
@@ -197,14 +209,17 @@ export const AddForums = () => {
           /> 
           <div className="flex flex-col mr-auto w-[270px]">
              {
-                 selectHead.map((r,i) => {
+                 selectHeadLabel.map((r,i) => {
                      return(
                          <div className="flex justify-between shadow-md px-4 py-2 hover:bg-black/[0.05] mt-4 ">
                              <span>{r}</span>
                              <Close className="cursor-pointer"onClick ={() => {
-                                 let temp = [...selectHead]
+                                 let temp = [...selectHeadLabel]
+                                 let x = [...selectHead]
                                  temp.splice(i,1)
-                                 setSelectHead(temp)
+                                 x.splice(i,1)
+                                 setSelectHeadLabel(temp)
+                                 setSelectHead(x)
                              }}/>
                          </div>
                      )
@@ -224,6 +239,8 @@ export const AddForums = () => {
                  if(e?.value === selectCoord[i]) return        
               }
               setSelectCoord([...selectCoord, e?.value])
+              setSelectCoordLabel([...selectCoordLabel,e?.label])
+
           }}
             styles={{
                 control: (base) => ({
@@ -250,14 +267,17 @@ export const AddForums = () => {
           /> 
            <div className="flex flex-col ml-auto w-[270px]">
              {
-                 selectCoord.map((r,i) => {
+                 selectCoordLabel.map((r,i) => {
                      return(
                          <div className="flex justify-between shadow-md px-4 py-2 hover:bg-black/[0.05] mt-4">
                              <span>{r}</span>
                              <Close className="cursor-pointer"onClick ={() => {
-                                 let temp = [...selectCoord]
+                                 let temp = [...selectCoordLabel]
+                                 let x = [...selectCoord]
                                  temp.splice(i,1)
-                                 setSelectCoord(temp)
+                                 x.splice(i,1)
+                                 setSelectCoordLabel(temp)
+                                 setSelectCoord(x)
                              }}/>
                          </div>
                      )
@@ -288,7 +308,7 @@ export const AddForums = () => {
         </div>
         
 
-        <Dialog show={show} setShow={setShow} title="Added">
+        <Dialog show={show} setShow={setShow} title={response}>
           {" "}
         </Dialog>
 

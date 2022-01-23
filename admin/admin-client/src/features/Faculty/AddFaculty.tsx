@@ -12,6 +12,7 @@ export const AddFaculty = () => {
   const [uniqueid, setuniqueid] = useState("");
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("");
+  const [phone, setPhone] = useState("");
   const [span, setSpan] = useState(false)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,10 +21,13 @@ export const AddFaculty = () => {
   const [emailError, setEmailError] = useState<string>();
   const [nameError, setNameError] = useState<string>();
   const [designationError, setDesignationError] = useState<string>();
+  const [phoneError, setPhoneError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
   const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
   const [myrole, setMyRole] = useState<{}[]>()
+  const [response, setResponse] = useState("")
+
 
 
   useEffect(() => {
@@ -104,24 +108,48 @@ export const AddFaculty = () => {
       }
     
   };
+  
+  const validatePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const phone = e.target.value;
+    setPhone(phone);
+    var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    if (phone.length === 0) {
+      setPhoneError("Phone field is empty");
+    } else if(!phone.match(phoneno)){
+      setPhoneError("Invalid number");
+    }
+    else {
+        setPhoneError("");
+      }  
+  };
 
-  const loginValidate = () => {
+  const loginValidate = async() => {
     if (
       uniqueid.length === 0 ||
       name.length === 0 ||
       password.length === 0 ||
+      phone.length === 0 ||
       email.length === 0 ||
       designation.length === 0 ||
       uniqueidError?.length !== 0 ||
       nameError?.length !== 0 ||
+      phoneError?.length !== 0 ||
       passwordError?.length !==0 ||
       emailError?.length !==0 ||
       designationError?.length !== 0
     ) {
       setShowError("Fill details appropriately");
     } else {
-      setShow(true);
       setShowError("");
+      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "admin/addFaculty", {name:name, rollNumber:uniqueid, phone:phone, designation:designation,email:email,roles:selectRoles, password:password})
+      const data = res.data
+      if (data.status === 1) {
+        setResponse("New Faculty Added")
+        setShow(true)
+      } else {
+          setResponse(data.response)
+          setShow(true)             
+      }   
     }
   };
 
@@ -236,8 +264,17 @@ export const AddFaculty = () => {
             }}
           />
         </div>
-
-        <Dialog show={show} setShow={setShow} title="Added">
+        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+        <InputField
+            name="Phone Number"
+            type="text"
+            error={phoneError}
+            onChange={(e) => {
+              validatePhone(e);
+            }}
+          />
+        </div>
+        <Dialog show={show} setShow={setShow} title={response}>
           {" "}
         </Dialog>
 
