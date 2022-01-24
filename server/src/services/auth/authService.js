@@ -51,11 +51,9 @@ const register = async (user, userType) => {
     const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
     const password = await bcrypt.hash(user.password, salt);
     if (userType === "FACULTY") {
-      let {roles, ...newuser} = user
-      roles = roles.map((f) => {
-        return mongoose.Types.ObjectId(f._id)
-    })
-      let faculty = new facultyModel({roles,...newuser});
+      let {role, ...newuser} = user
+      role = mongoose.Types.ObjectId(role)
+      let faculty = new facultyModel({role,...newuser});
       faculty.password = password;
       await faculty.save();
     } else if (userType === "FORUM") {

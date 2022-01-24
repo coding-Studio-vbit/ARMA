@@ -41,8 +41,7 @@ export const AddRoles = () => {
   const loginValidate = async() => {
     if (
       name.length === 0 ||
-      nameError?.length !== 0 ||
-      selectRoles.length === 0
+      nameError?.length !== 0 
     ) {
       setShowError("Fill details appropriately");
     } else {
