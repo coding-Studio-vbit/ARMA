@@ -6,6 +6,8 @@ const students = require("../../models/student");
 const role = require("../../models/role");
 const response = require("../util/response");
 const admins = require("../../models/admin");
+const mongoose = require('mongoose')
+
 const login = async (email, password, userAgent, userType) => {
   try {
     let user;
@@ -49,11 +51,22 @@ const register = async (user, userType) => {
     const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
     const password = await bcrypt.hash(user.password, salt);
     if (userType === "FACULTY") {
-      let faculty = new facultyModel(user);
+      let {roles, ...newuser} = user
+      roles = roles.map((f) => {
+        return mongoose.Types.ObjectId(f._id)
+    })
+      let faculty = new facultyModel({roles,...newuser});
       faculty.password = password;
       await faculty.save();
     } else if (userType === "FORUM") {
-      let forum = new forums(user);
+      let {facultyCoordinatorID, forumHeads, ...newuser} = user
+      facultyCoordinatorID = facultyCoordinatorID.map((f) => {
+          return mongoose.Types.ObjectId(f._id)
+      })
+      forumHeads = forumHeads.map((f) => {
+        return mongoose.Types.ObjectId(f._id)
+    })
+      let forum = new forums({ facultyCoordinatorID, forumHeads, ...newuser});
       forum.password = password;
       await forum.save();
     } else if (userType === "ADMIN") {
@@ -82,6 +95,25 @@ const addStudent = async (data) => {
   }
 };
 
+const editAdmin = async(email, newEmail, newpassword) => {
+  try {
+    const admin = await admins.findOne({email:email})
+    if(admin){
+      const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
+      const newPassword = await bcrypt.hash(newpassword, salt);
+      admin.email = newEmail;
+      admin.password = newPassword;
+      await admin.save();
+      return response("Password changed Successfully", process.env.SUCCESS_CODE);
+    }else{
+      return response("Email Does not exist", process.env.FAILURE_CODE);
+    }
+  } catch (error) {
+    console.log(error);
+    return response("failure", process.env.FAILURE_CODE);
+  }
+}
+
 const addRole = async (data) => {
   try {
     let newRole = new role(data);
@@ -93,4 +125,4 @@ const addRole = async (data) => {
   }
 };
 
-module.exports = { login, register, addStudent, addRole };
+module.exports = { login, register, addStudent, addRole, editAdmin };

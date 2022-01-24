@@ -1,3 +1,4 @@
+const facultyModel = require("../../models/faculty");
 const faculty = require("../../models/faculty");
 const response = require("../util/response");
 
@@ -38,4 +39,42 @@ const getFacultyList = async(req,res)=>{
     }
 }
 
-module.exports = {getFacultyList}
+const editProfile = async(req,res) => {
+try {
+    const {email,designation,phone } = req.body;
+    const user = await faculty.findOneAndUpdate({email:email}, { $set: {designation: designation, phone:phone}}, {new:true} )
+    res.json(response(user, process.env.SUCCESS_CODE))
+} catch (error) {
+    res.json(response("Details could not be updated", process.env.FAILURE_CODE))
+}
+}
+
+const editFaculty = async(req,res)=>{
+    try {
+        const {id, name, designation, roles} = req.body
+        await faculty.findOneAndUpdate({_id: id},{$set:{name:name, designation: designation, roles:roles}}, {new:true})
+        res.json(
+         response("Faculty Details edited successfully!",process.env.SUCCESS_CODE)
+     )
+    } catch (error) {
+     console.log(error);
+     res.json(response(error,process.env.FAILURE_CODE))}
+ }
+ 
+ const fetchFaculty = async (req, res) => {
+    try {
+      let fac= await faculty.find({});
+      res.json(
+        response(
+          fac,
+          process.env.SUCCESS_CODE
+        )
+      );
+        
+      } catch (err) {
+        console.log(err);
+        res.json(response(error, process.env.FAILURE_CODE));
+      }
+  }
+
+module.exports = {getFacultyList, editProfile, editFaculty, fetchFaculty}

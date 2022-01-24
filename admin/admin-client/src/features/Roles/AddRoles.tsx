@@ -4,6 +4,7 @@ import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
+import axiosInstance from "../../utils/axios";
 
 
 export const AddRoles = () => {
@@ -11,6 +12,8 @@ export const AddRoles = () => {
   const [nameError, setNameError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<string>("");
+  const [response, setResponse] = useState("")
+
 
   const options = [
     { value: "Create ", label: "Create" },
@@ -35,15 +38,24 @@ export const AddRoles = () => {
   };
 
   
-  const loginValidate = () => {
+  const loginValidate = async() => {
     if (
       name.length === 0 ||
-      nameError?.length !== 0 
+      nameError?.length !== 0 ||
+      selectRoles.length === 0
     ) {
       setShowError("Fill details appropriately");
     } else {
-      setShow(true);
       setShowError("");
+      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "roles/addRoles", {name:name, permissions:selectRoles})
+      const data = res.data
+      if (data.status === 1) {
+        setResponse("New Role Added")
+        setShow(true)
+      } else {
+          setResponse(data.response)
+          setShow(true)             
+      }   
     }
   };
 
@@ -121,7 +133,7 @@ export const AddRoles = () => {
          </div>
 
 
-        <Dialog show={show} setShow={setShow} title="Added">
+        <Dialog show={show} setShow={setShow} title={response}>
           {" "}
         </Dialog>
 

@@ -2,13 +2,26 @@ import React, { useState } from 'react'
 import Select from "react-select";
 import { Dialog } from '../../../components/Dialog/Dialog';
 import { InputField } from '../../../components/InputField/InputField';
+import { useUser } from '../../../providers/user/UserProvider';
+import axiosInstance from '../../../utils/axios';
 
 export default function AddNewCoreTeamMember() {
-    const options = [
-        { value: "Create ", label: "Create" },
-        { value: "Edit ", label: "Edit" },
-        { value: "Delete", label: "Delete" },
-      ];
+  const {forum} = useUser()
+  const departmentoptions = [
+      { value: "CSE ", label: "CSE" },
+      { value: "ECE ", label: "ECE" },
+      { value: "IT", label: "IT" },
+    ];
+    const yearoptions = [
+      { value: "1 ", label: "1" },
+      { value: "2 ", label: "2" },
+      { value: "3", label: "3" },
+    ];
+    const sectionoptions = [
+      { value: "A ", label: "A" },
+      { value: "B ", label: "B" },
+      { value: "C", label: "C" },
+    ];
 
     const [rollNumber, setRollNumber] = useState("")
     const [name, setName] = useState("");
@@ -19,6 +32,8 @@ export default function AddNewCoreTeamMember() {
     const [phone, setPhone] = useState("");
     const [designation, setDesignation] = useState("")
     const [show, setShow] = useState(false);
+    const [response, setResponse] = useState("")
+
     
     const [rollNumberError, setRollNumberError] = useState<string>();
     const [nameError, setNameError] = useState<string>();
@@ -133,7 +148,7 @@ export default function AddNewCoreTeamMember() {
         
       };
 
-      const submitValidate = () => {
+      const submitValidate = async() => {
         if (
           rollNumber.length === 0 ||
           name.length === 0 ||
@@ -154,16 +169,24 @@ export default function AddNewCoreTeamMember() {
         ) {
           setShowError("Fill details appropriately");
         } else {
-          setShow(true);
           setShowError("");
+          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewCoreTeamMember", {forumName:forum?.name, rollNumber:rollNumber, name:name, department:department, year:year, section:section, email:email,phone:phone, designation:designation})
+          const data = res.data
+          if (data.status === 1) {
+            setResponse("New Core Team Member Added")
+            setShow(true)
+          } else {
+              setResponse(data.response)
+              setShow(true)             
+          }   
         }
       };
 
 
     return (
-        <div className="flex flex-col grow items-center">
-            <div className="mt-12 w-max">
-            <p className="text-center lg:text-left text-arma-title text-3xl font-semibold mb-12 ml-2 ">
+      <div className="flex flex-col items-center">
+      <div className="mt-12 ">
+      <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
           ADD NEW CORE TEAM MEMBER
         </p>
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
@@ -181,20 +204,19 @@ export default function AddNewCoreTeamMember() {
           />
         </div>
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
-        <div className="flex flex-col shrink">
         <Select
             name="Department"
             placeholder="Department"
             className="basic-single"
             classNamePrefix="select"
             // value ={{value: "Department", label: "Department"}}
-            options={options}
+            options={departmentoptions}
             onChange={(e) => {validateDepartment(e)}}
             styles={{
                 control: (base) => ({
                 ...base,
                 minHeight: 52,
-                minWidth: 253,
+                minWidth: 270,
                 borderRadius: "0.5rem",
                 border: "2px solid rgb(200, 200, 200)",
                 }),
@@ -210,22 +232,19 @@ export default function AddNewCoreTeamMember() {
                 }) 
             }}           
           /> 
-         </div>
-         
-         <div className="flex flex-col shrink">
           <Select
             name="Year"
             placeholder="Year"
             className="basic-single"
             classNamePrefix="select"
             // value ={{value: "Year", label: "Year"}}
-            options={options}
+            options={yearoptions}
             onChange={(e) => {validateYear(e)}}
             styles={{
                 control: (base) => ({
                 ...base,
                 minHeight: 52,
-                minWidth: 253,
+                minWidth: 270,
                 borderRadius: "0.5rem",
                 border: "2px solid rgb(200, 200, 200)",
                 }),
@@ -241,7 +260,6 @@ export default function AddNewCoreTeamMember() {
                 }) 
             }}  
           /> 
-         </div>
         </div>
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
         <Select
@@ -250,13 +268,13 @@ export default function AddNewCoreTeamMember() {
             className="basic-single"
             classNamePrefix="select"
             // value ={{value: "Section", label: "Section"}}
-            options={options}
+            options={sectionoptions}
             onChange={(e) => {validateSection(e)}}
             styles={{
                 control: (base) => ({
                 ...base,
                 minHeight: 52,
-                minWidth: 253,
+                minWidth: 270,
                 borderRadius: "0.5rem",
                 border: "2px solid rgb(200, 200, 200)",
                 }),
@@ -290,7 +308,7 @@ export default function AddNewCoreTeamMember() {
             onChange={(e) => {validateDesignation(e)}}
           />
         </div>
-        <Dialog show={show} setShow={setShow} title="Added">
+        <Dialog show={show} setShow={setShow} title={response}>
           {" "}
         </Dialog>
         <button

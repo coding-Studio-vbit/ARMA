@@ -37,6 +37,7 @@ const faculty = new mongoose.Schema({
       message: `{VALUE} is not a valid email`,
     },
   },
+  designation: String,
   password: String,
   phone: {
     type: Number,

@@ -4,6 +4,9 @@ const attendance = require("../../models/attendance");
 const roles = require("../../models/role");
 const mailer = require("../util/mailer");
 const { budgetDocUpdateTemplate } = require("../../email_templates/templates");
+const equipments = require("../../models/equipment");
+const halls = require("../../models/hall");
+const Bookings = require("../../models/bookings");
 
 const getEvents = async (req, res) => {
   //For pagination
@@ -47,6 +50,29 @@ const getEvents = async (req, res) => {
 const createEvent = async (req, res) => {
   try {
     let newAttendanceDoc = new attendance();
+    let equipment = []
+    for (let i = 0; i < req.body.equipment.length; i++) {
+      const {name,totalCount} = req.body.equipment[i];
+      const eq = await equipments.findOne({name:name})
+      equipment.push(eq)
+    }
+    // hall :[  
+    //   {
+    //     date:Date,
+    //     hallID:HallID,
+    //     timeSlot:enum
+    //   }
+    // ]
+    ///Halls
+    const { hall } = req.body
+    const hallsNew = hall.map(async (hallItem)=>{
+      const h = await halls.findById(hallItem.hallID)
+      return {
+        hall:h,
+        date:hallItem.date,
+        timeSlot:hallItem.timeSlot
+      }
+    })
     let newEvent = new events({
       forumID: req.user._id,
       name: req.body.name,
@@ -54,20 +80,28 @@ const createEvent = async (req, res) => {
       eventProposalDocPath: req.files.eventDocument[0].path,
       budgetDocPath: req.files.budgetDocument[0].path,
       hasBudget: req.files.budgetDocument !== null,
+      equipment:equipment,
+      halls:hallsNew
     });
+    const booking = new Bookings({
+        halls:hallsNew,
+        eventID:newEvent._id,
+        status:'ONHOLD'
+    })
     newAttendanceDoc.eventID = String(newEvent._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
     await newAttendanceDoc.save();
     await newEvent.save();
+    await booking.save()
     res.json(
       response({ message: "new event created" }, process.env.SUCCESS_CODE)
     );
+
   } catch (e) {
     console.log(e);
     res.json(response({ message: "error" }, process.env.FAILURE_CODE));
   }
-};
-
+}
 const updateBudgetDoc = async (req, res) => {
   //update the budget here.
   console.log(req.files);

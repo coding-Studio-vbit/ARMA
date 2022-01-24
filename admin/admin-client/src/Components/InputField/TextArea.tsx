@@ -1,20 +1,18 @@
 import { FC } from "react";
 import "./inputField.css";
-interface IFProps {
+interface TAprops {
   name: string;
   className?: string;
   value?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   error?: string | undefined;
-  type?: string 
   disabled?:boolean
 }
 
-const InputField: FC<IFProps> = ({
+const TextArea: FC<TAprops> = ({
   className,
   name,
   value,
-  type,
   onChange,
   error,
   disabled = false
@@ -22,12 +20,12 @@ const InputField: FC<IFProps> = ({
   return (
     <div>
 
-    <div className={`inputDiv  ${error && "mb-10"}  ${className}`}>
-      <input
-        className="inputField"
+    <div className={`inputDivTA inputDiv  ${error && "mb-10"}  ${className}`}>
+      <textarea
+        className="inputField !w-full"
         value={value}
-        type={!type ? "text" : type}
         required
+        rows={4}
         onChange={(e) => onChange(e)}
         disabled = {disabled}
       />
@@ -44,4 +42,4 @@ const InputField: FC<IFProps> = ({
   );
 };
 
-export { InputField };
+export { TextArea };

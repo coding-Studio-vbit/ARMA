@@ -7,5 +7,10 @@ router.get("/getForums", controller.getForumsList);
 router.get("/dashboardInfo",eventController.getRequests);
 router.get("/getForums", controller.getForumsList);
 router.get("/getFaculty",facultyController.getFacultyList);
+router.put("/editProfile", facultyController.editProfile)
+router.put("/editFaculty", facultyController.editFaculty)
+router.get("/fetchFaculty", facultyController.fetchFaculty);
+
+
 
 module.exports = router;

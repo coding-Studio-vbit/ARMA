@@ -1,10 +1,11 @@
+const roles = require("../../models/role");
 const role = require("../../models/role");
 const response = require("../../services/util/response");
 
 //ADD ROLES
 const addRoles = async(req,res)=>{
     try{
-        let data = await role.find({name:req.body.name})
+        let data = await role.findOne({name:req.body.name})
         if(data) return res.json(response({message:"Role already exists"},process.env.SUCCESS_CODE));
         let newRole = new role({
             name : req.body.name,
@@ -60,4 +61,31 @@ const getRoles = async(req,res)=>{
 
 }
 
-module.exports = { addRoles, getRoles }
+const editRole = async(req,res)=>{
+    try {
+        const {id, name, permissions} = req.body
+        await role.findOneAndUpdate({_id: id},{$set:{name:name, permissions:permissions}}, {new:true})
+        res.json(
+         response("Role edited successfully!",process.env.SUCCESS_CODE)
+     )
+    } catch (error) {
+     console.log(error);
+     res.json(response(error,process.env.FAILURE_CODE))}
+ }
+
+ const fetchRoles = async (req, res) => {
+    try {
+      let role= await roles.find({});
+      res.json(
+        response(
+          role,
+          process.env.SUCCESS_CODE
+        )
+      );
+        
+      } catch (err) {
+        console.log(err);
+        res.json(response(error, process.env.FAILURE_CODE));
+      }
+  }
+module.exports = { addRoles, getRoles, editRole, fetchRoles }

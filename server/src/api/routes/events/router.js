@@ -21,9 +21,9 @@ router.get(
 //CREATE EVENT
 router.post(
   "/",
-  (req, res, next) => {
-    checkRolePermissions(req, res, next, "CREATE_EVENTS");
-  },
+  // (req, res, next) => {
+  //   checkRolePermissions(req, res, next, "CREATE_EVENTS");
+  // },
   upload.fields([
     { name: "eventDocument", maxCount: 1 },
     { name: "budgetDocument", maxCount: 1 },

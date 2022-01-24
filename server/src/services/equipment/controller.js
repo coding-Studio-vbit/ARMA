@@ -1,5 +1,6 @@
 const equipment = require("../../models/equipment");
 const response = require("../util/response");
+const mongoose = require('mongoose')
 
 // GET EQUIPMENT
 
@@ -41,11 +42,15 @@ const getEquipment = async(req,res)=>{
 
 const addEquipment = async(req,res)=>{
     try{
-        let data = equipment.find({name:req.body.name})
+
+        let data = await equipment.findOne({name:req.body.name})
+        console.log(data)
         if(data) return res.json(response({message:"Equipment already exists"},process.env.SUCCESS_CODE));
+
         let newEquipment = new equipment({
             name: req.body.name,
-            totalCount : req.body.totalCount
+            totalCount : req.body.totalCount,
+            facultyIncharge:mongoose.Types.ObjectId(req.body.facultyIncharge)
         })
         await newEquipment.save();
         res.json(
@@ -61,4 +66,17 @@ const addEquipment = async(req,res)=>{
     }
 }
 
-module.exports = { addEquipment, getEquipment }
+const editEquipment = async(req,res)=>{
+    try {
+        const {id, name,totalCount} = req.body
+        await equipment.findOneAndUpdate({_id: id},{$set:{name:name, totalCount:totalCount}}, {new:true})
+        res.json(
+         response("Equipment edited successfully!",process.env.SUCCESS_CODE)
+     )
+    } catch (error) {
+     console.log(error);
+     res.json(response(error,process.env.FAILURE_CODE))}
+ }
+
+module.exports = { addEquipment, getEquipment,editEquipment }
+

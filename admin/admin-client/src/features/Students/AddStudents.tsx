@@ -18,18 +18,27 @@ export const AddStudents = () => {
   const [phoneError, setPhoneError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
-  const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
 
 
   const validateUniqueid = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uniqueid = e.target.value;
     setuniqueid(uniqueid);
-    if (uniqueid.length === 0) {
-      setUniqueidError("Unique ID field is empty");
-    } //Add faculty Roll no validation
-    else {
-        setUniqueidError("");
-      }
+    var rollNumber = uniqueid.toUpperCase();
+    let rollRegex = new RegExp(/^(18|19|20|21)(p6|p5)(1|5)(a|A)(01|02|03|04|05|12|56|62|66|67|69|70)[(a-z)|(0-9)][0-9]$/i);
+    if(rollNumber.length === 0){
+        setUniqueidError("roll number cannot be empty");
+    }
+    else if(rollNumber.length < 10){
+        setUniqueidError("roll number cannot be less than 10 characters");
+    }
+    else if(rollNumber.length>10){
+        setUniqueidError("roll number cannot exceed 10 characters");
+    }
+    else if(!rollRegex.test(rollNumber)){
+        setUniqueidError("roll number invalid");  
+    } else{
+      setUniqueidError("");
+    }
     
   };
 
@@ -111,7 +120,7 @@ export const AddStudents = () => {
             }}
           />
           <InputField
-            name="Unique ID"
+            name="Roll Number"
             type="text"
             error={uniqueidError}
             onChange={(e) => {
@@ -178,10 +187,10 @@ export const AddStudents = () => {
           /> 
         </div>
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
-          <Select
-            name="Roles"
-            placeholder="Roles"
-            value ={{value: "Roles", label: "Roles"}}
+        <Select
+            name="Section"
+            placeholder="Section"
+            value ={{value: "Section", label: "Section"}}
             options={[]}
             styles={{
                 control: (base) => ({
@@ -215,15 +224,14 @@ export const AddStudents = () => {
             }}
           />
         </div>
-        <div className=" w-full sm:w-[270px] ">
-            <InputField 
+        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+        <InputField 
             name="Phone"
             type="text"
             error={phoneError}
             onChange={(e) =>{validatePhone(e)}}
             />
-            </div>
-
+        </div>
         <Dialog show={show} setShow={setShow} title="Added">
           {" "}
         </Dialog>
