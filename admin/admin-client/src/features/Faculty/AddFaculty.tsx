@@ -1,9 +1,10 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
+import axiosInstance from "../../utils/axios";
 
 
 
@@ -11,19 +12,37 @@ export const AddFaculty = () => {
   const [uniqueid, setuniqueid] = useState("");
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("");
+  const [phone, setPhone] = useState("");
   const [span, setSpan] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [uniqueidError, setUniqueidError] = useState<string>();
+  const [passwordError, setPasswordError] = useState<string>();
+  const [emailError, setEmailError] = useState<string>();
   const [nameError, setNameError] = useState<string>();
   const [designationError, setDesignationError] = useState<string>();
+  const [phoneError, setPhoneError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
   const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
+  const [myrole, setMyRole] = useState<{}[]>()
+  const [response, setResponse] = useState("")
 
-  const options = [
-    { value: "Create Event", label: "Create Event" },
-    { value: "Edit Event", label: "Edit Event" },
-    { value: "SAC", label: "SAC" },
-  ];
+
+
+  useEffect(() => {
+    const role = async () => {
+      const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"roles/fetchRoles");
+      console.log(res.data);
+      const data = res.data.response;
+      let arr = []
+      for(let i = 0; i < data.length; i++){
+          arr.push({value:data[i].name , label:data[i].name })
+      }
+      setMyRole(arr)
+    }
+    role();
+  },[])
 
   const validateUniqueid = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uniqueid = e.target.value;
@@ -48,7 +67,35 @@ export const AddFaculty = () => {
       }
     
   };
+  
+  const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const email = e.target.value;
+    setEmail(email);
+    if (email.length === 0) {
+      setEmailError("Email field is empty");
+    } else {
+      var validRegex =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+      if (!validRegex.test(email)) {
+        setEmailError("Enter valid Email!");
+      } else {
+        setEmailError("");
+      }
+    }
+  };
 
+  const validatePass = (e: ChangeEvent<HTMLInputElement>) => {
+    const password = e.target.value;
+    setPassword(password)
+    const p = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)/
+    if(password.length < 6){  
+       setPasswordError("Minimum Password Length should be 6")
+    }else if(!p.test(password)){
+       setPasswordError("Password should have atleast one capital letter, one digit and one symbol")
+    }else{
+        setPasswordError("")
+    }
+    }
   
   const validateDesignation = (e: React.ChangeEvent<HTMLInputElement>) => {
     const designation = e.target.value;
@@ -61,20 +108,48 @@ export const AddFaculty = () => {
       }
     
   };
+  
+  const validatePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const phone = e.target.value;
+    setPhone(phone);
+    var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    if (phone.length === 0) {
+      setPhoneError("Phone field is empty");
+    } else if(!phone.match(phoneno)){
+      setPhoneError("Invalid number");
+    }
+    else {
+        setPhoneError("");
+      }  
+  };
 
-  const loginValidate = () => {
+  const loginValidate = async() => {
     if (
       uniqueid.length === 0 ||
       name.length === 0 ||
+      password.length === 0 ||
+      phone.length === 0 ||
+      email.length === 0 ||
       designation.length === 0 ||
       uniqueidError?.length !== 0 ||
       nameError?.length !== 0 ||
+      phoneError?.length !== 0 ||
+      passwordError?.length !==0 ||
+      emailError?.length !==0 ||
       designationError?.length !== 0
     ) {
       setShowError("Fill details appropriately");
     } else {
-      setShow(true);
       setShowError("");
+      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "admin/addFaculty", {name:name, rollNumber:uniqueid, phone:phone, designation:designation,email:email,roles:selectRoles, password:password})
+      const data = res.data
+      if (data.status === 1) {
+        setResponse("New Faculty Added")
+        setShow(true)
+      } else {
+          setResponse(data.response)
+          setShow(true)             
+      }   
     }
   };
 
@@ -116,9 +191,8 @@ export const AddFaculty = () => {
           <Select
             name="Roles"
             placeholder="Roles"
-            value ={{value: "Roles", label: "Roles"}}
-            options={options}
-            onChange={(e) => {
+            options={myrole}
+            onChange={(e:any) => {
                 for(let i = 0; i < selectRoles.length; i++){
                    if(e?.value === selectRoles[i]) return        
                 }
@@ -149,6 +223,7 @@ export const AddFaculty = () => {
            
           /> 
         </div>
+
         <div className="flex flex-col w-full sm:w-[50%] mx-auto">
           
           {span &&
@@ -157,7 +232,7 @@ export const AddFaculty = () => {
              {
                  selectRoles.map((r,i) => {
                      return(
-                         <div className="flex justify-between shadow-md px-4 py-2 hover:bg-black/[0.05]">
+                         <div className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]">
                              <span>{r}</span>
                              <Close className="cursor-pointer"onClick ={() => {
                                  let temp = [...selectRoles]
@@ -171,8 +246,35 @@ export const AddFaculty = () => {
              }
           
          </div>
-
-        <Dialog show={show} setShow={setShow} title="Added">
+         <div className=" flex flex-col mt-2 gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+         <InputField
+            name="Login Email"
+            type="text"
+            error={emailError}
+            onChange={(e) => {
+              validateEmail(e);
+            }}
+          />
+          <InputField
+            name="Password"
+            type="password"
+            error={passwordError}
+            onChange={(e) => {
+              validatePass(e);
+            }}
+          />
+        </div>
+        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+        <InputField
+            name="Phone Number"
+            type="text"
+            error={phoneError}
+            onChange={(e) => {
+              validatePhone(e);
+            }}
+          />
+        </div>
+        <Dialog show={show} setShow={setShow} title={response}>
           {" "}
         </Dialog>
 

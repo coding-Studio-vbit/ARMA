@@ -3,6 +3,8 @@ const events = require("../../models/event");
 const forums = require('../../models/forum')
 const response = require("../util/response");
 const students = require('../../models/student')
+const equipments =require('../../models/equipment');
+const facultyModel = require("../../models/faculty");
 
 const dashboard = async (req, res) => {
     try {
@@ -19,6 +21,21 @@ const dashboard = async (req, res) => {
         console.log(err);
         res.json(response(error, process.env.FAILURE_CODE));
       }
+}
+const getEquipments = async (req, res) => {
+  try {
+    let myEquip= await equipments.find({});
+    res.json(
+      response(
+        myEquip,
+        process.env.SUCCESS_CODE
+      )
+    );
+      
+    } catch (err) {
+      console.log(err);
+      res.json(response(error, process.env.FAILURE_CODE));
+    }
 }
 
 const getForumsList = async (req, res) => {
@@ -107,7 +124,6 @@ const getCoreForumMembers = async (req, res) => {
 
   //For filters
   let where = {};
-  console.log(req.query.name);
   if (req.query.name) where.name = req.query.name
 
   //For sorting
@@ -172,5 +188,35 @@ const getForumMembers = async (req, res) => {
   }
 };
 
+const editForum = async(req,res)=>{
+  try {
+      const {id, name, phone, forumHeads, facultyID} = req.body
+      const faculty = await facultyModel.findById(facultyID)
+      await forums.findOneAndUpdate({_id: id},{$set:{name:name, facultyCoordinatorID:faculty, forumHeads:forumHeads, phone:phone}}, {new:true})
+      res.json(
+       response("Forum Details edited successfully!",process.env.SUCCESS_CODE)
+   )
+  } catch (error) {
+   console.log(error);
+   res.json(response(error,process.env.FAILURE_CODE))}
+}
 
-module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getCoreForumMembers, getForumMembers}
+
+const forumEventNumber = async(req,res) => {
+  try {
+    const {forumID} = req.body
+     const result = await events.find({forumID:forumID, eventStatus:{$nin:["REJECTED", "APPROVED", "COMPLETED"]}}).count()
+     res.json(
+      response(result,process.env.SUCCESS_CODE)
+    );
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response(error,process.env.FAILURE_CODE)
+    ); 
+  }
+}
+
+
+
+module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getCoreForumMembers, getForumMembers, getEquipments,editForum,forumEventNumber}

@@ -20,7 +20,7 @@ const InputField: FC<IFProps> = ({
   disabled = false
 }) => {
   return (
-    <div>
+    <div className="!w-[270px]">
 
     <div className={`inputDiv  ${error && "mb-10"}  ${className}`}>
       <input

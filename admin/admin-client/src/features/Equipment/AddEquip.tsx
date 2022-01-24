@@ -1,9 +1,10 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
+import axiosInstance from "../../utils/axios";
 
 
 
@@ -14,7 +15,11 @@ export const AddEquip = () => {
   const [quantityError, setQuantityError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
-  const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
+  const [incharge, setSelectIncharge] = useState("");
+  const [myfac, setMyFac] = useState<{value:string, label:string}[]>()
+  const [response, setResponse] = useState("")
+
+
 
 
 
@@ -43,7 +48,7 @@ export const AddEquip = () => {
     
   };
 
-  const loginValidate = () => {
+  const loginValidate = async() => {
     if (
       name.length === 0 ||
       quantity.length === 0 ||
@@ -52,10 +57,31 @@ export const AddEquip = () => {
     ) {
       setShowError("Fill details appropriately");
     } else {
-      setShow(true);
       setShowError("");
+      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "equipment/addEquipment", {name:name, totalCount:quantity, facultyIncharge:incharge})
+      const data = res.data
+      if (data.status === 1) {
+        setResponse("New Equipment Added")
+        setShow(true)
+      } else {
+          setResponse(data.response)
+          setShow(true)             
+      }   
     }
   };
+  useEffect(() => {
+    const faculty = async () => {
+      const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty");
+      console.log(res.data);
+      const data = res.data.response;
+      let arr = []
+      for(let i = 0; i < data.length; i++){
+          arr.push({value:data[i]._id, label:data[i].name + "  -  " + data[i].rollNumber})
+      }
+      setMyFac(arr)
+    }
+    faculty();
+  },[])
 
   return (
     <div className="flex flex-col grow items-center">
@@ -87,8 +113,10 @@ export const AddEquip = () => {
           <Select
             name="Faculty Incharge"
             placeholder="Faculty Incharge"
-            value ={{value: "Faculty Incharge", label: "Faculty Incharge"}}
-            options={[]}
+            options={myfac}
+            onChange={(e:any) => {
+              setSelectIncharge(e?.value)
+          }}
             styles={{
                 control: (base) => ({
                 ...base,
@@ -101,12 +129,20 @@ export const AddEquip = () => {
                 placeholder: (base) => ({
                   ...base,
                   paddingLeft: '16px'
+                  
                 }),
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
-                }) 
+                    color: 'black',
+                    width: '80%',
+                    textOverflow:'ellipsis'
+                }) ,
+                input: (base) => ({
+                  ...base,
+                  paddingLeft: '16px',
+                  color: 'black'
+              }) 
             }}
             
             className="basic-multi-select w-full h-full"
@@ -114,7 +150,7 @@ export const AddEquip = () => {
           /> 
         </div>
 
-        <Dialog show={show} setShow={setShow} title="Added">
+        <Dialog show={show} setShow={setShow} title={response}>
           {" "}
         </Dialog>
 

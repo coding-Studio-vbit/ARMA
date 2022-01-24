@@ -10,25 +10,32 @@ import CreateEvent from "../features/forum/create_event/createEvent";
 import ForumProfile from "../features/forum/profile/ForumProfile";
 import EventAttendance from "../features/forum/event_attendance/event_attendance";
 import UpdateEventDetails from "../features/forum/event_details/updateEventDetails";
+import AddNewCoreTeamMember from "../features/forum/profile/AddNewCoreTeamMember";
+import AddNewForumMember from "../features/forum/profile/AddNewForumMember";
+import EventBudget from "../features/forum/event_budget/EventBudget";
 
 const ForumRoutes = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar navItems={[]}/>
+      <Navbar navItems={[]} />
       <div className="flex-1 mt-[80px]">
-      <Routes>
-          <Route path="/" element={<Dashboard/>} />
-          <Route path="/eventDashboard" element={<ForumEventDashboard/>} />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/eventDashboard" element={<ForumEventDashboard />} />
           <Route path="/eventEquipment" element={<EventEquip />} />
-          <Route path="/event-venue" element={<EventVenue/>} />
-          <Route path="/reportAndMedia" element={<ReportAndMedia/>} />
-          <Route path="/createEvent" element={<CreateEvent/>} />
-          <Route path="/updateEventDetails" element={<UpdateEventDetails/>} />
-          <Route path="/profile" element={<ForumProfile/>} />
-          <Route path="/eventAttendance" element={<EventAttendance/>} />
+          <Route path="/event-venue" element={<EventVenue />} />
+          <Route path="/reportAndMedia" element={<ReportAndMedia />} />
+          <Route path="/createEvent" element={<CreateEvent />} />
+          <Route path="/updateEventDetails" element={<UpdateEventDetails />} />
+          <Route path="/profile" element={<ForumProfile />} />
+          <Route path="/eventAttendance" element={<EventAttendance />} />
+          <Route
+            path="/addNewCoreTeamMember"
+            element={<AddNewCoreTeamMember />}
+          />
+          <Route path="/budget" element={<EventBudget />} />
 
-
-
+          <Route path="/addNewForumMember" element={<AddNewForumMember />} />
         </Routes>
       </div>
       <Footer />

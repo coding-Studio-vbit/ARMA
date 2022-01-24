@@ -22,6 +22,7 @@ const faculty = new mongoose.Schema({
       validator: (value) => {
         return true;
         //PLEASEEEEEEEE ADDDDDDDDDD ROLL NUMBER VALIDATIONNNNNNNNNNNNN
+        // WILL NOT
       },
     },
     message: "{VALUE} is not a valid faculty roll number!",
@@ -36,6 +37,7 @@ const faculty = new mongoose.Schema({
       message: `{VALUE} is not a valid email`,
     },
   },
+  designation: String,
   password: String,
   phone: {
     type: Number,

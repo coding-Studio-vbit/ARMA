@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useUser } from "../providers/user/UserProvider";
 import { Sidebar } from "./Sidebar";
 import { motion, AnimatePresence } from "framer-motion";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 export interface NavItem {
   label: string;
@@ -23,7 +23,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
   const [showLogout, setShowLogout] = useState(false);
 
   return (
-    <div className="flex h-20  flex-row bg-white z-[11] fixed w-full">
+    <div className={`flex  flex-row bg-white z-[11] fixed w-full ${navItems.length === 0 && "h-[60px]"}`}>
       {/* side navigation bar */}
 
       <Sidebar
@@ -35,7 +35,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
         {/* {ARMA Title} */}
         <div
           id="ARMA-Logo"
-          className="text-xl md:text-2xl font-medium pl-2 text-arma-dark-blue cursor-pointer"
+          className="text-xl md:text-2xl  font-poppins pl-2 text-arma-dark-blue cursor-pointer"
         >
           {navItems.length > 0 && (
             <span
@@ -49,29 +49,34 @@ const Navbar = ({ navItems }: NavbarProps) => {
         </div>
 
         {/* Navigation Items */}
-        <div id="Nav-Items" className="hidden  md:justify-items-center gap-10	  sm:hidden md:flex flex-row ">
+        <div
+          id="Nav-Items"
+          className="hidden  md:justify-items-center gap-10	  sm:hidden md:flex flex-row "
+        >
           {navItems.map((item: NavItem, index: Number) => {
+            const isActive = location.pathname === item.path;
             return (
-              <NavLink 
-              end
-              to={item.path}
-              className={({isActive})=>isActive?'border-b-4 border-arma-blue':'border-white'}
-              
-              >
-                <div
+              <div
                 key={item.label}
-                className=" h-20
-                  flex justify-center items-center 
-                  cursor-pointer border-b-4 border-white"
+                className={` h-full w-full
+                flex justify-center items-center 
+                p-5
+                relative
+                cursor-pointer `}
+                onClick={() => nav(item.path)}
               >
-                <span className="material-icons !text-[1.25rem] text-arma-icon ">
+                {isActive && (
+                  <div className="bg-arma-blue h-[0.2rem] rounded-full  w-[90%] ml-[0.2rem] bottom-0 absolute  ">
+                    {" "}
+                  </div>
+                )}
+                <span
+                  className={`material-icons !text-[1.25rem]  text-arma-gray`}
+                >
                   {item.icon}
                 </span>
-                <span className="text-black font-poppins  ml-1">
-                  {item.label}
-                </span>
+                <span className=" font-poppins  ml-1">{item.label}</span>
               </div>
-              </NavLink>
             );
           })}
         </div>
