@@ -145,7 +145,7 @@ const Table = ({
 
   return (
     <>
-    <div className="w-full border-2 shadow-md rounded-[16px] overflow-clip">
+    <div className="w-full border-2 shadow-md rounded-[16px] overflow-x-auto">
       <table className="w-full ">
         <thead className="bg-white border-b-2 rounded-[8px] border-black/30">
           <tr className="rounded-[16px]" >

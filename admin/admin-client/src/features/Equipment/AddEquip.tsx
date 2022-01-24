@@ -52,6 +52,7 @@ export const AddEquip = () => {
     if (
       name.length === 0 ||
       quantity.length === 0 ||
+      incharge.length === 0 ||
       nameError?.length !== 0 ||
       quantityError?.length !== 0
     ) {

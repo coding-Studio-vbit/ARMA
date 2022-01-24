@@ -4,7 +4,7 @@ import Table from "../../Components/CustomTable";
 export const ForumsView = () => {
   const [roll,setRoll] = useState("")
   return (
-    <div className="flex flex-col grow">
+    <div className="flex flex-col grow overflow-x-auto">
         <div className="flex flex-col mt-5 sm:mx-5 mx-5 space-y-5">
             {/* View Forum Title */}
             <div>
@@ -17,7 +17,7 @@ export const ForumsView = () => {
             </div>
             <div>
                 <div className="w-full min-w-max rounded-[8px]">
-                    <div className="w-full border-2 shadow-md rounded-[16px] overflow-clip">
+                    <div className="w-full border-2 shadow-md rounded-[16px] overflow-x-auto">
                         <div className="m-8">
                             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                 <div className="text-arma-gray text-xl">Forum:</div>

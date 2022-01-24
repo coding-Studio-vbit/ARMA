@@ -95,6 +95,8 @@ export const AddForums = () => {
       password.length === 0 ||
       email.length === 0 ||
       phone.length === 0 ||
+      selectHead.length === 0 ||
+      selectCoord.length === 0 ||
       forumIDError?.length !== 0 ||
       phoneError?.length !== 0 ||
       passwordError?.length !==0 ||
@@ -200,7 +202,7 @@ export const AddForums = () => {
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
+                    color: 'black'
                 }) 
             }}
             
@@ -258,7 +260,7 @@ export const AddForums = () => {
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
+                    color: 'black'
                 }) 
             }}
             

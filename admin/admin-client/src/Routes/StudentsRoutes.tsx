@@ -8,7 +8,8 @@ function StudentsRoutes() {
 
       <Routes>
           <Route path = '/StudentView' element = {<StudentView />}/>
-          <Route path = '/AddStudents' element = {<AddStudents />}/>
+          <Route path = '/AddStudents' element = {<AddStudents isEdit={false} />}/>
+          <Route path = '/EditStudents/:id' element = {<AddStudents isEdit={true} />}/>
           <Route path = '/' element = {<ListStudents />}/>
       </Routes>
 
@@ -16,3 +17,8 @@ function StudentsRoutes() {
 }
 
 export default StudentsRoutes;
+
+
+
+
+

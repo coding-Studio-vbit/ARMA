@@ -131,6 +131,7 @@ export const AddFaculty = () => {
       phone.length === 0 ||
       email.length === 0 ||
       designation.length === 0 ||
+      selectRoles.length === 0 ||
       uniqueidError?.length !== 0 ||
       nameError?.length !== 0 ||
       phoneError?.length !== 0 ||
@@ -215,7 +216,7 @@ export const AddFaculty = () => {
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
+                    color: 'black'
                 }) 
             }}
             
