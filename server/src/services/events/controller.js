@@ -157,7 +157,7 @@ const getRequests = async (req,res) =>{
     res.json(
       response(result,process.env.SUCCESS_CODE)
     );
-    console.log("Get",result);
+    //console.log("Get",result);
   } catch (error) {
     console.log(error);
     res.json(
@@ -167,5 +167,19 @@ const getRequests = async (req,res) =>{
 }
 
 
+const getActiveEvents = async (req,res) =>{
+  try {
+    const result = await events
+      .find({eventStatus:"APPROVED" });
+    res.json(
+      response(result,process.env.SUCCESS_CODE)
+    );
+  } catch (error) {
+    //console.log(error);
+    res.json(
+      response("Unable to Load the Dashboard",process.env.FAILURE_CODE)
+    );    
+  }
+}
 
-module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia , getRequests};
+module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia , getRequests,getActiveEvents};

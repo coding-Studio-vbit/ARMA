@@ -6,7 +6,8 @@ const multerStorage = require("../../../services/util/multerStorage");
 const tokenAuth = require("../../middleware/tokenAuth")
 const upload = multer({ storage: multerStorage });
 
-// router.use(tokenAuth);
+
+router.use(tokenAuth);
 
 //GET EVENTS
 router.get(
@@ -34,6 +35,7 @@ router.post("/updateBudget", upload.fields([{name: "budgetDocument", maxCount:1}
 
 router.post("/reportAndMedia" , upload.fields([{name: "eventReport", maxCount:1} , {name:"eventImages", maxCount:10}]), controller.reportAndMedia)
 
+router.get("/activeEvents",controller.getActiveEvents)
 
 module.exports = router;
 
