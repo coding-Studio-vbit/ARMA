@@ -123,7 +123,7 @@ function Login() {
         <LoginButton
           onClick={async () => {
             if (!email || !password || emailError || passwordError) {
-              setError("Fill the details !");
+              setError("Fill the details!");
               return;
             }
             const userType =
@@ -146,7 +146,12 @@ function Login() {
           }}
         />
       </form>
-      <button className="text-arma-title font-medium">Forgot Password?</button>
+      <button
+        className="text-arma-title font-medium hover:text-black"
+        onClick={() => navigate("/forgot-password")}
+      >
+        Forgot Password?
+      </button>
     </div>
   );
 }
