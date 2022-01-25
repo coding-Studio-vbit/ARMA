@@ -111,7 +111,7 @@ const updateBudgetDoc = async (req, res) => {
     await event.save();
     //send notif to FO.
     const FORoleID = await roles.findOne({ name: "FO" });
-    const FO = faculty.findOne({ roles: [FORoleID._id] });
+    const FO = faculty.findOne({ role: [FORoleID._id] });
     await mailer.sendMail(element.email, budgetDocUpdateTemplate, {
       FOName: FO,
       forumName: req.user.name,

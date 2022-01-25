@@ -12,9 +12,9 @@ const login = async (email, password, userAgent, userType) => {
   try {
     let user;
     if (userType === "FACULTY") {
-      user = await facultyModel.findOne({ email: email }).populate("roles");
+      user = await facultyModel.findOne({ email: email }).populate("role");
     } else if (userType === "FORUM") {
-      user = await forums.findOne({ email: email }).populate("roles");
+      user = await forums.findOne({ email: email }).populate("role");
     } else if (userType === "ADMIN") {
       //Admin
       user = await admins.findOne({ email: email });
@@ -30,8 +30,8 @@ const login = async (email, password, userAgent, userType) => {
           email: email,
           _id: user._id,
           userAgent: userAgent,
-          roles: user.roles,
-          userType: userType
+          role: user.role,
+          userType: userType==='FACULTY'?user.role:userType
         },
         process.env.JWT_SECRET_KEY
       );

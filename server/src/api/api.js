@@ -13,7 +13,7 @@ const equipmentRouter = require("./routes/equipment/router")
 const api = () => {
   const router = express.Router();
   router.use("/", auth);
-  router.use("/students", studentRouter); //TEMP
+  router.use("/students",tokenAuth, studentRouter); //TEMP
   router.use("/faculty", facultyRouter);
   router.use("/forum",  forumRouter);
   router.use("/events", eventRouter);
