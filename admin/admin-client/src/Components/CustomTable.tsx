@@ -95,7 +95,7 @@ const Table = ({
       .get(api, {
         params: params
       })
-      .then((response) => {
+      .then((response:any) => {
         let newData = response.data.response.data;
         setTotalPages(Math.ceil(response.data.response.total / rowsPerPage));
 
@@ -107,7 +107,7 @@ const Table = ({
         
         setData(newData);
       })
-      .catch((error) => {
+      .catch((error:any) => {
         console.log(error.response.message);
       });
   }, [currentPage, totalPages, rowsPerPage, order, orderBy,filter]);
