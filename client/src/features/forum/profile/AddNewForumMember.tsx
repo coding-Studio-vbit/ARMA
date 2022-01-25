@@ -155,7 +155,7 @@ export default function AddNewForumMember() {
           setShowError("Fill details appropriately");
         } else {
           setShowError("");
-          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewForumMembers", {forumName:forum?.name, rollNumber:rollNumber, name:name, department:department, year:year, section:section, email:email,phone:phone})
+          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewForumMembers", {forumName:forum?.name, rollNumber:rollNumber, name:name, branch:department, year:year, section:section, email:email,phone:phone})
           const data = res.data
           if (data.status === 1) {
             setResponse("New Forum Member Added")

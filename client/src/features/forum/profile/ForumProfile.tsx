@@ -22,7 +22,7 @@ export default function ForumProfile() {
   console.log("Rebuild Profile");
   
   const [forumEmail, setForumEmail] = useState<string>(forum?.email ?? " ");
-  const headers:any[] = [
+  let headers:any[] = [
     {
       displayName: "Roll Number",
       dataPath: "studentID.rollNumber",
@@ -33,9 +33,10 @@ export default function ForumProfile() {
     { displayName: "Year", dataPath: "studentID.year", sortable: true },
     { displayName: "Section", dataPath: "studentID.section", sortable: false },
     { displayName: "Designation", dataPath: "designation", sortable: false },
+    
 
   ];
-  const memHeaders:any[] =[
+  let memHeaders:any[] =[
     {
       displayName: "Roll Number",
       dataPath: "rollNumber",
@@ -49,8 +50,10 @@ export default function ForumProfile() {
   const handelCheckbox = (item: any, i: number, core = true) => {
     console.log(item?.studentID?.name);
     
+
     let displayName = (
       <input
+        key={i}
         className="w-5 h-5 rounded-none accent-[#0B5B8A] cursor-pointer"
         type="checkbox"
         name={item?.studentID ? "core":"noncore"}
@@ -72,7 +75,7 @@ export default function ForumProfile() {
       </div>
     );
     item["dataPath"] = dataPath;
-    if (i === 0) {
+    if (headers.length ===6) {
       console.log(i);
 
       if (core)
@@ -190,8 +193,8 @@ export default function ForumProfile() {
             api={`${
               process.env.REACT_APP_SERVER_URL + "forum/getCoreForumMembers"
             }`}
-            rowsPerPage={2}
-            buttonsCount={1}
+            rowsPerPage={5}
+            buttonsCount={5}
             transformer={(item, i) => {
               return handelCheckbox(item, i);
             }}

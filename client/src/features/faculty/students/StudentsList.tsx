@@ -55,7 +55,7 @@ export default function StudentsList() {
         <Table
           api={`${process.env.REACT_APP_SERVER_URL + "students"}`}
           rowsPerPage={5}
-          buttonsCount={3}
+          buttonsCount={5}
           filter={{rollNumber:roll}}
           headers={[
             {

@@ -170,12 +170,14 @@ export default function AddNewCoreTeamMember() {
           setShowError("Fill details appropriately");
         } else {
           setShowError("");
-          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewCoreTeamMember", {forumName:forum?.name, rollNumber:rollNumber, name:name, department:department, year:year, section:section, email:email,phone:phone, designation:designation})
+          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewCoreForumMember", {forumName:forum?.name, rollNumber:rollNumber, name:name, branch:department, year:year, section:section, email:email,phone:phone, designation:designation})
           const data = res.data
           if (data.status === 1) {
             setResponse("New Core Team Member Added")
             setShow(true)
           } else {
+            console.log(data.response);
+            
               setResponse(data.response)
               setShow(true)             
           }   
@@ -303,7 +305,7 @@ export default function AddNewCoreTeamMember() {
           />
         </div>
         <Dialog show={show} setShow={setShow} title={response}>
-          {" "}
+        
         </Dialog>
         <button
           className="btn rounded-[8px] px-6 py-2 mt-12 ml-auto mr-auto flex justify-center"
