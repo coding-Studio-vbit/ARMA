@@ -1,5 +1,3 @@
-import { Card, CardContent } from "@material-ui/core";
-import React from "react";
 import Table from "../../../components/CustomTable";
 
 function Students_View() {
@@ -10,7 +8,7 @@ function Students_View() {
       </div>
       <div className="w-4/5 px-14 rounded-[8px]">
         <div className="w-full border-2 shadow-md  rounded-[16px] overflow-clip ">
-          <div className="grid sm:grid-cols-2 gap-0.5 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <div className="flex space-x-4">
                 <p className="text-arma-grey mb-5 text-xl">First Name:</p>
