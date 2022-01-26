@@ -9,6 +9,7 @@ import FacultyDashBoard from "../features/faculty/dashboard/facultyDashBoard";
 import { FacultyProfile } from "../features/faculty/profile/facultyprofile";
 import { Students_View } from "../features/faculty/students_view/Students_View";
 import FODashBoard from "../features/faculty/dashboard/FODashBoard";
+import { Forum_View } from "../features/faculty/forum_view/Forum_View";
 
 const FacultyRoutes = () => {
   const { faculty } = useUser();
@@ -29,7 +30,7 @@ const FacultyRoutes = () => {
           <Route path="/forums" element={<ForumsList />} />
           <Route path="/students" element={<StudentsList />} />
           <Route path="/students/:id" element={<Students_View />} />
-
+          <Route path="/forum/:id" element={<Forum_View/>} />
           <Route path="/requests" element={<RequestsList />} />
         </Routes>
       </div>
