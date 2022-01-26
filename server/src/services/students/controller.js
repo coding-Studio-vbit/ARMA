@@ -5,6 +5,7 @@ const getStudentsList = async (req, res) => {
   //For pagination
   let page = req.query.page ? Number(req.query.page) : 1;
   let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+  console.log(req.user);
   //For filters
   let where = {};
   if (req.query.name) where.name = {$regex: req.query.name,$options: 'i'};
@@ -38,4 +39,33 @@ const getStudentsList = async (req, res) => {
   }
 };
 
-module.exports = {getStudentsList}
+
+const editStudent = async(req,res)=>{
+  try {
+      const {id, name, rollNumber, year, branch, section, email, phone} = req.body
+      await students.findOneAndUpdate({_id: id},{$set:{name:name, rollNumber: rollNumber, year:year, branch:branch, section:section, email:email, phone:phone}}, {new:true})
+      res.json(
+       response("Student Details edited successfully!",process.env.SUCCESS_CODE)
+   )
+  } catch (error) {
+   console.log(error);
+   res.json(response(error,process.env.FAILURE_CODE))}
+}
+
+const fetchStudents = async (req, res) => {
+  try {
+    let student= await students.find({});
+    res.json(
+      response(
+        student,
+        process.env.SUCCESS_CODE
+      )
+    );
+      
+    } catch (err) {
+      console.log(err);
+      res.json(response(error, process.env.FAILURE_CODE));
+    }
+}
+module.exports = {getStudentsList, editStudent, fetchStudents}
+

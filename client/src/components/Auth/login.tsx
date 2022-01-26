@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputField } from "../InputField/InputField";
 import { Spinner } from "../Spinner/Spinner";
-import { login } from "./authService";
 import { VisibilityOff, Visibility } from "@material-ui/icons";
 import { useUser } from "../../providers/user/UserProvider";
+import { useLogin } from "../../hooks/useLogin";
 
 function Login() {
   let navigate = useNavigate();
@@ -13,10 +13,10 @@ function Login() {
   const [emailError, setEmailError] = useState<string>();
   const [passwordError, setPasswordError] = useState<string>();
   const [email, setEmail] = useState<String>("");
-  const [password, setPassword] = useState<String>("");
+  const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<String>("");
   const [showPassword, setShowPassword] = useState(false);
-
+  const { login, loading } = useLogin();
   useEffect(() => {
     if (forum) {
       navigate("/forum", { replace: true });
@@ -109,18 +109,19 @@ function Login() {
           />
           {showPassword ? (
             <Visibility
-              className="absolute top-[0.67rem] right-3 text-arma-title cursor-pointer"
+              className="absolute top-[0.89rem] right-3 text-arma-title cursor-pointer"
               onClick={() => setShowPassword(false)}
             />
           ) : (
             <VisibilityOff
-              className="absolute top-[0.67rem] right-3 text-arma-title cursor-pointer"
+              className="absolute top-[0.89rem] right-3 text-arma-title cursor-pointer"
               onClick={() => setShowPassword(true)}
             />
           )}
         </div>
         <span className="text-arma-red h-6">{error}</span>
         <LoginButton
+        loading={loading}
           onClick={async () => {
             if (!email || !password || emailError || passwordError) {
               setError("Fill the details!");
@@ -132,7 +133,6 @@ function Login() {
                 : "FORUM";
 
             const res = await login(email, password, userType);
-            console.log(res);
 
             if (res.status === 1) {
               if (userType === "FACULTY") {
@@ -155,18 +155,18 @@ function Login() {
     </div>
   );
 }
-const LoginButton = (props: { onClick: () => Promise<void> }) => {
-  const [loading, setLoading] = useState(false);
-  return loading ? (
+const LoginButton = (props: {
+  loading: boolean;
+  onClick: () => Promise<void>;
+}) => {
+  return props.loading ? (
     <Spinner className="mt-4 mb-2" />
   ) : (
     <button
       className="outlineBtn text-arma-blue border-[1px] rounded-[8px] mt-2 mb-2"
       type="submit"
       onClick={async () => {
-        setLoading(true);
         await props.onClick();
-        setLoading(false);
       }}
     >
       Login{" "}

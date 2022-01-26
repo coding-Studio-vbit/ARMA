@@ -14,10 +14,16 @@ const forum = new mongoose.Schema({
       `Name must be max ${process.env.MAX_NAME_LENGTH} characters`,
     ],
   },
-  forumHeads: {
+  forumHeads: [{
     required: true,
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "students" }],
-  },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "students" 
+  }],
+  facultyCoordinatorID: [{
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "faculty",
+  }],
   forumMembers: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -52,7 +58,16 @@ const forum = new mongoose.Schema({
   forumLogoPath: {
     type: String,
   },
-  roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "roles" }],
+  phone: {
+    type: Number,
+    validate: {
+      validator: (value) => {
+        return validator.isMobilePhone(String(value), "en-IN");
+      },
+      message: `{VALUE} is not a valid Indian contact number.`,
+    },
+  },
+  role: { type: mongoose.Schema.Types.ObjectId, ref: "roles" },
 });
 
 const forums = mongoose.model("forums", forum);

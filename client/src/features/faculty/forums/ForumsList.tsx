@@ -5,11 +5,10 @@ import { InputField } from "../../../components/InputField/InputField";
 export default function ForumsList() {
     const [name,setName] = useState('')
   return (
-    <div className="flex flex-col mt-16 sm:mx-24 mx-12">
+    <div className="flex flex-col mt-16 w-[90%] max-w-[60rem] mx-auto ">
       <p className="text-arma-title mb-16 text-2xl">FORUMS</p>
-      <InputField className="mb-6" name="Forum" onChange={(e) => setName(e.target.value)} />
+      <InputField className="mb-6 max-w-max" name="Forum" onChange={(e) => setName(e.target.value)} />
 
-      <div className="w-full min-w-max ">
         <Table
           api={`${process.env.REACT_APP_SERVER_URL + "faculty/getForums"}`}
           rowsPerPage={5}
@@ -34,6 +33,5 @@ export default function ForumsList() {
           ]}
         />
       </div>
-    </div>
   );
 }

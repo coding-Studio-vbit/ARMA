@@ -5,16 +5,19 @@ const forums = require("../../models/forum");
 const students = require("../../models/student");
 const role = require("../../models/role");
 const response = require("../util/response");
-const admins = require('../../models/admin')
+const admins = require("../../models/admin");
+const mongoose = require('mongoose')
+
 const login = async (email, password, userAgent, userType) => {
   try {
     let user;
     if (userType === "FACULTY") {
-      user = await facultyModel.findOne({ email: email }).populate('roles');
+      user = await facultyModel.findOne({ email: email }).populate("role");
     } else if (userType === "FORUM") {
-      user = await forums.findOne({ email: email }).populate('roles');
-    } else { //Admin
-      user = await admins.findOne({email:email})
+      user = await forums.findOne({ email: email }).populate("role");
+    } else if (userType === "ADMIN") {
+      //Admin
+      user = await admins.findOne({ email: email });
     }
 
     if (!user) {
@@ -23,11 +26,19 @@ const login = async (email, password, userAgent, userType) => {
     const result = bcrypt.compareSync(password, user.password);
     if (result) {
       const token = jwt.sign(
-        { email: email, _id: user._id, userAgent: userAgent, roles: user.roles },
+        {
+          email: email,
+          _id: user._id,
+          userAgent: userAgent,
+          role: user.role,
+          userType: userType==='FACULTY'?user.role:userType
+        },
         process.env.JWT_SECRET_KEY
       );
       user.password = "";
       return response({ token: token, user: user }, process.env.SUCCESS_CODE);
+    } else {
+      return response("Invalid Credentials!", process.env.FAILURE_CODE);
     }
   } catch (error) {
     console.log(error);
@@ -40,26 +51,34 @@ const register = async (user, userType) => {
     const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
     const password = await bcrypt.hash(user.password, salt);
     if (userType === "FACULTY") {
-      let faculty = new facultyModel(user);
+      let {role, ...newuser} = user
+      role = mongoose.Types.ObjectId(role)
+      let faculty = new facultyModel({role,...newuser});
       faculty.password = password;
       await faculty.save();
     } else if (userType === "FORUM") {
-      let forum = new forums(user);
+      let {facultyCoordinatorID, forumHeads, ...newuser} = user
+      facultyCoordinatorID = facultyCoordinatorID.map((f) => {
+          return mongoose.Types.ObjectId(f._id)
+      })
+      forumHeads = forumHeads.map((f) => {
+        return mongoose.Types.ObjectId(f._id)
+    })
+      let forum = new forums({ facultyCoordinatorID, forumHeads, ...newuser});
       forum.password = password;
       await forum.save();
-    }else if(userType === "ADMIN") {
-      let admin = new admins(user)
-      admin.password = password
-      await admin.save()
+    } else if (userType === "ADMIN") {
+      let admin = new admins(user);
+      admin.password = password;
+      await admin.save();
     }
 
     return response("Success", process.env.SUCCESS_CODE);
   } catch (error) {
     console.log(error);
-    if(error.code === 11000){
-     return response("Email Already Exists.",  process.env.FAILURE_CODE)
-    }else
-    return response(error, process.env.FAILURE_CODE);
+    if (error.code === 11000) {
+      return response("Email Already Exists.", process.env.FAILURE_CODE);
+    } else return response(error, process.env.FAILURE_CODE);
   }
 };
 
@@ -74,6 +93,25 @@ const addStudent = async (data) => {
   }
 };
 
+const editAdmin = async(email, newEmail, newpassword) => {
+  try {
+    const admin = await admins.findOne({email:email})
+    if(admin){
+      const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
+      const newPassword = await bcrypt.hash(newpassword, salt);
+      admin.email = newEmail;
+      admin.password = newPassword;
+      await admin.save();
+      return response("Password changed Successfully", process.env.SUCCESS_CODE);
+    }else{
+      return response("Email Does not exist", process.env.FAILURE_CODE);
+    }
+  } catch (error) {
+    console.log(error);
+    return response("failure", process.env.FAILURE_CODE);
+  }
+}
+
 const addRole = async (data) => {
   try {
     let newRole = new role(data);
@@ -85,4 +123,4 @@ const addRole = async (data) => {
   }
 };
 
-module.exports = { login, register, addStudent, addRole };
+module.exports = { login, register, addStudent, addRole, editAdmin };

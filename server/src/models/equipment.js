@@ -4,6 +4,8 @@ const equipment = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    uppercase:true,
+    unique:true,
     minLength: [
       process.env.MIN_NAME_LENGTH,
       `Name must be minimum ${process.env.MIN_NAME_LENGTH} characters`,
@@ -14,7 +16,11 @@ const equipment = new mongoose.Schema({
     ],
   },
   totalCount: { type: Number, min: [1, "totalCount cannot be less than 1"] },
+  facultyIncharge:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "faculty",
+  }
 });
 
 const equipments = mongoose.model("equipments", equipment);
-module.exports = roles;
+module.exports = equipments;

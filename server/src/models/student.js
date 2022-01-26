@@ -34,7 +34,7 @@ const student = new mongoose.Schema({
   },
   branch: {
     type: String,
-    enum: ["CSE", "CSM", "CSM", "CSC", "CSB", "ME", "CE", "EEE", "ECE", "IT"],
+    // enum: ["CSE", "CSM", "CSM", "CSC", "CSB", "ME", "CE", "EEE", "ECE", "IT"],
     required: true,
   },
   section: {
@@ -43,6 +43,7 @@ const student = new mongoose.Schema({
   },
   email: {
     type: String,
+    required:true,
     unique:true,
     validate: {
       validator: (value) => {

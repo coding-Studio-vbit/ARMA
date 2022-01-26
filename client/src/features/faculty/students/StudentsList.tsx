@@ -6,16 +6,18 @@ import { InputField } from "../../../components/InputField/InputField";
 export default function StudentsList() {
   const [roll,setRoll] = useState("")
   return (
-    <div className="flex flex-col mt-16 sm:mx-24 mx-12">
+    <div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[60rem]">
       <p className="text-arma-title mb-16 text-2xl">STUDENTS</p>
-      <div className="flex gap-4 mb-6 items-center   ">
-        <InputField name="Roll Number  " onChange={(e) => setRoll(e.target.value)} />
+      <div className="flex flex-wrap gap-4 mb-6 items-center   ">
+        <div className="w-full grow shrink basis-[250px]" >
+          <InputField className=" w-full" name="Roll Number  " onChange={(e) => setRoll(e.target.value)} />
+        </div>
         <Select
           styles={{
             control: (base) => ({
               ...base,
-              minHeight: 45,
-              minWidth: 145,
+              minHeight: 52,
+              minWidth: 152,
               borderRadius: "0.5rem",
               border: "2px solid rgb(200, 200, 200)",
             }),
@@ -27,7 +29,7 @@ export default function StudentsList() {
           styles={{
             control: (base) => ({
               ...base,
-              minHeight: 45,
+              minHeight: 52,
               minWidth: 100,
               borderRadius: "0.5rem",
               border: "2px solid rgb(200, 200, 200)",
@@ -40,7 +42,7 @@ export default function StudentsList() {
           styles={{
             control: (base) => ({
               ...base,
-              minHeight: 45,
+              minHeight: 52,
               minWidth: 120,
               borderRadius: "0.5rem",
               border: "2px solid rgb(200, 200, 200)",
@@ -50,11 +52,10 @@ export default function StudentsList() {
           placeholder="Section"
         />
       </div>
-      <div className="w-full min-w-max rounded-[8px] ">
         <Table
           api={`${process.env.REACT_APP_SERVER_URL + "students"}`}
           rowsPerPage={5}
-          buttonsCount={3}
+          buttonsCount={5}
           filter={{rollNumber:roll}}
           headers={[
             {
@@ -68,7 +69,6 @@ export default function StudentsList() {
             { displayName: "Section", dataPath: "section", sortable: false },
           ]}
         />
-      </div>
       <button className="btn mb-4 ml-auto  mt-8">GENERATE</button>
     </div>
   );

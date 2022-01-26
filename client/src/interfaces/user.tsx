@@ -4,7 +4,10 @@ export interface Faculty {
   name: string;
   rollNumber: string;
   email: string;
-  roles: Role[];
+  designation: string;
+  department: string;
+  phone: string;
+  role: Role;
 }
 interface Role {
   name: string;
@@ -29,7 +32,9 @@ export interface Student {
 export interface Forum {
   name: string;
   email:string
-  roles:[]
+  role:Role;
+  description:string;
+  facultyCoordinator:string;
   profileCoverPath: string;
   forumHeads: Student[];
   forumMembers: Student[];
