@@ -232,13 +232,14 @@ const forumEventNumber = async(req,res) => {
 const updateProfile = async (req, res) => {
   try {
     const {description,facultyCoordinator,email } = req.body;
-    const faculty=await facultyModel.find({name:facultyCoordinator});
+    const faculty=await facultyModel.findOne({name:facultyCoordinator});
     if( faculty == null ){
       throw "Details could not be updated"
     }
-    const user = await forums.findOneAndUpdate({email:email}, { $set: {description: description, facultyCoordinatorID:faculty._id}}, {new:true} )
+    const user = await forums.findOneAndUpdate({email:email}, { $set: {description: description, facultyCoordinatorID:faculty}}, {new:true} ).populate("facultyCoordinatorID name").populate("role")
     res.json(response(user, process.env.SUCCESS_CODE))
   } catch (error) {
+    console.log(error);
       res.json(response("Details could not be updated", process.env.FAILURE_CODE))
   }
 }
