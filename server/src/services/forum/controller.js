@@ -229,6 +229,18 @@ const forumEventNumber = async(req,res) => {
   }
 }
 
+const updateProfile = async (req, res) => {
+  try {
+    const {description,facultyCoordinator,email } = req.body;
+    const faculty=await facultyModel.find({name:facultyCoordinator});
+    if( faculty == null ){
+      throw "Details could not be updated"
+    }
+    const user = await forums.findOneAndUpdate({description:description}, {facultyCoordinatorID: faculty},{email:email} )
+    res.json(response(user, process.env.SUCCESS_CODE))
+  } catch (error) {
+      res.json(response("Details could not be updated", process.env.FAILURE_CODE))
+  }
+}
 
-
-module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getCoreForumMembers, getForumMembers, getEquipments,editForum,forumEventNumber}
+module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getCoreForumMembers, getForumMembers, getEquipments,editForum,forumEventNumber,updateProfile}
