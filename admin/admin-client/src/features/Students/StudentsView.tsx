@@ -11,7 +11,7 @@ export const StudentView = () => {
             {/* Personal Details */}
                 <p className="text mb-1 text-2xl">Personal Details</p>
                
-                            <div className="grid grid-cols-2 md:grid-cols-4  gap-5 border-2 shadow-md rounded-[16px] p-6">
+                            <div className="grid grid-cols-2 lg:grid-cols-4  gap-5 border-2 shadow-md rounded-[16px] p-6">
                                 <div className="text-arma-gray text-xl">First Name:</div>
                                 <div className="text-xl">Michael</div>
                                 <div className="text-arma-gray text-xl">Last Name:</div>
@@ -86,40 +86,44 @@ export const StudentView = () => {
             {/* Events Organized */}
 
                     <p className="text mb-5 mt-5 text-2xl">Events Organized</p>
-                    <Table
-                    api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
-                    rowsPerPage={5}
-                    buttonsCount={3}
-                    filter={{rollNumber:roll}}
-                    headers={[
-                        { displayName: "FORUM", dataPath: "forum", sortable: false },
-                        { displayName: "ROLE", dataPath: "role", sortable: false },
-                        { displayName: "EVENT NAME", dataPath: "eventname", sortable: false },
-                        { displayName: "DURATION", dataPath: "duration", sortable: false },
-                    ]}
-                    />
+                        <Table
+                        api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                        rowsPerPage={5}
+                        buttonsCount={3}
+                        filter={{rollNumber:roll}}
+                        headers={[
+                            { displayName: "FORUM", dataPath: "forum", sortable: false },
+                            { displayName: "ROLE", dataPath: "role", sortable: false },
+                            { displayName: "EVENT NAME", dataPath: "eventname", sortable: false },
+                            { displayName: "DURATION", dataPath: "duration", sortable: false },
+                            { displayName: "FORUM", dataPath: "forum", sortable: false },
+                            { displayName: "ROLE", dataPath: "role", sortable: false },
+                            { displayName: "EVENT NAME", dataPath: "eventname", sortable: false },
+                            { displayName: "DURATION", dataPath: "duration", sortable: false },
+                        ]}
+                        />
 
 
             {/* Events Participated */}
 
                     <p className="text mb-5 mt-5 text-2xl">Events Participated</p>
-                    <Table
-                    api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
-                    rowsPerPage={5}
-                    buttonsCount={3}
-                    filter={{rollNumber:roll}}
-                    headers={[
-                        { displayName: "FORUM", dataPath: "forum", sortable: false },
-                        { displayName: "EVENT NAME", dataPath: "eventname", sortable: false },
-                        { displayName: "DURATION", dataPath: "duration", sortable: false },
-                    ]}
-                    />
+                        <Table
+                        api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                        rowsPerPage={5}
+                        buttonsCount={3}
+                        filter={{rollNumber:roll}}
+                        headers={[
+                            { displayName: "FORUM", dataPath: "forum", sortable: false },
+                            { displayName: "EVENT NAME", dataPath: "eventname", sortable: false },
+                            { displayName: "DURATION", dataPath: "duration", sortable: false },
+                        ]}
+                        />
+                    </div>
 
             <div className="ml-auto mt-8">
                 <button className="btn mb-8 ml-auto mt-8">GENERATE</button>
             </div>
 
         </div>
-    </div>
   );
 }

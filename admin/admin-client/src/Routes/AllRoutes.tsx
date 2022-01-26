@@ -32,7 +32,7 @@ const ProtectedRoutes = () => {
     <>
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
 
-      <div className="flex flex-col grow">
+      <div className="flex flex-col">
         <Topnav showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <Routes>
         <Route path="/Admins/*" element={<AdminRoutes />} />

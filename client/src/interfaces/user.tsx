@@ -34,7 +34,7 @@ export interface Forum {
   email:string
   role:Role;
   description:string;
-  facultyCoordinator:string;
+  facultyCoordinatorID:{name:string};
   profileCoverPath: string;
   forumHeads: Student[];
   forumMembers: Student[];

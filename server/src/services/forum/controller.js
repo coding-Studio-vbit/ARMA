@@ -236,7 +236,7 @@ const updateProfile = async (req, res) => {
     if( faculty == null ){
       throw "Details could not be updated"
     }
-    const user = await forums.findOneAndUpdate({description:description}, {facultyCoordinatorID: faculty},{email:email} )
+    const user = await forums.findOneAndUpdate({email:email}, { $set: {description: description, facultyCoordinatorID:faculty._id}}, {new:true} )
     res.json(response(user, process.env.SUCCESS_CODE))
   } catch (error) {
       res.json(response("Details could not be updated", process.env.FAILURE_CODE))
