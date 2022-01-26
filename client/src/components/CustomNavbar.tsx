@@ -23,7 +23,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
   const [showLogout, setShowLogout] = useState(false);
 
   return (
-    <div className={`flex  flex-row bg-white z-[11] fixed w-full ${navItems.length === 0 && "h-[60px]"}`}>
+    <div className={`flex  flex-row bg-white z-[11] fixed w-full h-[60px]`}>
       {/* side navigation bar */}
 
       <Sidebar
@@ -51,7 +51,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
         {/* Navigation Items */}
         <div
           id="Nav-Items"
-          className="hidden  md:justify-items-center gap-10	  sm:hidden md:flex flex-row "
+          className="hidden  md:justify-items-center gap-6	  sm:hidden md:flex flex-row "
         >
           {navItems.map((item: NavItem, index: Number) => {
             const isActive = location.pathname === item.path;
@@ -110,7 +110,12 @@ const Navbar = ({ navItems }: NavbarProps) => {
                   {!location.pathname.includes("profile") && (
                     <div
                       onClick={() => {
-                        if (faculty) nav("/faculty/profile");
+                        if (faculty){
+                          if(faculty.role.name==='FO')
+                          nav("/faculty/fo/profile");
+                          else
+                          nav("/faculty/profile");
+                        } 
                         else if (forum) nav("/forum/profile");
                       }}
                       className=" flex cursor-pointer gap-4 justify-center  rounded-[12px] z-10 py-4 hover:bg-[#eeeeee]  px-4 "
