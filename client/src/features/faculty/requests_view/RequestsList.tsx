@@ -25,7 +25,7 @@ const RequestsList = () => {
   return (
     <div id="requestsTable">
       <div className="flex mt-4 ml-2 mb-4 justify-around sm:justify-between sm:mx-16">
-        <p className="text-arma-title text-2xl text-arma-dark-blue">REQUESTS</p>
+        <p className="text-arma-title text-2xl ">REQUESTS</p>
         {/* Drop down for filtering based on request status*/}
         <Select
           options={[
@@ -49,7 +49,7 @@ const RequestsList = () => {
       {/* Table */}
       <div className="sm:w-max mx-auto overflow-auto">
         <Table
-          api={`${process.env.REACT_APP_SERVER_URL}events`}
+          api={`${process.env.REACT_APP_SERVER_URL}events/`}
           filter={{ eventStatus: requestStatus.value }}
           headers={headers}
           rowsPerPage={10}

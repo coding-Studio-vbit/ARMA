@@ -17,6 +17,8 @@ const getEvents = async (req, res) => {
   let where = {};
   if (req.query.forumID) where.forumID = req.query.forumID;
   if (req.query.eventStatus) where.eventStatus = req.query.eventStatus;
+  if (req.query.hasBudget) where.hasBudget = req.query.hasBudget;
+
 
   //For sorting
   let sort = {};
@@ -30,11 +32,20 @@ const getEvents = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort)
-      .populate({
-        path: "forumID",
-        select: "name facultyCoordinatorID",
-        populate: { path: "facultyCoordinatorID", select: "name" },
-      });
+      .populate({path:'forumID', select:'name facultyCoordinatorID',model:'forums',
+    populate:{
+      path:'facultyCoordinatorID',
+      select:'name',
+      model:'faculty'
+    }
+    })
+    if(req.query.forumName){
+      result = result.filter((e)=>{
+        if(e.forumID.name.includes(req.query.forumName)){
+          return e;
+        }
+      })
+    }
     const total = await events.count(where);
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
@@ -90,6 +101,7 @@ const createEvent = async (req, res) => {
     })
     newAttendanceDoc.eventID = String(newEvent._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
+    newEvent.eventStatus = req.files.budgetDocument !== null?"AWAITING BUDGET APPROVAL":"AWAITING SAC APPROVAL"
     await newAttendanceDoc.save();
     await newEvent.save();
     await booking.save()
@@ -181,5 +193,9 @@ const getActiveEvents = async (req,res) =>{
     );    
   }
 }
+
+
+
+
 
 module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia , getRequests,getActiveEvents};

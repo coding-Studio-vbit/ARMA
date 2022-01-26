@@ -21,6 +21,10 @@ function Login() {
     if (forum) {
       navigate("/forum", { replace: true });
     } else if (faculty) {
+      if(faculty.role.name==='FO'){
+        navigate("/faculty/fo", { replace: true });
+
+      }else
       navigate("/faculty", { replace: true });
     }
   }, [forum, faculty, navigate]);

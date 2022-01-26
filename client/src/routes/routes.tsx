@@ -5,6 +5,7 @@ import ForumRoutes from "./ForumRoutes";
 import { ForgotPassword } from "../components/Auth/forgotPassword";
 import {ResetPassword} from "../components/Auth/ResetPassword";
 import { useUser } from "../providers/user/UserProvider";
+import FORoutes from "./FORoutes";
 
 function AllRoutes() {
   const { faculty, forum } = useUser();
@@ -20,7 +21,8 @@ function AllRoutes() {
             forum && <Route path="/forum/*" element={<ForumRoutes />} />
           }    
            { faculty &&    <Route path="/faculty/*" element={<FacultyRoutes />} />}
-           
+           { faculty?.role.name==='FO' &&    <Route path="/faculty/fo" element={<FORoutes />} />}
+
         <Route path="*" element={ <PageNotFound/> } />
 
       </Routes>

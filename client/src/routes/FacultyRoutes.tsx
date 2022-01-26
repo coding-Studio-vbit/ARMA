@@ -24,7 +24,6 @@ const FacultyRoutes = () => {
       <div className="flex-1 mt-[80px]">
         <Routes>
           <Route path="/" element={<FacultyDashBoard />} />
-          <Route path="/fo" element={<FODashBoard />} />
 
           <Route path="/profile" element={<FacultyProfile />} />
           <Route path="/forums" element={<ForumsList />} />
