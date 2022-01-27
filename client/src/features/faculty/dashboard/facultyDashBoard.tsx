@@ -79,7 +79,7 @@ function FacultyDashBoard() {
                 eventStatus: "",
                 _id: ""
               };
-               event.forum = eventList[i].forumID;
+               event.forum = eventList[i].forumID.name;
                event._id = eventList[i]._id;
                event.event = eventList[i].name;
                event.eventStatus = eventList[i].eventStatus;
@@ -107,7 +107,8 @@ function FacultyDashBoard() {
             }          
             setCurrentRequests(data);
             setTodaysEvents(data);  
-            setPendingRequests(eventList.length);          
+            setPendingRequests(eventList.length); 
+                     
 
           }else{
             // console.log("No Events");
@@ -129,7 +130,7 @@ function FacultyDashBoard() {
         setError(error.message);
       });    
   }
-
+  
   useEffect(() => {
     fetchData();
   }, []);
