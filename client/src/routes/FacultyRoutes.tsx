@@ -13,18 +13,32 @@ import { Forum_View } from "../features/faculty/forum_view/Forum_View";
 
 const FacultyRoutes = () => {
   const { faculty } = useUser();
+
+  const navItems:any = [
+    //  { label: "Dashboard", icon: "home", path: "/faculty/" },
+    //  { label: "Forums", icon: "group", path: "/faculty/forums" },
+    // { label: "Students", icon: "person", path: "/faculty/students" },
+  ];
   
-  const navItems = [
-    { label: "Dashboard", icon: "home", path: "/faculty/" },
+  const setNavItems = ()=>{
+    if(faculty?.role.SAC)
+    navItems.push(  { label: "Dashboard", icon: "home", path: "/faculty/" },
     { label: "Forums", icon: "group", path: "/faculty/forums" },
     { label: "Students", icon: "person", path: "/faculty/students" },
-  ];
+    
+    )
+    return navItems
+  }
+
+  
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar navItems={navItems} />
+      <Navbar navItems={setNavItems()} />
       <div className="flex-1 mt-[80px]">
         <Routes>
-          <Route path="/" element={<FacultyDashBoard />} />
+          
+        <Route path="/" element={ <FacultyDashBoard/>} />
+        <Route path="/foRequests" element={ <FODashBoard/>} />
 
           <Route path="/profile" element={<FacultyProfile />} />
           <Route path="/forums" element={<ForumsList />} />

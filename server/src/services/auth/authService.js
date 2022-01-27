@@ -6,7 +6,8 @@ const students = require("../../models/student");
 const role = require("../../models/role");
 const response = require("../util/response");
 const admins = require("../../models/admin");
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const roles = require("../../models/role");
 
 const login = async (email, password, userAgent, userType) => {
   try {
@@ -26,6 +27,7 @@ const login = async (email, password, userAgent, userType) => {
     }
     const result = bcrypt.compareSync(password, user.password);
     if (result) {
+
       const token = jwt.sign(
         {
           email: email,
@@ -52,9 +54,17 @@ const register = async (user, userType) => {
     const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
     const password = await bcrypt.hash(user.password, salt);
     if (userType === "FACULTY") {
-      let {role, ...newuser} = user
-      role = mongoose.Types.ObjectId(role)
-      let faculty = new facultyModel({role,...newuser});
+      let {rolesF, ...newuser} = user
+      console.log(rolesF);
+      const arr = []
+      for (let index = 0; index < rolesF.length; index++) {
+        const element = rolesF[index];
+        const rol =  await roles.findById(element)
+        arr.push(rol)
+      }
+     
+      console.log(rolesF);
+      let faculty = new facultyModel({role:arr,...newuser});
       faculty.password = password;
       await faculty.save();
     } else if (userType === "FORUM") {

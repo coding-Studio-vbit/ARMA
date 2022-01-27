@@ -16,8 +16,14 @@ const getEvents = async (req, res) => {
   //For filters
   let where = {};
   if (req.query.forumID) where.forumID = req.query.forumID;
+  if (req.query.hasBudget)
+  {
+    where.hasBudget = req.query.hasBudget;
+    where.eventStatus = ["AWAITING BUDGET APPROVAL","REQUESTED BUDGET CHANGES","BUDGET CHANGES UPDATED","BUDGET REJECTED"]
+  }
   if (req.query.eventStatus) where.eventStatus = req.query.eventStatus;
-  if (req.query.hasBudget) where.hasBudget = req.query.hasBudget;
+
+  console.log(where);
 
 
   //For sorting
@@ -122,7 +128,7 @@ const updateBudgetDoc = async (req, res) => {
     event.budgetDocPath = req.files.budgetDocument[0].path;
     await event.save();
     //send notif to FO.
-    const FORoleID = await roles.findOne({ name: "FO" });
+    const FORoleID = await roles.findOne().where('name').in(['FO']);
     const FO = faculty.findOne({ role: [FORoleID._id] });
     await mailer.sendMail(element.email, budgetDocUpdateTemplate, {
       FOName: FO,
@@ -163,9 +169,18 @@ const reportAndMedia = async (req, res) => {
 };
 
 const getRequests = async (req,res) =>{
+  console.log(req.query.isFO);
   try {
-    const result = await events
+    let result
+    if(req.query.isFO==="true"){
+      console.log("htfkuyf,lig");
+      result = await events
+      .find({eventStatus:["AWAITING BUDGET APPROVAL","REQUESTED BUDGET CHANGES","BUDGET CHANGES UPDATED"] });
+    }else{
+      result = await events
       .find({eventStatus:{ $nin:["COMPLETED","REJECTED"]} });
+    }
+     
     res.json(
       response(result,process.env.SUCCESS_CODE)
     );

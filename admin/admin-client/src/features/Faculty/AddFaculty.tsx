@@ -2,7 +2,6 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
-import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
 import axiosInstance from "../../utils/axios";
 
@@ -24,7 +23,9 @@ export const AddFaculty = () => {
   const [phoneError, setPhoneError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
-  const [selectRole, setSelectRole] = useState<(string | undefined)>("")
+  const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
+  const [selectRolesL, setSelectRolesL] = useState<(string | undefined) []>([])
+
   const [myrole, setMyRole] = useState<{}[]>()
   const [response, setResponse] = useState("")
 
@@ -124,6 +125,7 @@ export const AddFaculty = () => {
   };
 
   const loginValidate = async() => {
+    try {
     if (
       uniqueid.length === 0 ||
       name.length === 0 ||
@@ -131,7 +133,7 @@ export const AddFaculty = () => {
       phone.length === 0 ||
       email.length === 0 ||
       designation.length === 0 ||
-      selectRole?.length === 0 ||
+      selectRoles.length === 0 ||
       uniqueidError?.length !== 0 ||
       nameError?.length !== 0 ||
       phoneError?.length !== 0 ||
@@ -142,7 +144,9 @@ export const AddFaculty = () => {
       setShowError("Fill details appropriately");
     } else {
       setShowError("");
-      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "admin/addFaculty", {name:name, rollNumber:uniqueid, phone:phone, designation:designation,email:email,role:selectRole, password:password})
+        const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "admin/addFaculty", {name:name, rollNumber:uniqueid, phone:phone, designation:designation,email:email,rolesF:selectRoles, password:password})
+
+      
       const data = res.data
       if (data.status === 1) {
         setResponse("New Faculty Added")
@@ -152,6 +156,9 @@ export const AddFaculty = () => {
           setShow(true)             
       }   
     }
+  } catch (error) {
+        
+  }
   };
 
   return (
@@ -194,7 +201,13 @@ export const AddFaculty = () => {
             placeholder="Roles"
             options={myrole}
             onChange={(e:any) => {
-                setSelectRole(e?.value)
+                for(let i = 0; i < selectRoles.length; i++){
+                   if(e?.value === selectRoles[i]) return        
+                }
+                setSelectRoles([...selectRoles, e?.value])
+                setSelectRolesL([...selectRolesL, e?.label])
+                
+                setSpan(true)
             }}
             styles={{
                 control: (base) => ({
@@ -216,10 +229,36 @@ export const AddFaculty = () => {
                 }) 
             }}
             
+            className="basic-multi-select "
            
           /> 
         </div>
 
+        <div className="flex flex-col w-full sm:w-[50%] mx-auto">
+          
+          {span &&
+          <span className="text-arma-title mb-2">Roles:</span>
+           }
+             {
+                 selectRolesL.map((r,i) => {
+                     return(
+                         <div className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]">
+                             <span>{r}</span>
+                             <Close className="cursor-pointer"onClick ={() => {
+                                 let temp = [...selectRoles]
+                                 temp.splice(i,1)
+                                 setSelectRoles(temp)
+                                 let tempL = [...selectRolesL]
+                                 tempL.splice(i,1)
+                                 setSelectRolesL(tempL)
+                                 if(selectRoles.length === 1) setSpan(false)
+                             }}/>
+                         </div>
+                     )
+                 })
+             }
+          
+         </div>
          <div className=" flex flex-col mt-2 gap-y-6 mb-6  md:flex-row sm:gap-x-8">
          <InputField
             name="Login Email"

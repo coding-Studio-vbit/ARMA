@@ -6,7 +6,7 @@ import AllRoutes from './Routes/AllRoutes';
 function App() {
 
   return (
-    <div className="App font-inter sm:grid grid-cols-[0px_1fr] sm:grid-cols-[190.838px_1fr] overflow-x-scroll">
+    <div className="App font-inter  ">
       <UserProvider>
       <AllRoutes />
       </UserProvider>
