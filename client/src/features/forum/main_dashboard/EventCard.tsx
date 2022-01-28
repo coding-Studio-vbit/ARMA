@@ -25,11 +25,11 @@ const EventCard = ({ event }: EventCardProps) => {
   }
 
   return (
-    <div className="mx-auto sm:mx-4 h-48 w-52 rounded-xl bg-white drop-shadow-xl">
-      <div className="text-center align-text-middle font-bold text-lg mt-2 border border-slate-300 border-b-1 border-t-0 border-l-0 border-r-0">
+    <div className="mx-0 h-44 w-52 rounded-xl bg-white drop-shadow-xl">
+      <div className="text-center py-1 align-text-middle font-bold text-lg mt-2 border border-slate-300 border-b-1 border-t-0 border-l-0 border-r-0">
         {event.name}
       </div>
-      {console.log(eventStatusColor)}
+      {/* {console.log(eventStatusColor)} */}
       <div className={`text-center align-text-middle font-medium text-md mt-2 ${eventStatusColor}`}>
         {event.eventStatus}
       </div>
