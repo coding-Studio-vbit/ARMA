@@ -77,6 +77,9 @@ const addNewForumMembers = async (req, res) => {
   try {
       const {forumName, ...stuser} = req.body;
       let stu = await students.findOne({ rollNumber: stuser.rollNumber });
+      const forum = await forums.findOne({name:forumName})
+      const studentExists = forum.forumMembers.find((v)=>v.toString()===stu._id.toString())
+      if(studentExists) throw ('Student already exists')
       if(stu){
         await forums.findOneAndUpdate({name: forumName}, {"$push":{"forumMembers": stu}})
       }else{
@@ -90,7 +93,7 @@ const addNewForumMembers = async (req, res) => {
     } catch (err) {
       console.log(err);
       res.json(
-        response("New Forum Member could not be added" , process.env.FAILURE_CODE)
+        response(err , process.env.FAILURE_CODE)
       );
     }
 }
@@ -99,12 +102,21 @@ const addNewCoreForumMember = async (req, res) => {
   try {
       const {forumName,designation, ...stuser} = req.body;
       let stu = await students.findOne({ rollNumber: stuser.rollNumber });
+      const forum = await forums.findOne({name:forumName})
+      console.log(forum.forumCoreTeamMembers[10].studentID.toString());
+      
+      
       if(stu){
-        await forums.findOneAndUpdate({name: forumName}, {"$push":{"forumCoreTeamMembers": {designation: designation, studentID: stu}}})
+        const studentExists = forum.forumCoreTeamMembers.find((v)=>{
+        
+          return v.studentID.toString()===stu._id.toString()
+        })
+        if(studentExists) throw ('Student already exists')
+        await forums.findOneAndUpdate({name: forumName}, {"$addToSet":{"forumCoreTeamMembers": {designation: designation, studentID: stu}}})
       }else{
       let student = new students(stuser);
       await student.save()
-      await forums.findOneAndUpdate({name: forumName}, {"$push":{"forumCoreTeamMembers": {designation: designation, studentID: student}}})
+      await forums.findOneAndUpdate({name: forumName}, {"$addToSet":{"forumCoreTeamMembers": {designation: designation, studentID: student}}})
       }
       res.json(
         response("New Core Forum Member Added", process.env.SUCCESS_CODE)
@@ -112,7 +124,7 @@ const addNewCoreForumMember = async (req, res) => {
     } catch (err) {
       console.log(err);
       res.json(
-        response("New Forum Member could not be added",process.env.FAILURE_CODE)
+        response(err,process.env.FAILURE_CODE)
       );
     }
 }
@@ -124,8 +136,7 @@ const getCoreForumMembers = async (req, res) => {
 
   //For filters
   let where = {};
-  if (req.query.name) where.name = req.query.name
-
+  where["name"] =  req.query.name
   //For sorting
   let sort = {};
   if (req.query.orderBy && req.query.order)
@@ -133,13 +144,14 @@ const getCoreForumMembers = async (req, res) => {
   else sort = { name: "asc" };
   try {
     result = await forums
-      .findOne({name:req.query.name})
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .sort(sort).select('-password')
+      .findOne(where)
+      .select('-password')
       .populate({path: 'forumCoreTeamMembers.studentID'})
+      // [0,1,2,3,4,5,6,7,8,9,10]
+    const mem = result.forumCoreTeamMembers.slice(limit*(page-1),limit*page)
+    console.log(limit*(page-1));
     res.json(
-      response({ data: result.forumCoreTeamMembers, total: result.forumCoreTeamMembers.length }, process.env.SUCCESS_CODE)
+      response({ data: mem, total: result.forumCoreTeamMembers.length }, process.env.SUCCESS_CODE)
     );
   } catch (error) {
     console.log(error);
@@ -217,6 +229,19 @@ const forumEventNumber = async(req,res) => {
   }
 }
 
+const updateProfile = async (req, res) => {
+  try {
+    const {description,facultyCoordinator,email } = req.body;
+    const faculty=await facultyModel.findOne({name:facultyCoordinator});
+    if( faculty == null ){
+      throw "Details could not be updated"
+    }
+    const user = await forums.findOneAndUpdate({email:email}, { $set: {description: description, facultyCoordinatorID:faculty}}, {new:true} ).populate("facultyCoordinatorID name").populate("role")
+    res.json(response(user, process.env.SUCCESS_CODE))
+  } catch (error) {
+    console.log(error);
+      res.json(response("Details could not be updated", process.env.FAILURE_CODE))
+  }
+}
 
-
-module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getCoreForumMembers, getForumMembers, getEquipments,editForum,forumEventNumber}
+module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getCoreForumMembers, getForumMembers, getEquipments,editForum,forumEventNumber,updateProfile}

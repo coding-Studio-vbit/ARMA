@@ -16,6 +16,7 @@ router.get("/getForumMembers" , controller.getForumMembers)
 
 router.post("/forumEventNumber",controller.forumEventNumber);
 
+router.put("/updateProfile", controller.updateProfile)
 
 
 

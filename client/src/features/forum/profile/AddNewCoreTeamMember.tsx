@@ -170,12 +170,14 @@ export default function AddNewCoreTeamMember() {
           setShowError("Fill details appropriately");
         } else {
           setShowError("");
-          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewCoreTeamMember", {forumName:forum?.name, rollNumber:rollNumber, name:name, department:department, year:year, section:section, email:email,phone:phone, designation:designation})
+          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewCoreForumMember", {forumName:forum?.name, rollNumber:rollNumber, name:name, branch:department, year:year, section:section, email:email,phone:phone, designation:designation})
           const data = res.data
           if (data.status === 1) {
             setResponse("New Core Team Member Added")
             setShow(true)
           } else {
+            console.log(data.response);
+            
               setResponse(data.response)
               setShow(true)             
           }   
@@ -189,7 +191,7 @@ export default function AddNewCoreTeamMember() {
       <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
           ADD NEW CORE TEAM MEMBER
         </p>
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+        <div className="grid sm:grid-cols-2 grid-cols-1 gap-6 ">
           <InputField
             name="Roll Number"
             type="text"
@@ -202,8 +204,6 @@ export default function AddNewCoreTeamMember() {
             error={nameError}
             onChange={(e) => {validateName(e)}}
           />
-        </div>
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
         <Select
             name="Department"
             placeholder="Department"
@@ -260,8 +260,6 @@ export default function AddNewCoreTeamMember() {
                 }) 
             }}  
           /> 
-        </div>
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
         <Select
             name="Section"
             placeholder="Section"
@@ -295,8 +293,6 @@ export default function AddNewCoreTeamMember() {
             type="text"
             onChange={(e) => {validateEmail(e)}}
           />
-        </div>
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
           <InputField
             name="Phone"
             type="text"
@@ -309,7 +305,7 @@ export default function AddNewCoreTeamMember() {
           />
         </div>
         <Dialog show={show} setShow={setShow} title={response}>
-          {" "}
+        
         </Dialog>
         <button
           className="btn rounded-[8px] px-6 py-2 mt-12 ml-auto mr-auto flex justify-center"

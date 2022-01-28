@@ -2,7 +2,6 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
-import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
 import axiosInstance from "../../utils/axios";
 
@@ -19,12 +18,10 @@ export const AddForums = () => {
   const [phoneError, setPhoneError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
-  const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])  
    const [selectHead, setSelectHead] = useState<(string | undefined) []>([])
    const [selectCoord, setSelectCoord] = useState<(string | undefined) []>([])
    const [selectHeadLabel, setSelectHeadLabel] = useState<(string | undefined) []>([])
-   const [selectCoordLabel, setSelectCoordLabel] = useState<(string | undefined) []>([])
-   const [mystu, setMyStu] = useState<{}[]>()
+   const [mystu, setMyStu] = useState<{value:string,label:string}[]>()
    const [myfac, setMyFac] = useState<{}[]>()
    const [response, setResponse] = useState("")
   
@@ -95,6 +92,8 @@ export const AddForums = () => {
       password.length === 0 ||
       email.length === 0 ||
       phone.length === 0 ||
+      selectHead.length === 0 ||
+      selectCoord.length === 0 ||
       forumIDError?.length !== 0 ||
       phoneError?.length !== 0 ||
       passwordError?.length !==0 ||
@@ -152,7 +151,7 @@ export const AddForums = () => {
           ADD FORUMS
         </p>
 
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <InputField
             name="Forum Name"
             type="text"
@@ -169,20 +168,18 @@ export const AddForums = () => {
               validatePhone(e);
             }}
           />
-        </div>
 
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
-        <div className="flex flex-col shrink">
         <Select
             name="Forum Head"
             placeholder="Forum Head"
+            value={{value:'Forum Head',label:'Forum Head'}}
             options={mystu}
             onChange={(e:any) => {
               for(let i = 0; i < selectHead.length; i++){
                  if(e?.value === selectHead[i]) return        
               }
               setSelectHead([...selectHead, e?.value])
-              setSelectHeadLabel([...selectHeadLabel,e?.label])
+              setSelectHeadLabel([...selectHeadLabel,e?.label.split('-')[0]])
           }}
             styles={{
                 control: (base) => ({
@@ -200,14 +197,46 @@ export const AddForums = () => {
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
                 }) 
             }}
             
             className="basic-multi-select"
            
           /> 
-          <div className="flex flex-col mr-auto w-[270px]">
+          <Select
+            name="Faculty Coordinator"
+            placeholder="Faculty Coordinator"
+            options={myfac}
+            onChange={(e:any) => {
+              for(let i = 0; i < selectCoord.length; i++){
+                 if(e?.value === selectCoord[i]) return        
+              }
+              setSelectCoord([...selectCoord, e?.value])
+
+          }}
+            styles={{
+                control: (base) => ({
+                ...base,
+                minHeight: 52,
+                minWidth: 270,
+                borderRadius: "0.5rem",
+                border: "2px solid rgb(200, 200, 200)",
+                }),
+
+                placeholder: (base) => ({
+                  ...base,
+                  paddingLeft: '16px'
+                }),
+                singleValue: (base) => ({
+                    ...base,
+                    paddingLeft: '16px',
+                }) 
+            }}
+            
+            className="basic-multi-select "
+           
+          /> 
+          <div className={`flex flex-col mr-auto w-[270px] ${selectHeadLabel.length===0 && 'hidden'} `}>
              {
                  selectHeadLabel.map((r,i) => {
                      return(
@@ -227,68 +256,10 @@ export const AddForums = () => {
              }
 
          </div>
-         </div>
          
-         <div className="flex flex-col shrink">
-          <Select
-            name="Faculty Coordinator"
-            placeholder="Faculty Coordinator"
-            options={myfac}
-            onChange={(e:any) => {
-              for(let i = 0; i < selectCoord.length; i++){
-                 if(e?.value === selectCoord[i]) return        
-              }
-              setSelectCoord([...selectCoord, e?.value])
-              setSelectCoordLabel([...selectCoordLabel,e?.label])
-
-          }}
-            styles={{
-                control: (base) => ({
-                ...base,
-                minHeight: 52,
-                minWidth: 270,
-                borderRadius: "0.5rem",
-                border: "2px solid rgb(200, 200, 200)",
-                }),
-
-                placeholder: (base) => ({
-                  ...base,
-                  paddingLeft: '16px'
-                }),
-                singleValue: (base) => ({
-                    ...base,
-                    paddingLeft: '16px',
-                    color: '#575757e1'
-                }) 
-            }}
-            
-            className="basic-multi-select "
-           
-          /> 
-           <div className="flex flex-col ml-auto w-[270px]">
-             {
-                 selectCoordLabel.map((r,i) => {
-                     return(
-                         <div className="flex justify-between shadow-md px-4 py-2 hover:bg-black/[0.05] mt-4">
-                             <span>{r}</span>
-                             <Close className="cursor-pointer"onClick ={() => {
-                                 let temp = [...selectCoordLabel]
-                                 let x = [...selectCoord]
-                                 temp.splice(i,1)
-                                 x.splice(i,1)
-                                 setSelectCoordLabel(temp)
-                                 setSelectCoord(x)
-                             }}/>
-                         </div>
-                     )
-                 })
-             }
-
-         </div>
-         </div>
-        </div>
+          
         
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+        
           <InputField
             name="Login Email"
             type="text"

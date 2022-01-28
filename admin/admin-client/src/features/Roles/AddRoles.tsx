@@ -41,8 +41,7 @@ export const AddRoles = () => {
   const loginValidate = async() => {
     if (
       name.length === 0 ||
-      nameError?.length !== 0 ||
-      selectRoles.length === 0
+      nameError?.length !== 0 
     ) {
       setShowError("Fill details appropriately");
     } else {
@@ -81,7 +80,6 @@ export const AddRoles = () => {
           <Select
             name="Roles"
             placeholder="Roles"
-            value ={{value: "Roles", label: "Roles"}}
             options={options}
             onChange={(e) => {
                 for(let i = 0; i < selectRoles.length; i++){
@@ -105,7 +103,7 @@ export const AddRoles = () => {
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
+                    color: 'black'
                 }) 
             }}
             

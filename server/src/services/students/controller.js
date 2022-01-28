@@ -5,6 +5,7 @@ const getStudentsList = async (req, res) => {
   //For pagination
   let page = req.query.page ? Number(req.query.page) : 1;
   let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+  console.log(req.user);
   //For filters
   let where = {};
   if (req.query.name) where.name = {$regex: req.query.name,$options: 'i'};

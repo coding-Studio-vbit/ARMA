@@ -51,8 +51,9 @@ try {
 
 const editFaculty = async(req,res)=>{
     try {
+        
         const {id, name, designation, roles} = req.body
-        await faculty.findOneAndUpdate({_id: id},{$set:{name:name, designation: designation, roles:roles}}, {new:true})
+        await faculty.findOneAndUpdate({_id: id},{$set:{name:name, designation: designation, role:roles}}, {new:true})
         res.json(
          response("Faculty Details edited successfully!",process.env.SUCCESS_CODE)
      )

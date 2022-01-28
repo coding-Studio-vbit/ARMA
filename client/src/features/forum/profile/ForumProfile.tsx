@@ -3,26 +3,30 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Table from "../../../components/CustomTable";
+import { Dialog } from "../../../components/Dialog/Dialog";
 import { InputField } from "../../../components/InputField/InputField";
 import { TextArea } from "../../../components/InputField/TextArea";
 import { useUser } from "../../../providers/user/UserProvider";
+import axiosInstance from "../../../utils/axios";
 
 export default function ForumProfile() {
   const navigate = useNavigate()
-  const { forum } = useUser();
+  const { forum, setForum } = useUser();
   const [isEdit, setIsEdit] = useState(false);
+  const [message, setMessage] = useState("")
+  const [show, setShow] = useState(false)
   const [description, setDescription] = useState<string>(
     forum?.description ?? " "
   );
   const [facultycoordinator, setFacultycoordinator] = useState<string>(
-    forum?.facultyCoordinator ?? " "
+    forum?.facultyCoordinatorID.name ?? " "
   );
   const [allCheckedCore,setAllCheckedCore] = useState(false)
   const [allCheckedMem,setAllCheckedMem] = useState(false)
   console.log("Rebuild Profile");
   
   const [forumEmail, setForumEmail] = useState<string>(forum?.email ?? " ");
-  const headers:any[] = [
+  let headers:any[] = [
     {
       displayName: "Roll Number",
       dataPath: "studentID.rollNumber",
@@ -33,9 +37,10 @@ export default function ForumProfile() {
     { displayName: "Year", dataPath: "studentID.year", sortable: true },
     { displayName: "Section", dataPath: "studentID.section", sortable: false },
     { displayName: "Designation", dataPath: "designation", sortable: false },
+    
 
   ];
-  const memHeaders:any[] =[
+  let memHeaders:any[] =[
     {
       displayName: "Roll Number",
       dataPath: "rollNumber",
@@ -49,8 +54,10 @@ export default function ForumProfile() {
   const handelCheckbox = (item: any, i: number, core = true) => {
     console.log(item?.studentID?.name);
     
+
     let displayName = (
       <input
+        key={i}
         className="w-5 h-5 rounded-none accent-[#0B5B8A] cursor-pointer"
         type="checkbox"
         name={item?.studentID ? "core":"noncore"}
@@ -72,7 +79,7 @@ export default function ForumProfile() {
       </div>
     );
     item["dataPath"] = dataPath;
-    if (i === 0) {
+    if (headers.length ===6) {
       console.log(i);
 
       if (core)
@@ -96,6 +103,20 @@ export default function ForumProfile() {
 
     return { ...item };
   };
+  const save = async() =>{
+    const res = await axiosInstance.put(process.env.REACT_APP_SERVER_URL + "forum/updateProfile", {email:forumEmail, description:description, facultyCoordinator: facultycoordinator})
+    const data = res.data
+    if(data.status === 1)
+    {
+      setForum(data.response)
+      setMessage("Details Updated")
+    }else
+    {
+      setMessage(data.response)
+    }
+    setShow(true)
+    setIsEdit(false)
+  }
   return (
     <div className="mt-8 overflow-x-auto">
       <div className="flex flex-col items-center m-auto sm:w-[80%] md:w-max w-[90%] ">
@@ -147,7 +168,7 @@ export default function ForumProfile() {
             className="mb-5"
             name="Forum Email"
             value={forumEmail}
-            disabled={!isEdit}
+            disabled={true}
             onChange={(e) => {
               setForumEmail(e.target.value);
             }}
@@ -164,13 +185,15 @@ export default function ForumProfile() {
               >
                 <button
                   className="btn  bg-arma-title rounded-[8px] px-6 py-2 m-auto"
-                  onClick={() => setIsEdit(false)}
+                  onClick={save}
                 >
                   SAVE
                 </button>
               </motion.div>
             )}
           </AnimatePresence>
+          <Dialog show={show} setShow={setShow} title = {message}
+      /> 
         </div>
       </div>
       <div className="md:mx-[5rem] lg:mx-[8rem] xl:mx-[12rem] sm:mx-[2rem] mx-4  mt-4">
@@ -190,8 +213,8 @@ export default function ForumProfile() {
             api={`${
               process.env.REACT_APP_SERVER_URL + "forum/getCoreForumMembers"
             }`}
-            rowsPerPage={2}
-            buttonsCount={1}
+            rowsPerPage={5}
+            buttonsCount={5}
             transformer={(item, i) => {
               return handelCheckbox(item, i);
             }}

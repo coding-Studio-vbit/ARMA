@@ -12,9 +12,9 @@ router.use(tokenAuth);
 //GET EVENTS
 router.get(
   "/",
-  (req, res, next) => {
-    return checkRolePermissions(req, res, next, "READ_EVENTS");
-  },
+  // (req, res, next) => {
+  //   return checkRolePermissions(req, res, next, "READ_EVENTS");
+  // },
   controller.getEvents
 );
 

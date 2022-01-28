@@ -4,21 +4,53 @@ import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
+import axiosInstance from "../../utils/axios";
+import { useLocation, useParams } from "react-router-dom";
 
+interface AddStudentsProps
+{
+  isEdit: boolean,
+}
 
-
-export const AddStudents = () => {
-  const [uniqueid, setuniqueid] = useState("");
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+export const AddStudents = ({isEdit}:AddStudentsProps) => {
+  const location:any = useLocation()
+  const [uniqueid, setuniqueid] = useState(location.state?.rollNumber ?? "");
+  const [email, setEmail] = useState(location.state?.email ?? "");
+  const [name, setName] = useState(location.state?.name ?? "");
+  const [phone, setPhone] = useState(location.state?.phone ?? "");
   const [uniqueidError, setUniqueidError] = useState<string>();
   const [emailError, setEmailError] = useState<string>();
   const [nameError, setNameError] = useState<string>();
   const [phoneError, setPhoneError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
+  const [response, setResponse] = useState("")
+  const [selectYear, setSelectYear] = useState(location.state?.year ?? null);
+  const [selectDepartment, setSelectDepartment] = useState(location.state?.branch ?? "");
+  const [selectSection, setSelectSection] = useState(location.state?.section ?? "");
+  let {id} = useParams()
+  
+  const department = [
+    { value: "CSE ", label: "CSE" },
+    { value: "ECE ", label: "ECE" },
+    { value: "IT", label: "IT" },
+  ];
 
+  
+  const year = [
+    { value: "1", label: "1" },
+    { value: "2", label: "2" },
+    { value: "3", label: "3" },
+    { value: "4", label: "4" },
+
+  ];
+
+  
+  const sections = [
+    { value: "A", label: "A" },
+    { value: "B", label: "B" },
+    { value: "C", label: "C" },
+  ];
 
   const validateUniqueid = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uniqueid = e.target.value;
@@ -86,28 +118,58 @@ export const AddStudents = () => {
 
 
 
-  const loginValidate = () => {
+  const loginValidate = async() => {
     if (
       uniqueid.length === 0 ||
       name.length === 0 ||
       email.length === 0 ||
+      selectDepartment.length === 0 ||
+      selectYear.length === 0 ||
+      selectSection.length === 0 ||
       uniqueidError?.length !== 0 ||
       nameError?.length !== 0 ||
       emailError?.length !==0  
       
     ) {
       setShowError("Fill details appropriately");
-    } else {
-      setShow(true);
-      setShowError("");
     }
+    else
+    {
+      if(!isEdit)
+    {
+        setShowError("");
+        const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "admin/addStudent", {name:name, rollNumber:uniqueid, year:selectYear, branch:selectDepartment, section:selectSection,email:email,phone:phone,})
+        const data = res.data
+        if (data.status === 1) {
+          setResponse("New Student Added")
+          setShow(true)
+        } else {
+            setResponse(data.response)
+            setShow(true)             
+        }   
+    }
+    else{
+      setShowError("");
+        const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "students/editStudent", {id:id, name:name, rollNumber:uniqueid, year:selectYear, branch:selectDepartment, section:selectSection,email:email,phone:phone,})
+        const data = res.data
+        if (data.status === 1) {
+          setResponse("Student Details Edited")
+          setShow(true)
+        } else {
+            setResponse(data.response)
+            setShow(true)             
+        }   
+    }
+    }
+  
+    
   };
 
   return (
     <div className="flex flex-col grow items-center">
       <div className="mt-12 w-max">
         <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
-          ADD STUDENT
+          {isEdit? "EDIT STUDENT" : "ADD STUDENT"}
         </p>
 
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
@@ -132,8 +194,10 @@ export const AddStudents = () => {
         <Select
             name="Year"
             placeholder="Year"
-            value ={{value: "Year", label: "Year"}}
-            options={[]}
+            options={year}
+            onChange={(e:any) => {
+              setSelectYear(e?.value)
+          }}
             styles={{
                 control: (base) => ({
                 ...base,
@@ -150,7 +214,7 @@ export const AddStudents = () => {
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
+                    color: '#black'
                 }) 
             }}
             
@@ -160,8 +224,10 @@ export const AddStudents = () => {
           <Select
             name="Branch"
             placeholder="Branch"
-            value ={{value: "Branch", label: "Branch"}}
-            options={[]}
+            options={department}
+            onChange={(e:any) => {
+              setSelectDepartment(e?.value)
+          }}
             styles={{
                 control: (base) => ({
                 ...base,
@@ -178,7 +244,7 @@ export const AddStudents = () => {
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
+                    color: 'black'
                 }) 
             }}
             
@@ -190,8 +256,10 @@ export const AddStudents = () => {
         <Select
             name="Section"
             placeholder="Section"
-            value ={{value: "Section", label: "Section"}}
-            options={[]}
+            options={sections}
+            onChange={(e:any) => {
+              setSelectSection(e?.value)
+          }}
             styles={{
                 control: (base) => ({
                 ...base,
@@ -208,7 +276,7 @@ export const AddStudents = () => {
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
+                    color: 'black'
                 }) 
             }}
             
@@ -232,7 +300,7 @@ export const AddStudents = () => {
             onChange={(e) =>{validatePhone(e)}}
             />
         </div>
-        <Dialog show={show} setShow={setShow} title="Added">
+        <Dialog show={show} setShow={setShow} title={response}>
           {" "}
         </Dialog>
 
@@ -242,7 +310,7 @@ export const AddStudents = () => {
             loginValidate();
           }}
         >
-          ADD
+          {isEdit? "SAVE" : "ADD"}
         </button>
         {showError.length !== 0 && (
           <span className="text-red-500 text-sm flex justify-center mt-2">

@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect } from "react";
+import React, { ReactElement, useState, useEffect, useRef } from "react";
 import {
   ArrowBackIos,
   ArrowDownward,
@@ -68,7 +68,7 @@ const Table = React.memo(({
   const [orderBy, setOrderBy] = useState<string | null>(null);
   const [order, setOrder] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const totalPages = useRef(0);
 
   //every time some filter is changed, reset the page number.
   useEffect(() => {
@@ -94,13 +94,14 @@ const Table = React.memo(({
       })
       .then((response) => {
         let newData = response.data.response.data;
-        setTotalPages(Math.ceil(response.data.response.total / rowsPerPage));
+        totalPages.current = (Math.ceil(response.data.response.total / rowsPerPage));
 
         //The transformer function is called on each object of the response.
-        if (transformer) {
+        if (transformer ) {
           
           newData = newData.map(transformer);
         }
+        console.log(newData);
         
         
         setData(newData);
@@ -108,28 +109,28 @@ const Table = React.memo(({
       .catch((error) => {
         console.log(error);
       });
-  }, [currentPage, totalPages, rowsPerPage, order, orderBy, filter]);
+  }, [currentPage, rowsPerPage, order, orderBy, filter,api]);
 
   const nextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+    if (currentPage < totalPages.current) setCurrentPage(currentPage + 1);
   };
 
   const prevPage = () => {
     if (currentPage !== 1) setCurrentPage(currentPage - 1);
   };
   const currentPageButtons = () => {
-    if(totalPages == 1) return [];
+    if(totalPages.current === 1) return [];
     let slice = Math.ceil(currentPage / buttonsCount);
     let buttonList = [];
     for (
       let i = buttonsCount * (slice - 1) + 1;
-      i <= buttonsCount * slice && i <= totalPages;
+      i <= buttonsCount * slice && i <= totalPages.current;
       i++
     )
       buttonList.push(
         <button
           key={i}
-          className={`px-1 text-sm text-white rounded-full ${
+          className={`px-3 py-1 text-sm text-white rounded-full ${
             i === currentPage ? "bg-arma-dark-blue" : "bg-arma-blue"
           }`}
           onClick={() => {
@@ -194,23 +195,17 @@ const Table = React.memo(({
       </div>
       <div
         id="paginationButtonsSection"
-        className="w-max mx-auto mt-8 flex gap-2  "
+        className=" mx-auto justify-center items-center my-8 flex gap-2  "
       >
-        {currentPage > buttonsCount ? (
-          <button
-            onClick={prevPage}
-            className="p-2 text-arma-dark-blue bg-white "
-          >
-            <ArrowBackIos />
-          </button>
-        ) : null}
+        {currentPage > buttonsCount && (
+         
+            <ArrowBackIos onClick={prevPage} className="cursor-pointer p-2 text-arma-dark-blue bg-white !text-[2rem]" />
+        )}
         {currentPageButtons()}
         {currentPage <=
-        (Math.ceil(totalPages / buttonsCount) - 1) * buttonsCount ? (
-          <button onClick={nextPage} className=" p-2 text-arma-dark-blue ">
-            <ArrowForwardIos />
-          </button>
-        ) : null}
+        (Math.ceil(totalPages.current / buttonsCount) - 1) * buttonsCount && (
+            <ArrowForwardIos onClick={nextPage} className="cursor-pointer p-2 text-arma-dark-blue !text-[2rem] " />
+        ) }
       </div>
     </>
   );

@@ -2,7 +2,6 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
-import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
 import axiosInstance from "../../utils/axios";
 
@@ -25,6 +24,8 @@ export const AddFaculty = () => {
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
   const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
+  const [selectRolesL, setSelectRolesL] = useState<(string | undefined) []>([])
+
   const [myrole, setMyRole] = useState<{}[]>()
   const [response, setResponse] = useState("")
 
@@ -37,7 +38,7 @@ export const AddFaculty = () => {
       const data = res.data.response;
       let arr = []
       for(let i = 0; i < data.length; i++){
-          arr.push({value:data[i].name , label:data[i].name })
+          arr.push({value:data[i]._id , label:data[i].name })
       }
       setMyRole(arr)
     }
@@ -124,6 +125,7 @@ export const AddFaculty = () => {
   };
 
   const loginValidate = async() => {
+    try {
     if (
       uniqueid.length === 0 ||
       name.length === 0 ||
@@ -131,6 +133,7 @@ export const AddFaculty = () => {
       phone.length === 0 ||
       email.length === 0 ||
       designation.length === 0 ||
+      selectRoles.length === 0 ||
       uniqueidError?.length !== 0 ||
       nameError?.length !== 0 ||
       phoneError?.length !== 0 ||
@@ -141,7 +144,9 @@ export const AddFaculty = () => {
       setShowError("Fill details appropriately");
     } else {
       setShowError("");
-      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "admin/addFaculty", {name:name, rollNumber:uniqueid, phone:phone, designation:designation,email:email,roles:selectRoles, password:password})
+        const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "admin/addFaculty", {name:name, rollNumber:uniqueid, phone:phone, designation:designation,email:email,rolesF:selectRoles, password:password})
+
+      
       const data = res.data
       if (data.status === 1) {
         setResponse("New Faculty Added")
@@ -151,6 +156,9 @@ export const AddFaculty = () => {
           setShow(true)             
       }   
     }
+  } catch (error) {
+        
+  }
   };
 
   return (
@@ -197,6 +205,8 @@ export const AddFaculty = () => {
                    if(e?.value === selectRoles[i]) return        
                 }
                 setSelectRoles([...selectRoles, e?.value])
+                setSelectRolesL([...selectRolesL, e?.label])
+                
                 setSpan(true)
             }}
             styles={{
@@ -215,7 +225,7 @@ export const AddFaculty = () => {
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
+                    color: 'black'
                 }) 
             }}
             
@@ -230,7 +240,7 @@ export const AddFaculty = () => {
           <span className="text-arma-title mb-2">Roles:</span>
            }
              {
-                 selectRoles.map((r,i) => {
+                 selectRolesL.map((r,i) => {
                      return(
                          <div className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]">
                              <span>{r}</span>
@@ -238,7 +248,10 @@ export const AddFaculty = () => {
                                  let temp = [...selectRoles]
                                  temp.splice(i,1)
                                  setSelectRoles(temp)
-                                 {(selectRoles.length === 1) && setSpan(false)}
+                                 let tempL = [...selectRolesL]
+                                 tempL.splice(i,1)
+                                 setSelectRolesL(tempL)
+                                 if(selectRoles.length === 1) setSpan(false)
                              }}/>
                          </div>
                      )

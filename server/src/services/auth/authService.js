@@ -6,32 +6,35 @@ const students = require("../../models/student");
 const role = require("../../models/role");
 const response = require("../util/response");
 const admins = require("../../models/admin");
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const roles = require("../../models/role");
 
 const login = async (email, password, userAgent, userType) => {
   try {
     let user;
     if (userType === "FACULTY") {
-      user = await facultyModel.findOne({ email: email }).populate("roles");
+      user = await facultyModel.findOne({ email: email }).populate("role");
     } else if (userType === "FORUM") {
-      user = await forums.findOne({ email: email }).populate("roles");
+      user = await forums.findOne({ email: email }).populate({path:"role"}).populate({path:"facultyCoordinatorID",select:'name'});
+      console.log(user.facultyCoordinatorID);
     } else if (userType === "ADMIN") {
       //Admin
       user = await admins.findOne({ email: email });
     }
-
+    
     if (!user) {
       return response("User does not exist", process.env.FAILURE_CODE);
     }
     const result = bcrypt.compareSync(password, user.password);
     if (result) {
+
       const token = jwt.sign(
         {
           email: email,
           _id: user._id,
           userAgent: userAgent,
-          roles: user.roles,
-          userType: userType
+          role: user.role,
+          userType: userType==='FACULTY'?user.role:userType
         },
         process.env.JWT_SECRET_KEY
       );
@@ -51,11 +54,17 @@ const register = async (user, userType) => {
     const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
     const password = await bcrypt.hash(user.password, salt);
     if (userType === "FACULTY") {
-      let {roles, ...newuser} = user
-      roles = roles.map((f) => {
-        return mongoose.Types.ObjectId(f._id)
-    })
-      let faculty = new facultyModel({roles,...newuser});
+      let {rolesF, ...newuser} = user
+      console.log(rolesF);
+      const arr = []
+      for (let index = 0; index < rolesF.length; index++) {
+        const element = rolesF[index];
+        const rol =  await roles.findById(element)
+        arr.push(rol)
+      }
+     
+      console.log(rolesF);
+      let faculty = new facultyModel({role:arr,...newuser});
       faculty.password = password;
       await faculty.save();
     } else if (userType === "FORUM") {

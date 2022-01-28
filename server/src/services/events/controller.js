@@ -16,7 +16,15 @@ const getEvents = async (req, res) => {
   //For filters
   let where = {};
   if (req.query.forumID) where.forumID = req.query.forumID;
+  if (req.query.hasBudget)
+  {
+    where.hasBudget = req.query.hasBudget;
+    where.eventStatus = ["AWAITING BUDGET APPROVAL","REQUESTED BUDGET CHANGES","BUDGET CHANGES UPDATED","BUDGET REJECTED"]
+  }
   if (req.query.eventStatus) where.eventStatus = req.query.eventStatus;
+
+  console.log(where);
+
 
   //For sorting
   let sort = {};
@@ -30,11 +38,20 @@ const getEvents = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort)
-      .populate({
-        path: "forumID",
-        select: "name facultyCoordinatorID",
-        populate: { path: "facultyCoordinatorID", select: "name" },
-      });
+      .populate({path:'forumID', select:'name facultyCoordinatorID',model:'forums',
+    populate:{
+      path:'facultyCoordinatorID',
+      select:'name',
+      model:'faculty'
+    }
+    })
+    if(req.query.forumName){
+      result = result.filter((e)=>{
+        if(e.forumID.name.includes(req.query.forumName)){
+          return e;
+        }
+      })
+    }
     const total = await events.count(where);
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
@@ -90,6 +107,7 @@ const createEvent = async (req, res) => {
     })
     newAttendanceDoc.eventID = String(newEvent._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
+    newEvent.eventStatus = req.files.budgetDocument !== null?"AWAITING BUDGET APPROVAL":"AWAITING SAC APPROVAL"
     await newAttendanceDoc.save();
     await newEvent.save();
     await booking.save()
@@ -110,8 +128,8 @@ const updateBudgetDoc = async (req, res) => {
     event.budgetDocPath = req.files.budgetDocument[0].path;
     await event.save();
     //send notif to FO.
-    const FORoleID = await roles.findOne({ name: "FO" });
-    const FO = faculty.findOne({ roles: [FORoleID._id] });
+    const FORoleID = await roles.findOne().where('name').in(['FO']);
+    const FO = faculty.findOne({ role: [FORoleID._id] });
     await mailer.sendMail(element.email, budgetDocUpdateTemplate, {
       FOName: FO,
       forumName: req.user.name,
@@ -151,9 +169,18 @@ const reportAndMedia = async (req, res) => {
 };
 
 const getRequests = async (req,res) =>{
+  console.log(req.query.isFO);
   try {
-    const result = await events
+    let result
+    if(req.query.isFO==="true"){
+      console.log("htfkuyf,lig");
+      result = await events
+      .find({eventStatus:["AWAITING BUDGET APPROVAL","REQUESTED BUDGET CHANGES","BUDGET CHANGES UPDATED"] });
+    }else{
+      result = await events
       .find({eventStatus:{ $nin:["COMPLETED","REJECTED"]} });
+    }
+     
     res.json(
       response(result,process.env.SUCCESS_CODE)
     );
@@ -181,5 +208,9 @@ const getActiveEvents = async (req,res) =>{
     );    
   }
 }
+
+
+
+
 
 module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia , getRequests,getActiveEvents};

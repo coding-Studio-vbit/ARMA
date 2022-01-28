@@ -1,4 +1,3 @@
-import { stringify } from 'querystring';
 import React, { useState } from 'react'
 import Select from "react-select";
 import { Dialog } from '../../../components/Dialog/Dialog';
@@ -156,7 +155,7 @@ export default function AddNewForumMember() {
           setShowError("Fill details appropriately");
         } else {
           setShowError("");
-          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewForumMembers", {forumName:forum?.name, rollNumber:rollNumber, name:name, department:department, year:year, section:section, email:email,phone:phone})
+          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewForumMembers", {forumName:forum?.name, rollNumber:rollNumber, name:name, branch:department, year:year, section:section, email:email,phone:phone})
           const data = res.data
           if (data.status === 1) {
             setResponse("New Forum Member Added")
@@ -175,7 +174,7 @@ export default function AddNewForumMember() {
             <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
           ADD NEW FORUM MEMBER
         </p>
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+        <div className=" grid grid-cols-1 sm:grid-cols-2 gap-6 ">
           <InputField
             name="Roll Number"
             type="text"
@@ -188,8 +187,7 @@ export default function AddNewForumMember() {
             error={nameError}
             onChange={(e) => {validateName(e)}}
           />
-        </div>
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+       
         <Select
             name="Department"
             placeholder="Department"
@@ -246,8 +244,6 @@ export default function AddNewForumMember() {
                 }) 
             }}  
           /> 
-        </div>
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
         <Select
             name="Section"
             placeholder="Section"
@@ -281,8 +277,6 @@ export default function AddNewForumMember() {
             type="text"
             onChange={(e) => {validateEmail(e)}}
           />
-        </div>
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
           <InputField
             name="Phone"
             type="text"
