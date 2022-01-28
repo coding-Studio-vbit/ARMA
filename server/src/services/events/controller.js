@@ -175,10 +175,10 @@ const getRequests = async (req,res) =>{
     if(req.query.isFO==="true"){
       console.log("htfkuyf,lig");
       result = await events
-      .find({eventStatus:["AWAITING BUDGET APPROVAL","REQUESTED BUDGET CHANGES","BUDGET CHANGES UPDATED"] });
+      .find({eventStatus:["AWAITING BUDGET APPROVAL","REQUESTED BUDGET CHANGES","BUDGET CHANGES UPDATED"] }).populate("forumID");
     }else{
       result = await events
-      .find({eventStatus:{ $nin:["COMPLETED","REJECTED"]} });
+      .find({eventStatus:{ $nin:["COMPLETED","REJECTED"]} }).populate("forumID");
     }
      
     res.json(
