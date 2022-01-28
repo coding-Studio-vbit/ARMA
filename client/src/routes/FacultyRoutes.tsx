@@ -50,7 +50,7 @@ const FacultyRoutes = () => {
       </div>
       <Footer />
     </div>
-  );
+  );  
 };
 
 export default FacultyRoutes;

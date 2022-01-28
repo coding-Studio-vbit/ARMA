@@ -18,6 +18,9 @@ router.post("/forumEventNumber",controller.forumEventNumber);
 
 router.put("/updateProfile", controller.updateProfile)
 
+router.post("/forumViewCard", controller.forumViewCard)
+
+
 
 
 module.exports = router;

@@ -19,6 +19,7 @@ interface TableProps {
   buttonsCount: number;
   headers: Array<header>;
   filter?: any;
+  onTableRowClick?:(id:string) => void
   transformer?: (item: any,i:number) => any;
 }
 
@@ -62,6 +63,7 @@ const Table = React.memo(({
   buttonsCount,
   headers,
   filter,
+  onTableRowClick,
   transformer,
 }: TableProps): ReactElement => {
   const [data, setData] = useState([]);
@@ -83,6 +85,7 @@ const Table = React.memo(({
       orderBy: orderBy,
       order: order,
       filter: null,
+      
     };
 
     //Adding the filter
@@ -171,11 +174,16 @@ const Table = React.memo(({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-300">
-            {data.map((item, index) => {
+            {data.map((item:any,index) => {
               return (
                 <tr
                   key={index}
                   className="odd:bg-white even:bg-arma-light-gray"
+                  onClick={() => {
+                    if(onTableRowClick){
+                      onTableRowClick(item._id)
+                    }
+                  }}
                 >
                   {headers.map((header) => {
                     return (
