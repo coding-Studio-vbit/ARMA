@@ -262,4 +262,21 @@ const deleteforumMember = async (req, res) => {
   }
 }
 
-module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getCoreForumMembers, getForumMembers, getEquipments,editForum,forumEventNumber,updateProfile}
+const forumViewCard = async (req, res) => {
+  try {
+    let {id} = req.body
+    let forum= await forums.findOne({_id:id}).populate("facultyCoordinatorID")
+    res.json(
+      response(
+        forum,
+        process.env.SUCCESS_CODE
+      )
+    );
+      
+    } catch (err) {
+      console.log(err);
+      res.json(response(error, process.env.FAILURE_CODE));
+    }
+}
+
+module.exports = {dashboard,getForumsList, addNewForumMembers, addNewCoreForumMember, getCoreForumMembers, getForumMembers, getEquipments,editForum,forumEventNumber,updateProfile, forumViewCard}

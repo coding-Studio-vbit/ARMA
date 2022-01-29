@@ -18,14 +18,12 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const { login, loading } = useLogin();
   useEffect(() => {
+    
     if (forum) {
-      navigate("/forum", { replace: true });
+      navigate("/forum/", { replace: true });
     } else if (faculty) {
-      if(faculty.role.name==='FO'){
-        navigate("/faculty/fo", { replace: true });
-
-      }else
-      navigate("/faculty", { replace: true });
+      
+      navigate("/faculty/", { replace: true });
     }
   }, [forum, faculty, navigate]);
 
@@ -140,6 +138,12 @@ function Login() {
 
             if (res.status === 1) {
               if (userType === "FACULTY") {
+                // ["ADMIN","SAC",'FC']
+                // {
+                //   ADMIN:true,
+                //   SAC:true,
+                //   FC:true
+                // }
                 setFaculty(res.response.user);
               } else {
                 setForum(res.response.user);

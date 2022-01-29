@@ -21,7 +21,6 @@ export const AddForums = () => {
    const [selectHead, setSelectHead] = useState<(string | undefined) []>([])
    const [selectCoord, setSelectCoord] = useState<(string | undefined) []>([])
    const [selectHeadLabel, setSelectHeadLabel] = useState<(string | undefined) []>([])
-   const [selectCoordLabel, setSelectCoordLabel] = useState<(string | undefined) []>([])
    const [mystu, setMyStu] = useState<{value:string,label:string}[]>()
    const [myfac, setMyFac] = useState<{}[]>()
    const [response, setResponse] = useState("")
@@ -213,7 +212,6 @@ export const AddForums = () => {
                  if(e?.value === selectCoord[i]) return        
               }
               setSelectCoord([...selectCoord, e?.value])
-              setSelectCoordLabel([...selectCoordLabel,e?.label])
 
           }}
             styles={{
@@ -260,26 +258,7 @@ export const AddForums = () => {
          </div>
          
           
-         <div className={`flex flex-col ml-auto w-[270px] ${selectHeadLabel.length===0 && 'hidden'} `}>
-             {
-                 selectCoordLabel.map((r,i) => {
-                     return(
-                         <div className="flex justify-between shadow-md px-4 py-2 hover:bg-black/[0.05] mt-4">
-                             <span>{r}</span>
-                             <Close className="cursor-pointer"onClick ={() => {
-                                 let temp = [...selectCoordLabel]
-                                 let x = [...selectCoord]
-                                 temp.splice(i,1)
-                                 x.splice(i,1)
-                                 setSelectCoordLabel(temp)
-                                 setSelectCoord(x)
-                             }}/>
-                         </div>
-                     )
-                 })
-             }
-
-        </div>
+        
         
           <InputField
             name="Login Email"

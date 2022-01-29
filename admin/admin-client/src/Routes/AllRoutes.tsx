@@ -29,7 +29,7 @@ const ProtectedRoutes = () => {
     return <Navigate to="/login" />;
   }
   return (
-    <>
+    <div className="sm:grid grid-cols-[0px_1fr] sm:grid-cols-[190.838px_1fr]">
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
 
       <div className="flex flex-col">
@@ -48,7 +48,7 @@ const ProtectedRoutes = () => {
       </Routes>
       </div>
       
-    </>
+    </div>
   );
 };
 

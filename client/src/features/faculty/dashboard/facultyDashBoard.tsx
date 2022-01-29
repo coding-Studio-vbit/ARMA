@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../../../components/CustomNavbar";
 import { Spinner } from "../../../components/Spinner/Spinner";
 import "react-modern-calendar-datepicker/lib/DatePicker.css";
-import { Calendar, DayValue, Day } from "react-modern-calendar-datepicker";
+import { Calendar, Day } from "react-modern-calendar-datepicker";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "./../../../utils/axios";
+import { useUser } from "../../../providers/user/UserProvider";
 
 interface EventInfo {
   forum: string;
@@ -41,9 +41,9 @@ function FacultyDashBoard() {
     x = todaysEvents?.filter(
       function(element){
         for (let i = 0; i < element.date.length; i++) {
-          if(element.date[i].day == selectedDate?.day && 
-             element.date[i].month == selectedDate?.month &&
-             element.date[i].year == selectedDate?.year){
+          if(element.date[i].day === selectedDate?.day && 
+             element.date[i].month === selectedDate?.month &&
+             element.date[i].year === selectedDate?.year){
                return element;
             } 
         }   
@@ -57,18 +57,19 @@ function FacultyDashBoard() {
   }
 
   const [error, setError] = useState<string|null>(null);
-
+  const {faculty} = useUser()
   async function fetchData() {
+    
     axiosInstance
-      .get(`${process.env.REACT_APP_SERVER_URL + "faculty/dashboardInfo"}`)
+      .get(process.env.REACT_APP_SERVER_URL + "faculty/dashboardInfo",{params:{isFO:faculty?.role.SAC ? false:faculty?.role.FO}})
       .then((response) => {
         // console.log("Success");
         
-        if(response.data.status==1){
+        if(response.data.status===1){
           // console.log("got Events");
 
           const eventList = response.data.response;
-          if(eventList.length!=0){
+          if(eventList.length!==0){
             let data =[];
             for (let i = 0; i < eventList.length; i++) {
               let event:EventInfo={
@@ -78,7 +79,7 @@ function FacultyDashBoard() {
                 eventStatus: "",
                 _id: ""
               };
-               event.forum = eventList[i].forumID;
+               event.forum = eventList[i].forumID.name;
                event._id = eventList[i]._id;
                event.event = eventList[i].name;
                event.eventStatus = eventList[i].eventStatus;
@@ -106,7 +107,8 @@ function FacultyDashBoard() {
             }          
             setCurrentRequests(data);
             setTodaysEvents(data);  
-            setPendingRequests(eventList.length);          
+            setPendingRequests(eventList.length); 
+                     
 
           }else{
             // console.log("No Events");
@@ -128,7 +130,7 @@ function FacultyDashBoard() {
         setError(error.message);
       });    
   }
-
+  
   useEffect(() => {
     fetchData();
   }, []);
@@ -150,7 +152,15 @@ function FacultyDashBoard() {
               className="w-max sm:w-2/3 lg:w-1/2 mx-4 px-10 py-12
                       arma-card-gradient text-white text-2xl
                       shadow-2xl rounded-2xl h-72 overflow-y-scroll currentRequest cursor-pointer"
-              onClick={()=>{navigate("/faculty/requests")}}
+              onClick={()=>{
+                if(faculty?.role.SAC){
+                  navigate("/faculty/requests")
+                }
+                else if(faculty?.role.FO){
+
+                  navigate("/faculty/foRequests")
+                }
+              }}
             >
               <p>Current Requests</p>
               <ul className="list-disc list-inside text-xl ">

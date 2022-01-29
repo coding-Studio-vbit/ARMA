@@ -9,9 +9,12 @@ export interface Faculty {
   phone: string;
   role: Role;
 }
-interface Role {
-  name: string;
-  permissions: string[];
+export interface Role {
+  ADMIN: boolean;
+  FO:boolean;
+  FC:boolean;
+  SAC:boolean;
+  FACULTY:boolean
 }
 
 interface ForumCoreTeamMembers {

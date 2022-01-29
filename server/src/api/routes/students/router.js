@@ -9,5 +9,8 @@ router.put("/editStudent", controller.editStudent);
 
 router.get("/fetchStudents", controller.fetchStudents);
 
+router.post("/studentViewCard", controller.studentViewCard);
+
+
 
 module.exports = router;

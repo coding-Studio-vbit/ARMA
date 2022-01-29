@@ -19,11 +19,25 @@ export class AuthService {
               userAgent: userAgent,
             }),
           });
-          const data = await res.json()
+          let data = await res.json()
+          console.log(data.response);
+          
+          let role = data.response.user.role
           localStorage.setItem('idk',data.response.token)
-         
+          data.response.user.role = {
+            ADMIN:false,
+            SAC:false,
+            FO:false,
+            FC:false,
+            FACULTY:false
+          }
+          role.forEach((element:any) => {
+            data.response.user.role[element.name] = true
+          });
           return data
         } catch (error) {
+          console.log(error);
+          
           return {response: "Server not available. Try again later", status: -1}
         }
       };
