@@ -246,16 +246,12 @@ const updateProfile = async (req, res) => {
 
 const deleteforumMember = async (req, res) => {
   try {
-    const {forumName, ...stuser } = req.body;
-    const stu=await forum.forumMembers.findOne({rollNumber: stuser.rollNumber});
-    const forum = await forums.findOne({name:forumName});
-    if( stu == null ){
-      throw "Cannot Delete forumMember"
-    }
-    if(stu){
-      const user = await forums.findOneAndUpdate({name: forumName}, {"$pop":{"forumMembers": stu}})
-      res.json(response(user, process.env.SUCCESS_CODE))
-    }
+    const {forumName, stuser } = req.body;
+    await forums.updateOne({name:forumName},{
+      $pullAll: {
+          forumMembers: stuser,
+      },
+    });
   } catch (error) {
     console.log(error);
     res.json(response("Cannot Delete forumMember", process.env.FAILURE_CODE))
