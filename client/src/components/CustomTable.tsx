@@ -217,6 +217,13 @@ const Table = React.memo(({
       </div>
     </>
   );
+},(prevProps,nextProps)=>{
+  
+  if(JSON.stringify(prevProps)!== JSON.stringify(nextProps)){
+    return true
+  }
+  
+  return false
 });
 
 export default Table;
