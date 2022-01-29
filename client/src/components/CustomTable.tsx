@@ -178,7 +178,7 @@ const Table = React.memo(({
               return (
                 <tr
                   key={index}
-                  className="odd:bg-white even:bg-arma-light-gray"
+                  className="odd:bg-white even:bg-arma-light-gray cursor-pointer hover:bg-black/[0.075]"
                   onClick={() => {
                     if(onTableRowClick){
                       onTableRowClick(item._id)
