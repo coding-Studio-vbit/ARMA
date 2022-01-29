@@ -97,12 +97,26 @@ function FacultyProfile() {
           </div>
         </div>
         {isEdit && (
+          <div className="flex gap-16">
           <button
-            className="btn  bg-arma-title rounded-[8px] px-6 py-2 m-auto"
+            className="btn    bg-arma-title rounded-[8px] px-6 py-2 m-auto"
+            onClick={()=>{
+              setEmail(faculty?.email??"")
+              setDesignation(faculty?.designation??"")
+              setPhone(faculty?.phone??"")
+              setrollNumber(faculty?.rollNumber??"")
+              setIsedit(false)
+            }}
+          >
+            CANCEL
+          </button>
+          <button
+            className="btn   bg-arma-title rounded-[8px] px-8 py-2 m-auto"
             onClick={save}
           >
             SAVE
           </button>
+          </div>
         )}
       </div>
 
