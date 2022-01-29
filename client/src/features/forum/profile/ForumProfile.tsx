@@ -79,6 +79,16 @@ export default function ForumProfile() {
       </div>
     );
     item["dataPath"] = dataPath;
+    if(memHeaders.length === 5){
+      if(!core){
+        memHeaders.push({
+          displayName: displayName,
+          dataPath: "dataPath",
+          sortable: false,
+        });
+      }
+
+    }
     if (headers.length ===6) {
       console.log(i);
 
@@ -91,14 +101,7 @@ export default function ForumProfile() {
         });
    
         }
-      else{
-
-        memHeaders.push({
-          displayName: displayName,
-          dataPath: "dataPath",
-          sortable: false,
-        });
-      }
+      
     }
 
     return { ...item };
@@ -127,15 +130,17 @@ export default function ForumProfile() {
             {!isEdit && (
               <motion.span
                 className="inline-block"
-                initial={{ rotate: 180, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 360, opacity: 0 }}
-                transition={{ ease: "easeOut", duration: 0.45 }}
+                initial={{  opacity: 0 }}
+                animate={{  opacity: 1 }}
+                exit={{  opacity: 0 }}
+                transition={{ ease: "easeOut", duration: 0.25 }}
               >
                 <Edit
                   className="ml-3 text-black !text-xl cursor-pointer"
                   onClick={() => {
+                    
                     setIsEdit(true);
+                    
                   }}
                 />
               </motion.span>
@@ -145,7 +150,7 @@ export default function ForumProfile() {
         <p className="text-black mb-10 text-lg">Forum</p>
         <div className="mx-auto w-full">
           <TextArea
-            className="mb-5"
+            className="mb-5 resize-none	"
             name="Forum Description"
             value={description}
             disabled={!isEdit}
@@ -178,11 +183,24 @@ export default function ForumProfile() {
           <AnimatePresence initial={false} exitBeforeEnter>
             {isEdit && (
               <motion.div
+                
                 initial={{ y: "-1vh", opacity: 0 }}
                 animate={{ y: "0", opacity: 1 }}
                 exit={{ y: "-0.5vh", opacity: 0 }}
                 transition={{ ease: "easeOut", duration: 0.1 }}
               >
+                <button
+                  className="btn mr-8  bg-arma-title rounded-[8px] px-6 py-2"
+                  onClick={()=>
+                    {
+                      setForumEmail(forum?.email ?? "")
+                      setFacultycoordinator(forum?.facultyCoordinatorID.name ?? "")
+                      setIsEdit(false)
+                    }
+                  }
+                >
+                  CANCEL
+                </button>
                 <button
                   className="btn  bg-arma-title rounded-[8px] px-6 py-2 m-auto"
                   onClick={save}
@@ -201,7 +219,9 @@ export default function ForumProfile() {
           <span className="text-arma-gray font-semibold text-lg">
             Forum Core Team
           </span>
-          <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 ">
+          <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
+          onClick={()=>navigate('/forum/addNewCoreTeamMember/')}
+          >
             ADD
           </button>
           <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1">
@@ -226,7 +246,9 @@ export default function ForumProfile() {
           <span className="text-arma-gray font-semibold text-lg">
             Forum Members
           </span>
-          <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 ">
+          <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
+          onClick={()=>navigate('/forum/addNewForumMember')}
+          >
             ADD
           </button>
           <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1">
