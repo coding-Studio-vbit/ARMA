@@ -195,6 +195,7 @@ export default function ForumProfile() {
                     {
                       setForumEmail(forum?.email ?? "")
                       setFacultycoordinator(forum?.facultyCoordinatorID.name ?? "")
+                      setDescription(forum?.description??"")
                       setIsEdit(false)
                     }
                   }
