@@ -6,6 +6,7 @@ import {
   ArrowUpward,
 } from "@material-ui/icons";
 import axiosInstance from "../utils/axios";
+import deepEqual from "../utils/DeepEqual";
 
 interface header {
   displayName: string; //Display header name
@@ -217,13 +218,6 @@ const Table = React.memo(({
       </div>
     </>
   );
-},(prevProps,nextProps)=>{
-  
-  if(JSON.stringify(prevProps)!== JSON.stringify(nextProps)){
-    return true
-  }
-  
-  return false
 });
 
 export default Table;
