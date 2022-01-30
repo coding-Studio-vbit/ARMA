@@ -9,6 +9,32 @@ import { TextArea } from "../../../components/InputField/TextArea";
 import { useUser } from "../../../providers/user/UserProvider";
 import axiosInstance from "../../../utils/axios";
 
+let headers:any[] = [
+  {
+    displayName: "Roll Number",
+    dataPath: "studentID.rollNumber",
+    sortable: true,
+  },
+  { displayName: "Name", dataPath: "studentID.name", sortable: false },
+  { displayName: "Department", dataPath: "studentID.branch", sortable: true },
+  { displayName: "Year", dataPath: "studentID.year", sortable: true },
+  { displayName: "Section", dataPath: "studentID.section", sortable: false },
+  { displayName: "Designation", dataPath: "designation", sortable: false },
+  
+
+];
+let memHeaders:any[] =[
+  {
+    displayName: "Roll Number",
+    dataPath: "rollNumber",
+    sortable: true,
+  },
+  { displayName: "Name", dataPath: "name", sortable: false },
+  { displayName: "Department", dataPath: "branch", sortable: true },
+  { displayName: "Year", dataPath: "year", sortable: true },
+  { displayName: "Section", dataPath: "section", sortable: false },
+];
+
 export default function ForumProfile() {
   const navigate = useNavigate()
   const { forum, setForum } = useUser();
@@ -26,31 +52,7 @@ export default function ForumProfile() {
   console.log("Rebuild Profile");
   
   const [forumEmail, setForumEmail] = useState<string>(forum?.email ?? " ");
-  let headers:any[] = [
-    {
-      displayName: "Roll Number",
-      dataPath: "studentID.rollNumber",
-      sortable: true,
-    },
-    { displayName: "Name", dataPath: "studentID.name", sortable: false },
-    { displayName: "Department", dataPath: "studentID.branch", sortable: true },
-    { displayName: "Year", dataPath: "studentID.year", sortable: true },
-    { displayName: "Section", dataPath: "studentID.section", sortable: false },
-    { displayName: "Designation", dataPath: "designation", sortable: false },
-    
-
-  ];
-  let memHeaders:any[] =[
-    {
-      displayName: "Roll Number",
-      dataPath: "rollNumber",
-      sortable: true,
-    },
-    { displayName: "Name", dataPath: "name", sortable: false },
-    { displayName: "Department", dataPath: "branch", sortable: true },
-    { displayName: "Year", dataPath: "year", sortable: true },
-    { displayName: "Section", dataPath: "section", sortable: false },
-  ];
+  
   const handelCheckbox = (item: any, i: number, core = true) => {
     console.log(item?.studentID?.name);
     
