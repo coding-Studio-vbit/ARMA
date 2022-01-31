@@ -7,6 +7,7 @@ import { Dialog } from "../../../components/Dialog/Dialog";
 import { InputField } from "../../../components/InputField/InputField";
 import { TextArea } from "../../../components/InputField/TextArea";
 import { useUser } from "../../../providers/user/UserProvider";
+import ForumService from "../../../services/forum/ForumService";
 import axiosInstance from "../../../utils/axios";
 
 let headers:any[] = [
@@ -49,12 +50,14 @@ export default function ForumProfile() {
   );
   const [allCheckedCore,setAllCheckedCore] = useState(false)
   const [allCheckedMem,setAllCheckedMem] = useState(false)
+  const [loading,setLoading] = useState(false)
+  const [show1,setShow1]= useState(false)
+  const [dialogMsg,setDialogMsg] = useState<{title:string,proceed:()=>Promise<void>}>({title:"",proceed:async()=>{}})
   console.log("Rebuild Profile");
   
   const [forumEmail, setForumEmail] = useState<string>(forum?.email ?? " ");
   
-  const handelCheckbox = (item: any, i: number, core = true) => {
-    console.log(item?.studentID?.name);
+  const handelCheckbox = (item: any, i: number, core:boolean,setUpdate:React.Dispatch<React.SetStateAction<boolean>>) => {
     
 
     let displayName = (
@@ -77,7 +80,21 @@ export default function ForumProfile() {
           name={item.name}
           onChange={(e) => null}
         ></input>
-        <Delete className="text-black/50" />
+        <Delete className="text-black/50" onClick={async()=>{
+          setDialogMsg({
+            title:"Are you sure want to delete the member?",
+            proceed: async()=>{
+               const res = await ForumService.deleteForumMemeber(forum?.name??"",core?item.studentID._id:item._id,core?"core":"nonCore")
+               setShow1(false)
+               setDialogMsg({title:"",proceed:async()=>{}})
+               setLoading(false)
+               setMessage(res)
+               setShow(true)
+          setUpdate((v)=>!v)
+            }
+          })
+          setShow1(true)
+          }} />
       </div>
     );
     item["dataPath"] = dataPath;
@@ -124,6 +141,18 @@ export default function ForumProfile() {
   }
   return (
     <div className="mt-8 overflow-x-auto">
+      <Dialog show={show1} setShow={setShow1} title={dialogMsg.title}  loading={loading}  >
+        <button className="outlineBtn" onClick={()=>setShow1(false)} >Cancel</button>
+        <button className="btn" onClick={async ()=>{
+          setLoading(true)
+          setDialogMsg({title:"Deleting...",proceed:async()=>{}})
+
+          await dialogMsg.proceed()
+          
+        }} >Proceed</button>
+
+      </Dialog>
+
       <div className="flex flex-col items-center m-auto sm:w-[80%] md:w-max w-[90%] ">
         <AccountCircle className="!text-7xl text-arma-title" />
         <span className="text-center  item-center text-2xl font-semibold text-arma-blue">
@@ -238,8 +267,8 @@ export default function ForumProfile() {
             }`}
             rowsPerPage={5}
             buttonsCount={5}
-            transformer={(item, i) => {
-              return handelCheckbox(item, i);
+            transformer={(item, i,setUpdate) => {
+              return handelCheckbox(item, i,true,setUpdate);
             }}
             filter={{ name: forum?.name }}
             headers={headers}
@@ -265,8 +294,8 @@ export default function ForumProfile() {
             }`}
             rowsPerPage={2}
             buttonsCount={1}
-            transformer={(item, i) => {
-              return handelCheckbox(item, i, false);
+            transformer={(item, i,setUpdate) => {
+              return handelCheckbox(item, i, false,setUpdate);
             }}
             filter={{ name: forum?.name }}
             headers={memHeaders}

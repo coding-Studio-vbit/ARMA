@@ -21,7 +21,7 @@ interface TableProps {
   headers: Array<header>;
   filter?: any;
   onTableRowClick?: (id: string) => void;
-  transformer?: (item: any, i: number) => any;
+  transformer?: (item: any, i: number,setUpdate:React.Dispatch<React.SetStateAction<boolean>>) => any;
 }
 
 interface sortButtonProps {
@@ -73,11 +73,14 @@ const Table = React.memo(
     const [order, setOrder] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const totalPages = useRef(0);
-
+    ///For forcefully updating the table
+    const [update,setUpdate] = useState<boolean>(false)
     //every time some filter is changed, reset the page number.
     useEffect(() => {
       setCurrentPage(1);
     }, [filter]);
+
+    
 
     useEffect(() => {
       //params object.
@@ -104,7 +107,7 @@ const Table = React.memo(
 
           //The transformer function is called on each object of the response.
           if (transformer) {
-            newData = newData.map(transformer);
+            newData = newData.map((v:any,i:number)=>transformer(v,i,setUpdate));
           }
           console.log(newData);
 
@@ -113,7 +116,7 @@ const Table = React.memo(
         .catch((error) => {
           console.log(error);
         });
-    }, [currentPage, rowsPerPage, order, orderBy, filter, api]);
+    }, [currentPage, rowsPerPage, order, orderBy, filter, api,update]);
 
     const nextPage = () => {
       if (currentPage < totalPages.current) setCurrentPage(currentPage + 1);

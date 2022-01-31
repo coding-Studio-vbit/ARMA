@@ -7,6 +7,8 @@ const upload = multer({storage: multerStorage});
 
 router.get("/dashboard", controller.dashboard);
 router.post("/addNewForumMembers" , controller.addNewForumMembers);
+router.post("/deleteMember" , controller.deleteforumMember);
+
 router.post("/addNewCoreForumMember" , controller.addNewCoreForumMember);
 
 router.get("/getEquipments", controller.getEquipments);
