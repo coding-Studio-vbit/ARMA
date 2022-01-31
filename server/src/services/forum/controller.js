@@ -240,7 +240,21 @@ const updateProfile = async (req, res) => {
     res.json(response(user, process.env.SUCCESS_CODE))
   } catch (error) {
     console.log(error);
-      res.json(response("Details could not be updated", process.env.FAILURE_CODE))
+    res.json(response("Details could not be updated", process.env.FAILURE_CODE))
+  }
+}
+
+const deleteforumMember = async (req, res) => {
+  try {
+    const {forumName, stuser } = req.body;
+    await forums.updateOne({name:forumName},{
+      $pullAll: {
+          forumMembers: stuser,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.json(response("Cannot Delete forumMember", process.env.FAILURE_CODE))
   }
 }
 
