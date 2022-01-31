@@ -16,7 +16,6 @@ const login = async (email, password, userAgent, userType) => {
       user = await facultyModel.findOne({ email: email }).populate("role");
     } else if (userType === "FORUM") {
       user = await forums.findOne({ email: email }).populate({path:"role"}).populate({path:"facultyCoordinatorID",select:'name'});
-      console.log(user.facultyCoordinatorID);
     } else if (userType === "ADMIN") {
       //Admin
       user = await admins.findOne({ email: email });
