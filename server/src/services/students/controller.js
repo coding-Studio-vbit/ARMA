@@ -94,7 +94,7 @@ const studentViewCard = async (req, res) => {
     
     } catch (err) {
       console.log(err);
-      res.json(response(error, process.env.FAILURE_CODE));
+      res.json(response(err, process.env.FAILURE_CODE));
     }
 }
 module.exports = {getStudentsList, editStudent, fetchStudents, studentViewCard}

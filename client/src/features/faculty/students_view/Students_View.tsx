@@ -100,23 +100,20 @@ export const Students_View = () => {
 
         {/* Events Organized */}
 
-        {/* <p className="text mb-5 mt-5 text-2xl">Events Organized</p>
-        <Table
-          api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
-          rowsPerPage={5}
-          buttonsCount={3}
-          filter={{ rollNumber: roll }}
+        <p className="text mb-5 mt-5 text-2xl">Events Organized</p>
+        <DataTable
+          data={info}
           headers={[
-            { displayName: "FORUM", dataPath: "forum", sortable: false },
-            { displayName: "ROLE", dataPath: "role", sortable: false },
-            {
-              displayName: "EVENT NAME",
-              dataPath: "eventname",
-              sortable: false,
-            },
-            { displayName: "DURATION", dataPath: "duration", sortable: false },
+            { displayName: "FORUM", dataPath: "coreTeamMember.forumID.name", sortable: false },
+            { displayName: "ROLE", dataPath: "coreTeamMember.role", sortable: false },
+            // {
+            //   displayName: "EVENT NAME",
+            //   dataPath: "eventname",
+            //   sortable: false,
+            // },
+            // { displayName: "DURATION", dataPath: "duration", sortable: false },
           ]}
-        /> */}
+        />
 
         {/* Events Participated */}
 
