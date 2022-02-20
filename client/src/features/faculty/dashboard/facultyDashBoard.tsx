@@ -15,6 +15,8 @@ interface EventInfo {
 }
 
 function FacultyDashBoard() {
+  console.log("jkhgbiujh");
+  
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [pendingRequests, setPendingRequests] = useState<number>();
@@ -113,11 +115,12 @@ function FacultyDashBoard() {
           }else{
             // console.log("No Events");
             
-            setError("No Events to View");
+            setError("No Event Requests Found");
           }
           //data :set
         }else{
           // console.log("Failure");
+          
           setError(response.data.response);
         }
         setLoading(false);
@@ -138,11 +141,11 @@ function FacultyDashBoard() {
   return !loading ? (
     <div>
       
-      {
-        error==null?
+      
+        
         <div className="mx-auto w-full px-4  md:px-8 lg:px-0 lg:w-10/12 flex flex-col justify-center items-center mt-6 gap-10 py-8 pb-14">
           {/* First Row */}
-          {
+          { error==null &&
             (faculty?.role.ADMIN || faculty?.role.SAC || faculty?.role.FO ) &&(
               <div className="flex flex-row gap-y-10 flex-wrap  lg:flex-nowrap justify-around w-full md:w-5/6 lg:w-11/12  xl:w-9/12 gap-4 xl:gap-6">
             {/* Current Requests */}
@@ -234,7 +237,7 @@ function FacultyDashBoard() {
         <div className="flex justify-center items-center">
           {error}
         </div>
-      }
+      
     </div>
   ) : (
     <div className="flex h-screen justify-center items-center">
