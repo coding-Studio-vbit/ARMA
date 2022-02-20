@@ -23,7 +23,7 @@ const ForumRoutes = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/eventDashboard" element={<ForumEventDashboard />} />
           <Route path="/eventEquipment" element={<EventEquip />} />
-          <Route path="/event-venue" element={<EventVenue />} />
+          <Route path="/eventVenue" element={<EventVenue />} />
           <Route path="/reportAndMedia" element={<ReportAndMedia />} />
           <Route path="/createEvent" element={<CreateEvent />} />
           <Route path="/updateEventDetails" element={<UpdateEventDetails />} />
