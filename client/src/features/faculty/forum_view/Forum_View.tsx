@@ -2,23 +2,28 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Table from "../../../components/CustomTable";
 import axiosInstance from "../../../utils/axios";
+import DataTable from "../../../components/Table";
+import { Spinner } from "../../../components/Spinner/Spinner";
 
 
 export const Forum_View = () => {
     const {id} = useParams()
     console.log(id);
   const [roll,setRoll] = useState("")
-  const [info, setInfo] = useState<{name:string, facultyCoordinatorID:{name:string}, email:string, phone:number}>()
+  const [info, setInfo] = useState<{name:string, facultyCoordinatorID:{name:string}, email:string, phone:number, events:any[]}>()
+  const [loading, setLoading] = useState(true)
   useEffect(() => {
     const forum = async () => {
       const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL +"forum/forumViewCard", {id:id});
       const data = res.data.response; 
       console.log(data);
       setInfo(data)
+      setLoading(false)
     }
     forum();
   },[])
-  return (
+  
+  return loading ? <div className="w-screen h-screen flex justify-center"><Spinner className="m-auto"/></div> :(
     <div className="flex flex-col sm:mx-6 mb-4">
         <div className="flex flex-col mt-5 sm:mx-5 mx-5 space-y-5">
             {/* View Forum Title */}
@@ -48,48 +53,44 @@ export const Forum_View = () => {
             {/* Core Team */}
             <p className="text mb-5 mt-5 text-2xl">Core Team</p>
                     <Table
-                    api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                    api={`${process.env.REACT_APP_SERVER_URL + "forum/getCoreForumMembers"}`}
                     rowsPerPage={5}
                     buttonsCount={3}
-                    filter={{rollNumber:roll}}
+                    filter={{name:info?.name}}
                     headers={[
-                        { displayName: "NAME", dataPath: "name", sortable: false },
-                        { displayName: "ROLL NUMBER", dataPath: "rollNumber", sortable: false },
-                        { displayName: "DEPARTMENT", dataPath: "branch", sortable: false },
-                        { displayName: "YEAR", dataPath: "year", sortable: false },
-                        { displayName: "SECTION", dataPath: "section", sortable: false },
+                        { displayName: "NAME", dataPath: "studentID.name", sortable: false },
+                        { displayName: "ROLL NUMBER", dataPath: "studentID.rollNumber", sortable: false },
+                        { displayName: "DEPARTMENT", dataPath: "studentID.branch", sortable: false },
+                        { displayName: "YEAR", dataPath: "studentID.year", sortable: false },
+                        { displayName: "SECTION", dataPath: "studentID.section", sortable: false },
                         { displayName: "ROLE", dataPath: "designation", sortable: false },
                     ]}
                     />
             {/* Members */}
                     <p className="text mb-5 mt-5 text-2xl">Members</p>
                     <Table
-                    api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                    api={`${process.env.REACT_APP_SERVER_URL + "forum/getForumMembers"}`}
                     rowsPerPage={5}
                     buttonsCount={3}
-                    filter={{rollNumber:roll}}
+                    filter={{name:info?.name}}
                     headers={[
                         { displayName: "NAME", dataPath: "name", sortable: false },
-                        { displayName: "ROLL NUMBER", dataPath: "rollno", sortable: false },
-                        { displayName: "DEPARTMENT", dataPath: "department", sortable: false },
+                        { displayName: "ROLL NUMBER", dataPath: "rollNumber", sortable: false },
+                        { displayName: "DEPARTMENT", dataPath: "branch", sortable: false },
                         { displayName: "YEAR", dataPath: "year", sortable: false },
                         { displayName: "SECTION", dataPath: "section", sortable: false },
-                        { displayName: "ROLE", dataPath: "role", sortable: false },
                     ]}
                     />
 
-            {/* Events Conducted */}
+
                     <p className="text mb-5 mt-5 text-2xl">Events Conducted</p>
-                    <Table
-                    api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
-                    rowsPerPage={5}
-                    buttonsCount={3}
-                    filter={{rollNumber:roll}}
+                    <DataTable
+                    data={info?.events}
                     headers={[
-                        { displayName: "EVENT NAME", dataPath: "eventname", sortable: false },
-                        { displayName: "NO. OF PARTICIPANTS", dataPath: "participantsno", sortable: false },
+                        { displayName: "EVENT NAME", dataPath: "name", sortable: false },
+                        { displayName: "NO. OF PARTICIPANTS", dataPath: "participants", sortable: false },
                         { displayName: "DURATION", dataPath: "duration", sortable: false },
-                        { displayName: "ATTENDANCE", dataPath: "attendance", sortable: false },
+                        // { displayName: "ATTENDANCE", dataPath: "attendance", sortable: false },
                     ]}
                     />
                 </div>
