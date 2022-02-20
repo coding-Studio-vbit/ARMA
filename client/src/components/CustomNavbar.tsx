@@ -88,11 +88,16 @@ const Navbar = ({ navItems }: NavbarProps) => {
           onBlur={() => {
             setShowLogout(false);
           }}
-          className={`cursor-pointer relative `}
+          className={`cursor-pointer relative flex items-center h-full  `}
           onClick={() => {
             setShowLogout(!showLogout);
           }}
         >
+          {location.pathname.includes('profile') && (
+                  <div className="bg-arma-blue h-[0.2rem] z-20 bottom-0 rounded-full  w-[90%] ml-[0.2rem]  absolute  ">
+                  
+                  </div>
+                )}
           <span className="text-lg mr-2 align-middle ">
             Hi, {forum?.name ?? faculty?.name}
           </span>
@@ -103,11 +108,11 @@ const Navbar = ({ navItems }: NavbarProps) => {
             {showLogout && (
               <motion.div
                 initial={{ y: "-1vh", opacity: 0 }}
-                animate={{ y: "0", opacity: 1 }}
+                animate={{ y: "3.5vh", opacity: 1 }}
                 exit={{ y: "-0.5vh", opacity: 0 }}
                 transition={{ ease: "easeOut", duration: 0.1 }}
               >
-                <div className="flex flex-col rounded-[12px]  shadow-xl bg-white absolute right-0">
+                <div className="flex flex-col rounded-[12px]  shadow-xl bg-white  absolute right-[-0.5rem]">
                   {!location.pathname.includes("profile") && (
                     <div
                       onClick={() => {

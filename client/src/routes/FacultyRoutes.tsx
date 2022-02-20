@@ -21,7 +21,7 @@ const FacultyRoutes = () => {
   ];
   
   const setNavItems = ()=>{
-    if(faculty?.role.SAC)
+    if(faculty?.role.SAC || faculty?.role.FC || faculty?.role.FACULTY)
     navItems.push(  { label: "Dashboard", icon: "home", path: "/faculty/" },
     { label: "Forums", icon: "group", path: "/faculty/forums" },
     { label: "Students", icon: "person", path: "/faculty/students" },
