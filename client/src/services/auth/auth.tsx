@@ -20,8 +20,12 @@ export class AuthService {
             }),
           });
           let data = await res.json()
-          console.log(data.response);
+          console.log(data);
           
+          if(data.status === -1){
+            
+            return data
+          }          
           let role = data.response.user.role
           localStorage.setItem('idk',data.response.token)
           data.response.user.role = {
