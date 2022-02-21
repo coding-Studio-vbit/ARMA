@@ -16,7 +16,7 @@ export default function ForumsList() {
           rowsPerPage={5}
           buttonsCount={3}
           filter={{name:name}}
-          onTableRowClick={(id) => nav(`/faculty/forum/${id}`)}
+          onTableRowClick={(id) => nav(`/faculty/forums/${id}`)}
           headers={[
             {
               displayName: "Forum ",

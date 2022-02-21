@@ -55,7 +55,14 @@ const Navbar = ({ navItems }: NavbarProps) => {
           className="hidden  md:justify-items-center gap-6	  sm:hidden md:flex flex-row "
         >
           {navItems.map((item: NavItem, index: Number) => {
-            const isActive = location.pathname === item.path;
+            let isActive = location.pathname.includes(item.path);
+
+            if((item.path==='/faculty/' && location.pathname==='/faculty/') || (location.pathname.includes('/faculty/requests') && item.path==='/faculty/') ){
+              isActive = true
+            }else if(item.path==='/faculty/'){
+              isActive = false
+            }
+            
             return (
               <div
                 key={item.label}

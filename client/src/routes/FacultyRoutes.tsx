@@ -44,7 +44,7 @@ const FacultyRoutes = () => {
           <Route path="/forums" element={<ForumsList />} />
           <Route path="/students" element={<StudentsList />} />
           <Route path="/students/:id" element={<Students_View />} />
-          <Route path="/forum/:id" element={<Forum_View/>} />
+          <Route path="/forums/:id" element={<Forum_View/>} />
           <Route path="/requests" element={<RequestsList />} />
         </Routes>
       </div>
