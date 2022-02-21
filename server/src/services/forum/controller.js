@@ -74,9 +74,13 @@ const addNewForumMembers = async (req, res) => {
     const { forumName, ...stuser } = req.body;
     let stu = await students.findOne({ rollNumber: stuser.rollNumber });
     const forum = await forums.findOne({ name: forumName });
-    const studentExists = forum.forumMembers.find(
-      (v) => v.toString() === stu._id.toString()
-    );
+    let studentExists;
+    if(stu){
+       studentExists = forum.forumMembers.find(
+        (v) => v.toString() === stu._id.toString()
+      );
+    }
+   
     if (studentExists) throw "Student already exists";
     if (stu) {
       await forums.findOneAndUpdate(
@@ -103,7 +107,6 @@ const addNewCoreForumMember = async (req, res) => {
     const { forumName, designation, ...stuser } = req.body;
     let stu = await students.findOne({ rollNumber: stuser.rollNumber });
     const forum = await forums.findOne({ name: forumName });
-    console.log(forum.forumCoreTeamMembers[10].studentID.toString());
 
     if (stu) {
       const studentExists = forum.forumCoreTeamMembers.find((v) => {
@@ -290,7 +293,7 @@ const deleteforumMember = async (req, res) => {
     const { forumName, studentID, userType } = req.body;
     if (userType === "core") {
       console.log(forumName,studentID);
-      
+      console.log(mongoose.Types.ObjectId(studentID));
       await forums.updateOne(
         { name: forumName },
         {
