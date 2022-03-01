@@ -2,9 +2,7 @@ export class AuthService {
 
     static async  login(email: String, password: String, userType: String) :Promise<{response:any,status:number}> {
         const userAgent = navigator.userAgent;
-        console.log(email, password, userType, userAgent);
         try {
-          console.log(process.env.REACT_APP_SERVER_URL);
           const res = await fetch(process.env.REACT_APP_SERVER_URL + "login", {
             method: "POST",
             headers: {
@@ -20,12 +18,12 @@ export class AuthService {
             }),
           });
           let data = await res.json()
-          console.log(data);
           
           if(data.status === -1){
             
             return data
           }          
+          
           let role = data.response.user.role
           localStorage.setItem('idk',data.response.token)
           data.response.user.role = {
