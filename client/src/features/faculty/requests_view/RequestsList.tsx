@@ -1,7 +1,6 @@
 import Table from "../../../components/CustomTable";
 import Select from "react-select";
 import { useState } from "react";
-import { RemoveRedEye } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
 
 const RequestsList = () => {
@@ -20,7 +19,6 @@ const RequestsList = () => {
     },
     { displayName: "Event Name", dataPath: "name", sortable: false },
     { displayName: "Status", dataPath: "eventStatus", sortable: false },
-    { displayName: "Actions", dataPath: "actions", sortable: false },
   ];
   return (
     <div id="requestsTable">
@@ -30,11 +28,20 @@ const RequestsList = () => {
         <Select
           options={[
             { value: null, label: "ALL" },
-            { value: "AWAITING BUDGET APPROVAL", label: "AWAITING BUDGET APPROVAL" },
-            { value: "REQUESTED BUDGET CHANGES", label: "REQUESTED BUDGET CHANGES" },
+            {
+              value: "AWAITING BUDGET APPROVAL",
+              label: "AWAITING BUDGET APPROVAL",
+            },
+            {
+              value: "REQUESTED BUDGET CHANGES",
+              label: "REQUESTED BUDGET CHANGES",
+            },
             { value: "BUDGET REJECTED", label: "BUDGET REJECTED" },
             { value: "AWAITING SAC APPROVAL", label: "AWAITING SAC APPROVAL" },
-            { value: "REQUESTED CHANGES BY SAC", label: "REQUESTED CHANGES BY SAC" },
+            {
+              value: "REQUESTED CHANGES BY SAC",
+              label: "REQUESTED CHANGES BY SAC",
+            },
             { value: "APPROVED", label: "APPROVED" },
             { value: "REJECTED", label: "REJECTED" },
             { value: "COMPLETED", label: "COMPLETED" },
@@ -54,20 +61,8 @@ const RequestsList = () => {
           headers={headers}
           rowsPerPage={10}
           buttonsCount={4}
-          transformer={(row) => {
-            row.actions = (
-              <div>
-                <span
-                  className="text-arma-dark-blue"
-                  onClick={() => {
-                    navigate(`/faculty/requests/${row._id}`);
-                  }}
-                >
-                  <RemoveRedEye />
-                </span>
-              </div>
-            );
-            return row;
+          onTableRowClick={(id) => {
+            navigate(`/faculty/requests/${id}`);
           }}
         />
       </div>
