@@ -16,7 +16,7 @@ function AllRoutes() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:id" element={<ResetPassword />} />
 
-        {forum && <Route path="/forum/*" element={<ForumRoutes />} />}
+        {true && <Route path="/forum/*" element={<ForumRoutes />} />}
         {faculty && <Route path="/faculty/*" element={<FacultyRoutes />} />}
 
         <Route path="*" element={<PageNotFound />} />

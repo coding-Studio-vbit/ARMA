@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "react-modern-calendar-datepicker/lib/DatePicker.css";
 import { Calendar, Day } from "react-modern-calendar-datepicker";
-
+import { SelectHalls } from "./selectHalls";
 const EventVenue = () => {
   const [selectedDays, setSelectedDays] = useState<Day[]>([]);
   const [showCalender, setShowCalender] = useState(false);
@@ -28,12 +28,21 @@ const EventVenue = () => {
     "Saturday",
     "Sunday",
   ];
-  const [eventDates] = useState<{ date: Date; halls: String[] }[]>([]);
-
+  const minimumDate = {
+    year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1,
+    day: new Date().getDate(),
+  };
+  const [eventDates, setEventDates] = useState([]);
+  const [showHallSelection, setShowHallSelection] = useState(false);
+  console.log(eventDates, minimumDate);
   const HallsList = (halls: string[]) =>
     halls.map((hall: string) => {
       return (
-        <button className="flex text-gray-500 flex-row justify-around px-8 mr-4 mb-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer">
+        <button
+          onClick={() => setShowHallSelection(true)}
+          className="flex text-gray-500 flex-row justify-around px-8 mr-4 mb-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
+        >
           <div className="">{hall}</div>
         </button>
       );
@@ -42,30 +51,37 @@ const EventVenue = () => {
   const DatesList = () =>
     selectedDays.map((date) => {
       const dateString = new Date(date.year, date.month, date.day);
-      // eslint-disable-next-line
-      var details = { date: dateString, halls: Array() };
-      var temp = eventDates;
-      temp.push(details);
       var halls = ["chetana", "Sumedha", "Nalanda", "Prerana"];
-      console.log(temp.indexOf(details));
       return (
         <div
           key={dateString.toDateString()}
           className="flex flex-col bg-white w-8/12 my-3 p-5 justify-between items-center rounded-[25px]"
         >
           <div className="flex flex-col md:flex-row justify-between items-center w-full">
-            <div className="md:w-4/12 font-medium mb-2 text-black md:mb-0">
+            <button
+              onClick={() => setShowCalender(true)}
+              className="md:w-4/12 text-center font-medium mb-2 text-black md:mb-0"
+            >
               {days[dateString.getDay()]}, {dateString.getDate()}{" "}
               {months[dateString.getMonth()]} {dateString.getFullYear()}
-            </div>
-            <div className="md:w-8/12 flex flex-wrap md:px-16 md:border-l-2">
+            </button>
+            <div className="md:w-8/12 flex flex-col md:flex-wrap md:flex-row md:px-16 md:border-l-2">
               {halls.length === 0 ? null : HallsList(halls)}
             </div>
           </div>
         </div>
       );
     });
-
+  const setDays = (date) => {
+    setSelectedDays(date);
+    var temp = [];
+    date.map((d) => {
+      const dateString = new Date(d.year, d.month, d.day);
+      var data = { eventDate: dateString, halls: [] };
+      temp.push(data);
+    });
+    setEventDates(temp);
+  };
   const CalenderPopUp = () => {
     return (
       <div
@@ -84,8 +100,9 @@ const EventVenue = () => {
             value={selectedDays}
             shouldHighlightWeekends
             colorPrimary="#139beb"
+            minimumDate={minimumDate}
             onChange={(e) => {
-              setSelectedDays(e);
+              setDays(e);
               console.log(e);
             }}
             renderFooter={() => (
@@ -114,9 +131,14 @@ const EventVenue = () => {
 
   return (
     <div
-      className="flex flex-col h-screen justify-start items-center pt-8"
+      className="flex flex-col h-screen justify-start items-center"
       style={{ backgroundColor: "#f5f5f5" }}
     >
+      <SelectHalls
+        SelectedHalls={["chetana", "Prerana"]}
+        show={showHallSelection}
+        setShow={setShowHallSelection}
+      />
       <div
         className="flex text-arma-title text-4xl font-bold mx-5 text-justify mb-3 items-center"
         style={{ color: "#1970A3" }}

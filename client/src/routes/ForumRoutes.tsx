@@ -18,7 +18,7 @@ const ForumRoutes = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar navItems={[]} />
-      <div className="flex-1 mt-[80px]">
+      <div className="flex-1 pt-[80px]">
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/eventDashboard" element={<ForumEventDashboard />} />
