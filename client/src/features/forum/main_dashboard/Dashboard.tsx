@@ -21,12 +21,12 @@ const Dashboard = () => {
     },
     {
       name: "codeCraft 3.0",
-      eventStatus: "approval pending",
+      eventStatus: "AWAITING SAC APPROVAL",
       isActive: false,
     },
     {
       name: "codeCraft 3.0",
-      eventStatus: "approval pending",
+      eventStatus: "AWAITING BUDGET APPROVAL",
       isActive: false,
     },
     {
