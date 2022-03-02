@@ -62,6 +62,9 @@ const student = new mongoose.Schema({
     },
   },
   attendedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "events" }],
+  coreTeamMember: [{designation: String, forumID: { type: mongoose.Schema.Types.ObjectId, ref: "forums" },},],
+  forumMemberships: [{ type: mongoose.Schema.Types.ObjectId, ref: "forums" }],
+  
 });
 
 const students = mongoose.model("students", student);

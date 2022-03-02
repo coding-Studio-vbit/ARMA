@@ -1,178 +1,140 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Table from "../../../components/CustomTable";
+import DataTable from "../../../components/Table";
+import axiosInstance from "../../../utils/axios";
 
-function Students_View() {
+export const Students_View = () => {
+  const { id } = useParams();
+  console.log(id);
+
+  const [roll, setRoll] = useState("");
+  const [info, setInfo] = useState<{
+    name: string;
+    email: string;
+    year: number;
+    section: string;
+    branch: string;
+    phone: number;
+    coreTeamMember: any[];
+    forumMemberships: any[];
+    attendedEvents: any[];
+  }>();
+  useEffect(() => {
+    const student = async () => {
+      const res = await axiosInstance.post(
+        process.env.REACT_APP_SERVER_URL + "students/studentViewCard",
+        { id: id }
+      );
+      const data = res.data.response;
+      console.log(data);
+      setInfo(data);
+    };
+    student();
+  }, []);
   return (
-    <div>
-      <div className="text-arma-dark-blue pt-16 px-14 text-lg">
-        Personal Details
-      </div>
-      <div className="w-4/5 px-14 rounded-[8px]">
-        <div className="w-full border-2 shadow-md  rounded-[16px] overflow-clip ">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-              <div className="flex space-x-4">
-                <p className="text-arma-grey mb-5 text-xl">First Name:</p>
-              </div>
-            </div>
-            <div>
-              <div className="flex space-x-4">
-                <p className="text-arma mb-5 text-xl">Siddharth</p>
-              </div>
-            </div>
-            <div>
-              <div className="flex space-x-4">
-                <p className="text-arma-grey mb-5 text-xl">Last Name:</p>
-              </div>
-            </div>
-            <div>
-              <div className="flex space-x-4">
-                <p className="text-arma mb-5 text-xl">Malladi</p>
-              </div>
-            </div>
+    <div className="flex flex-col sm:mx-6">
+      <div className="flex flex-col mt-5 sm:mx-5 mx-5 space-y-5">
+        {/* View Students Title */}
+        <p className="text-arma-title mb-5 text-4xl">View Student</p>
+        {/* Personal Details */}
+        <p className="text mb-1 text-2xl">Personal Details</p>
 
-            <div>
-              <div className="flex space-x-4">
-                <p className="text-arma-grey mb-5 text-xl">Year:</p>
-              </div>
-            </div>
-            <div>
-              <div className="flex space-x-4">
-                <p className="text-arma mb-5 text-xl">4</p>
-              </div>
-            </div>
-            <div>
-              <div className="flex space-x-4">
-                <p className="text-arma-grey mb-5 text-xl">Department:</p>
-              </div>
-            </div>
-            <div>
-              <div className="flex space-x-4">
-                <p className="text-arma mb-5 text-xl">CSE</p>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex space-x-4">
-                <p className="text-arma-grey mb-5 text-xl">Section:</p>
-              </div>
-            </div>
-            <div>
-              <div className="flex space-x-4">
-                <p className="text-arma mb-5 text-xl">C</p>
-              </div>
-            </div>
-            <div>
-              <div className="flex space-x-4">
-                <p className="text-arma-grey mb-5 text-xl">Contact:</p>
-              </div>
-            </div>
-            <div>
-              <div className="flex space-x-4">
-                <p className="text-arma mb-5 text-xl">9902917558</p>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2  gap-5 border-2 shadow-md rounded-[16px] p-6">
+          <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr] items-center">
+            <span className="text-arma-gray text-xl">Name:</span>
+            <span className="text-xl ml-4">{info?.name}</span>
+          </div>
+          <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr]  items-center">
+            <span className="text-arma-gray text-xl">Email:</span>
+            <span className="text-xl ml-4">{info?.email ?? " "}</span>
+          </div>
+          <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr] items-center">
+            <span className="text-arma-gray text-xl">Year:</span>
+            <span className="text-xl ml-4">{info?.year}</span>
+          </div>
+          <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr] items-center">
+            <span className="text-arma-gray text-xl">Department:</span>
+            <span className="text-xl ml-4">{info?.branch}</span>
+          </div>
+          <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr] items-center">
+            <span className="text-arma-gray text-xl">Section:</span>
+            <span className="text-xl ml-4">{info?.section}</span>
+          </div>
+          <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr] items-center">
+            <span className="text-arma-gray text-xl">Contact:</span>
+            <span className="text-xl ml-4">{info?.phone}</span>
           </div>
         </div>
-      </div>
 
-      <div className="text-arma-dark-blue pt-16 px-14 text-lg ">
-        Memberships
-      </div>
-      <div className=" px-14">
-        <Table
-          api="http://localhost:5000/students"
-          rowsPerPage={3}
-          buttonsCount={1}
-          headers={[
-            { displayName: "SNo", dataPath: "sno", sortable: true },
-            {
-              displayName: "Forum",
-              dataPath: "forum",
-              sortable: false,
-            },
-            {
-              displayName: "Role",
-              dataPath: "role",
-              sortable: false,
-            },
-            {
-              displayName: "Academic Year",
-              dataPath: "academicyear",
-              sortable: true,
-            },
-          ]}
-        />
-      </div>
+        <p className="text mb-5 mt-5 text-2xl">Core Team Member</p>
+        <div className="flex flex-wrap gap-4 w-[95%]">
+          {
+         (info?.coreTeamMember.length !== 0)?
+          info?.coreTeamMember.map((i: any) => {
+            return (
+              <div key ={i.forumID} className="shadow-xl border-2 flex flex-col p-4 w-max rounded-[16px]">
+                <span>Forum Name: {i.forumID.name} </span>
+                <span>Designation: {i.designation}</span>
+              </div>
+            );
+          }):
+          <p>Not a core member of any forum.</p>
+          }
+        </div>
 
-      <div className="text-arma-dark-blue pt-16 px-14 text-lg ">
-        Events Organised
-      </div>
-      <div className=" px-14 ">
-        <Table
-          api="http://localhost:5000/students"
-          rowsPerPage={3}
-          buttonsCount={1}
+        <p className="text mb-5 mt-5 text-2xl">Memberships</p>
+        <div className="flex flex-wrap gap-4 w-[95%]">
+          {
+        (info?.forumMemberships.length !== 0)?
+          info?.forumMemberships.map((i: any) => {
+            return (
+              <div key={i.forumID} className="shadow-xl border-2 flex flex-col p-4 w-max rounded-[16px]">
+                <span>Forum Name:{i.name}</span>
+              </div>
+            );
+          }):
+          <p>No memberships taken.</p>
+          }
+        </div>
+
+        {/* Events Organized */}
+
+        <p className="text mb-5 mt-5 text-2xl">Events Organized</p>
+        <DataTable
+          data={info}
           headers={[
-            { displayName: "SNo", dataPath: "sno", sortable: true },
-            {
-              displayName: "Forum",
-              dataPath: "forum",
-              sortable: false,
-            },
-            {
-              displayName: "Role",
-              dataPath: "role",
-              sortable: false,
-            },
-            {
-              displayName: "Event Name",
-              dataPath: "eventname",
-              sortable: false,
-            },
-            {
-              displayName: "Duration",
-              dataPath: "forum",
-              sortable: true,
-            },
+            { displayName: "FORUM", dataPath: "coreTeamMember.forumID.name", sortable: false },
+            { displayName: "ROLE", dataPath: "coreTeamMember.role", sortable: false },
+            // {
+            //   displayName: "EVENT NAME",
+            //   dataPath: "eventname",
+            //   sortable: false,
+            // },
+            // { displayName: "DURATION", dataPath: "duration", sortable: false },
           ]}
         />
-      </div>
-      <div className="text-arma-dark-blue pt-16 px-14">Events Participated</div>
-      <div className="px-14 ">
-        <Table
-          api="http://localhost:5000/students"
-          rowsPerPage={3}
-          buttonsCount={1}
+
+        {/* Events Participated */}
+
+        <p className="text mb-5 mt-5 text-2xl">Events Participated</p>
+        <DataTable
+          data = {info?.attendedEvents}
           headers={[
-            { displayName: "SNo", dataPath: "sno", sortable: true },
+            { displayName: "FORUM", dataPath:"forumID.name", sortable: false },
             {
-              displayName: "Forum",
-              dataPath: "forum",
+              displayName: "EVENT NAME",
+              dataPath: "name",
               sortable: false,
             },
-            {
-              displayName: "Event Name",
-              dataPath: "forum",
-              sortable: false,
-            },
-            {
-              displayName: "Duration",
-              dataPath: "forum",
-              sortable: true,
-            },
-            {
-              displayName: "Other Remarks",
-              dataPath: "other remarks",
-              sortable: false,
-            },
+            { displayName: "DURATION", dataPath: "duration", sortable: false },
           ]}
         />
-      </div>
-      <div className="grid justify-items-end my-32">
-        <button className="outlineBtn">GENERATE</button>
+
+        <div className="ml-auto mt-8">
+          <button className="btn mb-8 ml-auto mt-8">GENERATE</button>
+        </div>
       </div>
     </div>
   );
-}
-
-export { Students_View };
+};

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../../../components/CustomNavbar";
 import { Spinner } from "../../../components/Spinner/Spinner";
 import "react-modern-calendar-datepicker/lib/DatePicker.css";
-import { Calendar, DayValue, Day } from "react-modern-calendar-datepicker";
+import { Calendar, Day } from "react-modern-calendar-datepicker";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "./../../../utils/axios";
+import { useUser } from "../../../providers/user/UserProvider";
 
 interface EventInfo {
   forum: string;
@@ -15,6 +15,8 @@ interface EventInfo {
 }
 
 function FacultyDashBoard() {
+  console.log("jkhgbiujh");
+  
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [pendingRequests, setPendingRequests] = useState<number>();
@@ -41,9 +43,9 @@ function FacultyDashBoard() {
     x = todaysEvents?.filter(
       function(element){
         for (let i = 0; i < element.date.length; i++) {
-          if(element.date[i].day == selectedDate?.day && 
-             element.date[i].month == selectedDate?.month &&
-             element.date[i].year == selectedDate?.year){
+          if(element.date[i].day === selectedDate?.day && 
+             element.date[i].month === selectedDate?.month &&
+             element.date[i].year === selectedDate?.year){
                return element;
             } 
         }   
@@ -57,18 +59,19 @@ function FacultyDashBoard() {
   }
 
   const [error, setError] = useState<string|null>(null);
-
+  const {faculty} = useUser()
   async function fetchData() {
+    
     axiosInstance
-      .get(`${process.env.REACT_APP_SERVER_URL + "faculty/dashboardInfo"}`)
+      .get(process.env.REACT_APP_SERVER_URL + "faculty/dashboardInfo",{params:{isFO:faculty?.role.SAC ? false:faculty?.role.FO}})
       .then((response) => {
         // console.log("Success");
         
-        if(response.data.status==1){
+        if(response.data.status===1){
           // console.log("got Events");
 
           const eventList = response.data.response;
-          if(eventList.length!=0){
+          if(eventList.length!==0){
             let data =[];
             for (let i = 0; i < eventList.length; i++) {
               let event:EventInfo={
@@ -78,7 +81,7 @@ function FacultyDashBoard() {
                 eventStatus: "",
                 _id: ""
               };
-               event.forum = eventList[i].forumID;
+               event.forum = eventList[i].forumID.name;
                event._id = eventList[i]._id;
                event.event = eventList[i].name;
                event.eventStatus = eventList[i].eventStatus;
@@ -106,16 +109,18 @@ function FacultyDashBoard() {
             }          
             setCurrentRequests(data);
             setTodaysEvents(data);  
-            setPendingRequests(eventList.length);          
+            setPendingRequests(eventList.length); 
+                     
 
           }else{
             // console.log("No Events");
             
-            setError("No Events to View");
+            setError("No Event Requests Found");
           }
           //data :set
         }else{
           // console.log("Failure");
+          
           setError(response.data.response);
         }
         setLoading(false);
@@ -128,29 +133,36 @@ function FacultyDashBoard() {
         setError(error.message);
       });    
   }
-
+  
   useEffect(() => {
     fetchData();
   }, []);
 
   return !loading ? (
     <div>
-      {/* <Navbar navItems={[]} /> */}
-      {/* Navbar */}
-
-      {/* Page Content */}
-      {
-        error==null?
+      
+      
+        
         <div className="mx-auto w-full px-4  md:px-8 lg:px-0 lg:w-10/12 flex flex-col justify-center items-center mt-6 gap-10 py-8 pb-14">
           {/* First Row */}
-          <div className="flex flex-row gap-y-10 flex-wrap  lg:flex-nowrap justify-around w-full md:w-5/6 lg:w-11/12  xl:w-9/12 gap-4 xl:gap-6">
+          { error==null &&
+            (faculty?.role.ADMIN || faculty?.role.SAC || faculty?.role.FO ) &&(
+              <div className="flex flex-row gap-y-10 flex-wrap  lg:flex-nowrap justify-around w-full md:w-5/6 lg:w-11/12  xl:w-9/12 gap-4 xl:gap-6">
             {/* Current Requests */}
 
             <div
               className="w-max sm:w-2/3 lg:w-1/2 mx-4 px-10 py-12
                       arma-card-gradient text-white text-2xl
                       shadow-2xl rounded-2xl h-72 overflow-y-scroll currentRequest cursor-pointer"
-              onClick={()=>{navigate("/faculty/requests")}}
+              onClick={()=>{
+                if(faculty?.role.SAC){
+                  navigate("/faculty/requests")
+                }
+                else if(faculty?.role.FO){
+
+                  navigate("/faculty/foRequests")
+                }
+              }}
             >
               <p>Current Requests</p>
               <ul className="list-disc list-inside text-xl ">
@@ -182,6 +194,8 @@ function FacultyDashBoard() {
               </div>
             </div>
           </div>
+            )
+          }
 
           <div className="flex flex-row gap-y-10 flex-wrap  lg:flex-nowrap  justify-center lg:justify-start w-full md:w-5/6 lg:w-11/12  xl:w-9/12 gap-4 xl:gap-6">
             <div className="w-full sm:w-2/3 lg:w-1/2 xl:w-5/12 mx-4 text-2xl border-2 border-grey-600 shadow-2xl rounded-2xl overflow-y-scroll currentRequest white">
@@ -223,7 +237,7 @@ function FacultyDashBoard() {
         <div className="flex justify-center items-center">
           {error}
         </div>
-      }
+      
     </div>
   ) : (
     <div className="flex h-screen justify-center items-center">

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useUser } from "../providers/user/UserProvider";
 import { Sidebar } from "./Sidebar";
 import { motion, AnimatePresence } from "framer-motion";
-import { Navigate, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export interface NavItem {
   label: string;
@@ -23,7 +23,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
   const [showLogout, setShowLogout] = useState(false);
 
   return (
-    <div className={`flex  flex-row bg-white z-[11] fixed w-full ${navItems.length === 0 && "h-[60px]"}`}>
+    <div className={`flex  flex-row bg-white z-[11] fixed w-full h-[60px]`}>
       {/* side navigation bar */}
 
       <Sidebar
@@ -35,6 +35,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
         {/* {ARMA Title} */}
         <div
           id="ARMA-Logo"
+          onClick={()=>nav('/',{replace:true})}
           className="text-xl md:text-2xl  font-poppins pl-2 text-arma-dark-blue cursor-pointer"
         >
           {navItems.length > 0 && (
@@ -51,10 +52,17 @@ const Navbar = ({ navItems }: NavbarProps) => {
         {/* Navigation Items */}
         <div
           id="Nav-Items"
-          className="hidden  md:justify-items-center gap-10	  sm:hidden md:flex flex-row "
+          className="hidden  md:justify-items-center gap-6	  sm:hidden md:flex flex-row "
         >
           {navItems.map((item: NavItem, index: Number) => {
-            const isActive = location.pathname === item.path;
+            let isActive = location.pathname.includes(item.path);
+
+            if((item.path==='/faculty/' && location.pathname==='/faculty/') || (location.pathname.includes('/faculty/requests') && item.path==='/faculty/') ){
+              isActive = true
+            }else if(item.path==='/faculty/'){
+              isActive = false
+            }
+            
             return (
               <div
                 key={item.label}
@@ -87,11 +95,16 @@ const Navbar = ({ navItems }: NavbarProps) => {
           onBlur={() => {
             setShowLogout(false);
           }}
-          className={`cursor-pointer relative `}
+          className={`cursor-pointer relative flex items-center h-full  `}
           onClick={() => {
             setShowLogout(!showLogout);
           }}
         >
+          {location.pathname.includes('profile') && (
+                  <div className="bg-arma-blue h-[0.2rem] z-20 bottom-0 rounded-full  w-[90%] ml-[0.2rem]  absolute  ">
+                  
+                  </div>
+                )}
           <span className="text-lg mr-2 align-middle ">
             Hi, {forum?.name ?? faculty?.name}
           </span>
@@ -102,16 +115,17 @@ const Navbar = ({ navItems }: NavbarProps) => {
             {showLogout && (
               <motion.div
                 initial={{ y: "-1vh", opacity: 0 }}
-                animate={{ y: "0", opacity: 1 }}
+                animate={{ y: "3.5vh", opacity: 1 }}
                 exit={{ y: "-0.5vh", opacity: 0 }}
                 transition={{ ease: "easeOut", duration: 0.1 }}
               >
-                <div className="flex flex-col rounded-[12px]  shadow-xl bg-white absolute right-0">
+                <div className="flex flex-col rounded-[12px]  shadow-xl bg-white  absolute right-[-0.5rem]">
                   {!location.pathname.includes("profile") && (
                     <div
                       onClick={() => {
-                        if (faculty) nav("/faculty/profile");
-                        else if (forum) nav("/forum/profile");
+                        if (faculty) {
+                          nav("/faculty/profile");
+                        } else if (forum) nav("/forum/profile");
                       }}
                       className=" flex cursor-pointer gap-4 justify-center  rounded-[12px] z-10 py-4 hover:bg-[#eeeeee]  px-4 "
                     >

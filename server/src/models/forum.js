@@ -19,11 +19,11 @@ const forum = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "students" 
   }],
-  facultyCoordinatorID: [{
+  facultyCoordinatorID: {
     required: true,
     type: mongoose.Schema.Types.ObjectId,
     ref: "faculty",
-  }],
+  },
   forumMembers: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -58,6 +58,10 @@ const forum = new mongoose.Schema({
   forumLogoPath: {
     type: String,
   },
+  events: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "events" 
+  }],
   phone: {
     type: Number,
     validate: {
@@ -67,7 +71,7 @@ const forum = new mongoose.Schema({
       message: `{VALUE} is not a valid Indian contact number.`,
     },
   },
-  role: { type: mongoose.Schema.Types.ObjectId, ref: "roles" },
+  role:[ { type: mongoose.Schema.Types.ObjectId, ref: "roles" }],
 });
 
 const forums = mongoose.model("forums", forum);

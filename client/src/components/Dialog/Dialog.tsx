@@ -2,12 +2,14 @@ import { ReactNode } from "react";
 import ReactDOM from "react-dom";
 import { Close } from "@material-ui/icons";
 import { motion, AnimatePresence } from "framer-motion";
+import { Spinner } from "../Spinner/Spinner";
 
 interface DialogProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   children?: ReactNode;
   title: string;
+  loading?:boolean;
 }
 /**
  * Usage
@@ -16,7 +18,7 @@ interface DialogProps {
  * Pass show and setShow to the dialog.
  *
  */
-export const Dialog = ({ show, setShow, children, title }: DialogProps) => {
+export const Dialog = ({ show, setShow, children,loading, title }: DialogProps) => {
   const variants = {
     visible: { opacity: 1 },
     hidden: { opacity: 0 },
@@ -64,7 +66,7 @@ export const Dialog = ({ show, setShow, children, title }: DialogProps) => {
             </div>
           )}
           <p className="text-center p-4 text-xl mb-8 ">{title}</p>
-          {<div className="flex justify-around">{children}</div>}
+          {<div className="flex justify-around">{ loading? <Spinner/> : children}</div>}
         </div>
       </motion.div>
     </div>

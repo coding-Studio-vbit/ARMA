@@ -5,11 +5,10 @@ const response = require("../../services/util/response");
 //ADD ROLES
 const addRoles = async(req,res)=>{
     try{
-        let data = await role.findOne({name:req.body.name})
+        let data = await role.findOne({name:[req.body.name]})
         if(data) return res.json(response({message:"Role already exists"},process.env.SUCCESS_CODE));
         let newRole = new role({
             name : req.body.name,
-            permissions : req.body.permissions
         })
         await newRole.save()
         res.json(

@@ -42,7 +42,7 @@ const getFacultyList = async(req,res)=>{
 const editProfile = async(req,res) => {
 try {
     const {email,designation,phone } = req.body;
-    const user = await faculty.findOneAndUpdate({email:email}, { $set: {designation: designation, phone:phone}}, {new:true} )
+    const user = await faculty.findOneAndUpdate({email:email}, { $set: {designation: designation, phone:phone}}, {new:true} ).populate('role').select('-password')
     res.json(response(user, process.env.SUCCESS_CODE))
 } catch (error) {
     res.json(response("Details could not be updated", process.env.FAILURE_CODE))

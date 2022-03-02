@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import Select from "react-select";
 import { Dialog } from '../../../components/Dialog/Dialog';
 import { InputField } from '../../../components/InputField/InputField';
@@ -7,6 +8,7 @@ import axiosInstance from '../../../utils/axios';
 
 export default function AddNewForumMember() {
   const {forum} = useUser()
+  const nav = useNavigate()
     const departmentoptions = [
         { value: "CSE ", label: "CSE" },
         { value: "ECE ", label: "ECE" },
@@ -25,9 +27,9 @@ export default function AddNewForumMember() {
     
     const [rollNumber, setRollNumber] = useState("")
     const [name, setName] = useState("");
-    const [department, setDepartment] = useState("");
-    const [year, setYear] = useState("");
-    const [section, setSection] = useState("");
+    const [department, setDepartment] = useState<{value:string,label:string}>({value:"",label:"Department"});
+    const [year, setYear] = useState<{value:string,label:string}>({value:"",label:"Year"});
+    const [section, setSection] = useState<{value:string,label:string}>({value:"",label:"Section"});
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [show, setShow] = useState(false);
@@ -70,7 +72,7 @@ export default function AddNewForumMember() {
      
       const validateDepartment = (e: any) => {
         const department = e.value;
-        setDepartment(department);
+        setDepartment(e);
         if (department.length === 0) {
           setDepartmentError("Department field is empty");
         } 
@@ -82,7 +84,7 @@ export default function AddNewForumMember() {
 
       const validateYear = (e: any) => {
         const year = e.value;
-        setYear(year);
+        setYear(e);
         if (year.length === 0) {
           setYearError("Year field is empty");
         } 
@@ -94,7 +96,7 @@ export default function AddNewForumMember() {
 
       const validateSection = (e: any) => {
         const section = e.value;
-        setSection(section);
+        setSection(e);
         if (section.length === 0) {
           setSectionError("Section field is empty");
         } 
@@ -139,9 +141,9 @@ export default function AddNewForumMember() {
         if (
           rollNumber.length === 0 ||
           name.length === 0 ||
-          department.length === 0 ||
-          year.length === 0 ||
-          section.length === 0 ||
+          department.value.length === 0 ||
+          year.value.length === 0 ||
+          section.value.length === 0 ||
           email.length === 0 ||
           phone.length === 0 ||
           rollNumberError?.length !== 0 ||
@@ -155,7 +157,7 @@ export default function AddNewForumMember() {
           setShowError("Fill details appropriately");
         } else {
           setShowError("");
-          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewForumMembers", {forumName:forum?.name, rollNumber:rollNumber, name:name, branch:department, year:year, section:section, email:email,phone:phone})
+          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewForumMembers", {forumName:forum?.name, rollNumber:rollNumber, name:name, branch:department.value, year:year.value, section:section.value, email:email,phone:phone})
           const data = res.data
           if (data.status === 1) {
             setResponse("New Forum Member Added")
@@ -178,12 +180,14 @@ export default function AddNewForumMember() {
           <InputField
             name="Roll Number"
             type="text"
+            value={rollNumber}
             error={rollNumberError}
             onChange={(e) => {validateRollNumber(e)}}
           />
           <InputField
             name="Name"
             type="text"
+            value={name}
             error={nameError}
             onChange={(e) => {validateName(e)}}
           />
@@ -193,7 +197,7 @@ export default function AddNewForumMember() {
             placeholder="Department"
             className="basic-single"
             classNamePrefix="select"
-            // value ={{value: "Department", label: "Department"}}
+             value ={department}
             options={departmentoptions}
             onChange={(e) => {validateDepartment(e)}}
             styles={{
@@ -221,7 +225,7 @@ export default function AddNewForumMember() {
             placeholder="Year"
             className="basic-single"
             classNamePrefix="select"
-            // value ={{value: "Year", label: "Year"}}
+             value ={year}
             options={yearoptions}
             onChange={(e) => {validateYear(e)}}
             styles={{
@@ -249,7 +253,7 @@ export default function AddNewForumMember() {
             placeholder="Section"
             className="basic-single"
             classNamePrefix="select"
-            // value ={{value: "Section", label: "Section"}}
+            value ={section}
             options={sectionoptions}
             onChange={(e) => {validateSection(e)}}
             styles={{
@@ -274,17 +278,33 @@ export default function AddNewForumMember() {
           /> 
           <InputField
             name="E-mail"
+            value={email}
             type="text"
             onChange={(e) => {validateEmail(e)}}
           />
           <InputField
             name="Phone"
             type="text"
+            value={phone}
             onChange={(e) => {validatePhone(e)}}
           />
         </div>
         <Dialog show={show} setShow={setShow} title={response}>
-          {" "}
+        <button className='outlineBtn'
+            onClick={()=>{
+              setRollNumber("")
+              setName("")
+              setDepartment({value:"",label:"Department"})
+              setYear({value:"",label:"Year"})
+              setSection({value:"",label:"Section"})
+              setEmail("")
+              setPhone("")
+              setShow(false)
+            }}
+            >Add Another</button>
+            <button onClick={()=>{
+              nav('/forum/profile',{replace:true})
+            }} className='btn' >Okay</button>
         </Dialog>
         <button
           className="btn rounded-[8px] px-6 py-2 mt-12 ml-auto mr-auto flex justify-center"

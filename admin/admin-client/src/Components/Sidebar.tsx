@@ -25,7 +25,7 @@ export const Sidebar: FC<SidebarProps> = ({showSidebar, setShowSidebar}) => {
   const [activeOption , setActiveOption] = useState<String>(active? active: "Students")
   
   return (
-  <div className ={`${showSidebar && "bg-black/30 h-screen w-full fixed z-[15]"} h-screen `}>
+  <div className ={`${showSidebar && "bg-black/30 w-full fixed z-[15] h-screen"} `}>
     <div className={`${!showSidebar && "hidden"} ${showSidebar && "fixed  "} sm:block  sm:fixed sm:overflow-hidden w-max bg-arma-title h-screen pt-4 pb-4`}>
       <div className="sm:hidden flex justify-end mr-3">
       <Close className="text-white !text-3xl !cursor-pointer "  onClick = {() => setShowSidebar(false)} />

@@ -39,9 +39,11 @@ const event = new mongoose.Schema({
     enum: [
       "AWAITING BUDGET APPROVAL",
       "REQUESTED BUDGET CHANGES",
+      "BUDGET CHANGES UPDATED",
       "BUDGET REJECTED",
       "AWAITING SAC APPROVAL",
       "REQUESTED CHANGES BY SAC",
+      "SAC CHANGES UPDATED",
       "APPROVED",
       "REJECTED",
       "COMPLETED",
@@ -55,11 +57,7 @@ const event = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "equipments",
   }],
-  budgetStatus: {
-    type: String,
-    default: "APPROVAL PENDING",
-    enum: ["APPROVAL PENDING", "REQUESTED CHANGES", "APPROVED", "REJECTED"],
-  },
+  
   halls: [{
     date:{type:Date},
     timeSlot: [{
