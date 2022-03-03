@@ -181,7 +181,7 @@ const CreateEvent = () => {
                 setMsg("Please provide a budget document.")
               })
             }else{
-              navigate('/forum/eventVenue')
+              navigate('/forum/createEvent/venue')
             }
 
 
