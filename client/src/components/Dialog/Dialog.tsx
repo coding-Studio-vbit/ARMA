@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import ReactDOM from "react-dom";
 import { Close } from "@material-ui/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { Spinner } from "../Spinner/Spinner";
