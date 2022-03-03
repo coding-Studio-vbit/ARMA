@@ -2,17 +2,23 @@ import { useState } from "react";
 import { CloudUploadTwoTone } from "@material-ui/icons";
 import ToggleSwitch from "../../../components/CustomToggleSwitch";
 import { motion, AnimatePresence } from "framer-motion";
+import { Dialog } from "../../../components/Dialog/Dialog";
+import { unstable_batchedUpdates } from 'react-dom';
+import { useNavigate } from "react-router-dom";
 
 const CreateEvent = () => {
+  const [name, setName] = useState("");
+  const [desc, setDesc] = useState("");
   const [pdf1, setPdf1] = useState<File>();
   const [pdf2, setPdf2] = useState<File>();
   const [budget, setBudget] = useState(false);
+  const [show,setShow] = useState(false)
+  const [msg, setMsg] = useState("");
+  const navigate = useNavigate()
+
   return (
     <div className="flex flex-col  mx-6 sm:mx-8 md:mx-32 lg:mx-48 ">
       <div className="mt-8 mb-4 flex items-center">
-        <span className="mr-8  material-icons scale-100 md:scale-150">
-          chevron_left
-        </span>
         <h1 className=" font-poppins text-arma-dark-blue  text-2xl md:text-4xl">
           Create Event
         </h1>
@@ -28,6 +34,7 @@ const CreateEvent = () => {
           </label>
           <input
             type="text"
+            onChange={(e) => setName(e.target.value)}
             className="
                         form-control
                         block
@@ -59,6 +66,7 @@ const CreateEvent = () => {
             Description
           </label>
           <textarea
+            onChange={(e) => setDesc(e.target.value)}
             className="
                         form-control
                         block
@@ -146,12 +154,40 @@ const CreateEvent = () => {
           </div>
         </div>
       </div>
+      <Dialog show={show} setShow={setShow} title={msg}  />
       <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
         <button
           className="btn px-8 py-3   text-xl tracking-wide  ml-auto my-8"
-          onClick={() => {}}
+          onClick={() => {
+
+            if(name.length < 3 ){
+              unstable_batchedUpdates(()=>{
+                setShow(true)
+                setMsg("Event name must be atleast 3 characters")
+              })
+            }else if(desc.length < 20){
+              unstable_batchedUpdates(()=>{
+                setShow(true)
+                setMsg("Description must be atleast 20 characters")
+              })
+            }else if( !pdf1){
+              unstable_batchedUpdates(()=>{
+                setShow(true)
+                setMsg("Please provide an event description document")
+              })
+            }else if(budget && !pdf2){
+              unstable_batchedUpdates(()=>{
+                setShow(true)
+                setMsg("Please provide a budget document.")
+              })
+            }else{
+              navigate('/forum/eventVenue')
+            }
+
+
+          }}
         >
-          CREATE
+          NEXT
         </button>
       </div>
     </div>
