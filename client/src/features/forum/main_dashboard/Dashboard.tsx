@@ -1,8 +1,10 @@
 import { Add } from "@material-ui/icons";
+import { useNavigate } from "react-router-dom";
 import EventCard from "./EventCard";
 import StatisticsCard from "./StatisticsCard";
 
 const Dashboard = () => {
+  const navigate = useNavigate()
   const eventList = [
     {
       name: "codeCraft 3.0",
@@ -59,7 +61,9 @@ const Dashboard = () => {
           className="pb-6 w-max my-3 sm:px-4 mx-auto sm:ml-auto sm:mt-8 justify-self-end
           border-0 border-gray-200 border-t-0 sm:border-t-0 border-l-0 sm:border-l-2 border-r-0 sm:border-r-0 sm:border-b-0 "
         >
-          <div className="w-max">
+          <div className="w-max" onClick={()=>{
+            navigate('createEvent')
+          }} >
             <button className="btn text-sm px-6 py-auto ">
               <Add fontSize="small" />
               Create New Event

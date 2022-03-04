@@ -1,5 +1,4 @@
 import React,{useEffect,useState} from 'react'
-import Navbar from '../../../components/CustomNavbar';
 import { Spinner } from '../../../components/Spinner/Spinner';
 
 function ForumEventDashboard() {
