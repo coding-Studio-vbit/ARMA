@@ -3,7 +3,7 @@ const course_structure = require("../../static_data/courses.json");
 const checkStudentRollNumber = (roll) => {
   /* 2 - year - Allow last 8 years students.
    * 2 - College code - Anything
-   * 1 - Type of Course - 1 or 5
+   * 1 - Type of Course - '1' or '5'
    * 1 - Course Code - A,D,E,F,R,S,T
    * 2 - Branch Code -
    * 2 - Serial Number
@@ -15,7 +15,13 @@ const checkStudentRollNumber = (roll) => {
   for (let i = 0; i < 8; i++)
     allowedYears.push(String(currentYear - i).slice(-2));
 
+  //Invalid Year
   if (!(year in allowedYears)) return false;
+
+  let courseType = roll.substring(4, 5);
+
+  //Invalid Course Type
+  if (!(courseType in ["1", "5"])) return false;
 
   let courseCode = roll.substring(5, 6);
   let branchCode = roll.substring(6, 8);
@@ -42,5 +48,5 @@ const checkStudentRollNumber = (roll) => {
 };
 
 module.exports = {
-    checkStudentRollNumber
-}
+  checkStudentRollNumber,
+};
