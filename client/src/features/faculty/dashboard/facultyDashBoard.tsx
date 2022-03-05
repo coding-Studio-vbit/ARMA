@@ -39,7 +39,7 @@ function FacultyDashBoard() {
   }
 
   function filterWithDates(): EventInfo[] {
-    let x;
+    let x:any;
     x = todaysEvents?.filter(
       function(element){
         for (let i = 0; i < element.date.length; i++) {
@@ -51,7 +51,7 @@ function FacultyDashBoard() {
         }   
       }
     );
-    if (x != undefined) {
+    if (x !== undefined) {
       return x;
     } else {
       return [];
