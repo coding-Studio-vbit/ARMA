@@ -58,6 +58,10 @@ const forum = new mongoose.Schema({
   forumLogoPath: {
     type: String,
   },
+  events: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "events" 
+  }],
   phone: {
     type: Number,
     validate: {

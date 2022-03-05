@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import Select from "react-select";
 import { Dialog } from '../../../components/Dialog/Dialog';
 import { InputField } from '../../../components/InputField/InputField';
@@ -7,6 +8,7 @@ import axiosInstance from '../../../utils/axios';
 
 export default function AddNewCoreTeamMember() {
   const {forum} = useUser()
+  const nav = useNavigate()
   const departmentoptions = [
       { value: "CSE ", label: "CSE" },
       { value: "ECE ", label: "ECE" },
@@ -25,9 +27,9 @@ export default function AddNewCoreTeamMember() {
 
     const [rollNumber, setRollNumber] = useState("")
     const [name, setName] = useState("");
-    const [department, setDepartment] = useState("");
-    const [year, setYear] = useState("");
-    const [section, setSection] = useState("");
+    const [department, setDepartment] = useState<{value:string,label:string}>({value:"",label:"Department"});
+    const [year, setYear] = useState<{value:string,label:string}>({value:"",label:"Year"});
+    const [section, setSection] = useState<{value:string,label:string}>({value:"",label:"Section"});
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [designation, setDesignation] = useState("")
@@ -72,7 +74,7 @@ export default function AddNewCoreTeamMember() {
      
       const validateDepartment = (e: any) => {
         const department = e.value;
-        setDepartment(department);
+        setDepartment(e);
         if (department.length === 0) {
           setDepartmentError("Department field is empty");
         } 
@@ -84,7 +86,7 @@ export default function AddNewCoreTeamMember() {
 
       const validateYear = (e: any) => {
         const year = e.value;
-        setYear(year);
+        setYear(e);
         if (year.length === 0) {
           setYearError("Year field is empty");
         } 
@@ -96,7 +98,7 @@ export default function AddNewCoreTeamMember() {
 
       const validateSection = (e: any) => {
         const section = e.value;
-        setSection(section);
+        setSection(e);
         if (section.length === 0) {
           setSectionError("Section field is empty");
         } 
@@ -152,9 +154,9 @@ export default function AddNewCoreTeamMember() {
         if (
           rollNumber.length === 0 ||
           name.length === 0 ||
-          department.length === 0 ||
-          year.length === 0 ||
-          section.length === 0 ||
+          department.value.length === 0 ||
+          year.value.length === 0 ||
+          section.value.length === 0 ||
           email.length === 0 ||
           phone.length === 0 ||
           designation.length === 0 ||
@@ -170,7 +172,7 @@ export default function AddNewCoreTeamMember() {
           setShowError("Fill details appropriately");
         } else {
           setShowError("");
-          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewCoreForumMember", {forumName:forum?.name, rollNumber:rollNumber, name:name, branch:department, year:year, section:section, email:email,phone:phone, designation:designation})
+          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "forum/addNewCoreForumMember", {forumName:forum?.name, rollNumber:rollNumber, name:name, branch:department.value, year:year.value, section:section.value, email:email,phone:phone, designation:designation})
           const data = res.data
           if (data.status === 1) {
             setResponse("New Core Team Member Added")
@@ -195,12 +197,14 @@ export default function AddNewCoreTeamMember() {
           <InputField
             name="Roll Number"
             type="text"
+            value={rollNumber}
             error={rollNumberError}
             onChange={(e) => {validateRollNumber(e)}}
           />
           <InputField
             name="Name"
             type="text"
+            value={name}
             error={nameError}
             onChange={(e) => {validateName(e)}}
           />
@@ -209,7 +213,7 @@ export default function AddNewCoreTeamMember() {
             placeholder="Department"
             className="basic-single"
             classNamePrefix="select"
-            // value ={{value: "Department", label: "Department"}}
+            value ={department}
             options={departmentoptions}
             onChange={(e) => {validateDepartment(e)}}
             styles={{
@@ -237,7 +241,7 @@ export default function AddNewCoreTeamMember() {
             placeholder="Year"
             className="basic-single"
             classNamePrefix="select"
-            // value ={{value: "Year", label: "Year"}}
+            value ={year}
             options={yearoptions}
             onChange={(e) => {validateYear(e)}}
             styles={{
@@ -265,7 +269,7 @@ export default function AddNewCoreTeamMember() {
             placeholder="Section"
             className="basic-single"
             classNamePrefix="select"
-            // value ={{value: "Section", label: "Section"}}
+             value ={section}
             options={sectionoptions}
             onChange={(e) => {validateSection(e)}}
             styles={{
@@ -291,21 +295,40 @@ export default function AddNewCoreTeamMember() {
           <InputField
             name="E-mail"
             type="text"
+            value={email}
             onChange={(e) => {validateEmail(e)}}
           />
           <InputField
             name="Phone"
+            value={phone}
             type="text"
             onChange={(e) => {validatePhone(e)}}
           />
           <InputField
             name="Designation"
             type="text"
+            value={designation}
             onChange={(e) => {validateDesignation(e)}}
           />
         </div>
         <Dialog show={show} setShow={setShow} title={response}>
-        
+            <button className='outlineBtn'
+            onClick={()=>{
+              setRollNumber("")
+              setName("")
+              setDepartment({value:"",label:"Department"})
+              setYear({value:"",label:"Year"})
+              setSection({value:"",label:"Section"})
+              setEmail("")
+              setPhone("")
+              setDesignation("")
+              setShow(false)
+            }}
+            >Add Another</button>
+            <button onClick={()=>{
+              nav('/forum/profile',{replace:true})
+            }} className='btn' >Okay</button>
+
         </Dialog>
         <button
           className="btn rounded-[8px] px-6 py-2 mt-12 ml-auto mr-auto flex justify-center"

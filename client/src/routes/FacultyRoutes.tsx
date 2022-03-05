@@ -21,7 +21,7 @@ const FacultyRoutes = () => {
   ];
   
   const setNavItems = ()=>{
-    if(faculty?.role.SAC)
+    if(faculty?.role.SAC || faculty?.role.FC || faculty?.role.FACULTY)
     navItems.push(  { label: "Dashboard", icon: "home", path: "/faculty/" },
     { label: "Forums", icon: "group", path: "/faculty/forums" },
     { label: "Students", icon: "person", path: "/faculty/students" },
@@ -44,13 +44,13 @@ const FacultyRoutes = () => {
           <Route path="/forums" element={<ForumsList />} />
           <Route path="/students" element={<StudentsList />} />
           <Route path="/students/:id" element={<Students_View />} />
-          <Route path="/forum/:id" element={<Forum_View/>} />
+          <Route path="/forums/:id" element={<Forum_View/>} />
           <Route path="/requests" element={<RequestsList />} />
         </Routes>
       </div>
       <Footer />
     </div>
-  );
+  );  
 };
 
 export default FacultyRoutes;

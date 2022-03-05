@@ -1,7 +1,9 @@
 import { Add } from "@material-ui/icons";
+import { useNavigate } from "react-router-dom";
 import EventCard from "./EventCard";
 
 const Dashboard = () => {
+  const navigate = useNavigate()
   const eventList = [
     {
       name: "codeCraft 3.0",
@@ -20,12 +22,12 @@ const Dashboard = () => {
     },
     {
       name: "codeCraft 3.0",
-      eventStatus: "approval pending",
+      eventStatus: "AWAITING SAC APPROVAL",
       isActive: false,
     },
     {
       name: "codeCraft 3.0",
-      eventStatus: "approval pending",
+      eventStatus: "AWAITING BUDGET APPROVAL",
       isActive: false,
     },
     {
@@ -52,28 +54,33 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div id="bottomSection" className="mx-0 px-0 sm:flex sm:flex-row-reverse ">
-
+      <div
+        id="bottomSection"
+        className="mx-0 px-0 sm:flex sm:flex-row-reverse "
+      >
         <div
           id="sideSection"
           className="pb-6 w-max my-3 sm:px-4 mx-auto sm:ml-auto sm:mt-8 justify-self-end
-          border-0 border-gray-200 border-t-0 sm:border-t-0 border-l-0 sm:border-l-2 border-r-0 sm:border-r-0 sm:border-b-0 ">
-
-          <div className="w-max">
+          border-0 border-gray-200 border-t-0 sm:border-t-0 border-l-0 sm:border-l-2 border-r-0 sm:border-r-0 sm:border-b-0 "
+        >
+          <div className="w-max" onClick={()=>{
+            navigate('createEvent')
+          }} >
             <button className="btn text-sm px-6 py-auto ">
-              <Add fontSize="small"/>Create New Event
+              <Add fontSize="small" />
+              Create New Event
             </button>
           </div>
-      
+
           <div className="mt-3 sm:mt-4 h-44 w-48 mx-auto bg-gray-200 rounded-md p-3 drop-shadow-xl border-2">
             <h2 className="text-arma-blue mx-auto">Active Events</h2>
             <ul className="pl-8 list-disc list-outside">
               {eventList.map((item) => {
                 if (item.isActive) return <li>{item.name}</li>;
+                return <></>
               })}
             </ul>
           </div>
-
         </div>
 
         <div
@@ -89,7 +96,6 @@ const Dashboard = () => {
             })
           }
         </div>
-
       </div>
     </div>
   );

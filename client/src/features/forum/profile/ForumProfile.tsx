@@ -7,7 +7,34 @@ import { Dialog } from "../../../components/Dialog/Dialog";
 import { InputField } from "../../../components/InputField/InputField";
 import { TextArea } from "../../../components/InputField/TextArea";
 import { useUser } from "../../../providers/user/UserProvider";
+import ForumService from "../../../services/forum/ForumService";
 import axiosInstance from "../../../utils/axios";
+
+let headers:any[] = [
+  {
+    displayName: "Roll Number",
+    dataPath: "studentID.rollNumber",
+    sortable: true,
+  },
+  { displayName: "Name", dataPath: "studentID.name", sortable: false },
+  { displayName: "Department", dataPath: "studentID.branch", sortable: true },
+  { displayName: "Year", dataPath: "studentID.year", sortable: true },
+  { displayName: "Section", dataPath: "studentID.section", sortable: false },
+  { displayName: "Designation", dataPath: "designation", sortable: false },
+  
+
+];
+let memHeaders:any[] =[
+  {
+    displayName: "Roll Number",
+    dataPath: "rollNumber",
+    sortable: true,
+  },
+  { displayName: "Name", dataPath: "name", sortable: false },
+  { displayName: "Department", dataPath: "branch", sortable: true },
+  { displayName: "Year", dataPath: "year", sortable: true },
+  { displayName: "Section", dataPath: "section", sortable: false },
+];
 
 export default function ForumProfile() {
   const navigate = useNavigate()
@@ -23,36 +50,14 @@ export default function ForumProfile() {
   );
   const [allCheckedCore,setAllCheckedCore] = useState(false)
   const [allCheckedMem,setAllCheckedMem] = useState(false)
+  const [loading,setLoading] = useState(false)
+  const [show1,setShow1]= useState(false)
+  const [dialogMsg,setDialogMsg] = useState<{title:string,proceed:()=>Promise<void>}>({title:"",proceed:async()=>{}})
   console.log("Rebuild Profile");
   
   const [forumEmail, setForumEmail] = useState<string>(forum?.email ?? " ");
-  let headers:any[] = [
-    {
-      displayName: "Roll Number",
-      dataPath: "studentID.rollNumber",
-      sortable: true,
-    },
-    { displayName: "Name", dataPath: "studentID.name", sortable: false },
-    { displayName: "Department", dataPath: "studentID.branch", sortable: true },
-    { displayName: "Year", dataPath: "studentID.year", sortable: true },
-    { displayName: "Section", dataPath: "studentID.section", sortable: false },
-    { displayName: "Designation", dataPath: "designation", sortable: false },
-    
-
-  ];
-  let memHeaders:any[] =[
-    {
-      displayName: "Roll Number",
-      dataPath: "rollNumber",
-      sortable: true,
-    },
-    { displayName: "Name", dataPath: "name", sortable: false },
-    { displayName: "Department", dataPath: "branch", sortable: true },
-    { displayName: "Year", dataPath: "year", sortable: true },
-    { displayName: "Section", dataPath: "section", sortable: false },
-  ];
-  const handelCheckbox = (item: any, i: number, core = true) => {
-    console.log(item?.studentID?.name);
+  
+  const handelCheckbox = (item: any, i: number, core:boolean,setUpdate:React.Dispatch<React.SetStateAction<boolean>>) => {
     
 
     let displayName = (
@@ -75,10 +80,34 @@ export default function ForumProfile() {
           name={item.name}
           onChange={(e) => null}
         ></input>
-        <Delete className="text-black/50" />
+        <Delete className="text-black/50" onClick={async()=>{
+          setDialogMsg({
+            title:"Are you sure want to delete the member?",
+            proceed: async()=>{
+               const res = await ForumService.deleteForumMemeber(forum?.name??"",core?item.studentID._id:item._id,core?"core":"nonCore")
+               setShow1(false)
+               setDialogMsg({title:"",proceed:async()=>{}})
+               setLoading(false)
+               setMessage(res)
+               setShow(true)
+          setUpdate((v)=>!v)
+            }
+          })
+          setShow1(true)
+          }} />
       </div>
     );
     item["dataPath"] = dataPath;
+    if(memHeaders.length === 5){
+      if(!core){
+        memHeaders.push({
+          displayName: displayName,
+          dataPath: "dataPath",
+          sortable: false,
+        });
+      }
+
+    }
     if (headers.length ===6) {
       console.log(i);
 
@@ -91,14 +120,7 @@ export default function ForumProfile() {
         });
    
         }
-      else{
-
-        memHeaders.push({
-          displayName: displayName,
-          dataPath: "dataPath",
-          sortable: false,
-        });
-      }
+      
     }
 
     return { ...item };
@@ -119,6 +141,18 @@ export default function ForumProfile() {
   }
   return (
     <div className="mt-8 overflow-x-auto">
+      <Dialog show={show1} setShow={setShow1} title={dialogMsg.title}  loading={loading}  >
+        <button className="outlineBtn" onClick={()=>setShow1(false)} >Cancel</button>
+        <button className="btn" onClick={async ()=>{
+          setLoading(true)
+          setDialogMsg({title:"Deleting...",proceed:async()=>{}})
+
+          await dialogMsg.proceed()
+          
+        }} >Proceed</button>
+
+      </Dialog>
+
       <div className="flex flex-col items-center m-auto sm:w-[80%] md:w-max w-[90%] ">
         <AccountCircle className="!text-7xl text-arma-title" />
         <span className="text-center  item-center text-2xl font-semibold text-arma-blue">
@@ -127,15 +161,17 @@ export default function ForumProfile() {
             {!isEdit && (
               <motion.span
                 className="inline-block"
-                initial={{ rotate: 180, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 360, opacity: 0 }}
-                transition={{ ease: "easeOut", duration: 0.45 }}
+                initial={{  opacity: 0 }}
+                animate={{  opacity: 1 }}
+                exit={{  opacity: 0 }}
+                transition={{ ease: "easeOut", duration: 0.25 }}
               >
                 <Edit
                   className="ml-3 text-black !text-xl cursor-pointer"
                   onClick={() => {
+                    
                     setIsEdit(true);
+                    
                   }}
                 />
               </motion.span>
@@ -145,7 +181,7 @@ export default function ForumProfile() {
         <p className="text-black mb-10 text-lg">Forum</p>
         <div className="mx-auto w-full">
           <TextArea
-            className="mb-5"
+            className="mb-5 resize-none	"
             name="Forum Description"
             value={description}
             disabled={!isEdit}
@@ -178,11 +214,25 @@ export default function ForumProfile() {
           <AnimatePresence initial={false} exitBeforeEnter>
             {isEdit && (
               <motion.div
+                
                 initial={{ y: "-1vh", opacity: 0 }}
                 animate={{ y: "0", opacity: 1 }}
                 exit={{ y: "-0.5vh", opacity: 0 }}
                 transition={{ ease: "easeOut", duration: 0.1 }}
               >
+                <button
+                  className="btn mr-8  bg-arma-title rounded-[8px] px-6 py-2"
+                  onClick={()=>
+                    {
+                      setForumEmail(forum?.email ?? "")
+                      setFacultycoordinator(forum?.facultyCoordinatorID.name ?? "")
+                      setDescription(forum?.description??"")
+                      setIsEdit(false)
+                    }
+                  }
+                >
+                  CANCEL
+                </button>
                 <button
                   className="btn  bg-arma-title rounded-[8px] px-6 py-2 m-auto"
                   onClick={save}
@@ -201,7 +251,9 @@ export default function ForumProfile() {
           <span className="text-arma-gray font-semibold text-lg">
             Forum Core Team
           </span>
-          <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 ">
+          <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
+          onClick={()=>navigate('/forum/addNewCoreTeamMember/')}
+          >
             ADD
           </button>
           <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1">
@@ -215,8 +267,8 @@ export default function ForumProfile() {
             }`}
             rowsPerPage={5}
             buttonsCount={5}
-            transformer={(item, i) => {
-              return handelCheckbox(item, i);
+            transformer={(item, i,setUpdate) => {
+              return handelCheckbox(item, i,true,setUpdate);
             }}
             filter={{ name: forum?.name }}
             headers={headers}
@@ -226,7 +278,9 @@ export default function ForumProfile() {
           <span className="text-arma-gray font-semibold text-lg">
             Forum Members
           </span>
-          <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 ">
+          <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
+          onClick={()=>navigate('/forum/addNewForumMember')}
+          >
             ADD
           </button>
           <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1">
@@ -240,8 +294,8 @@ export default function ForumProfile() {
             }`}
             rowsPerPage={2}
             buttonsCount={1}
-            transformer={(item, i) => {
-              return handelCheckbox(item, i, false);
+            transformer={(item, i,setUpdate) => {
+              return handelCheckbox(item, i, false,setUpdate);
             }}
             filter={{ name: forum?.name }}
             headers={memHeaders}

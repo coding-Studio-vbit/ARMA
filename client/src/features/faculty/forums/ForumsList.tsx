@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Table from "../../../components/CustomTable";
 import { InputField } from "../../../components/InputField/InputField";
 
 export default function ForumsList() {
+    const nav = useNavigate()
     const [name,setName] = useState('')
   return (
     <div className="flex flex-col mt-16 w-[90%] max-w-[60rem] mx-auto ">
@@ -14,6 +16,7 @@ export default function ForumsList() {
           rowsPerPage={5}
           buttonsCount={3}
           filter={{name:name}}
+          onTableRowClick={(id) => nav(`/faculty/forums/${id}`)}
           headers={[
             {
               displayName: "Forum ",

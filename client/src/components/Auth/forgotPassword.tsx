@@ -68,7 +68,10 @@ const ForgotPassword = () => {
           <div className="w-50 md:w-1/3" id="animationEmailContainer"></div>
           <div className="text-gray-500 font-light mx-5 text-justify">
             Did not receive the email?{" "}
-            <button style={{ color: "rgb(19,155,235)" }}>
+            <button
+              className="hover:text-black"
+              style={{ color: "rgb(19,155,235)" }}
+            >
               click here to resend it.
             </button>
           </div>
@@ -85,24 +88,27 @@ const ForgotPassword = () => {
           >
             Did someone forget their password?
           </div>
-          <div className="text-gray-500 font-light mx-5 text-justify mb-6">
+          <div className="text-gray-500 font-light mx-5 text-justify mb-8">
             It is alright, enter your registered email ID and we will send you a
             reset mail.
           </div>
-          <InputField
-            className="mb-[38px]"
-            name="Email"
-            error={emailError}
-            onChange={(e) => {
-              validateEmail(e);
-            }}
-          />
-          <button
-            className="outlineBtn text-arma-blue border-[1px] rounded-[8px] mb-2 px-[110px] py-[0.5rem]"
-            onClick={onSubmit}
-          >
-            Submit{" "}
-          </button>
+          <form className="flex flex-col items-center">
+            <InputField
+              className="mb-1"
+              name="Email"
+              onChange={(e) => {
+                validateEmail(e);
+              }}
+            />
+            <span className="text-arma-red h-8">{emailError}</span>
+            <button
+              className="outlineBtn text-arma-blue border-[1px] rounded-[8px] mb-2 px-[110px] py-[0.5rem]"
+              onClick={onSubmit}
+              type="submit"
+            >
+              Submit{" "}
+            </button>
+          </form>
         </div>
       </div>
     );

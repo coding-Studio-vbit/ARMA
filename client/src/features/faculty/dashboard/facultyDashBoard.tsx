@@ -15,6 +15,8 @@ interface EventInfo {
 }
 
 function FacultyDashBoard() {
+  console.log("jkhgbiujh");
+  
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [pendingRequests, setPendingRequests] = useState<number>();
@@ -79,7 +81,7 @@ function FacultyDashBoard() {
                 eventStatus: "",
                 _id: ""
               };
-               event.forum = eventList[i].forumID;
+               event.forum = eventList[i].forumID.name;
                event._id = eventList[i]._id;
                event.event = eventList[i].name;
                event.eventStatus = eventList[i].eventStatus;
@@ -107,16 +109,18 @@ function FacultyDashBoard() {
             }          
             setCurrentRequests(data);
             setTodaysEvents(data);  
-            setPendingRequests(eventList.length);          
+            setPendingRequests(eventList.length); 
+                     
 
           }else{
             // console.log("No Events");
             
-            setError("No Events to View");
+            setError("No Event Requests Found");
           }
           //data :set
         }else{
           // console.log("Failure");
+          
           setError(response.data.response);
         }
         setLoading(false);
@@ -129,22 +133,21 @@ function FacultyDashBoard() {
         setError(error.message);
       });    
   }
-
+  
   useEffect(() => {
     fetchData();
   }, []);
 
   return !loading ? (
     <div>
-      {/* <Navbar navItems={[]} /> */}
-      {/* Navbar */}
-
-      {/* Page Content */}
-      {
-        error==null?
+      
+      
+        
         <div className="mx-auto w-full px-4  md:px-8 lg:px-0 lg:w-10/12 flex flex-col justify-center items-center mt-6 gap-10 py-8 pb-14">
           {/* First Row */}
-          <div className="flex flex-row gap-y-10 flex-wrap  lg:flex-nowrap justify-around w-full md:w-5/6 lg:w-11/12  xl:w-9/12 gap-4 xl:gap-6">
+          { error==null &&
+            (faculty?.role.ADMIN || faculty?.role.SAC || faculty?.role.FO ) &&(
+              <div className="flex flex-row gap-y-10 flex-wrap  lg:flex-nowrap justify-around w-full md:w-5/6 lg:w-11/12  xl:w-9/12 gap-4 xl:gap-6">
             {/* Current Requests */}
 
             <div
@@ -191,6 +194,8 @@ function FacultyDashBoard() {
               </div>
             </div>
           </div>
+            )
+          }
 
           <div className="flex flex-row gap-y-10 flex-wrap  lg:flex-nowrap  justify-center lg:justify-start w-full md:w-5/6 lg:w-11/12  xl:w-9/12 gap-4 xl:gap-6">
             <div className="w-full sm:w-2/3 lg:w-1/2 xl:w-5/12 mx-4 text-2xl border-2 border-grey-600 shadow-2xl rounded-2xl overflow-y-scroll currentRequest white">
@@ -232,7 +237,7 @@ function FacultyDashBoard() {
         <div className="flex justify-center items-center">
           {error}
         </div>
-      }
+      
     </div>
   ) : (
     <div className="flex h-screen justify-center items-center">
