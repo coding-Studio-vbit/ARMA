@@ -26,6 +26,10 @@ router.post("/addForum",async(req, res)=>{
   res.json(result)
 })
 
+router.post("/addStudent", async (req, res) => {
+  const result = await authService.addStudent(req.body);
+  res.json(result);
+});
 
 
 

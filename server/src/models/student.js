@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const {
+  checkStudentRollNumber,
+} = require("../services/util/rollNumberValidator");
 
 const student = new mongoose.Schema({
   name: {
@@ -19,10 +22,7 @@ const student = new mongoose.Schema({
     unique: true,
     required: true,
     validate: {
-      validator: (value) => {
-        return true;
-        //PLEASEEEEEEEE ADDDDDDDDDD ROLL NUMBER VALIDATIONNNNNNNNNNNNN
-      },
+      validator: checkStudentRollNumber,
       message: "{VALUE} is not a valid roll number",
     },
   },
@@ -34,7 +34,7 @@ const student = new mongoose.Schema({
   },
   branch: {
     type: String,
-    enum: ["CSE", "CSM", "CSM", "CSC", "CSB", "ME", "CE", "EEE", "ECE", "IT"],
+    // enum: ["CSE", "CSM", "CSM", "CSC", "CSB", "ME", "CE", "EEE", "ECE", "IT"],
     required: true,
   },
   section: {
@@ -43,8 +43,8 @@ const student = new mongoose.Schema({
   },
   email: {
     type: String,
-    required:true,
-    unique:true,
+    required: true,
+    unique: true,
     validate: {
       validator: (value) => {
         return validator.isEmail(value);
@@ -62,6 +62,13 @@ const student = new mongoose.Schema({
     },
   },
   attendedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "events" }],
+  coreTeamMember: [
+    {
+      designation: String,
+      forumID: { type: mongoose.Schema.Types.ObjectId, ref: "forums" },
+    },
+  ],
+  forumMemberships: [{ type: mongoose.Schema.Types.ObjectId, ref: "forums" }],
 });
 
 const students = mongoose.model("students", student);

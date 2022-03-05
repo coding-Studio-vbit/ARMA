@@ -57,7 +57,7 @@ const addHall = async(req,res)=>{
     }catch(error){
         console.log(error);
         res.json(
-            response({message:"Sorry! Hall cannot be added at this moment"},
+            response(error,
             process.env.FAILURE_CODE)
         )
     }
@@ -72,7 +72,7 @@ const editHall = async(req,res)=>{
     )
    } catch (error) {
     console.log(error);
-    res.json(response(error,process.env.FAILURE_CODE))}
+    res.json(response(error._message,process.env.FAILURE_CODE))}
 }
 
 

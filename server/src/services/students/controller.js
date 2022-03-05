@@ -5,6 +5,7 @@ const getStudentsList = async (req, res) => {
   //For pagination
   let page = req.query.page ? Number(req.query.page) : 1;
   let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+  console.log(req.user);
   //For filters
   let where = {};
   if (req.query.name) where.name = {$regex: req.query.name,$options: 'i'};
@@ -75,10 +76,51 @@ const editStudent = async(req,res)=>{
    res.json(response(error,process.env.FAILURE_CODE))}
 }
 
+const fetchStudents = async (req, res) => {
+  try {
+    let student= await students.find({});
+    res.json(
+      response(
+        student,
+        process.env.SUCCESS_CODE
+      )
+    );
+      
+    } catch (err) {
+      console.log(err);
+      res.json(response(error, process.env.FAILURE_CODE));
+    }
+}
 
-module.exports = {getStudentsList,uploadStudentsList,editStudent}
-
-
-
+const studentViewCard = async (req, res) => {
+  try {
+    let {id} = req.body
+    let student= await students.findOne({_id:id}).populate("coreTeamMember.forumID").populate({path:"attendedEvents",populate:{path:"forumID"}});
+    let {attendedEvents, ...stu} = student.toObject()
+    for(let i = 0; i < attendedEvents.length; i++)
+    {
+      let set = new Set()
+      for(let j = 0; j < attendedEvents[i].halls.length; j++)
+      {
+          set.add(attendedEvents[i].halls[j].date)
+      }
+      attendedEvents[i]["duration"] = 3 //set.size 
+    }
+    stu["attendedEvents"] = null
+    stu["attendedEvents"] = attendedEvents
+    console.log(student.attendedEvents);
+    res.json(
+      response(
+        stu,
+        process.env.SUCCESS_CODE
+      )
+    );
+    
+    } catch (err) {
+      console.log(err);
+      res.json(response(err, process.env.FAILURE_CODE));
+    }
+}
+module.exports = {getStudentsList, editStudent, fetchStudents, studentViewCard}
 
 //eventID 61da9c41ee32a8e65373fcc4

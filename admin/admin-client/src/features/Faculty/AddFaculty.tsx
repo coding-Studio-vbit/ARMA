@@ -1,9 +1,9 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
-import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
+import axiosInstance from "../../utils/axios";
 
 
 
@@ -11,6 +11,7 @@ export const AddFaculty = () => {
   const [uniqueid, setuniqueid] = useState("");
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("");
+  const [phone, setPhone] = useState("");
   const [span, setSpan] = useState(false)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,15 +20,30 @@ export const AddFaculty = () => {
   const [emailError, setEmailError] = useState<string>();
   const [nameError, setNameError] = useState<string>();
   const [designationError, setDesignationError] = useState<string>();
+  const [phoneError, setPhoneError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
   const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
+  const [selectRolesL, setSelectRolesL] = useState<(string | undefined) []>([])
 
-  const options = [
-    { value: "Create Event", label: "Create Event" },
-    { value: "Edit Event", label: "Edit Event" },
-    { value: "SAC", label: "SAC" },
-  ];
+  const [myrole, setMyRole] = useState<{}[]>()
+  const [response, setResponse] = useState("")
+
+
+
+  useEffect(() => {
+    const role = async () => {
+      const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"roles/fetchRoles");
+      console.log(res.data);
+      const data = res.data.response;
+      let arr = []
+      for(let i = 0; i < data.length; i++){
+          arr.push({value:data[i]._id , label:data[i].name })
+      }
+      setMyRole(arr)
+    }
+    role();
+  },[])
 
   const validateUniqueid = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uniqueid = e.target.value;
@@ -93,25 +109,56 @@ export const AddFaculty = () => {
       }
     
   };
+  
+  const validatePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const phone = e.target.value;
+    setPhone(phone);
+    var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    if (phone.length === 0) {
+      setPhoneError("Phone field is empty");
+    } else if(!phone.match(phoneno)){
+      setPhoneError("Invalid number");
+    }
+    else {
+        setPhoneError("");
+      }  
+  };
 
-  const loginValidate = () => {
+  const loginValidate = async() => {
+    try {
     if (
       uniqueid.length === 0 ||
       name.length === 0 ||
       password.length === 0 ||
+      phone.length === 0 ||
       email.length === 0 ||
       designation.length === 0 ||
+      selectRoles.length === 0 ||
       uniqueidError?.length !== 0 ||
       nameError?.length !== 0 ||
+      phoneError?.length !== 0 ||
       passwordError?.length !==0 ||
       emailError?.length !==0 ||
       designationError?.length !== 0
     ) {
       setShowError("Fill details appropriately");
     } else {
-      setShow(true);
       setShowError("");
+        const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "admin/addFaculty", {name:name, rollNumber:uniqueid, phone:phone, designation:designation,email:email,rolesF:selectRoles, password:password})
+
+      
+      const data = res.data
+      if (data.status === 1) {
+        setResponse("New Faculty Added")
+        setShow(true)
+      } else {
+          setResponse(data.response)
+          setShow(true)             
+      }   
     }
+  } catch (error) {
+        
+  }
   };
 
   return (
@@ -152,13 +199,14 @@ export const AddFaculty = () => {
           <Select
             name="Roles"
             placeholder="Roles"
-            value ={{value: "Roles", label: "Roles"}}
-            options={options}
-            onChange={(e) => {
+            options={myrole}
+            onChange={(e:any) => {
                 for(let i = 0; i < selectRoles.length; i++){
                    if(e?.value === selectRoles[i]) return        
                 }
                 setSelectRoles([...selectRoles, e?.value])
+                setSelectRolesL([...selectRolesL, e?.label])
+                
                 setSpan(true)
             }}
             styles={{
@@ -177,7 +225,7 @@ export const AddFaculty = () => {
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
+                    color: 'black'
                 }) 
             }}
             
@@ -192,7 +240,7 @@ export const AddFaculty = () => {
           <span className="text-arma-title mb-2">Roles:</span>
            }
              {
-                 selectRoles.map((r,i) => {
+                 selectRolesL.map((r,i) => {
                      return(
                          <div className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]">
                              <span>{r}</span>
@@ -200,7 +248,10 @@ export const AddFaculty = () => {
                                  let temp = [...selectRoles]
                                  temp.splice(i,1)
                                  setSelectRoles(temp)
-                                 {(selectRoles.length === 1) && setSpan(false)}
+                                 let tempL = [...selectRolesL]
+                                 tempL.splice(i,1)
+                                 setSelectRolesL(tempL)
+                                 if(selectRoles.length === 1) setSpan(false)
                              }}/>
                          </div>
                      )
@@ -226,8 +277,17 @@ export const AddFaculty = () => {
             }}
           />
         </div>
-
-        <Dialog show={show} setShow={setShow} title="Added">
+        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+        <InputField
+            name="Phone Number"
+            type="text"
+            error={phoneError}
+            onChange={(e) => {
+              validatePhone(e);
+            }}
+          />
+        </div>
+        <Dialog show={show} setShow={setShow} title={response}>
           {" "}
         </Dialog>
 

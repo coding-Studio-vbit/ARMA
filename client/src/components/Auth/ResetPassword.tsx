@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { InputField } from "../InputField/InputField";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
+  const navigate = useNavigate();
   const [passwordError, setPasswordError] = useState<string>();
   const [Password, setPassword] = useState<String>("");
   const [ConfirmPassword, setConfirmPassword] = useState<String>("");
@@ -42,26 +43,32 @@ const ResetPassword = () => {
         <div className="text-gray-500 font-light mx-5 text-justify mb-[35px]">
           Enter your new password below :)
         </div>
-        <InputField
-          className="mb-5"
-          name="Password"
-          type={`${!showPassword && "password"}`}
-          onChange={(e) => {
-            validatePassword(e);
-          }}
-        />
-        <InputField
-          className="mb-[35px]"
-          name="Confirm Password"
-          type={`${!showPassword && "password"}`}
-          error={passwordError}
-          onChange={(e) => {
-            validateConfirmPassword(e);
-          }}
-        />
-        <button className="outlineBtn text-arma-blue border-[1px] rounded-[8px] mb-2  py-[0.5rem]">
-          Submit{" "}
-        </button>
+        <form className="flex flex-col items-center">
+          <InputField
+            className="mb-5"
+            name="Password"
+            type={`${!showPassword && "password"}`}
+            onChange={(e) => {
+              validatePassword(e);
+            }}
+          />
+          <InputField
+            className="mb-5"
+            name="Confirm Password"
+            type={`${!showPassword && "password"}`}
+            onChange={(e) => {
+              validateConfirmPassword(e);
+            }}
+          />
+          <span className="text-arma-red h-8">{passwordError}</span>
+          <button
+            className="outlineBtn text-arma-blue border-[1px] rounded-[8px] py-[0.5rem]"
+            type="submit"
+            onClick={() => navigate("/")}
+          >
+            Submit{" "}
+          </button>
+        </form>
       </div>
     </div>
   );

@@ -6,23 +6,24 @@ const multerStorage = require("../../../services/util/multerStorage");
 const tokenAuth = require("../../middleware/tokenAuth")
 const upload = multer({ storage: multerStorage });
 
-// router.use(tokenAuth);
+
+router.use(tokenAuth);
 
 //GET EVENTS
 router.get(
   "/",
-  (req, res, next) => {
-    return checkRolePermissions(req, res, next, "READ_EVENTS");
-  },
+  // (req, res, next) => {
+  //   return checkRolePermissions(req, res, next, "READ_EVENTS");
+  // },
   controller.getEvents
 );
 
 //CREATE EVENT
 router.post(
   "/",
-  (req, res, next) => {
-    checkRolePermissions(req, res, next, "CREATE_EVENTS");
-  },
+  // (req, res, next) => {
+  //   checkRolePermissions(req, res, next, "CREATE_EVENTS");
+  // },
   upload.fields([
     { name: "eventDocument", maxCount: 1 },
     { name: "budgetDocument", maxCount: 1 },
@@ -37,6 +38,8 @@ router.post("/reportAndMedia" , upload.fields([{name: "eventReport", maxCount:1}
 router.post("/uploadRegistrants",controller.uploadRegistrantsList);
 router.get("/eventAttendance",controller.eventAttendance);
 router.put("/postAttendance",controller.postAttendance)
+router.get("/activeEvents",controller.getActiveEvents)
+
 module.exports = router;
 
 

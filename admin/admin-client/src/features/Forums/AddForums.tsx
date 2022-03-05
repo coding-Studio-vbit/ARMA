@@ -1,9 +1,9 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
-import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
+import axiosInstance from "../../utils/axios";
 
 
 
@@ -18,9 +18,14 @@ export const AddForums = () => {
   const [phoneError, setPhoneError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
-  const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])  
    const [selectHead, setSelectHead] = useState<(string | undefined) []>([])
    const [selectCoord, setSelectCoord] = useState<(string | undefined) []>([])
+   const [selectHeadLabel, setSelectHeadLabel] = useState<(string | undefined) []>([])
+   const [mystu, setMyStu] = useState<{value:string,label:string}[]>()
+   const [myfac, setMyFac] = useState<{}[]>()
+   const [response, setResponse] = useState("")
+  
+
 
 
   const validateforumID = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,12 +86,14 @@ export const AddForums = () => {
 
   
 
-  const loginValidate = () => {
+  const loginValidate = async() => {
     if (
       forumID.length === 0 ||
       password.length === 0 ||
       email.length === 0 ||
       phone.length === 0 ||
+      selectHead.length === 0 ||
+      selectCoord.length === 0 ||
       forumIDError?.length !== 0 ||
       phoneError?.length !== 0 ||
       passwordError?.length !==0 ||
@@ -95,10 +102,47 @@ export const AddForums = () => {
     ) {
       setShowError("Fill details appropriately");
     } else {
-      setShow(true);
       setShowError("");
+      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "admin/addForum", {name:forumID, phone:phone, facultyCoordinatorID:selectCoord, forumHeads:selectHead,email:email, password:password})
+      const data = res.data
+      if (data.status === 1) {
+        setResponse("New Forum Added")
+        setShow(true)
+      } else {
+          setResponse(data.response)
+          setShow(true)             
+      }   
     }
   };
+
+      
+  useEffect(() => {
+    const students = async () => {
+      const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"students/fetchStudents");
+      console.log(res.data);
+      const data = res.data.response;
+      let arr = []
+      for(let i = 0; i < data.length; i++){
+          arr.push({value:data[i]._id, label:data[i].name + "  -  " + data[i].rollNumber})
+      }
+      setMyStu(arr)
+    }
+    students();
+  },[])
+
+  useEffect(() => {
+    const faculty = async () => {
+      const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty");
+      console.log(res.data);
+      const data = res.data.response;
+      let arr = []
+      for(let i = 0; i < data.length; i++){
+          arr.push({value:data[i]._id, label:data[i].name + "  -  " + data[i].rollNumber})
+      }
+      setMyFac(arr)
+    }
+    faculty();
+  },[])
 
   return (
     <div className="flex flex-col grow items-center">
@@ -107,7 +151,7 @@ export const AddForums = () => {
           ADD FORUMS
         </p>
 
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <InputField
             name="Forum Name"
             type="text"
@@ -124,20 +168,18 @@ export const AddForums = () => {
               validatePhone(e);
             }}
           />
-        </div>
 
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
-        <div className="flex flex-col shrink">
         <Select
             name="Forum Head"
             placeholder="Forum Head"
-            value ={{value: "Forum Head", label: "Forum Head"}}
-            options={[]}
-            onChange={(e) => {
+            value={{value:'Forum Head',label:'Forum Head'}}
+            options={mystu}
+            onChange={(e:any) => {
               for(let i = 0; i < selectHead.length; i++){
                  if(e?.value === selectHead[i]) return        
               }
               setSelectHead([...selectHead, e?.value])
+              setSelectHeadLabel([...selectHeadLabel,e?.label.split('-')[0]])
           }}
             styles={{
                 control: (base) => ({
@@ -155,43 +197,22 @@ export const AddForums = () => {
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
                 }) 
             }}
             
             className="basic-multi-select"
            
           /> 
-          <div className="flex flex-col mr-auto w-[270px]">
-             {
-                 selectHead.map((r,i) => {
-                     return(
-                         <div className="flex justify-between shadow-md px-4 py-2 hover:bg-black/[0.05] mt-4 ">
-                             <span>{r}</span>
-                             <Close className="cursor-pointer"onClick ={() => {
-                                 let temp = [...selectHead]
-                                 temp.splice(i,1)
-                                 setSelectHead(temp)
-                             }}/>
-                         </div>
-                     )
-                 })
-             }
-
-         </div>
-         </div>
-         
-         <div className="flex flex-col shrink">
           <Select
             name="Faculty Coordinator"
             placeholder="Faculty Coordinator"
-            value ={{value: "Faculty Coordinator", label: "Faculty Coordinator"}}
-            options={[]}
-            onChange={(e) => {
+            options={myfac}
+            onChange={(e:any) => {
               for(let i = 0; i < selectCoord.length; i++){
                  if(e?.value === selectCoord[i]) return        
               }
               setSelectCoord([...selectCoord, e?.value])
+
           }}
             styles={{
                 control: (base) => ({
@@ -209,23 +230,25 @@ export const AddForums = () => {
                 singleValue: (base) => ({
                     ...base,
                     paddingLeft: '16px',
-                    color: '#575757e1'
                 }) 
             }}
             
             className="basic-multi-select "
            
           /> 
-           <div className="flex flex-col ml-auto w-[270px]">
+          <div className={`flex flex-col mr-auto w-[270px] ${selectHeadLabel.length===0 && 'hidden'} `}>
              {
-                 selectCoord.map((r,i) => {
+                 selectHeadLabel.map((r,i) => {
                      return(
-                         <div className="flex justify-between shadow-md px-4 py-2 hover:bg-black/[0.05] mt-4">
+                         <div className="flex justify-between shadow-md px-4 py-2 hover:bg-black/[0.05] mt-4 ">
                              <span>{r}</span>
                              <Close className="cursor-pointer"onClick ={() => {
-                                 let temp = [...selectCoord]
+                                 let temp = [...selectHeadLabel]
+                                 let x = [...selectHead]
                                  temp.splice(i,1)
-                                 setSelectCoord(temp)
+                                 x.splice(i,1)
+                                 setSelectHeadLabel(temp)
+                                 setSelectHead(x)
                              }}/>
                          </div>
                      )
@@ -233,10 +256,10 @@ export const AddForums = () => {
              }
 
          </div>
-         </div>
-        </div>
+         
+          
         
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+        
           <InputField
             name="Login Email"
             type="text"
@@ -256,7 +279,7 @@ export const AddForums = () => {
         </div>
         
 
-        <Dialog show={show} setShow={setShow} title="Added">
+        <Dialog show={show} setShow={setShow} title={response}>
           {" "}
         </Dialog>
 

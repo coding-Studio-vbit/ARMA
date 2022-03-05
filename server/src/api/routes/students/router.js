@@ -8,5 +8,10 @@ router.get("/", controller.getStudentsList);
 router.post("/uploadStudentsList",controller.uploadStudentsList);
 router.put("/editStudent", controller.editStudent);
 
+router.get("/fetchStudents", controller.fetchStudents);
+
+router.post("/studentViewCard", controller.studentViewCard);
+
+
 
 module.exports = router;

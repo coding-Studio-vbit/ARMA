@@ -1,0 +1,43 @@
+{
+  "B.Tech": {
+    "code": "A",
+    "branches": {
+      "CIV": {
+        "code": "01",
+        "sections": 4
+      },
+      "EEE": {
+        "code": "02",
+        "sections": 4
+      },
+      "MECH": {
+        "code": "03",
+        "sections": 4
+      },
+      "ECE": {
+        "code": "04",
+        "sections": 4
+      },
+      "CSE": {
+        "code": "05",
+        "sections": 4
+      },
+      "CHEM": {
+        "code": "08",
+        "sections": 4
+      },
+      "EIE": {
+        "code": "10",
+        "sections": 4
+      },
+      "BIOM": {
+        "code": "11",
+        "sections": 4
+      },
+      "IT": {
+        "code": "12",
+        "sections": 4
+      }
+    }
+  }
+}

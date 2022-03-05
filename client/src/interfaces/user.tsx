@@ -7,11 +7,14 @@ export interface Faculty {
   designation: string;
   department: string;
   phone: string;
-  roles: Role[];
+  role: Role;
 }
-interface Role {
-  name: string;
-  permissions: string[];
+export interface Role {
+  ADMIN: boolean;
+  FO:boolean;
+  FC:boolean;
+  SAC:boolean;
+  FACULTY:boolean
 }
 
 interface ForumCoreTeamMembers {
@@ -32,9 +35,9 @@ export interface Student {
 export interface Forum {
   name: string;
   email:string
-  roles:[]
+  role:Role;
   description:string;
-  facultyCoordinator:string;
+  facultyCoordinatorID:{name:string};
   profileCoverPath: string;
   forumHeads: Student[];
   forumMembers: Student[];

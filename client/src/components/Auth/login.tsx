@@ -18,10 +18,12 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const { login, loading } = useLogin();
   useEffect(() => {
+    
     if (forum) {
-      navigate("/forum", { replace: true });
+      navigate("/forum/", { replace: true });
     } else if (faculty) {
-      navigate("/faculty", { replace: true });
+      
+      navigate("/faculty/", { replace: true });
     }
   }, [forum, faculty, navigate]);
 
@@ -124,7 +126,7 @@ function Login() {
         loading={loading}
           onClick={async () => {
             if (!email || !password || emailError || passwordError) {
-              setError("Fill the details !");
+              setError("Fill the details!");
               return;
             }
             const userType =
@@ -136,6 +138,12 @@ function Login() {
 
             if (res.status === 1) {
               if (userType === "FACULTY") {
+                // ["ADMIN","SAC",'FC']
+                // {
+                //   ADMIN:true,
+                //   SAC:true,
+                //   FC:true
+                // }
                 setFaculty(res.response.user);
               } else {
                 setForum(res.response.user);
@@ -146,7 +154,12 @@ function Login() {
           }}
         />
       </form>
-      <button className="text-arma-title font-medium">Forgot Password?</button>
+      <button
+        className="text-arma-title font-medium hover:text-black"
+        onClick={() => navigate("/forgot-password")}
+      >
+        Forgot Password?
+      </button>
     </div>
   );
 }

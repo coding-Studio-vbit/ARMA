@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import Table from "../../../components/CustomTable";
 import { InputField } from "../../../components/InputField/InputField";
 
 export default function StudentsList() {
+  const nav = useNavigate()
   const [roll,setRoll] = useState("")
   return (
     <div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[60rem]">
@@ -55,8 +57,10 @@ export default function StudentsList() {
         <Table
           api={`${process.env.REACT_APP_SERVER_URL + "students"}`}
           rowsPerPage={5}
-          buttonsCount={3}
-          filter={{rollNumber:roll}}
+          buttonsCount={5}
+          filter={{rollNumber:roll}} 
+          onTableRowClick={(id) => nav(`/faculty/students/${id}`)}
+
           headers={[
             {
               displayName: "Roll Number",
@@ -73,3 +77,4 @@ export default function StudentsList() {
     </div>
   );
 }
+
