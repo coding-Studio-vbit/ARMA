@@ -60,6 +60,7 @@ const uploadStudentsList = async(req,res)=>{
     console.log(error);
     res.json(response({message:"Internal Server Error"}, process.env.SUCCESS_CODE));
   }
+}
   
 
 const editStudent = async(req,res)=>{
@@ -73,9 +74,9 @@ const editStudent = async(req,res)=>{
    console.log(error);
    res.json(response(error,process.env.FAILURE_CODE))}
 }
-}
 
-module.exports = {getStudentsList, editStudent,uploadStudentsList}
+
+module.exports = {getStudentsList,uploadStudentsList,editStudent}
 
 
 

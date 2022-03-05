@@ -153,60 +153,57 @@ const uploadRegistrantsList = async(req,res)=>{
 
 
 const eventAttendance = async(req,res) => {
-  try{
-    let attendanceDoc = await attendance.findOne({eventID:req.body.eventID})
-    console.log(attendanceDoc)
-    let page = req.query.page ? Number(req.query.page) : 1;
-    let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+  let page = req.query.page ? Number(req.query.page) : 1;
+  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
 
-    let where = {};
-    where._id = attendanceDoc.registrantsList;
+  //For filters
+  let where = {};
+  if (req.query.eventID) where.eventID = req.query.eventID
 
-    let sort = {};
-    if (req.query.orderBy && req.query.order) sort[req.query.orderBy] = req.query.order;
-    else sort = { name: "asc" };
+  //For sorting
+  let sort = {};
+  if (req.query.orderBy && req.query.order)
+    sort[req.query.orderBy] = req.query.order;
+  else sort = { name: "asc" };
 
-    try {
-      result = await students
-        .find(where)
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .sort(sort);
-      const total = await students.count(where);
-      res.json(
-        response({ data: result, total: total }, process.env.SUCCESS_CODE)
-      );
-    }  catch (error) {
+  try {
+    result = await attendance
+      .findOne(where)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort(sort)
+      .populate(
+        { path: "presence._id",
+        model:"students"})
+      .exec()
+    const total = await attendance.count(where);
+    res.json(
+      response({ data: result.presence, total: total }, process.env.SUCCESS_CODE)
+    );
+  } catch (error) {
     console.log(error);
     res.json(
       response({ message: "event data fetch error" }, process.env.FAILURE_CODE)
     );
   }
-  }
-  catch(error){
-    console.log(error);
-    res.json(
-      response({message:"Update Event Attendance failed"},process.env.FAILURE_CODE)
-    )
-  }
-//   {
-//     Mounika :  ['Day-1', 'Day-4', 'Day-3']
-//     Rushi : ['Day-1', 'Day-2', 'Day-3'],
-//     Shivani : ['Day-3']
-// }
-
-
 }
 
 
 
 const postAttendance = async(req,res)=>{
+  try{
+    console.log(req.body)
+    // let attedanceDoc = await attendance.findOne({eventID : req.body.eventID});
+    
+
+  }catch(error){
+    console.log(error);
+    res.json(response({message:"Update Attendance Failed"},process.env.FAILURE_CODE))
+  }
 
 
 }
 
-module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia, uploadRegistrantsList, eventAttendance 
-                  ,postAttendance};
 const getRequests = async (req,res) =>{
   try {
     const result = await events
@@ -224,4 +221,5 @@ const getRequests = async (req,res) =>{
 }
 
 
-module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia , getRequests};
+module.exports = { getEvents, createEvent, updateBudgetDoc,uploadRegistrantsList, eventAttendance 
+  ,postAttendance, reportAndMedia , getRequests};

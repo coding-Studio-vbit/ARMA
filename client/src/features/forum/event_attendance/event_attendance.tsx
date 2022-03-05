@@ -1,8 +1,26 @@
 import Table from "../../../components/CustomTable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import readXlsxFile from "read-excel-file";
 import { Dialog } from "../../../components/Dialog/Dialog";
 import { useParams } from "react-router-dom"
+import axiosInstance from "../../../utils/axios";
+let header = [
+  {
+    displayName: "Name",
+    dataPath: "_id.name",
+    sortable: false,
+  },
+  {
+    displayName: "Roll Number",
+    dataPath: "_id.rollNumber",
+    sortable: false,
+  },  
+  {
+    displayName: "Branch",
+    dataPath: "_id.branch",
+    sortable: false,
+  },
+];
 const EventAttendance = () => {
   enum branch {
     CSE = "CSE",
@@ -27,32 +45,36 @@ const EventAttendance = () => {
     phone?: Number;
     attendedEvents : [string];
   }
+
+  
   
   let data;
   let indx: Number;
-  let NumberOfDays: number = 5;
   let dayWiseAttendance: any = {};
-  let header = [
-    {
-      displayName: "Name",
-      dataPath: "name",
-      sortable: false,
-    },
-    {
-      displayName: "Roll Number",
-      dataPath: "rollNumber",
-      sortable: false,
-    },
-    {
-      displayName: "Branch",
-      dataPath: "branch",
-      sortable: false,
-    },
-  ];
-
+  let eventDays = ["7-1-2021","8-1-2021","9-1-2021"];
+  let NumberOfDays: number = eventDays.length
+  
+  const [studentPresence,setStudentPresence] = useState<any>({});
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [dataUploaded, setDataUploaded] = useState(false);
+  let newObj:any = {}
+
+
+  useEffect(()=>{
+    axiosInstance.get("http://localhost:5000/events/eventAttendance")
+  .then(resp=>{
+    // console.log(resp.data.response.data)
+    (resp.data.response.data).forEach((data:any)=>{
+      setStudentPresence((prevStudentPresence:any)=>({
+        ...prevStudentPresence,
+        [data._id.name]:data.dates
+      }));
+    })
+  })  
+  },[])
+  
+  console.log(studentPresence)
 
   function checkBranch(val: any) {
     console.log(val);
@@ -118,28 +140,37 @@ const EventAttendance = () => {
         });
     }
   };
-
+  
   const handelAttendance = (e: { target: any }) => {
     if (e.target.checked) {
       dayWiseAttendance[e.target.name].push(e.target.value);
+      setStudentPresence((prevStudentPresence:any)=>({
+        ...studentPresence,
+        [e.target.name] : dayWiseAttendance[e.target.name]
+      }))
+      console.log(studentPresence)
+      
     } else {
       dayWiseAttendance[e.target.name] = dayWiseAttendance[
         e.target.name
       ].filter((val: any) => val !== e.target.value);
     }
-    console.log(dayWiseAttendance);
+    console.log(studentPresence[e.target.name])
+    
   };
 
   const handelCheckbox = (item: any, indx: number) => {
-    let displayName = `Day-${indx}`;
-    let dataPath = `day-${indx}`;
-    dayWiseAttendance[item.name] = [];
+    let displayName = eventDays[indx];
+    let dataPath = eventDays[indx];
+    
+    dayWiseAttendance[item._id.name] = item.dates;
     item[dataPath] = (
       <input
         className="w-7 h-7 rounded-none accent-[#0B5B8A] cursor-pointer"
         type="checkbox"
-        name={item.name}
+        name={item._id.name}
         value={displayName}
+        // checked = {item._id.dates.include}
         onChange={(e) => handelAttendance(e)}
       ></input>
     );
@@ -150,6 +181,7 @@ const EventAttendance = () => {
         sortable: false,
       });
     }
+    return item
   };
 
   return (
@@ -181,15 +213,17 @@ const EventAttendance = () => {
         <>
           <div className="w-full min-w-max ">
             <Table
-              api={`${process.env.REACT_APP_SERVER_URL + "students/?attendedEvents=61da9c41ee32a8e65373fcc4"}`}
+              api={"http://localhost:5000/events/eventAttendance"}
               rowsPerPage={12}
               buttonsCount={2}
               headers={header}
               transformer={(item: any) => {
                 for (let i = 0; i < NumberOfDays; i++) {
-                  handelCheckbox(item, i + 1);
+                  item = handelCheckbox(item, i );
                 }
-              }}
+                return item;
+              }
+            }
             />
             <div>
               <div className="flex justify-center">
@@ -208,3 +242,4 @@ const EventAttendance = () => {
 };
 
 export default EventAttendance;
+

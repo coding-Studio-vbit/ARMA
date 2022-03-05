@@ -36,6 +36,7 @@ router.post("/reportAndMedia" , upload.fields([{name: "eventReport", maxCount:1}
 
 router.post("/uploadRegistrants",controller.uploadRegistrantsList);
 router.get("/eventAttendance",controller.eventAttendance);
+router.put("/postAttendance",controller.postAttendance)
 module.exports = router;
 
 

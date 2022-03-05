@@ -99,7 +99,7 @@ const Table = React.memo(({
         //The transformer function is called on each object of the response.
         if (transformer) {
           
-          newData.map(transformer);
+         newData =  newData.map(transformer);
         }
         
         
