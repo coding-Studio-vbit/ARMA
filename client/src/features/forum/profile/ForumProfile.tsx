@@ -9,6 +9,7 @@ import { TextArea } from "../../../components/InputField/TextArea";
 import { useUser } from "../../../providers/user/UserProvider";
 import ForumService from "../../../services/forum/ForumService";
 import axiosInstance from "../../../utils/axios";
+import Profile from "./profile";
 
 let headers:any[] = [
   {
@@ -36,12 +37,15 @@ let memHeaders:any[] =[
   { displayName: "Section", dataPath: "section", sortable: false },
 ];
 
+
+
 export default function ForumProfile() {
   const navigate = useNavigate()
   const { forum, setForum } = useUser();
   const [isEdit, setIsEdit] = useState(false);
   const [message, setMessage] = useState("")
   const [show, setShow] = useState(false)
+  const [link, setLink] = useState("")
   const [description, setDescription] = useState<string>(
     forum?.description ?? " "
   );
@@ -154,7 +158,7 @@ export default function ForumProfile() {
       </Dialog>
 
       <div className="flex flex-col items-center m-auto sm:w-[80%] md:w-max w-[90%] ">
-        <AccountCircle className="!text-7xl text-arma-title" />
+        <Profile link={link} onChange={setLink} />
         <span className="text-center  item-center text-2xl font-semibold text-arma-blue">
           {forum?.name}
           <AnimatePresence initial={false} exitBeforeEnter>
