@@ -121,6 +121,6 @@ const studentViewCard = async (req, res) => {
       res.json(response(err, process.env.FAILURE_CODE));
     }
 }
-module.exports = {getStudentsList, editStudent, fetchStudents, studentViewCard}
+module.exports = {getStudentsList,uploadStudentsList, editStudent, fetchStudents, studentViewCard}
 
 //eventID 61da9c41ee32a8e65373fcc4
