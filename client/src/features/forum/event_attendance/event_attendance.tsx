@@ -4,7 +4,6 @@ import readXlsxFile from "read-excel-file";
 import { Dialog } from "../../../components/Dialog/Dialog";
 import { useParams } from "react-router-dom"
 import axiosInstance from "../../../utils/axios";
-
 let header = [
   {
     displayName: "Name",
@@ -60,6 +59,8 @@ const EventAttendance = () => {
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [dataUploaded, setDataUploaded] = useState(false);
+  let newObj:any = {}
+
 
 
 

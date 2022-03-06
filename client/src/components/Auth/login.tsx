@@ -54,7 +54,7 @@ function Login() {
   };
 
   return (
-    <div className="flex flex-col h-screen justify-center items-center svg-background">
+    <div className="flex flex-col h-screen justify-center items-center sm:svg-background">
       <p className="text-arma-title text-5xl font-medium mb-2">A.R.M.A</p>
       <p className="text-[#263238] mb-8 text-center">
         Automating and Digitalizing Event Organization

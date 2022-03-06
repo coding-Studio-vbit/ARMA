@@ -46,7 +46,7 @@ function FileUploader({
                 ></input>
             </label> 
             {
-                error.length==0?
+                error.length===0?
                 <p className='mt-10'>{fileName}</p>:
                 <p className='mt-10 text-red-600'>{error}</p>
             }                      

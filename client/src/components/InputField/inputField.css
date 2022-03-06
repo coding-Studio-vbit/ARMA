@@ -9,11 +9,6 @@
   border: 2px solid rgb(200, 200, 200);
   border-radius: 0.5rem;
 }
-.inputField:disabled ~ .label {
-  top: -3.25rem;
-  @apply px-4;
-  color: #222222e1;
-}
 .label {
   @apply px-5 py-[0.75rem];
   pointer-events: none;
@@ -33,16 +28,14 @@
   border: 2px solid #0b5b8a;
 }
 
-.inputField:valid ~ .label {
+.inputField:valid ~ .label,.inputField:focus ~ .label,.inputField:disabled ~ .label {
   top: -3.25rem;
-  @apply px-4;
+  @apply px-3;
   color: #222222e1;
 }
-.inputField:focus ~ .label {
-  top: -3.25rem;
-  @apply px-4;
-  color: #222222e1;
-}
+
+
+
 .inputDivTA textarea:disabled ~ .label {
   top: -8.35rem;
   left: 0;
