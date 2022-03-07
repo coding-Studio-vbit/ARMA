@@ -15,7 +15,7 @@ interface EventInfo {
 }
 
 function FacultyDashBoard() {
-  console.log("jkhgbiujh");
+  //console.log("jkhgbiujh");
   
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,7 @@ function FacultyDashBoard() {
   }
 
   function filterWithDates(): EventInfo[] {
-    let x;
+    let x:any;
     x = todaysEvents?.filter(
       function(element){
         for (let i = 0; i < element.date.length; i++) {
@@ -48,10 +48,11 @@ function FacultyDashBoard() {
              element.date[i].year === selectedDate?.year){
                return element;
             } 
-        }   
+        } 
+          
       }
     );
-    if (x != undefined) {
+    if (x !== undefined) {
       return x;
     } else {
       return [];
@@ -105,27 +106,21 @@ function FacultyDashBoard() {
                eD=eD.concat(eventList[i].eventDates)
                data.push(event);
                setEventDays(eD);
-               
             }          
             setCurrentRequests(data);
             setTodaysEvents(data);  
             setPendingRequests(eventList.length); 
-                     
-
           }else{
             // console.log("No Events");
-            
             setError("No Event Requests Found");
           }
           //data :set
         }else{
           // console.log("Failure");
-          
           setError(response.data.response);
         }
         setLoading(false);
         // console.log("End Then");
-        
       })
       .catch((error) => {
         console.log("Fetch Failed");
@@ -140,9 +135,6 @@ function FacultyDashBoard() {
 
   return !loading ? (
     <div>
-      
-      
-        
         <div className="mx-auto w-full px-4  md:px-8 lg:px-0 lg:w-10/12 flex flex-col justify-center items-center mt-6 gap-10 py-8 pb-14">
           {/* First Row */}
           { error==null &&
