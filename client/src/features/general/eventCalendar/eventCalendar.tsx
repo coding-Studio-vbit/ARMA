@@ -2,7 +2,6 @@ import React,{useState,useEffect} from 'react'
 import { Calendar,Day } from "react-modern-calendar-datepicker";
 import axiosInstance from "./../../../utils/axios";
 import { Spinner } from "../../../components/Spinner/Spinner";
-import Navbar from '../../../components/CustomNavbar';
 
 interface EventInfo {
     forum: string;
