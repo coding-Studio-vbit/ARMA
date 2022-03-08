@@ -42,9 +42,8 @@ const getHalls = async(req,res)=>{
 
 const addHall = async(req,res)=>{
     try{
-        console.log("dgduk");
         let data = await halls.findOne({name:req.body.name})
-        if(data) return res.json(response({message:"Hall already exists"},process.env.FAILURE_CODE));
+        if(data) return res.json(response({message:"Hall already exists"},process.env.SUCCESS_CODE));
         let newHall = new halls({
             name :  req.body.name,
             hallInfo : req.body.hallInfo,
