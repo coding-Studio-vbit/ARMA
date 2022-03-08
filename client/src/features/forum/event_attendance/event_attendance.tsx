@@ -55,13 +55,10 @@ const EventAttendance = () => {
   let NumberOfDays: number = eventDays.length
   
   const [studentPresence,setStudentPresence] = useState<any>({});
-  const [present , setPresent] = useState<any>({})
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [dataUploaded, setDataUploaded] = useState(false);
   let newObj:any = {}
-
-
 
 
   useEffect(()=>{
@@ -75,9 +72,9 @@ const EventAttendance = () => {
       }));
     })
   })  
-  },[dataUploaded])
-
+  },[])
   
+  console.log(studentPresence)
 
   function checkBranch(val: any) {
     console.log(val);
@@ -101,7 +98,6 @@ const EventAttendance = () => {
     // console.log(data)
     if (data != null) {
       setDataUploaded(true);
-      setPresent({...present,...studentPresence})
       let list: Student[] = [];
       readXlsxFile(data[0])
         .then((row: any) => {
@@ -148,22 +144,25 @@ const EventAttendance = () => {
   const handelAttendance = (e: { target: any }) => {
     if (e.target.checked) {
       dayWiseAttendance[e.target.name].push(e.target.value);
-      setPresent({dayWiseAttendance})
+      setStudentPresence((prevStudentPresence:any)=>({
+        ...studentPresence,
+        [e.target.name] : dayWiseAttendance[e.target.name]
+      }))
+      console.log(studentPresence)
+      
     } else {
       dayWiseAttendance[e.target.name] = dayWiseAttendance[
         e.target.name
       ].filter((val: any) => val !== e.target.value);
     }
-    console.log("daywss",dayWiseAttendance)
-    console.log("pres",present);
-    console.log("STU VAL",e.target.name,present[e.target.name])
-
+    console.log(studentPresence[e.target.name])
+    
   };
 
   const handelCheckbox = (item: any, indx: number) => {
     let displayName = eventDays[indx];
     let dataPath = eventDays[indx];
-    console.log("{RE",present)
+    
     dayWiseAttendance[item._id.name] = item.dates;
     item[dataPath] = (
       <input
@@ -171,8 +170,8 @@ const EventAttendance = () => {
         type="checkbox"
         name={item._id.name}
         value={displayName}
-        checked = {present[item._id.name].includes(displayName)}
-        onClick={(e) => handelAttendance(e)}
+        // checked = {item._id.dates.include}
+        onChange={(e) => handelAttendance(e)}
       ></input>
     );
     if (header.length !== 3 + NumberOfDays) {
@@ -243,4 +242,3 @@ const EventAttendance = () => {
 };
 
 export default EventAttendance;
-
