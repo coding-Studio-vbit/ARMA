@@ -4,6 +4,7 @@ const attendance = require("../../models/attendance");
 const roles = require("../../models/role");
 const mailer = require("../util/mailer");
 const { budgetDocUpdateTemplate } = require("../../email_templates/templates");
+const students = require("../../models/student");
 const equipments = require("../../models/equipment");
 const halls = require("../../models/hall");
 const Bookings = require("../../models/bookings");
@@ -168,6 +169,93 @@ const reportAndMedia = async (req, res) => {
   }
 };
 
+
+const uploadRegistrantsList = async(req,res)=>{
+  let attendedEvents = req.query.attendedEvents;
+  try{
+    for ( let i = 0; i<req.body.length;i++){
+      let data = req.body[i];
+      let value = await students.findOne({rollNumber:data.rollNumber})
+      if(!value){
+        console.log(data)
+        let newStudent = students(data)
+        await newStudent.save()
+      }
+      else {
+        await students.findOneAndUpdate({rollNumber:data.rollNumber},{$addToSet:{attendedEvents:[data.attendedEvents]}});
+      }
+      console.log(data.attendedEvents);
+      
+    }
+    let attendanceDoc = await attendance.findOne({eventID:attendedEvents})
+    let studentData= await students.find({attendedEvents:attendedEvents})
+    attendanceDoc.registrantsList  = studentData;
+    attendanceDoc.presence = studentData;
+    await attendanceDoc.save()
+    res.json(response({message:"Students added successfully"},process.env.SUCCESS_CODE))
+
+  }
+  catch(error){
+    console.log(error);
+    res.json(
+      response({message:"Upload of Registrants failed"},process.env.FAILURE_CODE)
+    )
+  }
+}
+
+
+const eventAttendance = async(req,res) => {
+  let page = req.query.page ? Number(req.query.page) : 1;
+  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+
+  //For filters
+  let where = {};
+  if (req.query.eventID) where.eventID = req.query.eventID
+
+  //For sorting
+  let sort = {};
+  if (req.query.orderBy && req.query.order)
+    sort[req.query.orderBy] = req.query.order;
+  else sort = { name: "asc" };
+
+  try {
+    result = await attendance
+      .findOne(where)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort(sort)
+      .populate(
+        { path: "presence._id",
+        model:"students"})
+      .exec()
+    const total = await attendance.count(where);
+    res.json(
+      response({ data: result.presence, total: total }, process.env.SUCCESS_CODE)
+    );
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response({ message: "event data fetch error" }, process.env.FAILURE_CODE)
+    );
+  }
+}
+
+
+
+const postAttendance = async(req,res)=>{
+  try{
+    console.log(req.body)
+    // let attedanceDoc = await attendance.findOne({eventID : req.body.eventID});
+    
+
+  }catch(error){
+    console.log(error);
+    res.json(response({message:"Update Attendance Failed"},process.env.FAILURE_CODE))
+  }
+
+
+}
+
 const getRequests = async (req,res) =>{
   console.log(req.query.isFO);
   try {
@@ -213,4 +301,6 @@ const getActiveEvents = async (req,res) =>{
 
 
 
-module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia , getRequests,getActiveEvents};
+module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia , getRequests,getActiveEvents,uploadRegistrantsList, eventAttendance 
+  ,postAttendance,};
+
