@@ -17,15 +17,18 @@ const getEvents = async (req, res) => {
   //For filters
   let where = {};
   if (req.query.forumID) where.forumID = req.query.forumID;
-  if (req.query.hasBudget)
-  {
+  if (req.query.hasBudget) {
     where.hasBudget = req.query.hasBudget;
-    where.eventStatus = ["AWAITING BUDGET APPROVAL","REQUESTED BUDGET CHANGES","BUDGET CHANGES UPDATED","BUDGET REJECTED"]
+    where.eventStatus = [
+      "AWAITING BUDGET APPROVAL",
+      "REQUESTED BUDGET CHANGES",
+      "BUDGET CHANGES UPDATED",
+      "BUDGET REJECTED",
+    ];
   }
   if (req.query.eventStatus) where.eventStatus = req.query.eventStatus;
 
   console.log(where);
-
 
   //For sorting
   let sort = {};
@@ -39,19 +42,22 @@ const getEvents = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort)
-      .populate({path:'forumID', select:'name facultyCoordinatorID',model:'forums',
-    populate:{
-      path:'facultyCoordinatorID',
-      select:'name',
-      model:'faculty'
-    }
-    })
-    if(req.query.forumName){
-      result = result.filter((e)=>{
-        if(e.forumID.name.includes(req.query.forumName)){
+      .populate({
+        path: "forumID",
+        select: "name facultyCoordinatorID",
+        model: "forums",
+        populate: {
+          path: "facultyCoordinatorID",
+          select: "name",
+          model: "faculty",
+        },
+      });
+    if (req.query.forumName) {
+      result = result.filter((e) => {
+        if (e.forumID.name.includes(req.query.forumName)) {
           return e;
         }
-      })
+      });
     }
     const total = await events.count(where);
     res.json(
@@ -68,13 +74,13 @@ const getEvents = async (req, res) => {
 const createEvent = async (req, res) => {
   try {
     let newAttendanceDoc = new attendance();
-    let equipment = []
+    let equipment = [];
     for (let i = 0; i < req.body.equipment.length; i++) {
-      const {name,totalCount} = req.body.equipment[i];
-      const eq = await equipments.findOne({name:name})
-      equipment.push(eq)
+      const { name, totalCount } = req.body.equipment[i];
+      const eq = await equipments.findOne({ name: name });
+      equipment.push(eq);
     }
-    // hall :[  
+    // hall :[
     //   {
     //     date:Date,
     //     hallID:HallID,
@@ -82,15 +88,15 @@ const createEvent = async (req, res) => {
     //   }
     // ]
     ///Halls
-    const { hall } = req.body
-    const hallsNew = hall.map(async (hallItem)=>{
-      const h = await halls.findById(hallItem.hallID)
+    const { hall } = req.body;
+    const hallsNew = hall.map(async (hallItem) => {
+      const h = await halls.findById(hallItem.hallID);
       return {
-        hall:h,
-        date:hallItem.date,
-        timeSlot:hallItem.timeSlot
-      }
-    })
+        hall: h,
+        date: hallItem.date,
+        timeSlot: hallItem.timeSlot,
+      };
+    });
     let newEvent = new events({
       forumID: req.user._id,
       name: req.body.name,
@@ -98,29 +104,31 @@ const createEvent = async (req, res) => {
       eventProposalDocPath: req.files.eventDocument[0].path,
       budgetDocPath: req.files.budgetDocument[0].path,
       hasBudget: req.files.budgetDocument !== null,
-      equipment:equipment,
-      halls:hallsNew
+      equipment: equipment,
+      halls: hallsNew,
     });
     const booking = new Bookings({
-        halls:hallsNew,
-        eventID:newEvent._id,
-        status:'ONHOLD'
-    })
+      halls: hallsNew,
+      eventID: newEvent._id,
+      status: "ONHOLD",
+    });
     newAttendanceDoc.eventID = String(newEvent._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
-    newEvent.eventStatus = req.files.budgetDocument !== null?"AWAITING BUDGET APPROVAL":"AWAITING SAC APPROVAL"
+    newEvent.eventStatus =
+      req.files.budgetDocument !== null
+        ? "AWAITING BUDGET APPROVAL"
+        : "AWAITING SAC APPROVAL";
     await newAttendanceDoc.save();
     await newEvent.save();
-    await booking.save()
+    await booking.save();
     res.json(
       response({ message: "new event created" }, process.env.SUCCESS_CODE)
     );
-
   } catch (e) {
     console.log(e);
     res.json(response({ message: "error" }, process.env.FAILURE_CODE));
   }
-}
+};
 const updateBudgetDoc = async (req, res) => {
   //update the budget here.
   console.log(req.files);
@@ -129,7 +137,7 @@ const updateBudgetDoc = async (req, res) => {
     event.budgetDocPath = req.files.budgetDocument[0].path;
     await event.save();
     //send notif to FO.
-    const FORoleID = await roles.findOne().where('name').in(['FO']);
+    const FORoleID = await roles.findOne().where("name").in(["FO"]);
     const FO = faculty.findOne({ role: [FORoleID._id] });
     await mailer.sendMail(element.email, budgetDocUpdateTemplate, {
       FOName: FO,
@@ -169,48 +177,53 @@ const reportAndMedia = async (req, res) => {
   }
 };
 
-
-const uploadRegistrantsList = async(req,res)=>{
+const uploadRegistrantsList = async (req, res) => {
   let attendedEvents = req.query.attendedEvents;
-  try{
-    for ( let i = 0; i<req.body.length;i++){
+  try {
+    for (let i = 0; i < req.body.length; i++) {
       let data = req.body[i];
-      let value = await students.findOne({rollNumber:data.rollNumber})
-      if(!value){
-        console.log(data)
-        let newStudent = students(data)
-        await newStudent.save()
-      }
-      else {
-        await students.findOneAndUpdate({rollNumber:data.rollNumber},{$addToSet:{attendedEvents:[data.attendedEvents]}});
+      let value = await students.findOne({ rollNumber: data.rollNumber });
+      if (!value) {
+        console.log(data);
+        let newStudent = students(data);
+        await newStudent.save();
+      } else {
+        await students.findOneAndUpdate(
+          { rollNumber: data.rollNumber },
+          { $addToSet: { attendedEvents: [data.attendedEvents] } }
+        );
       }
       console.log(data.attendedEvents);
-      
     }
-    let attendanceDoc = await attendance.findOne({eventID:attendedEvents})
-    let studentData= await students.find({attendedEvents:attendedEvents})
-    attendanceDoc.registrantsList  = studentData;
+    let attendanceDoc = await attendance.findOne({ eventID: attendedEvents });
+    let studentData = await students.find({ attendedEvents: attendedEvents });
+    attendanceDoc.registrantsList = studentData;
     attendanceDoc.presence = studentData;
-    await attendanceDoc.save()
-    res.json(response({message:"Students added successfully"},process.env.SUCCESS_CODE))
-
-  }
-  catch(error){
+    await attendanceDoc.save();
+    res.json(
+      response(
+        { message: "Students added successfully" },
+        process.env.SUCCESS_CODE
+      )
+    );
+  } catch (error) {
     console.log(error);
     res.json(
-      response({message:"Upload of Registrants failed"},process.env.FAILURE_CODE)
-    )
+      response(
+        { message: "Upload of Registrants failed" },
+        process.env.FAILURE_CODE
+      )
+    );
   }
-}
+};
 
-
-const eventAttendance = async(req,res) => {
+const eventAttendance = async (req, res) => {
   let page = req.query.page ? Number(req.query.page) : 1;
   let limit = req.query.limit ? Number(req.query.limit) : 1000000;
 
   //For filters
   let where = {};
-  if (req.query.eventID) where.eventID = req.query.eventID
+  if (req.query.eventID) where.eventID = req.query.eventID;
 
   //For sorting
   let sort = {};
@@ -224,13 +237,14 @@ const eventAttendance = async(req,res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort)
-      .populate(
-        { path: "presence._id",
-        model:"students"})
-      .exec()
+      .populate({ path: "presence._id", model: "students" })
+      .exec();
     const total = await attendance.count(where);
     res.json(
-      response({ data: result.presence, total: total }, process.env.SUCCESS_CODE)
+      response(
+        { data: result.presence, total: total },
+        process.env.SUCCESS_CODE
+      )
     );
   } catch (error) {
     console.log(error);
@@ -238,69 +252,100 @@ const eventAttendance = async(req,res) => {
       response({ message: "event data fetch error" }, process.env.FAILURE_CODE)
     );
   }
-}
+};
 
-
-
-const postAttendance = async(req,res)=>{
-  try{
-    console.log(req.body)
+const postAttendance = async (req, res) => {
+  try {
+    console.log(req.body);
     // let attedanceDoc = await attendance.findOne({eventID : req.body.eventID});
-    
-
-  }catch(error){
+  } catch (error) {
     console.log(error);
-    res.json(response({message:"Update Attendance Failed"},process.env.FAILURE_CODE))
+    res.json(
+      response(
+        { message: "Update Attendance Failed" },
+        process.env.FAILURE_CODE
+      )
+    );
   }
+};
 
-
-}
-
-const getRequests = async (req,res) =>{
+const getRequests = async (req, res) => {
   console.log(req.query.isFO);
   try {
-    let result
-    if(req.query.isFO==="true"){
+    let result;
+    if (req.query.isFO === "true") {
       console.log("htfkuyf,lig");
       result = await events
-      .find({eventStatus:["AWAITING BUDGET APPROVAL","REQUESTED BUDGET CHANGES","BUDGET CHANGES UPDATED"] }).populate("forumID");
-    }else{
+        .find({
+          eventStatus: [
+            "AWAITING BUDGET APPROVAL",
+            "REQUESTED BUDGET CHANGES",
+            "BUDGET CHANGES UPDATED",
+          ],
+        })
+        .populate("forumID");
+    } else {
       result = await events
-      .find({eventStatus:{ $nin:["COMPLETED","REJECTED"]} }).populate("forumID");
+        .find({ eventStatus: { $nin: ["COMPLETED", "REJECTED"] } })
+        .populate("forumID");
     }
-     
-    res.json(
-      response(result,process.env.SUCCESS_CODE)
-    );
+
+    res.json(response(result, process.env.SUCCESS_CODE));
     //console.log("Get",result);
   } catch (error) {
     console.log(error);
     res.json(
-      response("Unable to Load the Dashboard",process.env.FAILURE_CODE)
-    );    
-  }
-}
-
-
-const getActiveEvents = async (req,res) =>{
-  try {
-    const result = await events
-      .find({eventStatus:"APPROVED" });
-    res.json(
-      response(result,process.env.SUCCESS_CODE)
+      response("Unable to Load the Dashboard", process.env.FAILURE_CODE)
     );
+  }
+};
+
+const getActiveEvents = async (req, res) => {
+  try {
+    const result = await events.find({ eventStatus: "APPROVED" });
+    res.json(response(result, process.env.SUCCESS_CODE));
   } catch (error) {
     //console.log(error);
     res.json(
-      response("Unable to Load the Dashboard",process.env.FAILURE_CODE)
-    );    
+      response("Unable to Load the Dashboard", process.env.FAILURE_CODE)
+    );
   }
-}
+};
 
+const getEventById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const event = await events.findById(id).populate({
+      path: "forumID",
+      select: "name facultyCoordinatorID",
+      populate: {
+        path: "facultyCoordinatorID",
+        select: "name",
+      },
+    });
 
+    if (event) {
+      res.json(response(event, process.env.SUCCESS_CODE));
+    } else {
+      res.json(response("No such event found", process.env.FAILURE_CODE));
+    }
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response("Unable to fetch the event info", process.env.FAILURE_CODE)
+    );
+  }
+};
 
-
-
-module.exports = { getEvents, createEvent, updateBudgetDoc, reportAndMedia , getRequests,getActiveEvents,uploadRegistrantsList, eventAttendance 
-  ,postAttendance,};
-
+module.exports = {
+  getEventById,
+  getEvents,
+  createEvent,
+  updateBudgetDoc,
+  reportAndMedia,
+  getRequests,
+  getActiveEvents,
+  uploadRegistrantsList,
+  eventAttendance,
+  postAttendance,
+};
