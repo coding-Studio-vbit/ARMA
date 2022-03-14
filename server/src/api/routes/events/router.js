@@ -39,7 +39,7 @@ router.post("/uploadRegistrants",controller.uploadRegistrantsList);
 router.get("/eventAttendance",controller.eventAttendance);
 router.put("/postAttendance",controller.postAttendance)
 router.get("/activeEvents",controller.getActiveEvents)
-
+router.get("/getEvent/:id",controller.getEventById)
 module.exports = router;
 
 
