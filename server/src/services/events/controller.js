@@ -315,7 +315,7 @@ const getActiveEvents = async (req, res) => {
 const getEventById = async (req, res) => {
   try {
     const { id } = req.params;
-    const event = await events.findById(id).populate({
+    let event = await events.findById(id).populate({
       path: "forumID",
       select: "name facultyCoordinatorID",
       populate: {
@@ -323,7 +323,10 @@ const getEventById = async (req, res) => {
         select: "name",
       },
     });
-
+    const dates = event.getDates
+    event = event.toObject()
+    event.dates = dates
+    
     if (event) {
       res.json(response(event, process.env.SUCCESS_CODE));
     } else {

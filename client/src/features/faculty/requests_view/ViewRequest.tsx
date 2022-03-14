@@ -66,13 +66,10 @@ export default function RequestsView() {
       </div>
 
       <span className="text-arma-gray font-medium text-2xl ">Attachments</span>
-      <div className="flex items-center gap-x-4">
-        <div className="bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] max-w-[500px] break-words">
-          <span>{event.eventProposalDocPath}</span>
-          <span>{event.budgetDocPath}</span>
+      <div className="flex items-center gap-x-4 bg-white py-3 px-6 rounded-[24px] max-w-[500px] break-words">
+          {event.eventProposalDocPath && <a target="_blank" href={ process.env.REACT_APP_SERVER_URL+ event.eventProposalDocPath} rel="noreferrer"><button className="btn" >Event Doc</button></a>}
+          {event.budgetDocPath && <a target="_blank" href={ process.env.REACT_APP_SERVER_URL+ event.budgetDocPath} rel="noreferrer"><button className="btn" >Budget Doc</button></a>}
 
-        </div>
-        <CloudDownload className="cursor-pointer" />
       </div>
       </div>
             <div className="flex flex-col gap-8" >
