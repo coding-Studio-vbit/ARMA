@@ -42,15 +42,12 @@ export interface Event {
   hasBudget?: boolean;
   budgetStatus?: Status;
   eventDates?: Date[];
-  eventProposalDocPath?: {
-    type: String;
-    required: true;
-  };
+  eventProposalDocPath?: string;
   equipment : Equipment[];
   halls : EventHalls[];
   budgetDocPath?: string;
   reportDocPath?: string;
   mediaFilePaths?: string[];
-  FOComments?: String;
-  SACComments?: String;
+  FOComments?: string;
+  SACComments?: string;
 }

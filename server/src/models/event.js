@@ -87,5 +87,13 @@ const event = new mongoose.Schema({
   SACComments: String,
 });
 
+event.virtual('getDates').get(function() {
+  const dates = new Set()
+  this.halls.forEach((hall)=>{
+    dates.add(hall.date)
+  })
+  return [...dates]
+});
+
 const  events = mongoose.model("events", event);
 module.exports = events;
