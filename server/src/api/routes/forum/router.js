@@ -14,5 +14,11 @@ router.get("/getForumMembers", controller.getForumMembers);
 router.post("/forumEventNumber", controller.forumEventNumber);
 router.put("/updateProfile", controller.updateProfile);
 router.post("/forumViewCard", controller.forumViewCard);
+router.post(
+  "/profilePicture",
+  upload.fields([{ name: "profilePicture", maxCount: 1 }]),
+  controller.uploadProfilePicture
+);
+router.get("/profilePicture", controller.getProfilePicture);
 
 module.exports = router;
