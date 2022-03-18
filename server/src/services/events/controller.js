@@ -311,8 +311,33 @@ const getActiveEvents = async (req, res) => {
     );
   }
 };
+const getEventById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const event = await events.findById(id).populate({
+      path: "forumID",
+      select: "name facultyCoordinatorID",
+      populate: {
+        path: "facultyCoordinatorID",
+        select: "name",
+      },
+    });
+
+    if (event) {
+      res.json(response(event, process.env.SUCCESS_CODE));
+    } else {
+      res.json(response("No such event found", process.env.FAILURE_CODE));
+    }
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response("Unable to fetch the event info", process.env.FAILURE_CODE)
+    );
+  }
+};
 
 module.exports = {
+  getEventById,
   getEvents,
   createEvent,
   updateBudgetDoc,
