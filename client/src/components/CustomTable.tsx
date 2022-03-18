@@ -81,7 +81,6 @@ const Table = React.memo(
     }, [filter]);
 
     
-    console.log("Headers are: ", headers);
 
     useEffect(() => {
       //params object.
@@ -112,7 +111,6 @@ const Table = React.memo(
             newData = newData.map((v:any,i:number)=>transformer(v,i,setUpdate));
             //console.log("After transformer: ", newData);
           }
-          console.log(newData);
 
           setData(newData);
         })
