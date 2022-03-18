@@ -8,7 +8,7 @@ function Profile({url,setUrl}) {
     setUrl('')
   }
   useEffect(() => {
-    // getProfileURL()
+    getProfileURL()
   }, [])
   
   return (
@@ -20,10 +20,10 @@ function Profile({url,setUrl}) {
           {
             profileObj==null?
             url.length>0?
-            <img src={url} alt="fuckc"></img>:
+            <img src={url} alt="profile"></img>:
             <AccountCircle className="!text-7xl text-arma-title"/> 
             :     
-            <img src={profileObj} alt="fuckc"></img>       
+            <img src={profileObj} alt="profile" className="profileImg"></img>       
           }
         </label>          
     </div>

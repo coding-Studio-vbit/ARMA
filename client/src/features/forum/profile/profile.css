@@ -12,6 +12,12 @@
     cursor: pointer;
 }
 
+.profileImg{
+    height: 72px;
+    width: 72px;
+    border-radius: 36px;
+}
+
 input[type="file"] {
     display: none;
 } 
