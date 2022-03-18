@@ -157,7 +157,7 @@ export default function ForumProfile() {
 
       <div className="flex flex-col items-center m-auto sm:w-[80%] md:w-max w-[90%] ">
 
-        <Profile url={url} setUrl={setUrl}/>
+        <Profile url={url} setUrl={setUrl} isEdit={isEdit}/>
         {/* <AccountCircle className="!text-7xl text-arma-title" /> */}
         <span className="text-center  item-center text-2xl font-semibold text-arma-blue">
           {forum?.name}
