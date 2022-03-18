@@ -2,6 +2,7 @@ const { welcomeTemplate } = require("../../email_templates/templates");
 const events = require("../../models/event");
 const forums = require("../../models/forum");
 const response = require("../util/response");
+const fs = require("fs");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
 const facultyModel = require("../../models/faculty");
@@ -357,14 +358,47 @@ const forumViewCard = async (req, res) => {
 };
 
 const uploadProfilePicture = async (req, res) => {
-  console.log(req.files);
-  
-  res.json(response("okay", process.env.SUCCESS_CODE))
+  try {
+    const imagePath = req.files.profilePicture[0].path;
+    console.log(imagePath);
+    forums.findOneAndUpdate(
+      { email: req.user.email },
+      { profilePictureFilePath: imagePath },
+      { returnDocument: "before" },
+      (err, doc) => {
+        if (err) {
+          throw err;
+        } else {
+          fs.unlinkSync(doc.profilePictureFilePath);
+          res.json(
+            response(
+              "SUCCESSFULLY UPDATED FORUM PROFILE IMAGE",
+              process.env.SUCCESS_CODE
+            )
+          );
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
 };
 
 const getProfilePicture = async (req, res) => {
   //console.log(req);
-  res.json(response("okay", process.env.SUCCESS_CODE))
+  try{
+    const myForum = await forums.findOne({email: req.user.email});
+    console.log(myForum.profilePictureFilePath);
+    if(myForum.profilePictureFilePath == undefined)
+      res.sendFile("cs.png", {root: __dirname});
+    else
+      res.sendFile(myForum.profilePictureFilePath, {root: "/"});   
+  }
+  catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
 };
 
 module.exports = {
@@ -381,5 +415,5 @@ module.exports = {
   updateProfile,
   forumViewCard,
   uploadProfilePicture,
-  getProfilePicture
+  getProfilePicture,
 };
