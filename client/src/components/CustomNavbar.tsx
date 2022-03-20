@@ -35,18 +35,21 @@ const Navbar = ({ navItems }: NavbarProps) => {
         {/* {ARMA Title} */}
         <div
           id="ARMA-Logo"
-          onClick={()=>nav('/',{replace:true})}
+          
           className="text-xl md:text-2xl  font-poppins pl-2 text-arma-dark-blue cursor-pointer"
         >
           {navItems.length > 0 && (
             <span
               className="material-icons align-middle md:hidden mr-2 "
-              onClick={() => setshowSideNav(!showSideNav)}
+              onClick={(e) =>{
+                e.preventDefault()
+                setshowSideNav(!showSideNav)
+              }}
             >
               menu
             </span>
           )}
-          A.R.M.A
+          <span onClick={()=>nav('/',{replace:true})} >A.R.M.A</span>
         </div>
 
         {/* Navigation Items */}

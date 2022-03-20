@@ -7,7 +7,7 @@ const storage = multer.diskStorage({
     let hashValue = md5(file.originalname + Date.now());
     pathValue = path.join(
       __dirname,
-      "../../../../data",
+      "../../../data/static/",
       hashValue.slice(0, 1),
       hashValue.slice(0, 2)
     );
