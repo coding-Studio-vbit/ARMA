@@ -27,16 +27,33 @@ const SelectHalls = (props: SelectedHallsProps) => {
   const HallsList = (halls: string[]) =>
     halls.map((hall: string) => {
       return (
-        <button
-          className={
-            selectedHalls.includes(hall)
-              ? "flex w-full flex-row justify-around px-8 mr-4 mb-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
-              : "flex w-full text-gray-500 flex-row justify-around px-8 mr-4 mb-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
-          }
-          onClick={() => addHalls(hall)}
-        >
-          <div className="">{hall}</div>
-        </button>
+        <div className="mb-4">
+          <div className="w-3/4 m-auto text-center pb-1 mb-4 border-b-2 border-b-gray">
+            {hall}
+          </div>
+          <div className="flex">
+            <button
+              className={
+                selectedHalls.includes("morning." + hall)
+                  ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
+                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
+              }
+              onClick={() => addHalls("morning." + hall)}
+            >
+              <div className="">Morning</div>
+            </button>
+            <button
+              className={
+                selectedHalls.includes("afternoon." + hall)
+                  ? "flex px-8 mb-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
+                  : "flex text-gray-500 px-8 mb-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
+              }
+              onClick={() => addHalls("afternoon." + hall)}
+            >
+              <div className="">Afternoon</div>
+            </button>
+          </div>
+        </div>
       );
     });
   if (props.show)

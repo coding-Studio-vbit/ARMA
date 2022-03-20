@@ -94,6 +94,31 @@ const register = async (user, userType) => {
   }
 };
 
+const resetPasswordEmail = async (email) => {
+  try {
+    facultyUser = await facultyModel.findOne({ email: email }).populate("role");
+    forumUser = await forums
+      .findOne({ email: email })
+      .populate({ path: "role" })
+      .populate({ path: "facultyCoordinatorID", select: "name" });
+    adminUser = await admins.findOne({ email: email });
+
+    if (facultyUser) {
+      //mail with tokenID
+    }
+    if (forumUser) {
+      //mail with tokenID
+    }
+    if (adminUser) {
+      //mail with tokenID
+    }
+    if (!facultyUser && !forumUser && !adminUser)
+      response("Email does not exists.", process.env.FAILURE_CODE);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const addStudent = async (data) => {
   try {
     let student = new students(data);
