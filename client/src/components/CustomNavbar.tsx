@@ -23,7 +23,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
   const [showLogout, setShowLogout] = useState(false);
 
   return (
-    <div className={`flex  flex-row bg-white z-[11] fixed w-full h-[60px]`}>
+    <div className={`flex flex-row bg-white fixed w-full h-[60px]`}>
       {/* side navigation bar */}
 
       <Sidebar
@@ -35,21 +35,20 @@ const Navbar = ({ navItems }: NavbarProps) => {
         {/* {ARMA Title} */}
         <div
           id="ARMA-Logo"
-          
           className="text-xl md:text-2xl  font-poppins pl-2 text-arma-dark-blue cursor-pointer"
         >
           {navItems.length > 0 && (
             <span
               className="material-icons align-middle md:hidden mr-2 "
-              onClick={(e) =>{
-                e.preventDefault()
-                setshowSideNav(!showSideNav)
+              onClick={(e) => {
+                e.preventDefault();
+                setshowSideNav(!showSideNav);
               }}
             >
               menu
             </span>
           )}
-          <span onClick={()=>nav('/',{replace:true})} >A.R.M.A</span>
+          <span onClick={() => nav("/", { replace: true })}>A.R.M.A</span>
         </div>
 
         {/* Navigation Items */}
@@ -60,12 +59,17 @@ const Navbar = ({ navItems }: NavbarProps) => {
           {navItems.map((item: NavItem, index: Number) => {
             let isActive = location.pathname.includes(item.path);
 
-            if((item.path==='/faculty/' && location.pathname==='/faculty/') || (location.pathname.includes('/faculty/requests') && item.path==='/faculty/') ){
-              isActive = true
-            }else if(item.path==='/faculty/'){
-              isActive = false
+            if (
+              (item.path === "/faculty/" &&
+                location.pathname === "/faculty/") ||
+              (location.pathname.includes("/faculty/requests") &&
+                item.path === "/faculty/")
+            ) {
+              isActive = true;
+            } else if (item.path === "/faculty/") {
+              isActive = false;
             }
-            
+
             return (
               <div
                 key={item.label}
@@ -103,11 +107,9 @@ const Navbar = ({ navItems }: NavbarProps) => {
             setShowLogout(!showLogout);
           }}
         >
-          {location.pathname.includes('profile') && (
-                  <div className="bg-arma-blue h-[0.2rem] z-20 bottom-0 rounded-full  w-[90%] ml-[0.2rem]  absolute  ">
-                  
-                  </div>
-                )}
+          {location.pathname.includes("profile") && (
+            <div className="bg-arma-blue h-[0.2rem] z-20 bottom-0 rounded-full  w-[90%] ml-[0.2rem]  absolute  "></div>
+          )}
           <span className="text-lg mr-2 align-middle ">
             Hi, {forum?.name ?? faculty?.name}
           </span>
