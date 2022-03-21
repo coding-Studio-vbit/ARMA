@@ -1,8 +1,24 @@
 import { CloudDownload } from "@material-ui/icons";
-import React from "react";
+import { useEffect, useState } from "react";
 import { Calendar } from "react-modern-calendar-datepicker";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+import { Event } from "../../../interfaces/event";
+import { Forum } from "../../../interfaces/user";
+import { fetchEventById } from "../../../services/events/event";
 
 export default function RequestsView() {
+  const {id} = useParams()
+  const {status,data:event,error} = useQuery<Event,Error>(['eventByID',id],()=>fetchEventById(id),{retry:false})
+  
+  if(status === 'loading'){
+    return <p>loading</p>
+  }
+  if(status === 'error'){
+    return <p>{error.message}</p>
+  }
+
+  
   const preselectedDays = [
     {
       year: 2019,
@@ -26,12 +42,12 @@ export default function RequestsView() {
       <div className="flex flex-col w-max ">
         <div className="break-words">
         <span className="text-arma-title sm:text-2xl text-lg font-semibold w-max">
-          REQUEST TO CONDUCT : [EVENT NAME] 
+          REQUEST TO CONDUCT : {event.name}
         </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-arma-gray text-md">[forum name]</span>
-          <span className="text-arma-gray text-md">[faculty coordinator]</span>
+          <span className="text-arma-gray text-md">{(event.forumID as Forum).name}</span>
+          <span className="text-arma-gray text-md">{(event.forumID as Forum).facultyCoordinatorID.name}</span>
         </div>
       </div>
       <hr className=" bg-black/10 h-[1.55px]" />
@@ -40,20 +56,21 @@ export default function RequestsView() {
 
       <span className="text-arma-gray font-medium text-2xl ">Event Name</span>
       <div className="bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] max-w-[500px] break-words">
-        <span>[some event name here]</span>
+        <span>{event.name}</span>
       </div>
       <span className="text-arma-gray font-medium text-2xl ">Description</span>
       <div className="bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] max-w-[700px] break-words">
         <p >
-          [some event name
-          here] Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab possimus architecto ipsam fugit id voluptate aperiam, nostrum impedit eligendi facilis consectetur tempore, nemo officiis culpa expedita obcaecati voluptates! Iste, et?
+          {event.description}
         </p>
       </div>
 
       <span className="text-arma-gray font-medium text-2xl ">Attachments</span>
       <div className="flex items-center gap-x-4">
         <div className="bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] max-w-[500px] break-words">
-          <span>[some pdf file here]</span>
+          <span>{event.eventProposalDocPath}</span>
+          <span>{event.budgetDocPath}</span>
+
         </div>
         <CloudDownload className="cursor-pointer" />
       </div>

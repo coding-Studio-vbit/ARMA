@@ -1,0 +1,23 @@
+.custom-file-upload {
+    width: 100px;
+    height: 100px;
+    border-radius:50%;
+    /* //color */
+    outline: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.profileImg{
+    height: 72px;
+    width: 72px;
+    border-radius: 36px;
+}
+
+input[type="file"] {
+    display: none;
+} 

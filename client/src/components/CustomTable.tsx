@@ -107,9 +107,10 @@ const Table = React.memo(
 
           //The transformer function is called on each object of the response.
           if (transformer) {
+            //console.log("Before transformer: ", newData);
             newData = newData.map((v:any,i:number)=>transformer(v,i,setUpdate));
+            //console.log("After transformer: ", newData);
           }
-          console.log(newData);
 
           setData(newData);
         })

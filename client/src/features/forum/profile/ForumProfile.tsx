@@ -57,7 +57,8 @@ export default function ForumProfile() {
   const [loading,setLoading] = useState(false)
   const [show1,setShow1]= useState(false)
   const [dialogMsg,setDialogMsg] = useState<{title:string,proceed:()=>Promise<void>}>({title:"",proceed:async()=>{}})
-  console.log("Rebuild Profile");
+  // console.log("Rebuild Profile");
+  const [url, setUrl] = useState("");
   
   const [forumEmail, setForumEmail] = useState<string>(forum?.email ?? " ");
   
@@ -158,7 +159,10 @@ export default function ForumProfile() {
       </Dialog>
 
       <div className="flex flex-col items-center m-auto sm:w-[80%] md:w-max w-[90%] ">
-        <Profile link={link} onChange={setLink} />
+
+        <Profile url={url} setUrl={setUrl} isEdit={isEdit}/>
+        {/* <AccountCircle className="!text-7xl text-arma-title" /> */}
+
         <span className="text-center  item-center text-2xl font-semibold text-arma-blue">
           {forum?.name}
           <AnimatePresence initial={false} exitBeforeEnter>
@@ -173,9 +177,7 @@ export default function ForumProfile() {
                 <Edit
                   className="ml-3 text-black !text-xl cursor-pointer"
                   onClick={() => {
-                    
                     setIsEdit(true);
-                    
                   }}
                 />
               </motion.span>
