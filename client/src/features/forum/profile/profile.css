@@ -13,9 +13,9 @@
 }
 
 .profileImg{
-    height: 72px;
-    width: 72px;
-    border-radius: 36px;
+    height: 200px;
+    width: 200px;
+    border-radius: 100px;
 }
 
 input[type="file"] {

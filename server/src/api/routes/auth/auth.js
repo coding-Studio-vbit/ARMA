@@ -8,10 +8,15 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const {userType, ...user} = req.body
+  const { userType, ...user } = req.body;
   const result = await authService.register(user, userType);
   res.json(result);
 });
 
+router.post("/forgotPassword", async (req, res) => {
+  const { email } = req.body;
+  const result = await authService.forgotPassword(email);
+  res.json(result);
+});
 
 module.exports = router;
