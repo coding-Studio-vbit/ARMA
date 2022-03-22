@@ -13,10 +13,13 @@
 
 @layer components {
   .btn {
-    @apply py-[0.5rem] px-8 bg-[#139BEB] text-white rounded-[25px] hover:bg-[#1386c9] font-poppins font-semibold ;
+    @apply py-[0.5rem] px-8 bg-[#139BEB] text-white rounded-[25px] hover:bg-[#1386c9] font-poppins font-semibold;
   }
   .outlineBtn {
     @apply py-[0.5rem] px-8 border-2 border-[#139BEB] text-black text-base font-semibold rounded-[25px] hover:bg-[#139BEB] hover:text-white;
+  }
+  .outlineCancelBtn {
+    @apply py-[0.5rem] px-8 border-2 border-[#ff6863] text-black text-base font-semibold rounded-[25px] hover:bg-[#ff6863] hover:text-white;
   }
   .btn-green {
     @apply btn bg-arma-green hover:bg-[#35b860];
