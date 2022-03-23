@@ -137,6 +137,7 @@ export default function ForumProfile() {
     }else
     {
       setMessage(data.response)
+      setFacultycoordinator(forum?.facultyCoordinatorID.name ?? "")
     }
     setShow(true)
     setIsEdit(false)
@@ -200,6 +201,7 @@ export default function ForumProfile() {
             value={facultycoordinator}
             onChange={(e) => {
               setFacultycoordinator(e.target.value);
+              console.log(e.target.value)
             }}
           />
           <InputField
