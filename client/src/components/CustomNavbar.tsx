@@ -23,7 +23,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
   const [showLogout, setShowLogout] = useState(false);
 
   return (
-    <div className={`flex flex-row bg-white fixed w-full h-[60px]`}>
+    <div className={`flex flex-row bg-white fixed z-[11] w-full h-[60px]`}>
       {/* side navigation bar */}
 
       <Sidebar

@@ -14,9 +14,9 @@ import CreateEventRoutes from "./CreateEventRoutes";
 
 const ForumRoutes = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col ">
       <Navbar navItems={[]} />
-      <div className="flex-1 pt-[60px]">
+      <div className="flex-1 mt-[60px]">
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/eventDashboard" element={<ForumEventDashboard />} />
