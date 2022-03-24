@@ -193,7 +193,6 @@ const uploadRegistrantsList = async (req, res) => {
           { $addToSet: { attendedEvents: [data.attendedEvents] } }
         );
       }
-      console.log(data.attendedEvents);
     }
     let attendanceDoc = await attendance.findOne({ eventID: attendedEvents });
     let studentData = await students.find({ attendedEvents: attendedEvents });
@@ -218,20 +217,12 @@ const uploadRegistrantsList = async (req, res) => {
 };
 
 const eventAttendance = async (req, res) => {
-  let page = req.query.page ? Number(req.query.page) : 1;
-  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
-
-  //For filters
   let where = {};
   if (req.query.eventID) where.eventID = req.query.eventID
   console.log(req.query.eventID)
-
   try {
     result = await attendance
       .findOne(where)
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .sort(sort)
       .populate({ path: "presence._id", model: "students" })
       .exec();
     const total = await attendance.count(where);
@@ -241,7 +232,8 @@ const eventAttendance = async (req, res) => {
         process.env.SUCCESS_CODE
       )
     );
-  } catch (error) {
+  } 
+  catch (error) {
     console.log(error);
     res.json(
       response({ message: "event data fetch error" }, process.env.FAILURE_CODE)
@@ -251,17 +243,14 @@ const eventAttendance = async (req, res) => {
 
 const postAttendance = async(req,res)=>{
   try{
-    console.log(req.body)
     let attendanceDoc = await attendance.findOne({eventID : req.body.eventID});
     attendanceDoc.presence.forEach(element=> {
       element.dates = req.body.studentPresence[element._id]
-      console.log(element)
     })
     await attendanceDoc.save()
     res.json(
       response({message:"Attendance Updated"},process.env.SUCCESS_CODE)
     );
-
   }catch(error){
     console.log(error);
     res.json(

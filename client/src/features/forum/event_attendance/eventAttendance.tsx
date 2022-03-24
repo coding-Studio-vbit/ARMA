@@ -1,8 +1,8 @@
 import Attendance from "./attendanceTable";
 import { useEffect, useState } from "react";
 import readXlsxFile from "read-excel-file";
+import json2ExcelBin from 'js2excel';
 import { Dialog } from "../../../components/Dialog/Dialog";
-import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import axiosInstance from "../../../utils/axios";
 
 const EventAttendance = () => {
@@ -33,6 +33,7 @@ const EventAttendance = () => {
 
   let data;
   let indx: Number;
+  let eventName = "c.S( );SoC - Attendance"
   const [tableData,setTableData] = useState([])
   const [tableHeader,setTableHeader] = useState(["Name","Roll Number", "Branch","7-1-2021","8-1-2021","9-1-2021"])
   const [eventDates,setEventDates] = useState(["1-11-2020","2-11-2020","3-11-2020"])
@@ -50,9 +51,6 @@ const EventAttendance = () => {
         [data._id._id]:data.dates
       }));
     })
-    console.log(resp)
-    console.log("STUPRS",studentPresence);
-    console.log("TABDA",tableData);
     if ((resp.data.response.data).length>0){
       setDataUploaded(true)
       setTableData(resp.data.response.data)
@@ -63,7 +61,6 @@ const EventAttendance = () => {
   
 
   function checkBranch(val: any) {
-    console.log(val);
     if (Object.values(branch).includes(val.toUpperCase())) {
       return String(val);
     } else {
@@ -81,7 +78,6 @@ const EventAttendance = () => {
   }
   const handleFileToJson = (e: { target: { files: any } }) => {
     data = e.target.files;
-    // console.log(data)
     if (data != null) {
       setDataUploaded(true);
       let list: Student[] = [];
@@ -117,7 +113,6 @@ const EventAttendance = () => {
           });
         })
         .then(async()=>{
-          console.log(list)
           await axiosInstance.post(process.env.REACT_APP_SERVER_URL+ "events/uploadRegistrants?attendedEvents=" + eventID
           ,list)
         })
@@ -148,16 +143,27 @@ const EventAttendance = () => {
     axiosInstance.get(process.env.REACT_APP_SERVER_URL +"events/eventAttendance?eventID=" + eventID)
     .then(res =>{
       let data = res.data.response.data
-      console.log(data)
+      let reportData = []
       try{
-        
-        
-      }
-      catch{
+        data.forEach((value)=>{
+          let newObj = {"Name" :value._id.name, 
+                        "Roll Number" : value._id.rollNumber,
+                        "Branch" : value._id.branch}
+          eventDates.forEach((date)=>{
+            if (value.dates.indexOf(date)>-1){ 
+              newObj[date] = "Present"
+            }
+            else{ newObj[date] = "Absent" }
+          })
+          reportData.push(newObj)
+        })
+        json2ExcelBin.json2excel({data: reportData, name: eventName})
+    }
+      catch{ 
         console.log("biscuit")
-      }
-    })
-  }
+        setMessage("Error! Report cannot be generated right now.") 
+        setShow(true)  }
+    })}
 
   return (
     <div>
@@ -165,7 +171,7 @@ const EventAttendance = () => {
       <div className="flex flex-wrap">
         <div>
           <h1 className="text-arma-dark-blue pl-10 pt-10 pb-5 text-3xl font-bold">
-            c.S( );SoC - Attendance
+            {eventName}
           </h1>
         </div>
         <div className="pl-10 pb-10 mt-12">
@@ -195,15 +201,8 @@ const EventAttendance = () => {
             />
             <div>
               <div className="flex justify-center">
-                {/* have to add functionality to buttons */}
                 <button className="btn m-5" onClick = {handleSave}>Save</button>
-                <ReactHTMLTableToExcel
-                    id="test-table-xls-button"
-                    className="btn m-5 download-table-xls-button "
-                    table="attendTable"
-                    filename="eventAttendance"
-                    sheet="tablexls"
-                    buttonText="Get Report"/>
+                <button className="btn m-5" onClick = {handleReport}>Get Report</button>
               </div>
             </div>
           </div>
