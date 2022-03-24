@@ -143,7 +143,7 @@ function EventCalendar() {
                     
                 <div className='bg-arma-blue 
                     flex flex-row rounded-3xl
-                    h-3/4 w-4/6 text-white mt-12'>
+                    h-3/4 w-5/6 lg:w-5/6 xl:w-2/3 text-white mt-12'>
                         
                     <div className="w-1/3 flex flex-col justify-center items-center gap-5 text-white ">
                         <p className="text-9xl ">
