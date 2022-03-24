@@ -216,4 +216,3 @@ const EventAttendance = () => {
 };
 
 export default EventAttendance;
-

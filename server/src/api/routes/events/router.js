@@ -3,11 +3,10 @@ const multer = require("multer");
 const checkRolePermissions = require("../../../services/util/checkRole");
 const controller = require("../../../services/events/controller");
 const multerStorage = require("../../../services/util/multerStorage");
-const tokenAuth = require("../../middleware/tokenAuth")
+const tokenAuth = require("../../middleware/tokenAuth");
 const upload = multer({ storage: multerStorage });
 
-
-// router.use(tokenAuth);
+router.use(tokenAuth);
 
 //GET EVENTS
 router.get(
@@ -31,15 +30,24 @@ router.post(
   controller.createEvent
 );
 
-router.post("/updateBudget", upload.fields([{name: "budgetDocument", maxCount:1}]), controller.updateBudgetDoc);
+router.post(
+  "/updateBudget",
+  upload.fields([{ name: "budgetDocument", maxCount: 1 }]),
+  controller.updateBudgetDoc
+);
 
-router.post("/reportAndMedia" , upload.fields([{name: "eventReport", maxCount:1} , {name:"eventImages", maxCount:10}]), controller.reportAndMedia)
+router.post(
+  "/reportAndMedia",
+  upload.fields([
+    { name: "eventReport", maxCount: 1 },
+    { name: "eventImages", maxCount: 10 },
+  ]),
+  controller.reportAndMedia
+);
 
 router.post("/uploadRegistrants",controller.uploadRegistrantsList);
 router.get("/eventAttendance",controller.eventAttendance);
 router.put("/postAttendance",controller.postAttendance)
 router.get("/activeEvents",controller.getActiveEvents)
-
+router.get("/getEvent/:id",controller.getEventById)
 module.exports = router;
-
-
