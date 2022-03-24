@@ -46,7 +46,7 @@ const Attendance = (props) =>{
                                    setStudentPresence({...studentPresence,...newObj})
                                }
                                console.log(studentPresence)
-                            }}/><span className="invisible">{studentPresence[value._id._id].indexOf(date)>-1?"Present":"Absent"}</span></td>
+                            }}/></td>
                             
                         ))}
                        </tr>
