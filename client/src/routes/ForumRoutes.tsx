@@ -26,7 +26,6 @@ const ForumRoutes = () => {
           <Route path="/updateEventDetails" element={<UpdateEventDetails />} />
           <Route path="/profile" element={<ForumProfile />} />
           <Route path="/eventAttendance" element={<EventAttendance />} />
-          <Route path="/attendance" element={<Attendance />} />
           <Route
             path="/addNewCoreTeamMember"
             element={<AddNewCoreTeamMember />}
