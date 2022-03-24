@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "react-html-table-to-excel": "^2.0.0"
+  }
+}
