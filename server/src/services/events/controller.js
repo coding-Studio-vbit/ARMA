@@ -211,19 +211,13 @@ const eventAttendance = async(req,res) => {
   //For filters
   let where = {};
   if (req.query.eventID) where.eventID = req.query.eventID
-
-  //For sorting
-  let sort = {};
-  if (req.query.orderBy && req.query.order)
-    sort[req.query.orderBy] = req.query.order;
-  else sort = { name: "asc" };
+  console.log(req.query.eventID)
 
   try {
     result = await attendance
       .findOne(where)
       .skip((page - 1) * limit)
       .limit(limit)
-      .sort(sort)
       .populate(
         { path: "presence._id",
         model:"students"})
@@ -245,8 +239,15 @@ const eventAttendance = async(req,res) => {
 const postAttendance = async(req,res)=>{
   try{
     console.log(req.body)
-    // let attedanceDoc = await attendance.findOne({eventID : req.body.eventID});
-    
+    let attendanceDoc = await attendance.findOne({eventID : req.body.eventID});
+    attendanceDoc.presence.forEach(element=> {
+      element.dates = req.body.studentPresence[element._id]
+      console.log(element)
+    })
+    await attendanceDoc.save()
+    res.json(
+      response({message:"Attendance Updated"},process.env.SUCCESS_CODE)
+    );
 
   }catch(error){
     console.log(error);
@@ -296,7 +297,6 @@ const getActiveEvents = async (req,res) =>{
     );    
   }
 }
-
 
 
 
