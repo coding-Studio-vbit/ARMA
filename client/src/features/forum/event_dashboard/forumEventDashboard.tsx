@@ -1,5 +1,6 @@
-import React,{useEffect,useState} from 'react'
+import {useEffect,useState} from 'react'
 import { Spinner } from '../../../components/Spinner/Spinner';
+import { useNavigate } from "react-router-dom";
 
  interface EventInfo{
     name:string,
@@ -7,15 +8,16 @@ import { Spinner } from '../../../components/Spinner/Spinner';
 }
 
 const eventInfoList:EventInfo[] = [
-    {name:'Event Details',route:''},
-    {name:'Budget',route:''},
-    {name:'Event Venue',route:''},
-    {name:'Equipment',route:''},
-    {name:'Attendance',route:''},
-    {name:'Report & Media',route:''},
+    {name:'Event Details',route:'/venueInfo'},
+    {name:'Budget',route:'/budget'},
+    {name:'Event Venue',route:'/venueInfo'},
+    {name:'Equipment',route:'/eventEquipment'},
+    {name:'Attendance',route:'/eventAttendance'},
+    {name:'Report & Media',route:'/reportAndMedia'},
 ]
 
 function ForumEventDashboard() {
+    const navigate = useNavigate()
     const [loading, setLoading] = useState<boolean>(true);
     const [username, setUsername] = useState<string>("");
     const [event, setEvent] = useState<string>("");
@@ -53,9 +55,11 @@ function ForumEventDashboard() {
                                     return(
                                         <div className='w-full sm:w-3/4 md:w-1/3 px-6 py-8 lg:p-10 m-0 
                                             arma-card-gradient text-white  text-xl lg:text-2xl
-                                            shadow-2xl rounded-2xl min-h-max h-48 md:h-60'>
+                                            shadow-2xl rounded-2xl min-h-max h-48 md:h-60'
+                                            onClick={()=>navigate(eventInfo.route,{ replace: true })}
+                                            >
                                             <div className=' flex flex-wrap justify-between items-center' 
-                                                onClick={()=>{console.log(`Route To ${eventInfo.route}`)}}>
+                                                >
                                                 <span>{eventInfo.name}</span>
                                                 {
                                                     (index ===0 || index === 1) &&
@@ -80,9 +84,11 @@ function ForumEventDashboard() {
                                     return(
                                         <div className='w-full sm:w-3/4 md:w-1/3 p-6 py-8 lg:p-10 m-0 
                                         arma-card-gradient text-white  text-xl lg:text-2xl
-                                        shadow-2xl rounded-2xl min-h-max h-48 md:h-60'>
+                                        shadow-2xl rounded-2xl min-h-max h-48 md:h-60'
+                                        onClick={()=>navigate(eventInfo.route,{ replace: true })}
+                                        >
                                             <div className=' flex flex-wrap justify-between items-center' 
-                                                onClick={()=>{console.log(`Route To ${eventInfo.route}`)}}>
+                                                >
                                                 <span>{eventInfo.name}</span>
                                                 {/* <span className="material-icons text-right  lg:scale-125">
                                                 info
