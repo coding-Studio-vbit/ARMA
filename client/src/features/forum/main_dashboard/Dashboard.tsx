@@ -92,12 +92,12 @@ const Dashboard = () => {
 
         <div
           id="eventCardsSection"
-          className="hidden sm:relative -top-16 mb-4 w-full sm:w-3/5 md:w-2/3 lg:w-5/6 flex flex-wrap justify-center lg:justify-start lg:ml-4"
+          className="sm:relative -top-16 mb-4 w-full sm:w-3/5 md:w-2/3 lg:w-5/6 flex flex-wrap justify-center lg:justify-start lg:ml-4"
         >
           {eventList.map((item) => {
             return (
               <div className="mx-2 my-4 sm:m-4">
-                <EventCard event={item} />
+                <EventCard event={item} onClick={()=>{console.log("Hello")}}/>
               </div>
             );
           })}
