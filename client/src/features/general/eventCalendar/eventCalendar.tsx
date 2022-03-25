@@ -117,8 +117,8 @@ function EventCalendar() {
       .catch((error) => {
         console.log("Fetch Failed");
         setLoading(false);
-        setError(null);
-        // setError(error.toString());
+        // setError(null);
+        setError(error.toString());
       });    
   }
   
