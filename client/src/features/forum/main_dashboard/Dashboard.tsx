@@ -1,6 +1,8 @@
 import { Add } from "@material-ui/icons";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import EventCard from "./EventCard";
+import axios from "../../../utils/axios";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -37,6 +39,10 @@ const Dashboard = () => {
       isActive: false,
     },
   ];
+
+  useEffect(()=>{
+    axios.get(`${process.env.REACT_APP_SERVER_URL}forums/dashboard`)
+  },[])
 
   return (
     <div>
