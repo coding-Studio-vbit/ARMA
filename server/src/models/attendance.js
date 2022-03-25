@@ -17,7 +17,7 @@ const attendance = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "students",
       },
-      dates: [Date],
+      dates: [],
     },
   ],
 });
