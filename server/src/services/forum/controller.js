@@ -401,6 +401,48 @@ const getProfilePicture = async (req, res) => {
   }
 };
 
+const uploadDashboardCover = async (req, res) => {
+  try {
+    const imagePath = req.files.dashboardCover[0].path;
+    forums.findOneAndUpdate(
+      { email: req.user.email },
+      { dashboardCoverFilePath: imagePath },
+      { returnDocument: "before" },
+      (err, doc) => {
+        if (err) {
+          throw err;
+        } else {
+          fs.unlinkSync(doc.dashboardCoverFilePath);
+          res.json(
+            response(
+              "SUCCESSFULLY UPDATED DASHBOARD COVER IMAGE",
+              process.env.SUCCESS_CODE
+            )
+          );
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
+
+const getDashboardCover = async (req, res) => {
+  //console.log(req);
+  try{
+    const myForum = await forums.findOne({email: req.user.email});
+    if(myForum.dashboardCoverFilePath == undefined)
+      res.sendFile("sky.png", {root: __dirname});
+    else
+      res.sendFile(myForum.dashboardCoverFilePath, {root: "/"});   
+  }
+  catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
+
 module.exports = {
   dashboard,
   getForumsList,
@@ -416,4 +458,6 @@ module.exports = {
   forumViewCard,
   uploadProfilePicture,
   getProfilePicture,
+  uploadDashboardCover,
+  getDashboardCover
 };

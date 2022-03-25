@@ -11,7 +11,7 @@ const Reservation = new mongoose.Schema({
     enum: ["COMPLETED", "NOT COMPLETED"],
   },
   dates: [{ type: String }],
-  timeSlots: [{ type: [String], enum: ["MORNING", "AFTERNOON"] }],
+  timeSlots: [String],
 });
 
 const reservations = mongoose.model("reservations", Reservation);
