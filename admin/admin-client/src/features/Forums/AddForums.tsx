@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, SetStateAction, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
@@ -19,11 +19,12 @@ export const AddForums = () => {
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
    const [selectHead, setSelectHead] = useState<(string | undefined) []>([])
-   const [selectCoord, setSelectCoord] = useState<(string | undefined) []>([])
+   const [selectCoord, setSelectCoord] = useState<string>("")
    const [selectHeadLabel, setSelectHeadLabel] = useState<(string | undefined) []>([])
    const [mystu, setMyStu] = useState<{value:string,label:string}[]>()
    const [myfac, setMyFac] = useState<{}[]>()
    const [response, setResponse] = useState("")
+   let[name, setName]= useState<string>(" ")
   
 
 
@@ -132,17 +133,29 @@ export const AddForums = () => {
 
   useEffect(() => {
     const faculty = async () => {
-      const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty");
+      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty", {name: name});
       console.log(res.data);
       const data = res.data.response;
       let arr = []
       for(let i = 0; i < data.length; i++){
-          arr.push({value:data[i]._id, label:data[i].name + "  -  " + data[i].rollNumber})
+          arr.push({value:data[i]._id, label:data[i].name})
       }
+
       setMyFac(arr)
     }
-    faculty();
-  },[])
+    if(name.length !== 0)
+    {
+      faculty();
+    }else{
+      setMyFac([])
+    }
+    
+  },[name])
+  const handleInputChange = (characterEntered: SetStateAction<string>) => {
+    setName(characterEntered)
+    
+    console.log(name);
+  };
 
   return (
     <div className="flex flex-col grow items-center">
@@ -205,15 +218,14 @@ export const AddForums = () => {
           /> 
           <Select
             name="Faculty Coordinator"
-            placeholder="Faculty Coordinator"
             options={myfac}
+            placeholder="faculty coordinator"
+            onInputChange={handleInputChange}
+            noOptionsMessage={() => null}
             onChange={(e:any) => {
-              for(let i = 0; i < selectCoord.length; i++){
-                 if(e?.value === selectCoord[i]) return        
-              }
-              setSelectCoord([...selectCoord, e?.value])
-
-          }}
+            setSelectCoord(e?.value)
+          }  
+        }
             styles={{
                 control: (base) => ({
                 ...base,
@@ -225,12 +237,13 @@ export const AddForums = () => {
 
                 placeholder: (base) => ({
                   ...base,
-                  paddingLeft: '16px'
+                  
                 }),
-                singleValue: (base) => ({
-                    ...base,
-                    paddingLeft: '16px',
-                }) 
+                
+                valueContainer: (base) => ({
+                  ...base,
+                  paddingLeft: '16px',
+              })  
             }}
             
             className="basic-multi-select "
