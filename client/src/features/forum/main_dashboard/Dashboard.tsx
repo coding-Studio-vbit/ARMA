@@ -1,42 +1,55 @@
 import { Add } from "@material-ui/icons";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EventCard from "./EventCard";
+import axios from "../../../utils/axios";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  
-  const eventList = [
-    {
-      name: "codeCraft 3.0",
-      eventStatus: "completed",
-      isActive: true,
-    },
-    {
-      name: "codeCraft 3.0",
-      eventStatus: "approved",
-      isActive: true,
-    },
-    {
-      name: "codeCraft 3.0",
-      eventStatus: "rejected",
-      isActive: true,
-    },
-    {
-      name: "codeCraft 3.0",
-      eventStatus: "AWAITING SAC APPROVAL",
-      isActive: false,
-    },
-    {
-      name: "codeCraft 3.0",
-      eventStatus: "AWAITING BUDGET APPROVAL",
-      isActive: false,
-    },
-    {
-      name: "codeCraft 3.0",
-      eventStatus: "rejected",
-      isActive: false,
-    },
-  ];
+  const [eventList, setEventList] = useState([]);
+  // const eventList = [
+  //   {
+  //     name: "codeCraft 3.0",
+  //     eventStatus: "completed",
+  //     isActive: true,
+  //   },
+  //   {
+  //     name: "codeCraft 3.0",
+  //     eventStatus: "approved",
+  //     isActive: true,
+  //   },
+  //   {
+  //     name: "codeCraft 3.0",
+  //     eventStatus: "rejected",
+  //     isActive: true,
+  //   },
+  //   {
+  //     name: "codeCraft 3.0",
+  //     eventStatus: "AWAITING SAC APPROVAL",
+  //     isActive: false,
+  //   },
+  //   {
+  //     name: "codeCraft 3.0",
+  //     eventStatus: "AWAITING BUDGET APPROVAL",
+  //     isActive: false,
+  //   },
+  //   {
+  //     name: "codeCraft 3.0",
+  //     eventStatus: "rejected",
+  //     isActive: false,
+  //   },
+  // ];
+
+  useEffect(()=>{
+    axios.get(`${process.env.REACT_APP_SERVER_URL}forum/dashboard`)
+    .then(response=>{
+      console.log(response.data.response)
+      setEventList(response?.data.response.events)
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+  },[])
 
   return (
     <div>

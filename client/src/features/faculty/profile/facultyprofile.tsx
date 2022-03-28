@@ -84,17 +84,17 @@ function FacultyProfile() {
               onChange={(e) => {
                 setrollNumber(e.target.value);
               }}
-              disabled={!isEdit}
+              disabled={true}
             />
 
             <InputField
               className="mb-5"
               name="Email"
               value={email}
+              disabled={true}
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
-              disabled={!isEdit}
             />
           </div>
           <div className="flex flex-col gap-y-6 mb-6 w-full md:flex-row sm:gap-x-8">
