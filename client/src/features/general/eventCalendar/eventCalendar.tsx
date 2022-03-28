@@ -117,7 +117,8 @@ function EventCalendar() {
       .catch((error) => {
         console.log("Fetch Failed");
         setLoading(false);
-        setError(error.message);
+        // setError(null);
+        setError(error.toString());
       });    
   }
   
@@ -140,49 +141,47 @@ function EventCalendar() {
             !loading?
                 error == null?
                 <div className='h-screen bg-teal-100 flex justify-center items-center'>
-                    
-                <div className='bg-arma-blue 
-                    flex flex-row rounded-3xl
-                    h-3/4 w-4/6 text-white mt-12'>
-                        
-                    <div className="w-1/3 flex flex-col justify-center items-center gap-5 text-white ">
-                        <p className="text-9xl ">
-                        {selectedDate.day}
-                        </p>
-                        <p className='text-4xl'>
-                            {weekDay[new Date(selectedDate.year,selectedDate.month-1,selectedDate.day).getDay()]}
-                        </p>
-                        <p className='text-4xl'>{months[selectedDate.month-1] +" "+ selectedDate.year}</p>
-                        
-                        {selectedDate != null && filterWithDates().length > 0 ? (
-                        <ul className="mt-3 list-disc list-inside text-xl">
-                            {filterWithDates().map((e) => {
-                            return <li key={e._id}>{e.event}</li>;
-                            })}
-                        </ul>
-                        ) : (
-                        <p className=" mt-4">
-                            No Events
-                        </p>
-                        )}
-                    </div>  
+                    <div className='bg-arma-blue 
+                        flex flex-col lg:flex-row rounded-3xl
+                        h-3/4 w-5/6 lg:w-5/6 xl:w-2/3 text-white mt-12'>
+                        <div className="h-auto px-8 py-12 justify-between lg:justify-center lg:px-2 lg:h-full lg:py-5 w-full lg:w-1/3 flex flex-row lg:flex-col justify-center items-center gap-5 text-white ">
+                            <div className='text-left lg:text-center'>
+                                <p className="text-5xl lg:text-9xl ">
+                                {selectedDate.day}
+                                </p>
+                                <p className='text-2xl lg:text-4xl'>
+                                    {weekDay[new Date(selectedDate.year,selectedDate.month-1,selectedDate.day).getDay()]}
+                                </p>
+                                <p className='text-3xl lg:text-4xl'>{months[selectedDate.month-1] +" "+ selectedDate.year}</p>
+                            </div>
+                            
+                            {selectedDate != null && filterWithDates().length > 0 ? (
+                            <ul className="mt-3 list-disc list-inside text-xl">
+                                {filterWithDates().map((e) => {
+                                return <li key={e._id}>{e.event}</li>;
+                                })}
+                            </ul>
+                            ) : (
+                            <p className=" mt-4">
+                                No Events
+                            </p>
+                            )}
+                        </div>  
         
-                    <div className='w-2/3'>
-                        <Calendar
-                            value={eventDays}
-                            onChange={(e) => handleSelectedDate(e)}
-                            colorPrimary="#0B5B8A"
-                            calendarClassName="publicCalendar"
-                            shouldHighlightWeekends
-                        />
+                        <div className='w-full lg:w-2/3'>
+                            <Calendar
+                                value={eventDays}
+                                onChange={(e) => handleSelectedDate(e)}
+                                colorPrimary="#0B5B8A"
+                                calendarClassName="publicCalendar"
+                                shouldHighlightWeekends
+                            />
+                        </div>                    
                     </div>
-                                                    
-                    </div>
-                </div>:
-                <div>{error}</div>
-                :<div className="flex h-screen justify-center items-center">
-                    <Spinner className="" />
-                </div>
+                </div>:<div>ffh{error}</div>
+              :<div className="flex h-screen justify-center items-center">
+                  <Spinner className="" />
+              </div>
             }
         </div>
     )

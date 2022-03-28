@@ -26,12 +26,16 @@ const ForumRoutes = () => {
           <Route path="/updateEventDetails" element={<UpdateEventDetails />} />
           <Route path="/profile" element={<ForumProfile />} />
           <Route path="/eventAttendance" element={<EventAttendance />} />
+          {/* TODO - creating temp routes */}
+          <Route path="/reportAndMedia" element={<div>Report & Media</div>} />
+          <Route path="/eventEquipment" element={<div>Event Equipment</div>} />
+          <Route path="/venueInfo" element={<div>Event Venue</div>} />
+          
           <Route
             path="/addNewCoreTeamMember"
             element={<AddNewCoreTeamMember />}
           />
           <Route path="/budget" element={<EventBudget />} />
-
           <Route path="/addNewForumMember" element={<AddNewForumMember />} />
         </Routes>
       </div>

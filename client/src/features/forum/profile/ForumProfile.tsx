@@ -1,4 +1,4 @@
-import { AccountCircle, Delete, Edit } from "@material-ui/icons";
+import { Delete, Edit } from "@material-ui/icons";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -51,13 +51,15 @@ export default function ForumProfile() {
   const [facultycoordinator, setFacultycoordinator] = useState<string>(
     forum?.facultyCoordinatorID.name ?? " "
   );
-  const [allCheckedCore,setAllCheckedCore] = useState(false)
-  const [allCheckedMem,setAllCheckedMem] = useState(false)
+  // const [allCheckedCore,setAllCheckedCore] = useState(false)
+  // const [allCheckedMem,setAllCheckedMem] = useState(false)
   const [loading,setLoading] = useState(false)
   const [show1,setShow1]= useState(false)
   const [myfac, setMyFac] = useState<{}[]>()
   const [dialogMsg,setDialogMsg] = useState<{title:string,proceed:()=>Promise<void>}>({title:"",proceed:async()=>{}})
   // console.log("Rebuild Profile");
+  const [profileObj, setprofileObj] = useState(null);
+
   const [url, setUrl] = useState("");
   let [name, setName] = useState<string>(" ")
   
@@ -192,8 +194,8 @@ export default function ForumProfile() {
 
       <div className="flex flex-col items-center m-auto sm:w-[80%] md:w-max w-[90%] ">
 
-        <Profile url={url} setUrl={setUrl} isEdit={isEdit}/>
-        {/* <AccountCircle className="!text-7xl text-arma-title" /> */}
+        <Profile url={url} setUrl={setUrl} 
+        isEdit={isEdit} profileObj={profileObj} setprofileObj={setprofileObj}/>
         <span className="text-center  item-center text-2xl font-semibold text-arma-blue">
           {forum?.name}
           <AnimatePresence initial={false} exitBeforeEnter>
