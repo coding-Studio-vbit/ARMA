@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, SetStateAction, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
@@ -70,19 +70,33 @@ export const AddEquip = () => {
       }   
     }
   };
+  
   useEffect(() => {
     const faculty = async () => {
-      const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty");
+      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty", {name: name});
       console.log(res.data);
       const data = res.data.response;
       let arr = []
       for(let i = 0; i < data.length; i++){
-          arr.push({value:data[i]._id, label:data[i].name + "  -  " + data[i].rollNumber})
+          arr.push({value:data[i]._id, label:data[i].name})
       }
+
       setMyFac(arr)
     }
-    faculty();
-  },[])
+    if(name.length !== 0)
+    {
+      faculty();
+    }else{
+      setMyFac([])
+    }
+    
+  },[name])
+  const handleInputChange = (characterEntered: SetStateAction<string>) => {
+    setName(characterEntered)
+    
+    console.log(name);
+  };
+  
 
   return (
     <div className="flex flex-col grow items-center">
@@ -111,13 +125,16 @@ export const AddEquip = () => {
         </div>
 
         <div className=" w-full sm:w-[270px] ">
-          <Select
-            name="Faculty Incharge"
-            placeholder="Faculty Incharge"
+        <Select
+            name="Faculty Coordinator"
             options={myfac}
+            placeholder="faculty coordinator"
+            onInputChange={handleInputChange}
+            noOptionsMessage={() => null}
             onChange={(e:any) => {
-              setSelectIncharge(e?.value)
-          }}
+            setSelectIncharge(e?.value)
+          }  
+        }
             styles={{
                 control: (base) => ({
                 ...base,
@@ -129,24 +146,16 @@ export const AddEquip = () => {
 
                 placeholder: (base) => ({
                   ...base,
-                  paddingLeft: '16px'
                   
                 }),
-                singleValue: (base) => ({
-                    ...base,
-                    paddingLeft: '16px',
-                    color: 'black',
-                    width: '80%',
-                    textOverflow:'ellipsis'
-                }) ,
-                input: (base) => ({
+                
+                valueContainer: (base) => ({
                   ...base,
                   paddingLeft: '16px',
-                  color: 'black'
-              }) 
+              })  
             }}
             
-            className="basic-multi-select w-full h-full"
+            className="basic-multi-select "
            
           /> 
         </div>

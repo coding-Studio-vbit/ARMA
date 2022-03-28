@@ -5,12 +5,11 @@ import axios from "../../../utils/axios";
 
 function Profile({ url, setUrl, isEdit,profileObj,setprofileObj }) {
   async function getProfileURL() {
-    const response = await axios.get(
+    const res = await axios.get(
       `${process.env.REACT_APP_SERVER_URL}forum/profilePicture`
     );
-
-    console.log(response.data);
-    setUrl(response.data);
+    console.log(res.data.response)
+    setUrl(res.data.response);
   }
   useEffect(() => {
     getProfileURL();
@@ -26,11 +25,26 @@ function Profile({ url, setUrl, isEdit,profileObj,setprofileObj }) {
             onChange={(e) => {
               console.log(URL.createObjectURL(e.target.files[0]))              
               setprofileObj(URL.createObjectURL(e.target.files[0]));
+
+              let myFormData = new FormData();
+              myFormData.append("profilePicture", e.target.files[0]);
+              axios
+                .post(
+                  `${process.env.REACT_APP_SERVER_URL}forum/profilePicture`,
+                  myFormData
+                )
+                .then((response) => {
+                  console.log(response);
+                  window.location.reload();
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
             }}
           />
           {profileObj == null ? (
             url.length > 0 ? (
-              <img src={url} alt="profile"></img>
+              <img className="profileImg" src={`data:image/png;base64, ${url}`} alt="profile"></img>
             ) : (
               <AccountCircle className="!text-7xl text-arma-title" />
             )
@@ -39,7 +53,7 @@ function Profile({ url, setUrl, isEdit,profileObj,setprofileObj }) {
           )}
         </label>
       ) : url.length > 0 ? (
-        <img src={url} alt="profile"></img>
+        <img className="profileImg" src={`data:image/png;base64, ${url}`} alt="profile"></img>
       ) : (
         <AccountCircle className="!text-7xl text-arma-title" />
       )}

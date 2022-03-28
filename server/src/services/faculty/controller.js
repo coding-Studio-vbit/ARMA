@@ -64,7 +64,9 @@ const editFaculty = async(req,res)=>{
  
  const fetchFaculty = async (req, res) => {
     try {
-      let fac= await faculty.find({});
+      let {name} = req.body
+      console.log(name);
+      let fac= await faculty.find({name:{$regex:`^${name}` , $options: 'i' }});
       res.json(
         response(
           fac,
@@ -74,7 +76,7 @@ const editFaculty = async(req,res)=>{
         
       } catch (err) {
         console.log(err);
-        res.json(response(error, process.env.FAILURE_CODE));
+        res.json(response(err, process.env.FAILURE_CODE));
       }
   }
 

@@ -4,6 +4,7 @@ import readXlsxFile from "read-excel-file";
 import json2ExcelBin from 'js2excel';
 import { Dialog } from "../../../components/Dialog/Dialog";
 import axiosInstance from "../../../utils/axios";
+import {Info} from "@material-ui/icons";
 
 const EventAttendance = () => {
   enum branch {
@@ -30,15 +31,16 @@ const EventAttendance = () => {
     attendedEvents : [string];
   }
 
-
   let data;
   let indx: Number;
   let eventName = "c.S( );SoC - Attendance"
   const [tableData,setTableData] = useState([])
+  const [reportData,setReportData] = useState([])
   const [tableHeader,setTableHeader] = useState(["Name","Roll Number", "Branch","7-1-2021","8-1-2021","9-1-2021"])
   const [eventDates,setEventDates] = useState(["1-11-2020","2-11-2020","3-11-2020"])
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
   const [message, setMessage] = useState("");
+  const [showBtns,setShowBtns] = useState(false)
   const [dataUploaded, setDataUploaded] = useState(false);
   const [studentPresence,setStudentPresence] = useState<any>({});
 
@@ -139,11 +141,11 @@ const EventAttendance = () => {
     setShow(true)
   }
 
-  const handleReport = () =>{
+  const handleReport = async() =>{
     axiosInstance.get(process.env.REACT_APP_SERVER_URL +"events/eventAttendance?eventID=" + eventID)
     .then(res =>{
       let data = res.data.response.data
-      let reportData = []
+      let tempReportData = []
       try{
         data.forEach((value)=>{
           let newObj = {"Name" :value._id.name, 
@@ -155,19 +157,36 @@ const EventAttendance = () => {
             }
             else{ newObj[date] = "Absent" }
           })
-          reportData.push(newObj)
+          tempReportData.push(newObj)
         })
-        json2ExcelBin.json2excel({data: reportData, name: eventName})
+        setReportData(tempReportData);
+        setMessage("Is attendance saved?")
+        setShowBtns(true)
+        setShow(true)
     }
       catch{ 
         console.log("biscuit")
         setMessage("Error! Report cannot be generated right now.") 
         setShow(true)  }
-    })}
+    })
+    }
 
   return (
     <div>
-      <Dialog show={show} setShow={() => setShow(!show)} title={message} />
+      <Dialog show={show} setShow={() => setShow(!show)} title={message}
+       children = {
+         showBtns &&
+        <div>
+            <button className="outlineBtn m-2" onClick={()=>{
+              setShow(!show)
+              setShowBtns(false)}} >No</button>
+            <button className="btn m-2" onClick={()=>{
+                json2ExcelBin.json2excel({data: reportData, name: eventName})
+                setShowBtns(false)
+                setShow(false)  
+            }} >Yes</button>
+        </div>
+      }/>
       <div className="flex flex-wrap">
         <div>
           <h1 className="text-arma-dark-blue pl-10 pt-10 pb-5 text-3xl font-bold">
@@ -178,15 +197,18 @@ const EventAttendance = () => {
           <label htmlFor="upload" className="btn cursor-pointer">
             Upload New Students list
           </label>
-          <input
+          <input 
             type="file"
             id="upload"
             accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            style={{ display: "none" }}
             onChange={(e) => {
               handleFileToJson(e);
             }}
           />
+          <Info className = "text-arma-blue m-3 cursor-pointer" onClick= {()=>{
+            setMessage("Make sure the header row order is as- Name/Rollnumber/Year/Branch\n/Section/Email/Phone")
+            setShow(true)
+          }} />
         </div>
       </div>
       {dataUploaded ? (
