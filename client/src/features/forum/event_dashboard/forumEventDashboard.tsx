@@ -37,7 +37,7 @@ function ForumEventDashboard() {
     return !loading?(
         (
             <div id="forumEventPage">
-                <div id='forumEventPageContent' className='w-screen mx-auto my-5'>
+                <div id='forumEventPageContent' className='mx-auto my-5'>
                     <div className='mx-auto w-11/12 md:w-5/6 mt-8 md:mt-16 mb-12'>
             
                         <div className='flex flex-row justify-start items-center'>
