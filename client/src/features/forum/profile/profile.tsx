@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { AccountCircle } from "@material-ui/icons";
 import "./profile.css";
 import axios from "../../../utils/axios";
 
-function Profile({ url, setUrl, isEdit }) {
-  const [profileObj, setprofileObj] = useState(null);
+function Profile({ url, setUrl, isEdit,profileObj,setprofileObj }) {
   async function getProfileURL() {
     const res = await axios.get(
       `${process.env.REACT_APP_SERVER_URL}forum/profilePicture`
@@ -26,6 +25,7 @@ function Profile({ url, setUrl, isEdit }) {
             onChange={(e) => {
               console.log(URL.createObjectURL(e.target.files[0]))              
               setprofileObj(URL.createObjectURL(e.target.files[0]));
+
               let myFormData = new FormData();
               myFormData.append("profilePicture", e.target.files[0]);
               axios
