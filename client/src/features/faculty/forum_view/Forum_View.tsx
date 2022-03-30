@@ -41,23 +41,27 @@ export const Forum_View = () => {
         {/* View Forum Title */}
 
         {/* Forum Details */}
-        <div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[60rem]"></div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 border-2 shadow-md rounded-[16px] p-6">
-          <div className="grid grid-cols-[0.8fr_1fr] md:grid-cols-[0.8fr_1fr] lg:grid-cols-[0.5fr_1fr] items-center">
-            <span className="text-arma-gray text-xl">Forum:</span>
-            <span className="text-xl">{info?.name}</span>
-          </div>
-          <div className="grid grid-cols-[0.8fr_1fr] lg:grid-cols-[0.3fr_1fr] items-center ">
-            <span className="text-arma-gray text-xl">Email:</span>
-            <span className="text-xl">executives@codingstudio.club</span>
-          </div>
-          <div className="grid grid-cols-[0.8fr_1fr] md:grid-cols-[0.8fr_1fr] lg:grid-cols-[0.5fr_1fr] items-center ">
-            <span className="text-arma-gray text-xl">Faculty Coordinator:</span>
-            <span className="text-xl">{info?.facultyCoordinatorID?.name}</span>
-          </div>
-          <div className="grid grid-cols-[0.8fr_1fr] lg:grid-cols-[0.3fr_1fr] items-center">
-            <span className="text-arma-gray text-xl">Contact:</span>
-            <span className="text-xl">{info?.phone}</span>
+        <div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[60rem]">
+          <p className="text-arma-title mb-1 text-2xl">Personal Details</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2  gap-5 border-2 shadow-md rounded-[16px] p-6">
+            <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr] items-center">
+              <div className="grid grid-cols-[0.8fr_1fr] md:grid-cols-[0.8fr_1fr] lg:grid-cols-[0.5fr_1fr] items-center">
+                <span className="text-arma-gray text-xl">Email:</span>
+                <span className="text-xl ml-4">{info?.email ?? " "}</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr]  items-center">
+              <span className="text-arma-gray text-xl">
+                Faculty Coordinator:
+              </span>
+              <span className="text-xl">
+                {info?.facultyCoordinatorID?.name}
+              </span>
+            </div>
+            <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr] items-center">
+              <span className="text-arma-gray text-xl">Contact:</span>
+              <span className="text-xl">{info?.phone}</span>
+            </div>
           </div>
         </div>
 
