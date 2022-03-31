@@ -2,11 +2,13 @@ const { welcomeTemplate } = require("../../email_templates/templates");
 const events = require("../../models/event");
 const forums = require("../../models/forum");
 const response = require("../util/response");
+const base64 = require("../util/base64")
+const fs = require("fs");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
 const facultyModel = require("../../models/faculty");
 const { populate } = require("../../models/forum");
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 const dashboard = async (req, res) => {
   try {
     let myEvents = await events.find({ forumID: req.user._id });
@@ -75,12 +77,12 @@ const addNewForumMembers = async (req, res) => {
     let stu = await students.findOne({ rollNumber: stuser.rollNumber });
     const forum = await forums.findOne({ name: forumName });
     let studentExists;
-    if(stu){
-       studentExists = forum.forumMembers.find(
+    if (stu) {
+      studentExists = forum.forumMembers.find(
         (v) => v.toString() === stu._id.toString()
       );
     }
-   
+
     if (studentExists) throw "Student already exists";
     if (stu) {
       await forums.findOneAndUpdate(
@@ -151,7 +153,7 @@ const getCoreForumMembers = async (req, res) => {
   //For filters
   let where = {};
   console.log(req.query.name);
-  if (req.query.name) where.name = req.query.name
+  if (req.query.name) where.name = req.query.name;
   //For sorting
   let sort = {};
   if (req.query.orderBy && req.query.order)
@@ -159,13 +161,19 @@ const getCoreForumMembers = async (req, res) => {
   else sort = { name: "asc" };
   try {
     result = await forums
-      .findOne({name:req.query.name})
-      .select('-password')
-      .populate({path: 'forumCoreTeamMembers', populate:{path:'studentID'}})
-      // [0,1,2,3,4,5,6,7,8,9,10]
-    const mem = result.forumCoreTeamMembers.slice(limit*(page-1),limit*page)
-    console.log(limit*(page-1));
-     console.log(result);
+      .findOne({ name: req.query.name })
+      .select("-password")
+      .populate({
+        path: "forumCoreTeamMembers",
+        populate: { path: "studentID" },
+      });
+    // [0,1,2,3,4,5,6,7,8,9,10]
+    const mem = result.forumCoreTeamMembers.slice(
+      limit * (page - 1),
+      limit * page
+    );
+    console.log(limit * (page - 1));
+    console.log(result);
     res.json(
       response(
         { data: mem, total: result.forumCoreTeamMembers.length },
@@ -292,15 +300,15 @@ const deleteforumMember = async (req, res) => {
   try {
     const { forumName, studentID, userType } = req.body;
     if (userType === "core") {
-      console.log(forumName,studentID);
+      console.log(forumName, studentID);
       console.log(mongoose.Types.ObjectId(studentID));
       await forums.updateOne(
         { name: forumName },
         {
           $pull: {
-            forumCoreTeamMembers: 
-               { studentID: mongoose.Types.ObjectId(studentID) },
-            
+            forumCoreTeamMembers: {
+              studentID: mongoose.Types.ObjectId(studentID),
+            },
           },
         }
       );
@@ -315,7 +323,6 @@ const deleteforumMember = async (req, res) => {
       );
     }
     res.json(response("User Deleted", process.env.SUCCESS_CODE));
-
   } catch (error) {
     console.log(error);
     res.json(response("Cannot delete the member", process.env.FAILURE_CODE));
@@ -324,32 +331,120 @@ const deleteforumMember = async (req, res) => {
 
 const forumViewCard = async (req, res) => {
   try {
-    let {id} = req.body
-    let forum= await forums.findOne({_id:id}).populate("facultyCoordinatorID").populate({path:"events", match:{eventStatus:"COMPLETED"}, populate:{path:"attendanceDocID"}})
-    forum = forum.toObject()
+    let { id } = req.body;
+    let forum = await forums
+      .findOne({ _id: id })
+      .populate("facultyCoordinatorID")
+      .populate({
+        path: "events",
+        match: { eventStatus: "COMPLETED" },
+        populate: { path: "attendanceDocID" },
+      });
+    forum = forum.toObject();
     console.log(forum.events);
-    for(let i = 0; i < forum.events.length;i++)
-    {
-      forum.events[i].participants = forum.events[i].attendanceDocID.presence.length;
-      let set = new Set()
-      for(let j = 0; j < forum.events[i].halls.length; j++)
-      {
-        set.add(forum.events[i].halls[j].date)
+    for (let i = 0; i < forum.events.length; i++) {
+      forum.events[i].participants =
+        forum.events[i].attendanceDocID.presence.length;
+      let set = new Set();
+      for (let j = 0; j < forum.events[i].halls.length; j++) {
+        set.add(forum.events[i].halls[j].date);
       }
-      forum.events[i]["duration"] = 3 //set.size 
+      forum.events[i]["duration"] = 3; //set.size
     }
-    res.json(
-      response(
-        forum,
-        process.env.SUCCESS_CODE
-      )
+    res.json(response(forum, process.env.SUCCESS_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
+
+const uploadProfilePicture = async (req, res) => {
+  try {
+    const imagePath = req.files.profilePicture[0].path;
+    console.log(imagePath);
+    forums.findOneAndUpdate(
+      { email: req.user.email },
+      { profilePictureFilePath: imagePath },
+      { returnDocument: "before" },
+      (err, doc) => {
+        if (err) {
+          throw err;
+        } else {
+          fs.unlinkSync(doc.profilePictureFilePath);
+          res.json(
+            response(
+              "SUCCESSFULLY UPDATED FORUM PROFILE IMAGE",
+              process.env.SUCCESS_CODE
+            )
+          );
+        }
+      }
     );
-      
-    } catch (err) {
-      console.log(err);
-      res.json(response(err, process.env.FAILURE_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
+
+const getProfilePicture = async (req, res) => {
+  //console.log(req);
+  try{
+    const myForum = await forums.findOne({email: req.user.email});
+    console.log(myForum.profilePictureFilePath);
+    if(myForum.profilePictureFilePath == undefined)
+      res.sendFile("cs.png", {root: __dirname});
+    else
+    {
+      res.json(response(base64.encode(myForum.profilePictureFilePath), process.env.SUCCESS_CODE));   
     }
-}
+  }
+  catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
+
+const uploadDashboardCover = async (req, res) => {
+  try {
+    const imagePath = req.files.dashboardCover[0].path;
+    forums.findOneAndUpdate(
+      { email: req.user.email },
+      { dashboardCoverFilePath: imagePath },
+      { returnDocument: "before" },
+      (err, doc) => {
+        if (err) {
+          throw err;
+        } else {
+          fs.unlinkSync(doc.dashboardCoverFilePath);
+          res.json(
+            response(
+              "SUCCESSFULLY UPDATED DASHBOARD COVER IMAGE",
+              process.env.SUCCESS_CODE
+            )
+          );
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
+
+const getDashboardCover = async (req, res) => {
+  //console.log(req);
+  try{
+    const myForum = await forums.findOne({email: req.user.email});
+    if(myForum.dashboardCoverFilePath == undefined)
+      res.sendFile("sky.png", {root: __dirname});
+    else
+      res.sendFile(myForum.dashboardCoverFilePath, {root: "/"});   
+  }
+  catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
 
 module.exports = {
   dashboard,
@@ -364,4 +459,8 @@ module.exports = {
   forumEventNumber,
   updateProfile,
   forumViewCard,
+  uploadProfilePicture,
+  getProfilePicture,
+  uploadDashboardCover,
+  getDashboardCover
 };

@@ -29,6 +29,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
   const [selectDepartment, setSelectDepartment] = useState(location.state?.branch ?? "");
   const [selectSection, setSelectSection] = useState(location.state?.section ?? "");
   let {id} = useParams()
+  console.log(id);
   
   const department = [
     { value: "CSE ", label: "CSE" },

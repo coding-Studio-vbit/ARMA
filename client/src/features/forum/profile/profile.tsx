@@ -1,47 +1,64 @@
-import React,{useState} from 'react';
-import profilepic from '../../../assets/profilepic.png';
-import { AccountCircle} from "@material-ui/icons";
+import { useEffect } from "react";
+import { AccountCircle } from "@material-ui/icons";
+import "./profile.css";
+import axios from "../../../utils/axios";
 
-function Profile({link,onChange}) {
-    const [url, setUrl] = useState<string>(link);
-    const [image,setImage] = useState(null);
-    async function updateProfile() {
-        try {
-            //updateProfile()
-            //onChange to setURL and setImage to null 
+function Profile({ url, setUrl, isEdit,profileObj,setprofileObj }) {
+  async function getProfileURL() {
+    const res = await axios.get(
+      `${process.env.REACT_APP_SERVER_URL}forum/profilePicture`
+    );
+    console.log(res.data.response)
+    setUrl(res.data.response);
+  }
+  useEffect(() => {
+    getProfileURL();
+  }, []);
 
-        } catch (error) {
-            //display dialog: update failed
-        }
-        
-    }
   return (
     <div>
-        { 
-            image==null?
-            
-                url.length>0?<img src={url}> </img>: 
-                <AccountCircle className="!text-7xl text-arma-title" />
-            
-      
-      :<img src={image}> </img>
-        }
-        <label>
-         <input
-                    name="profile"
-                    id="file-upload"
-                    onChange={(e)=>{setImage(e.target.files[0]) }}
+      {isEdit ? (
+        <label className="custom-file-upload">
+          <input
+            type="file"
+            name="file"
+            onChange={(e) => {
+              console.log(URL.createObjectURL(e.target.files[0]))              
+              setprofileObj(URL.createObjectURL(e.target.files[0]));
 
-                    className="hidden"
-                    type="file"
-                ></input>
-                upload profile
+              let myFormData = new FormData();
+              myFormData.append("profilePicture", e.target.files[0]);
+              axios
+                .post(
+                  `${process.env.REACT_APP_SERVER_URL}forum/profilePicture`,
+                  myFormData
+                )
+                .then((response) => {
+                  console.log(response);
+                  window.location.reload();
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            }}
+          />
+          {profileObj == null ? (
+            url.length > 0 ? (
+              <img className="profileImg" src={`data:image/png;base64, ${url}`} alt="profile"></img>
+            ) : (
+              <AccountCircle className="!text-7xl text-arma-title" />
+            )
+          ) : (
+            <img src={profileObj} alt="profile" className="profileImg"></img>
+          )}
         </label>
-
-      </div>
-
-    
-  )
+      ) : url.length > 0 ? (
+        <img className="profileImg" src={`data:image/png;base64, ${url}`} alt="profile"></img>
+      ) : (
+        <AccountCircle className="!text-7xl text-arma-title" />
+      )}
+    </div>
+  );
 }
 
-export default Profile
+export default Profile;
