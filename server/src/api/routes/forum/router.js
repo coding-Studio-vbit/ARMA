@@ -1,11 +1,11 @@
 const router = require("express").Router();
-const tokenAuth = require("../../middleware/tokenAuth")
+const tokenAuth = require("../../middleware/tokenAuth");
 const controller = require("../../../services/forum/controller");
 const multerStorage = require("../../../services/util/multerStorage");
 const multer = require("multer");
 const upload = multer({ storage: multerStorage });
 
-router.use(tokenAuth)
+router.use(tokenAuth);
 
 router.get("/dashboard", controller.dashboard);
 router.post("/addNewForumMembers", controller.addNewForumMembers);
@@ -23,5 +23,11 @@ router.post(
   controller.uploadProfilePicture
 );
 router.get("/profilePicture", controller.getProfilePicture);
+router.post(
+  "/dashboardCover",
+  upload.fields([{ name: "dashboardCover", maxCount: 1 }]),
+  controller.uploadDashboardCover
+);
+router.get("/dashboardCover", controller.getDashboardCover);
 
 module.exports = router;

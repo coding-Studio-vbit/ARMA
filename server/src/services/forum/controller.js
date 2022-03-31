@@ -2,6 +2,7 @@ const { welcomeTemplate } = require("../../email_templates/templates");
 const events = require("../../models/event");
 const forums = require("../../models/forum");
 const response = require("../util/response");
+const base64 = require("../util/base64")
 const fs = require("fs");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
@@ -393,7 +394,51 @@ const getProfilePicture = async (req, res) => {
     if(myForum.profilePictureFilePath == undefined)
       res.sendFile("cs.png", {root: __dirname});
     else
-      res.sendFile(myForum.profilePictureFilePath, {root: "/"});   
+    {
+      res.json(response(base64.encode(myForum.profilePictureFilePath), process.env.SUCCESS_CODE));   
+    }
+  }
+  catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
+
+const uploadDashboardCover = async (req, res) => {
+  try {
+    const imagePath = req.files.dashboardCover[0].path;
+    forums.findOneAndUpdate(
+      { email: req.user.email },
+      { dashboardCoverFilePath: imagePath },
+      { returnDocument: "before" },
+      (err, doc) => {
+        if (err) {
+          throw err;
+        } else {
+          fs.unlinkSync(doc.dashboardCoverFilePath);
+          res.json(
+            response(
+              "SUCCESSFULLY UPDATED DASHBOARD COVER IMAGE",
+              process.env.SUCCESS_CODE
+            )
+          );
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
+
+const getDashboardCover = async (req, res) => {
+  //console.log(req);
+  try{
+    const myForum = await forums.findOne({email: req.user.email});
+    if(myForum.dashboardCoverFilePath == undefined)
+      res.sendFile("sky.png", {root: __dirname});
+    else
+      res.sendFile(myForum.dashboardCoverFilePath, {root: "/"});   
   }
   catch (err) {
     console.log(err);
@@ -416,4 +461,6 @@ module.exports = {
   forumViewCard,
   uploadProfilePicture,
   getProfilePicture,
+  uploadDashboardCover,
+  getDashboardCover
 };

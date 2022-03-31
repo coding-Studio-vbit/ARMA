@@ -58,17 +58,17 @@ const event = new mongoose.Schema({
     ref: "equipments",
   }],
   
-  halls: [{
-    date:{type:Date},
-    timeSlot: [{
-      type:String,
-      enum:["Morning","Afternoon"]
-    }],
-    hall:{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "halls",
-    }
-  }],
+  // halls: [{
+  //   date:{type:Date},
+  //   timeSlot: [{
+  //     type:String,
+  //     enum:["Morning","Afternoon"]
+  //   }],
+  //   hall:{
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: "halls",
+  //   }
+  // }],
   eventProposalDocPath: {
     type: String,
     required: true,
