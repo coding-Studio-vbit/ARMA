@@ -1,4 +1,4 @@
-import { ShopSharp } from "@material-ui/icons";
+import { Info } from "@material-ui/icons";
 import { useState } from "react";
 
 interface SelectedHallsProps {
@@ -14,7 +14,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
     "Nalanda",
     "Prerana",
   ]);
-  const [selectedHalls, setSelectedHalls] = useState([]);
+  const [selectedHalls, setSelectedHalls] = useState(props.SelectedHalls);
   const addHalls = (hall) => {
     var sh = selectedHalls;
     if (selectedHalls.includes(hall)) {
@@ -30,6 +30,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
         <div className="mb-4">
           <div className="w-3/4 m-auto text-center pb-1 mb-4 border-b-2 border-b-gray">
             {hall}
+            <Info className="ml-2" />
           </div>
           <div className="flex">
             <button

@@ -8,6 +8,7 @@ const EventVenue = () => {
   const [showCalender, setShowCalender] = useState(false);
   const [isLong, setIsLong] = useState(false);
   const [cardHalls, setCardHalls] = useState([]);
+  const [data, setData] = useState([]);
 
   const months = [
     "January",
@@ -44,7 +45,6 @@ const EventVenue = () => {
   const [selectedDayRange, setSelectedDayRange] = useState(defaultValue);
   const [eventDates, setEventDates] = useState([]);
   const [showHallSelection, setShowHallSelection] = useState(false);
-  console.log(eventDates, minimumDate);
   const HallsList = (halls: string[]) =>
     halls.map((hall: string) => {
       return (
@@ -58,14 +58,23 @@ const EventVenue = () => {
     });
 
   const DatesList = () =>
-    selectedDays.map((date) => {
-      const dateString = new Date(date.year, date.month, date.day);
+    eventDates.map((event) => {
+      const dateString = new Date(
+        event.dateObject.year,
+        event.dateObject.month,
+        event.dateObject.day
+      );
       var halls = [];
       return (
         <div
           key={dateString.toDateString()}
           className="flex flex-col bg-white w-8/12 my-3 p-5 justify-between items-center rounded-[25px]"
         >
+          <SelectHalls
+            SelectedHalls={event.halls}
+            show={showHallSelection}
+            setShow={setShowHallSelection}
+          />
           <div className="flex flex-col md:flex-row justify-between items-center w-full">
             <button
               onClick={() => setShowCalender(true)}
@@ -88,7 +97,7 @@ const EventVenue = () => {
                   />
                 </button>
               ) : (
-                HallsList(halls)
+                HallsList(event.halls)
               )}
             </div>
           </div>
@@ -100,7 +109,7 @@ const EventVenue = () => {
     var temp = [];
     date.map((d) => {
       const dateString = new Date(d.year, d.month, d.day);
-      var data = { eventDate: dateString, halls: [] };
+      var data = { dateObject: d, eventDate: dateString, halls: [] };
       temp.push(data);
     });
     setEventDates(temp);
@@ -200,11 +209,6 @@ const EventVenue = () => {
       className="flex flex-col h-screen justify-start items-center"
       style={{ backgroundColor: "#f5f5f5" }}
     >
-      <SelectHalls
-        SelectedHalls={cardHalls}
-        show={showHallSelection}
-        setShow={setShowHallSelection}
-      />
       <div
         className="flex text-arma-title text-4xl font-bold mx-5 text-justify mb-3 items-center"
         style={{ color: "#1970A3" }}

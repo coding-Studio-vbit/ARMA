@@ -9,6 +9,7 @@ const ResetPassword = () => {
   const [ConfirmPassword, setConfirmPassword] = useState<String>("");
   const [showPassword, setShowPassword] = useState(false);
   const { id } = useParams();
+
   const validatePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     var password = e.target.value;
     setPassword(password);
