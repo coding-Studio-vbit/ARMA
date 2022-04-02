@@ -163,7 +163,7 @@ export default function AddNewForumMember() {
             setResponse("New Forum Member Added")
             setShow(true)
           } else {
-              setResponse(data.response)
+              setResponse(data.response.message)
               setShow(true)             
           }   
         }
