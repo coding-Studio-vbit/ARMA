@@ -179,7 +179,7 @@ const Table = React.memo(
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-300">
-              {data.map((item: any, index) => {
+              {data?.map((item: any, index) => {
                 return (
                   <tr
                     key={index}
