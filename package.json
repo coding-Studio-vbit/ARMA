@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "js2excel": "^1.0.1",
-    "react-html-table-to-excel": "^2.0.0"
-  }
-}
