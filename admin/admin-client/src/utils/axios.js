@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
 	(config) => {
-		const token = localStorage.getItem('idk');
+		const token = localStorage.getItem('adminToken');
 		if (token) {
 			config.headers.Authorization = `Bearer ${token}`;
 		}
