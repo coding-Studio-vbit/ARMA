@@ -110,7 +110,9 @@ const Dashboard = () => {
           {eventList.map((item) => {
             return (
               <div className="mx-2 my-4 sm:m-4">
-                <EventCard event={item} onClick={()=>{console.log("Hello")}}/>
+                <EventCard event={item} onClick={()=>{
+                  navigate('eventDashboard', {state: item})
+                }}/>
               </div>
             );
           })}
