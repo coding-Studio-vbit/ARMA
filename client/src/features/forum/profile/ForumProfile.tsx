@@ -113,7 +113,7 @@ export default function ForumProfile() {
     if(memHeaders.length === 5){
       if(!core){
         memHeaders.push({
-          displayName: displayName,
+          displayName: "Actions",
           dataPath: "dataPath",
           sortable: false,
         });
@@ -126,7 +126,7 @@ export default function ForumProfile() {
       if (core)
         {
           headers.push({
-          displayName: displayName,
+          displayName: "Actions",
           dataPath: "dataPath",
           sortable: false,
         });

@@ -49,7 +49,7 @@ export const Dialog = ({ show, setShow, children,loading, title }: DialogProps) 
     >
       <motion.div variants={dia} animate="visible" exit="exit" initial="hidden">
         <div
-          className="bg-white p-6 max-w-[90%] rounded-[24px] w-[400px] mx-auto z-[15] "
+          className="bg-white p-4 max-w-[90%] rounded-[24px] w-[400px] mx-auto z-[15] "
           onClick={(e) => {
             e.stopPropagation();
           }}
@@ -64,7 +64,7 @@ export const Dialog = ({ show, setShow, children,loading, title }: DialogProps) 
               />
             </div>
           )}
-          <p className="text-center p-4 text-xl mb-8 ">{title}</p>
+          <p className="text-center text-xl mb-4 ">{title}</p>
           {<div className="flex justify-around">{ loading? <Spinner/> : children}</div>}
         </div>
       </motion.div>

@@ -9,6 +9,8 @@ import { useUser } from "../providers/user/UserProvider";
 // import FacultyDashBoard from "../features/faculty/dashboard/facultyDashBoard";
 import EventCalendar from "../features/general/eventCalendar/eventCalendar";
 import { Students_View } from "../features/faculty/students_view/Students_View";
+import { Forum } from "@material-ui/icons";
+import { Forum_View } from "../features/faculty/forum_view/Forum_View";
 
 function AllRoutes() {
   const { faculty, forum } = useUser();
@@ -17,7 +19,7 @@ function AllRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-      <Route path="/test" element={<Students_View />} />
+      <Route path="/test" element={<Forum_View/>} />
         <Route path="/" element={<Login />} />
         <Route path="/eventCalendar" element={<EventCalendar />} />
 
