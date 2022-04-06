@@ -10,7 +10,7 @@ function StudentsRoutes() {
           <Route path = '/StudentView' element = {<StudentView />}/>
           <Route path = '/AddStudents' element = {<AddStudents isEdit={false} />}/>
           <Route path = '/EditStudents/:id' element = {<AddStudents isEdit={true} />}/>
-          <Route path = '/' element = {<ListStudents />}/>
+          <Route path = '/' element = {<ListStudents isEdit={false} />}/>
       </Routes>
 
   );

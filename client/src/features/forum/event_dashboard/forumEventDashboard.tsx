@@ -1,6 +1,6 @@
 import {useEffect,useState} from 'react'
 import { Spinner } from '../../../components/Spinner/Spinner';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
  interface EventInfo{
     name:string,
@@ -16,8 +16,9 @@ const eventInfoList:EventInfo[] = [
     {name:'Report & Media',route:'/reportAndMedia'},
 ]
 
-function ForumEventDashboard() {
+function ForumEventDashboard(props) {
     const navigate = useNavigate()
+    const {state} = useLocation()
     const [loading, setLoading] = useState<boolean>(true);
     const [username, setUsername] = useState<string>("");
     const [event, setEvent] = useState<string>("");
