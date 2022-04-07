@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Table from "../../Components/CustomTable";
 import Select from "react-select";
 import { InputField } from "../../Components/InputField/InputField";
-import axiosInstance from "../../utils/axios";
 import { useLocation, useParams } from "react-router-dom";
 
 interface SearchStudentsProps {

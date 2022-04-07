@@ -24,18 +24,33 @@ const navigate = useNavigate()
 
                     {/* <button className="btn" onClick = {() => navigate('/Halls/EditHall')}>EDIT</button> */}
                     
+
                     <Table
-                        api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
-                        rowsPerPage={5}
-                        buttonsCount={3}
-                        filter={{rollNumber:roll}}
-                        headers={[
-                            { displayName: "S.NO", dataPath: "forum", sortable: false },
-                            { displayName: "HALL NAME", dataPath: "eventname", sortable: false },
-                            { displayName: "CAPACITY", dataPath: "duration", sortable: false },
-                            { displayName: "ACTIONS", dataPath: "duration", sortable: false },
-                        ]}
-                        />
+                        api={`${process.env.REACT_APP_SERVER_URL + "halls/getHalls"}`}
+                        rowsPerPage={3}
+                        buttonsCount={4}
+                        transformer={(item) => {
+                            let newItem = item;
+                            newItem.actions = (
+                            <span
+                                className="text-red-500"
+                                onClick={() => {
+                                //code to delete this item goes here.
+                                console.log("delete me");
+                                }}
+                            >
+                                delete
+                            </span>
+                            );
+                        return newItem;
+                      }}
+                      headers={[
+                        { displayName: "HALL NAME", dataPath: "name", sortable: false },
+                        { displayName: "CAPACITY", dataPath: "capacity", sortable: false },
+                        { displayName: "ACTIONS", dataPath: "actions", sortable: false },
+                      ]}
+                    />
+
                 </div>
             </div>
         </div>    

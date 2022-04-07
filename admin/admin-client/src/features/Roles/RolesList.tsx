@@ -24,16 +24,18 @@ const navigate = useNavigate()
 
                     {/* <button className="btn" onClick = {() => navigate('/Admins/EditRoles')}>EDIT</button> */}
                     
+                    {/* Need more datapath for roles */}
+
                     <Table
-                        api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                        api={`${process.env.REACT_APP_SERVER_URL + "roles/getRoles"}`}
                         rowsPerPage={5}
                         buttonsCount={3}
                         filter={{rollNumber:roll}}
                         headers={[
-                            { displayName: "S.NO", dataPath: "forum", sortable: false },
-                            { displayName: "ROLE", dataPath: "eventname", sortable: false },
-                            { displayName: "PERMISSIONS", dataPath: "duration", sortable: false },
-                            { displayName: "ACTIONS", dataPath: "duration", sortable: false },
+                            { displayName: "NAME", dataPath: "name", sortable: false },
+                            // { displayName: "ROLE", dataPath: "role", sortable: false },
+                            // { displayName: "PERMISSIONS", dataPath: "permissions", sortable: false },
+                            // { displayName: "ACTIONS", dataPath: "actions", sortable: false },
                         ]}
                         />
                 </div>

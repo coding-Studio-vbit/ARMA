@@ -25,15 +25,29 @@ const navigate = useNavigate()
                     {/* <button className="btn" onClick = {() => navigate('/Facilities/EditEquip')}>EDIT</button> */}
                     
                     <Table
-                        api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
-                        rowsPerPage={5}
+                        api={`${process.env.REACT_APP_SERVER_URL + "equipment/getEquipment"}`}
+                        rowsPerPage={4}
                         buttonsCount={3}
-                        filter={{rollNumber:roll}}
+                        transformer={(item) => {
+                            let newItem = item;
+                            newItem.actions = (
+                            <span
+                                className="text-red-500"
+                                onClick={() => {
+                                //code to delete this item goes here.
+                                console.log("delete me");
+                                }}
+                            >
+                                delete
+                            </span>
+                            );
+                        return newItem;
+                      }}
                         headers={[
-                            { displayName: "S.NO", dataPath: "forum", sortable: false },
-                            { displayName: "EQUIPMENT", dataPath: "eventname", sortable: false },
-                            { displayName: "TOTAL", dataPath: "duration", sortable: false },
-                            { displayName: "ACTIONS", dataPath: "duration", sortable: false },
+                            // { displayName: "S.NO", dataPath: "forum", sortable: false },
+                            { displayName: "EQUIPMENT", dataPath: "name", sortable: false },
+                            { displayName: "TOTAL", dataPath: "totalCount", sortable: false },
+                            { displayName: "ACTIONS", dataPath: "actions", sortable: false },
                         ]}
                         />
                 </div>

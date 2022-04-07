@@ -106,121 +106,55 @@ const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
                     <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
                         
                         <InputField
-                        name="Search by name"
-                        type="text"
-                        error={nameError}
-                        onChange={(e) => {
-                        validateName(e);
-                        }}
+                            name="Search by Unique ID"
+                            type="text"
+                            error={uniqueidError}
+                            onChange={(e) => {
+                              setRoll(e.target.value);
+                              validateUniqueid(e);
+                            }}
                         />
-
+                        
                         <InputField
-                        name="Search by roll number"
-                        type="text"
-                        error={uniqueidError}
-                        onChange={(e) => {
-                        validateUniqueid(e);
-                        }}
+                          name="Search by name"
+                          type="text"
+                          error={nameError}
+                          onChange={(e) => {
+                          validateName(e);
+                          }}
                         />
-
-                        <Select
-                        name="Year"
-                        placeholder="Year"
-                        options={year}
-                        onChange={(e:any) => {
-                        setSelectYear(e?.value)
-                        }}
-                        styles={{
-                        control: (base) => ({
-                        ...base,
-                        minHeight: 52,
-                        minWidth: 230,
-                        borderRadius: "0.5rem",
-                        border: "2px solid rgb(200, 200, 200)",
-                        }),
-                        placeholder: (base) => ({
-                        ...base,
-                        paddingLeft: '16px'
-                        }),
-                        singleValue: (base) => ({
-                        ...base,
-                        paddingLeft: '16px',
-                        color: '#black'
-                        }) 
-                        }}
-                        className="basic-multi-select"
-                        />
-
-                        <Select
-                        name="Branch"
-                        placeholder="Branch"
-                        options={department}
-                        onChange={(e:any) => {
-                        setSelectDepartment(e?.value)
-                        }}
-                        styles={{
-                        control: (base) => ({
-                        ...base,
-                        minHeight: 52,
-                        minWidth: 230,
-                        borderRadius: "0.5rem",
-                        border: "2px solid rgb(200, 200, 200)",
-                        }),
-                        placeholder: (base) => ({
-                        ...base,
-                        paddingLeft: '16px'
-                        }),
-                        singleValue: (base) => ({
-                        ...base,
-                        paddingLeft: '16px',
-                        color: 'black'
-                        }) 
-                        }}
-                        className="basic-multi-select"
-                        />
-
-                        <Select
-                        name="Section"
-                        placeholder="Section"
-                        options={sections}
-                        onChange={(e:any) => {
-                        setSelectSection(e?.value)
-                        }}
-                        styles={{
-                        control: (base) => ({
-                        ...base,
-                        minHeight: 52,
-                        minWidth: 230,
-                        borderRadius: "0.5rem",
-                        border: "2px solid rgb(200, 200, 200)",
-                        }),
-                        placeholder: (base) => ({
-                        ...base,
-                        paddingLeft: '16px'
-                        }),
-                        singleValue: (base) => ({
-                        ...base,
-                        paddingLeft: '16px',
-                        color: 'black'
-                        }) 
-                        }}
-                        className="basic-multi-select"
-                        /> 
+                        
                     </div>
                     
                     <Table
-                        api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
-                        rowsPerPage={5}
-                        buttonsCount={3}
-                        filter={{rollNumber:roll}}
-                        headers={[
-                            { displayName: "UNIQUE ID", dataPath: "forum", sortable: false },
-                            { displayName: "NAME", dataPath: "eventname", sortable: false },
-                            { displayName: "DESIGNATION", dataPath: "duration", sortable: false },
-                            { displayName: "ROLES", dataPath: "duration", sortable: false },
-                            { displayName: "ACTIONS", dataPath: "duration", sortable: false },
-                        ]}
-                        />
+                      api={`${process.env.REACT_APP_SERVER_URL + "faculty/getFaculty"}`}
+                      rowsPerPage={5}
+                      buttonsCount={3}
+                      filter={{ rollNumber: roll, name: name }}
+                      transformer={(item) => {
+                        let newItem = item;
+                        newItem.actions = (
+                          <span
+                            className="text-red-500"
+                            onClick={() => {
+                              //code to delete this item goes here.
+                              console.log("delete me");
+                            }}
+                          >
+                            delete
+                          </span>
+                        );
+                        return newItem;
+                      }}
+                      headers={[
+                        { displayName: "UNIQUE ID", dataPath: "rollNumber", sortable: true },
+                        { displayName: "NAME", dataPath: "name", sortable: true },
+                        { displayName: "DESIGNATION", dataPath: "designation", sortable: true },
+                        // { displayName: "ROLES", dataPath: "", sortable: false },
+                        { displayName: "ACTIONS", dataPath: "actions", sortable: false },
+                      ]}
+                    />
+
                 </div>
             </div>
         </div>    

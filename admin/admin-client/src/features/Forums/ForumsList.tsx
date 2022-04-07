@@ -52,20 +52,38 @@ const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
                         />
 
                     {/* <button className="btn" onClick = {() => navigate('/Forums/EditForums')}>EDIT</button> */}
+                    
+                    {/* Need Forum End Point to get it working */}
 
                     <Table
-                        api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                        api={`${process.env.REACT_APP_SERVER_URL + "forum"}`}
                         rowsPerPage={5}
                         buttonsCount={3}
-                        filter={{rollNumber:roll}}
-                        headers={[
-                            { displayName: "S.NO", dataPath: "forum", sortable: false },
-                            { displayName: "FORUM NAME", dataPath: "eventname", sortable: false },
-                            { displayName: "FACULTY COORDINATOR", dataPath: "duration", sortable: false },
-                            { displayName: "POINT OF CONTACT", dataPath: "duration", sortable: false },
-                            { displayName: "ACTIONS", dataPath: "duration", sortable: false },
-                        ]}
-                        />
+                        filter={{ rollNumber: roll, name: name }}
+                        transformer={(item) => {
+                            let newItem = item;
+                            newItem.actions = (
+                            <span
+                                className="text-red-500"
+                                onClick={() => {
+                                //code to delete this item goes here.
+                                console.log("delete me");
+                                }}
+                            >
+                                delete
+                            </span>
+                            );
+                        return newItem;
+                      }}
+                      headers={[
+                        { displayName: "S.NO", dataPath: "forum", sortable: false },
+                        { displayName: "FORUM NAME", dataPath: "eventname", sortable: false },
+                        { displayName: "FACULTY COORDINATOR", dataPath: "duration", sortable: false },
+                        { displayName: "POINT OF CONTACT", dataPath: "duration", sortable: false },
+                        { displayName: "ACTIONS", dataPath: "duration", sortable: false },
+                      ]}
+                    />
+
                 </div>
             </div>
         </div>    
