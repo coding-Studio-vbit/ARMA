@@ -1,11 +1,11 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
 import axiosInstance from "../../utils/axios";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 interface AddStudentsProps
 {
@@ -13,11 +13,36 @@ interface AddStudentsProps
 }
 
 export const AddStudents = ({isEdit}:AddStudentsProps) => {
+  const nav = useNavigate()
   const location:any = useLocation()
-  const [uniqueid, setuniqueid] = useState(location.state?.rollNumber ?? "");
-  const [email, setEmail] = useState(location.state?.email ?? "");
-  const [name, setName] = useState(location.state?.name ?? "");
-  const [phone, setPhone] = useState(location.state?.phone ?? "");
+  let {id} = useParams()
+  console.log(id);
+  useEffect(() => {
+    const student = async () => {
+      const res = await axiosInstance.post(
+        process.env.REACT_APP_SERVER_URL + "students/studentViewCard",
+        { id: id }
+      );
+      const data = res.data.response;
+      console.log(data);
+      setName(data?.name)
+      setuniqueid(data?.rollNumber)
+      setSelectYear(data?.year)
+      setSelectDepartment(data?.branch)
+      setSelectSection(data?.section)
+      setEmail(data?.email)
+      setPhone(data?.phone)
+
+    };
+    if(isEdit)
+    {
+    student();
+    }
+  }, []);
+  const [uniqueid, setuniqueid] = useState("");
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [uniqueidError, setUniqueidError] = useState<string>();
   const [emailError, setEmailError] = useState<string>();
   const [nameError, setNameError] = useState<string>();
@@ -25,20 +50,19 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<String>("");
   const [response, setResponse] = useState("")
-  const [selectYear, setSelectYear] = useState(location.state?.year ?? null);
-  const [selectDepartment, setSelectDepartment] = useState(location.state?.branch ?? "");
-  const [selectSection, setSelectSection] = useState(location.state?.section ?? "");
-  let {id} = useParams()
-  console.log(id);
+  const [selectYear, setSelectYear] = useState("");
+  const [selectDepartment, setSelectDepartment] = useState("");
+  const [selectSection, setSelectSection] = useState("");
+  console.log(name);
   
-  const department = [
+  const departments = [
     { value: "CSE ", label: "CSE" },
     { value: "ECE ", label: "ECE" },
     { value: "IT", label: "IT" },
   ];
 
   
-  const year = [
+  const years = [
     { value: "1", label: "1" },
     { value: "2", label: "2" },
     { value: "3", label: "3" },
@@ -117,7 +141,19 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
     
   };
 
-
+  const deleteItem = async() => {
+    setShowError("");
+    const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "students/deleteStudent", {id:id})
+    const data = res.data
+    if (data.status === 1) {
+      setResponse("Deleted")
+      setShow(true)
+      nav('/Students/')
+    } else {
+        setResponse(data.response.message)
+        setShow(true)             
+    }  
+  }
 
   const loginValidate = async() => {
     if (
@@ -145,19 +181,20 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
           setResponse("New Student Added")
           setShow(true)
         } else {
-            setResponse(data.response)
+            setResponse(data.response.message)
             setShow(true)             
         }   
     }
     else{
       setShowError("");
-        const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "students/editStudent", {id:id, name:name, rollNumber:uniqueid, year:selectYear, branch:selectDepartment, section:selectSection,email:email,phone:phone,})
+        const res = await axiosInstance.put(process.env.REACT_APP_SERVER_URL + "students/editStudent", {id:id, name:name, rollNumber:uniqueid, year:selectYear, branch:selectDepartment, section:selectSection,email:email,phone:phone,})
         const data = res.data
         if (data.status === 1) {
           setResponse("Student Details Edited")
           setShow(true)
+          
         } else {
-            setResponse(data.response)
+            setResponse(data.response.message)
             setShow(true)             
         }   
     }
@@ -169,14 +206,22 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
   return (
     <div className="flex flex-col grow items-center">
       <div className="mt-12 w-max">
+        <div className="flex flex-row justify-between">
         <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
           {isEdit? "EDIT STUDENT" : "ADD STUDENT"}
         </p>
-
+        {isEdit &&
+        <button
+          className="btn  bg-arma-red rounded-[8px] px-6 py-2 mb-12 flex" onClick={() => {deleteItem();}}>
+         Delete
+        </button>
+        }
+        </div>
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
           <InputField
             name="Name"
             type="text"
+            value={name}
             error={nameError}
             onChange={(e) => {
               validateName(e);
@@ -185,6 +230,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
           <InputField
             name="Roll Number"
             type="text"
+            value={uniqueid}
             error={uniqueidError}
             onChange={(e) => {
               validateUniqueid(e);
@@ -195,7 +241,8 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
         <Select
             name="Year"
             placeholder="Year"
-            options={year}
+            options={years}
+            value={{value: `${selectYear}`, label: `${selectYear}`}}
             onChange={(e:any) => {
               setSelectYear(e?.value)
           }}
@@ -225,7 +272,8 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
           <Select
             name="Branch"
             placeholder="Branch"
-            options={department}
+            value={{value: `${selectDepartment}`, label: `${selectDepartment}`}}
+            options={departments}
             onChange={(e:any) => {
               setSelectDepartment(e?.value)
           }}
@@ -258,6 +306,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
             name="Section"
             placeholder="Section"
             options={sections}
+            value={{value: `${selectSection}`, label: `${selectSection}`}}
             onChange={(e:any) => {
               setSelectSection(e?.value)
           }}
@@ -287,6 +336,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
           <InputField
             name="Email"
             type="text"
+            value={email}
             error={emailError}
             onChange={(e) => {
               validateEmail(e);
@@ -297,6 +347,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
         <InputField 
             name="Phone"
             type="text"
+            value={phone}
             error={phoneError}
             onChange={(e) =>{validatePhone(e)}}
             />
