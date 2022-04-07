@@ -10,6 +10,9 @@ router.get("/getFaculty",facultyController.getFacultyList);
 router.put("/editProfile", facultyController.editProfile)
 router.put("/editFaculty", facultyController.editFaculty)
 router.post("/fetchFaculty", facultyController.fetchFaculty);
+router.post("/deleteFaculty", facultyController.deleteFaculty);
+router.post("/viewFaculty", facultyController.viewFaculty);
+
 
 
 

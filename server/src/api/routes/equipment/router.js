@@ -13,6 +13,11 @@ router.post("/addEquipment",controller.addEquipment);
 
 router.put("/editEquipment",controller.editEquipment);
 
+router.post("/deleteEquipment", controller.deleteEquipment);
+
+router.post("/viewEquipment", controller.viewEquipment);
+
+
 
 
 module.exports = router;

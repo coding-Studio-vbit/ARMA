@@ -35,4 +35,19 @@ router.put(
   controller.editHall
 );
 
+router.post(
+  "/deleteHall",
+  (req, res, next) => {
+    checkRolePermissions(req, res, next, WRITE_HALLS);
+  },
+  controller.deleteHall
+);
+
+router.post(
+  "/viewHall",
+  (req, res, next) => {
+    checkRolePermissions(req, res, next, WRITE_HALLS);
+  },
+  controller.viewHall
+);
 module.exports = router;

@@ -152,6 +152,27 @@ const editAdmin = async (email, newEmail, newpassword) => {
   }
 };
 
+
+const viewAdmin = async (id) => {
+  try {
+    let admin = await admins.findOne({_id: id});
+    res.json(response(admin, process.env.SUCCESS_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
+const deleteAdmin = async (id) => {
+  try {
+    let admin = await admins.deleteOne({_id:id})
+    res.json(response(admin, process.env.SUCCESS_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
 const addRole = async (data) => {
   try {
     let newRole = new role(data);
@@ -163,4 +184,4 @@ const addRole = async (data) => {
   }
 };
 
-module.exports = { login, register, addStudent, addRole, editAdmin };
+module.exports = { login, register, addStudent, addRole, editAdmin, viewAdmin, deleteAdmin };

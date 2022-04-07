@@ -13,6 +13,15 @@ router.put("/editAdmin", async (req, res) => {
   res.json(result);
 });
 
+router.post("/deleteAdmin" , async(req, res) => {
+  let {id} = req.body;
+  let result = await authService.deleteAdmin(id);
+});
+
+router.post("/viewAdmin" , async(req, res) => {
+  let {id} = req.body;
+  let result = await authService.viewAdmin(id);
+});
 
 router.post("/addFaculty",async(req, res)=>{
   const user = req.body;
