@@ -48,6 +48,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
   const [nameError, setNameError] = useState<string>();
   const [phoneError, setPhoneError] = useState<string>();
   const [show, setShow] = useState(false);
+  const [show1, setShow1] = useState(false);
   const [showError, setShowError] = useState<String>("");
   const [response, setResponse] = useState("")
   const [selectYear, setSelectYear] = useState("");
@@ -212,10 +213,17 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
         </p>
         {isEdit &&
         <button
-          className="btn  bg-arma-red rounded-[8px] px-6 py-2 mb-12 flex" onClick={() => {deleteItem();}}>
+          className="btn  bg-arma-red hover:bg-arma-red rounded-[8px] px-6 py-2 mb-12 flex" onClick={() => {setShow1(true)}}>
          Delete
         </button>
         }
+         <Dialog show={show1} setShow={setShow1} title="Are you sure you want to proceed?">
+         <button className="outlineBtn" onClick={()=>setShow1(false)} >Cancel</button>
+         <button className="btn" onClick={()=>{
+          deleteItem();
+        }} >Proceed</button>
+        </Dialog>
+
         </div>
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
           <InputField
