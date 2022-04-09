@@ -32,7 +32,6 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
       setSelectSection(data?.section)
       setEmail(data?.email)
       setPhone(data?.phone)
-
     };
     if(isEdit)
     {
@@ -43,10 +42,10 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [uniqueidError, setUniqueidError] = useState<string>();
-  const [emailError, setEmailError] = useState<string>();
-  const [nameError, setNameError] = useState<string>();
-  const [phoneError, setPhoneError] = useState<string>();
+  const [uniqueidError, setUniqueidError] = useState<string>("");
+  const [emailError, setEmailError] = useState<string>("");
+  const [nameError, setNameError] = useState<string>("");
+  const [phoneError, setPhoneError] = useState<string>("");
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [showError, setShowError] = useState<String>("");
@@ -166,10 +165,13 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
       selectSection.length === 0 ||
       uniqueidError?.length !== 0 ||
       nameError?.length !== 0 ||
-      emailError?.length !==0  
-      
-    ) {
+      emailError?.length !==0  ||
+      phoneError?.length !==0    
+    ) 
+    {
       setShowError("Fill details appropriately");
+      console.log(uniqueidError?.length + nameError?.length + emailError?.length);
+      
     }
     else
     {
@@ -250,7 +252,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
             name="Year"
             placeholder="Year"
             options={years}
-            value={{value: `${selectYear}`, label: `${selectYear}`}}
+            value={isEdit ? {value: `${selectYear}`, label: `${selectYear}`} : "Year" }
             onChange={(e:any) => {
               setSelectYear(e?.value)
           }}
@@ -280,7 +282,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
           <Select
             name="Branch"
             placeholder="Branch"
-            value={{value: `${selectDepartment}`, label: `${selectDepartment}`}}
+            value={isEdit ? {value: `${selectDepartment}`, label: `${selectDepartment}`} : "Branch"}
             options={departments}
             onChange={(e:any) => {
               setSelectDepartment(e?.value)
@@ -314,7 +316,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
             name="Section"
             placeholder="Section"
             options={sections}
-            value={{value: `${selectSection}`, label: `${selectSection}`}}
+            value={isEdit ? {value: `${selectSection}`, label: `${selectSection}`} : "Section"}
             onChange={(e:any) => {
               setSelectSection(e?.value)
           }}
