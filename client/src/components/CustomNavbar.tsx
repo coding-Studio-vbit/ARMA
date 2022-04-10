@@ -126,7 +126,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
             Hi, {forum?.name ?? faculty?.name}
           </span>
           <span className="material-icons text-arma-dark-blue/70 md-48 align-middle text-3xl">
-          {url.length > 0 ? (
+          {url?.length > 0 ? (
               <img className="h-10 w-10 rounded-3xl" src={`data:image/png;base64, ${url}`} alt="profile"></img>
             ) : (
               // <AccountCircle className="!text-7xl text-arma-title " />
