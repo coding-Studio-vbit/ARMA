@@ -74,20 +74,7 @@ const Dashboard = () => {
             return (
               <div className="mx-2 my-4 sm:m-4">
                 <EventCard event={item} onClick={()=>{
-                  navigate(
-                    'eventDashboard', 
-                    {
-                      state:{
-                        forumID:item.forumID,
-                        eventStatus:item.eventStatus,
-                        budgetDocPath:item.budgetDocPath,
-                        equipment:item.equipment,
-                        eventDates:item.eventDates,
-                        hasBudget:item.hasBudget,
-                        name:item.name
-                      }
-                    }
-                  )
+                  navigate('eventDashboard', {state:item})
                 }}/>
               </div>
             );

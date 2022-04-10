@@ -11,8 +11,8 @@ import { log } from 'console';
 
 const eventInfoList:EventInfo[] = [
     {name:'Event Details',route:'eventInfo'},
-    {name:'Budget',route:'budget'},
     {name:'Event Venue',route:'venueInfo'},
+    {name:'Budget',route:'budget'},
     {name:'Equipment',route:'eventEquipment'},
     {name:'Attendance',route:'eventAttendance'},
     {name:'Report & Media',route:'reportAndMedia'},
@@ -31,11 +31,9 @@ function ForumEventDashboard() {
     async function getEventDetails(){
         console.log(state);        
         if(state){
-            setUsername("codingStudio();");
-           
+            setUsername("codingStudio();");           
             setEvent(state.name);
-            setStatus(state.eventStatus);  
-            
+            setStatus(state.eventStatus);              
             try {
                 const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty", );
                 console.log(res);                
@@ -73,12 +71,12 @@ function ForumEventDashboard() {
                         <div className='flex flex-row flex-wrap 
                             sm:flex-wrap md:flex-nowrap justify-center items-center gap-5 xl:w-5/6 my-5 mx-auto w-5/6 md:w-full'>
                             {
-                                eventInfoList.slice(0,3).map((eventInfo,index)=>{
+                                eventInfoList.slice(0,state.hasBudget?3:2).map((eventInfo,index)=>{
                                     return(
-                                        <div className='w-full sm:w-3/4 md:w-1/3 px-6 py-8 lg:p-10 m-0 
-                                            arma-card-gradient text-white  text-xl lg:text-2xl
-                                            shadow-2xl rounded-2xl min-h-max h-48 md:h-60'
-                                            onClick={()=>navigate(`../${eventInfo.route}`,{replace:true})}
+                                        <div className='w-full sm:w-3/4 md:w-1/3 px-6 py-6 lg:py-8 lg:p-10 m-0 
+                                            arma-card-gradient text-white  text-lg sm:text-xl lg:text-2xl
+                                            shadow-2xl rounded-2xl min-h-max h-40 lg:h-60'
+                                            onClick={()=>navigate(`../${eventInfo.route}`,)}
                                             >
                                             <div className=' flex flex-wrap justify-between items-center' 
                                                 >
@@ -98,16 +96,16 @@ function ForumEventDashboard() {
                         </div>
 
                         <div className='flex flex-row flex-wrap 
-                            sm:flex-wrap md:flex-nowrap justify-center md:justify-start items-center gap-5 xl:w-5/6 my-5 mx-auto w-5/6 md:w-full'>
+                            sm:flex-wrap md:flex-nowrap justify-center  items-center gap-5 xl:w-5/6 my-5 mx-auto w-5/6 md:w-full'>
                             {
                                 eventInfoList
                                 .slice(3,status==="APPROVED"?6:4)
                                 .map((eventInfo,index)=>{
                                     return(
-                                        <div className='w-full sm:w-3/4 md:w-1/3 p-6 py-8 lg:p-10 m-0 
-                                        arma-card-gradient text-white  text-xl lg:text-2xl
-                                        shadow-2xl rounded-2xl min-h-max h-48 md:h-60'
-                                        onClick={()=>navigate(eventInfo.route,{ replace: true })}
+                                        <div className='w-full sm:w-3/4 md:w-1/3 p-6 lg:py-8 lg:p-10 m-0 
+                                        arma-card-gradient text-white text-lg sm:text-xl lg:text-2xl
+                                        shadow-2xl rounded-2xl min-h-max h-40 lg:h-60'
+                                        onClick={()=>navigate(`../${eventInfo.route}`)}
                                         >
                                             <div className=' flex flex-wrap justify-between items-center' 
                                                 >
