@@ -57,7 +57,6 @@ const event = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "equipments",
   }],
-  
   // halls: [{
   //   date:{type:Date},
   //   timeSlot: [{
