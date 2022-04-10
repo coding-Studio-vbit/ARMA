@@ -7,38 +7,6 @@ import axios from "../../../utils/axios";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [eventList, setEventList] = useState([]);
-  // const eventList = [
-  //   {
-  //     name: "codeCraft 3.0",
-  //     eventStatus: "completed",
-  //     isActive: true,
-  //   },
-  //   {
-  //     name: "codeCraft 3.0",
-  //     eventStatus: "approved",
-  //     isActive: true,
-  //   },
-  //   {
-  //     name: "codeCraft 3.0",
-  //     eventStatus: "rejected",
-  //     isActive: true,
-  //   },
-  //   {
-  //     name: "codeCraft 3.0",
-  //     eventStatus: "AWAITING SAC APPROVAL",
-  //     isActive: false,
-  //   },
-  //   {
-  //     name: "codeCraft 3.0",
-  //     eventStatus: "AWAITING BUDGET APPROVAL",
-  //     isActive: false,
-  //   },
-  //   {
-  //     name: "codeCraft 3.0",
-  //     eventStatus: "rejected",
-  //     isActive: false,
-  //   },
-  // ];
 
   useEffect(()=>{
     axios.get(`${process.env.REACT_APP_SERVER_URL}forum/dashboard`)
@@ -123,3 +91,39 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+
+
+// const eventList = [
+  //   {
+  //     name: "codeCraft 3.0",
+  //     eventStatus: "completed",
+  //     isActive: true,
+  //   },
+  //   {
+  //     name: "codeCraft 3.0",
+  //     eventStatus: "approved",
+  //     isActive: true,
+  //   },
+  //   {
+  //     name: "codeCraft 3.0",
+  //     eventStatus: "rejected",
+  //     isActive: true,
+  //   },
+  //   {
+  //     name: "codeCraft 3.0",
+  //     eventStatus: "AWAITING SAC APPROVAL",
+  //     isActive: false,
+  //   },
+  //   {
+  //     name: "codeCraft 3.0",
+  //     eventStatus: "AWAITING BUDGET APPROVAL",
+  //     isActive: false,
+  //   },
+  //   {
+  //     name: "codeCraft 3.0",
+  //     eventStatus: "rejected",
+  //     isActive: false,
+  //   },
+  // ];
