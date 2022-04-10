@@ -1,4 +1,5 @@
 const events = require("../../models/event");
+const reservations = require("../../models/reservations");
 const response = require("../util/response");
 const attendance = require("../../models/attendance");
 const roles = require("../../models/role");
@@ -7,7 +8,6 @@ const { budgetDocUpdateTemplate } = require("../../email_templates/templates");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
 const halls = require("../../models/hall");
-//const Bookings = require("../../models/bookings");
 
 const getEvents = async (req, res) => {
   //For pagination
@@ -27,9 +27,6 @@ const getEvents = async (req, res) => {
     ];
   }
   if (req.query.eventStatus) where.eventStatus = req.query.eventStatus;
-
-  console.log(where);
-
   //For sorting
   let sort = {};
   if (req.query.orderBy && req.query.order)
@@ -72,62 +69,91 @@ const getEvents = async (req, res) => {
 };
 
 const createEvent = async (req, res) => {
-  // try {
-  //   let newAttendanceDoc = new attendance();
-  //   let equipment = [];
-  //   for (let i = 0; i < req.body.equipment.length; i++) {
-  //     const { name, totalCount } = req.body.equipment[i];
-  //     const eq = await equipments.findOne({ name: name });
-  //     equipment.push(eq);
-  //   }
-  // hall :[
-  //   {
-  //     date:Date,
-  //     hallID:HallID,
-  //     timeSlot:enum
-  //   }
-  // ]
-  ///Halls
-  //   const { hall } = req.body;
-  //   const hallsNew = hall.map(async (hallItem) => {
-  //     const h = await halls.findById(hallItem.hallID);
-  //     return {
-  //       hall: h,
-  //       date: hallItem.date,
-  //       timeSlot: hallItem.timeSlot,
-  //     };
-  //   });
-  //   let newEvent = new events({
-  //     forumID: req.user._id,
-  //     name: req.body.name,
-  //     description: req.body.description,
-  //     eventProposalDocPath: req.files.eventDocument[0].path,
-  //     budgetDocPath: req.files.budgetDocument[0].path,
-  //     hasBudget: req.files.budgetDocument !== null,
-  //     equipment: equipment,
-  //     halls: hallsNew,
-  //   });
-  //   const booking = new Bookings({
-  //     halls: hallsNew,
-  //     eventID: newEvent._id,
-  //     status: "ONHOLD",
-  //   });
-  //   newAttendanceDoc.eventID = String(newEvent._id);
-  //   newEvent.attendanceDocID = String(newAttendanceDoc._id);
-  //   newEvent.eventStatus =
-  //     req.files.budgetDocument !== null
-  //       ? "AWAITING BUDGET APPROVAL"
-  //       : "AWAITING SAC APPROVAL";
-  //   await newAttendanceDoc.save();
-  //   await newEvent.save();
-  //   await booking.save();
-  //   res.json(
-  //     response({ message: "new event created" }, process.env.SUCCESS_CODE)
-  //   );
-  // } catch (e) {
-  //   console.log(e);
-  //   res.json(response({ message: "error" }, process.env.FAILURE_CODE));
-  // }
+  try {
+    // Create a new attendance document for this event.
+    let newAttendanceDoc = new attendance();
+    // Set the required equipment array
+    let equipment = [];
+    for (let i = 0; i < req.body.equipment.length; i++) {
+      const { name, totalCount } = req.body.equipment[i];
+      const eq = await equipments.findOne({ name: name });
+      equipment.push(eq._id);
+    }
+
+    let newEvent = new events({
+      forumID: req.user._id,
+      description: req.body.description,
+      name: req.body.name,
+      eventProposalDocPath: req.files.eventDocument[0].path,
+      budgetDocPath: req.files.budgetDocument[0].path,
+      hasBudget: req.files.budgetDocument !== null,
+      equipment: equipment,
+    });
+    newAttendanceDoc.eventID = String(newEvent._id);
+    newEvent.attendanceDocID = String(newAttendanceDoc._id);
+    newEvent.eventStatus =
+      req.files.budgetDocument !== null
+        ? "AWAITING BUDGET APPROVAL"
+        : "AWAITING SAC APPROVAL";
+
+    // Create reservations.
+    /**
+     *  [
+     *   {
+     *     HallID: hallID,
+     *     dates: ["2-3-2022", "3-3-2022"]
+     *     timeSlots: [["MORNING", "AFTERNOON"], ["MORNING"]]
+     *   }
+     *  ]
+     */
+    const eventReservations = req.body.reservations;
+    eventReservations.forEach(async (obj) => {
+      //first check if the dates are valid
+      //see if an already reserved date is being booked again.
+      const currentReservations = reservations.find({
+        status: "NOT COMPLETED",
+        hallId: obj.hallId,
+      });
+      const blocked = [];
+
+      currentReservations.forEach((r) => {
+        for (let i = 0; i < r.dates.length; i++) {
+          for (let j = 0; j < r.timeSlots[i].length; j++) {
+            blocked.push(r.dates[i] + "." + r.timeSlots[i][j]);
+          }
+        }
+      });
+      eventReservations.forEach((r) => {
+        for (let i = 0; i < r.dates.length; i++) {
+          for (let j = 0; j < r.timeSlots[i].length; j++) {
+            d = r.dates[i] + "." + r.timeSlots[i][j];
+            if (booked.indexOf(d) !== -1) {
+              throw new Error("Invalid dates");
+            }
+          }
+        }
+      });
+
+      const record = new reservations();
+      record.hallId = obj.hallId;
+      record.forumId = req.user._id;
+      record.status = "NOT COMPLETED";
+      record.eventId = newEvent._id;
+      record.dates = obj.dates;
+      record.timeSlots = obj.timeSlots;
+      await record.save();
+    });
+
+    await newAttendanceDoc.save();
+    await newEvent.save();
+
+    res.json(
+      response({ message: "new event created" }, process.env.SUCCESS_CODE)
+    );
+  } catch (e) {
+    console.log(e);
+    res.json(response({ message: "error" }, process.env.FAILURE_CODE));
+  }
 };
 const updateBudgetDoc = async (req, res) => {
   //update the budget here.
@@ -218,8 +244,8 @@ const uploadRegistrantsList = async (req, res) => {
 
 const eventAttendance = async (req, res) => {
   let where = {};
-  if (req.query.eventID) where.eventID = req.query.eventID
-  console.log(req.query.eventID)
+  if (req.query.eventID) where.eventID = req.query.eventID;
+  console.log(req.query.eventID);
   try {
     result = await attendance
       .findOne(where)
@@ -232,8 +258,7 @@ const eventAttendance = async (req, res) => {
         process.env.SUCCESS_CODE
       )
     );
-  } 
-  catch (error) {
+  } catch (error) {
     console.log(error);
     res.json(
       response({ message: "event data fetch error" }, process.env.FAILURE_CODE)
@@ -241,17 +266,17 @@ const eventAttendance = async (req, res) => {
   }
 };
 
-const postAttendance = async(req,res)=>{
-  try{
-    let attendanceDoc = await attendance.findOne({eventID : req.body.eventID});
-    attendanceDoc.presence.forEach(element=> {
-      element.dates = req.body.studentPresence[element._id]
-    })
-    await attendanceDoc.save()
+const postAttendance = async (req, res) => {
+  try {
+    let attendanceDoc = await attendance.findOne({ eventID: req.body.eventID });
+    attendanceDoc.presence.forEach((element) => {
+      element.dates = req.body.studentPresence[element._id];
+    });
+    await attendanceDoc.save();
     res.json(
-      response({message:"Attendance Updated"},process.env.SUCCESS_CODE)
+      response({ message: "Attendance Updated" }, process.env.SUCCESS_CODE)
     );
-  }catch(error){
+  } catch (error) {
     console.log(error);
     res.json(
       response(
@@ -293,7 +318,7 @@ const getRequests = async (req, res) => {
   }
 };
 
-const getActiveEvents = async (req, res) => {
+const getCalendarEvents = async (req, res) => {
   try {
     const result = await events.find({ eventStatus: "APPROVED" });
     res.json(response(result, process.env.SUCCESS_CODE));
@@ -329,6 +354,24 @@ const getEventById = async (req, res) => {
   }
 };
 
+const getActiveEvents = async (req, res) => {
+  try {
+    const currentDate = new Date();
+    const possibleEvents = await reservations
+      .find({ status: "NOT COMPLETED" })
+      .populate("forumId")
+      .populate("eventId");
+    const dateString = `${currentDate.getDate()}-${currentDate.getMonth()}-${currentDate.getFullYear()}`;
+    const activeEvents = possibleEvents.filter((event) => {
+      return event.dates.indexOf(dateString) !== -1;
+    });
+    res.json(response(activeEvents, process.env.SUCCESS_CODE));
+  } catch (error) {
+    console.log(error);
+    response("Failure", process.env.FAILURE_CODE);
+  }
+};
+
 module.exports = {
   getEventById,
   getEvents,
@@ -336,6 +379,7 @@ module.exports = {
   updateBudgetDoc,
   reportAndMedia,
   getRequests,
+  getCalendarEvents,
   getActiveEvents,
   uploadRegistrantsList,
   eventAttendance,

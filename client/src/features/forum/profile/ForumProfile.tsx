@@ -39,12 +39,15 @@ let memHeaders:any[] =[
   { displayName: "Section", dataPath: "section", sortable: false },
 ];
 
+
+
 export default function ForumProfile() {
   const navigate = useNavigate()
   const { forum, setForum } = useUser();
   const [isEdit, setIsEdit] = useState(false);
   const [message, setMessage] = useState("")
   const [show, setShow] = useState(false)
+  const [link, setLink] = useState("")
   const [description, setDescription] = useState<string>(
     forum?.description ?? " "
   );
