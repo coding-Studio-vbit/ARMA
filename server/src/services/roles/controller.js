@@ -85,4 +85,28 @@ const fetchRoles = async (req, res) => {
     res.json(response(error, process.env.FAILURE_CODE));
   }
 };
-module.exports = { addRoles, getRoles, editRole, fetchRoles };
+
+const viewRoles = async (req, res) => {
+  try {
+    let {id} = req.body
+    let role = await roles.findOne({_id: id});
+    res.json(response(role, process.env.SUCCESS_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
+const deleteRoles = async (req, res) => {
+  try {
+    let {id} = req.body;
+    let role = await roles.deleteOne({_id:id})
+    res.json(response(role, process.env.SUCCESS_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
+
+module.exports = { addRoles, getRoles, editRole, fetchRoles, viewRoles, deleteRoles };

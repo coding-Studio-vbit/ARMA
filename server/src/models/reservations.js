@@ -4,6 +4,9 @@ const Reservation = new mongoose.Schema({
   hallId: {
     type: mongoose.Schema.Types.ObjectId,
   },
+  forumId: {
+    type: mongoose.Schema.Types.ObjectId,
+  },
   eventId: {
     type: mongoose.Schema.Types.ObjectId,
   },

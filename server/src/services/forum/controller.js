@@ -446,6 +446,29 @@ const getDashboardCover = async (req, res) => {
   }
 };
 
+
+const viewForum = async (req, res) => {
+  try {
+    let {id} = req.body
+    let forum = await forums.findOne({_id: id});
+    res.json(response(forum, process.env.SUCCESS_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
+const deleteForum = async (req, res) => {
+  try {
+    let {id} = req.body;
+    let forum = await forums.deleteOne({_id:id})
+    res.json(response(forum, process.env.SUCCESS_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
 module.exports = {
   dashboard,
   getForumsList,
@@ -462,5 +485,7 @@ module.exports = {
   uploadProfilePicture,
   getProfilePicture,
   uploadDashboardCover,
-  getDashboardCover
+  getDashboardCover,
+  viewForum,
+  deleteForum,
 };

@@ -25,15 +25,12 @@ const navigate = useNavigate()
                     {/* <button className="btn" onClick = {() => navigate('/Facilities/EditEquip')}>EDIT</button> */}
                     
                     <Table
-                        api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                        api={`${process.env.REACT_APP_SERVER_URL + "equipment/getEquipment"}`}
                         rowsPerPage={5}
                         buttonsCount={3}
-                        filter={{rollNumber:roll}}
                         headers={[
-                            { displayName: "S.NO", dataPath: "forum", sortable: false },
-                            { displayName: "EQUIPMENT", dataPath: "eventname", sortable: false },
-                            { displayName: "TOTAL", dataPath: "duration", sortable: false },
-                            { displayName: "ACTIONS", dataPath: "duration", sortable: false },
+                            { displayName: "EQUIPMENT", dataPath: "name", sortable: false },
+                            { displayName: "TOTAL", dataPath: "totalCount", sortable: false },
                         ]}
                         />
                 </div>

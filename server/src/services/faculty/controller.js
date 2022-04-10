@@ -80,4 +80,25 @@ const editFaculty = async(req,res)=>{
       }
   }
 
-module.exports = {getFacultyList, editProfile, editFaculty, fetchFaculty}
+  const viewFaculty = async (req, res) => {
+    try {
+      let {id} = req.body
+      let faculty = await facultyModel.findOne({_id: id});
+      res.json(response(faculty, process.env.SUCCESS_CODE));
+    } catch (err) {
+      console.log(err);
+      res.json(response(error, process.env.FAILURE_CODE));
+    }
+  };
+  
+  const deleteFaculty = async (req, res) => {
+    try {
+      let {id} = req.body;
+      let faculty = await facultyModel. deleteOne({_id:id})
+      res.json(response(faculty, process.env.SUCCESS_CODE));
+    } catch (err) {
+      console.log(err);
+      res.json(response(error, process.env.FAILURE_CODE));
+    }
+  };
+module.exports = {getFacultyList, editProfile, editFaculty, fetchFaculty, deleteFaculty, viewFaculty}

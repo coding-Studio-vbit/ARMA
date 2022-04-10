@@ -14,6 +14,13 @@ router.put("/editRoles", controller.editRole)
 
 router.get("/fetchRoles", controller.fetchRoles)
 
+router.post("/deleteRoles", controller.deleteRoles);
+
+router.post("/viewRoles", controller.viewRoles);
+
+
+
+
 
 
 module.exports = router;

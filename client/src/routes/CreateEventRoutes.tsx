@@ -9,7 +9,7 @@ export default function CreateEventRoutes() {
       <Routes>
         <Route path="/venue" element={<EventVenue />} />
         <Route path="/equipment" element={<CreateEvent />} />
-        <Route path="/" element={<EventVenue />} />
+        <Route path="/" element={<CreateEvent />} />
       </Routes>
     </EventProvider>
   );
