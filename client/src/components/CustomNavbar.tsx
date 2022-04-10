@@ -1,9 +1,10 @@
 import { AccountCircle, PowerSettingsNewTwoTone } from "@material-ui/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../providers/user/UserProvider";
 import { Sidebar } from "./Sidebar";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axios";
 
 export interface NavItem {
   label: string;
@@ -21,6 +22,17 @@ const Navbar = ({ navItems }: NavbarProps) => {
   const { forum, faculty, logout } = useUser();
   const [showSideNav, setshowSideNav] = useState<boolean>(false);
   const [showLogout, setShowLogout] = useState(false);
+  const [url,setUrl]=useState("");
+  useEffect(() => {
+    axiosInstance.get(process.env.REACT_APP_SERVER_URL+'forum/profilePicture')
+    .then((resp=>{
+      console.log(resp)
+      setUrl(resp.data.response);
+    }))
+  
+    
+  },[])
+  
 
   return (
     <div className={`flex flex-row bg-white fixed z-[11] w-full h-[60px]`}>
@@ -114,8 +126,16 @@ const Navbar = ({ navItems }: NavbarProps) => {
             Hi, {forum?.name ?? faculty?.name}
           </span>
           <span className="material-icons text-arma-dark-blue/70 md-48 align-middle text-3xl">
+          {url.length > 0 ? (
+              <img className="h-10 w-10 rounded-3xl" src={`data:image/png;base64, ${url}`} alt="profile"></img>
+            ) : (
+              // <AccountCircle className="!text-7xl text-arma-title " />
+              <span className="material-icons text-arma-dark-blue/70 md-48 align-middle text-3xl">
             account_circle
           </span>
+            )}
+          </span>
+
           <AnimatePresence initial={false} exitBeforeEnter>
             {showLogout && (
               <motion.div
