@@ -26,7 +26,6 @@ const navigate = useNavigate()
                     
                     <Table
                         api={`${process.env.REACT_APP_SERVER_URL + "equipment/getEquipment"}`}
-<<<<<<< HEAD
                         rowsPerPage={4}
                         buttonsCount={3}
                         transformer={(item) => {
@@ -49,13 +48,6 @@ const navigate = useNavigate()
                             { displayName: "EQUIPMENT", dataPath: "name", sortable: false },
                             { displayName: "TOTAL", dataPath: "totalCount", sortable: false },
                             { displayName: "ACTIONS", dataPath: "actions", sortable: false },
-=======
-                        rowsPerPage={5}
-                        buttonsCount={3}
-                        headers={[
-                            { displayName: "EQUIPMENT", dataPath: "name", sortable: false },
-                            { displayName: "TOTAL", dataPath: "totalCount", sortable: false },
->>>>>>> d05fd6c1866de5ce8b678c0427012cfc1c62bbcd
                         ]}
                         />
                 </div>

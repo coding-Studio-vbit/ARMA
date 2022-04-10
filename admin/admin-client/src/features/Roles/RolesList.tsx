@@ -31,14 +31,10 @@ const navigate = useNavigate()
                         rowsPerPage={5}
                         buttonsCount={3}
                         headers={[
-<<<<<<< HEAD
                             { displayName: "NAME", dataPath: "name", sortable: false },
                             // { displayName: "ROLE", dataPath: "role", sortable: false },
                             // { displayName: "PERMISSIONS", dataPath: "permissions", sortable: false },
                             // { displayName: "ACTIONS", dataPath: "actions", sortable: false },
-=======
-                            { displayName: "S.NO", dataPath: "name", sortable: false },
->>>>>>> d05fd6c1866de5ce8b678c0427012cfc1c62bbcd
                         ]}
                         />
                 </div>

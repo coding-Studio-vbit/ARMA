@@ -78,7 +78,6 @@ export const FacultyList = ({ isEdit }: SearchStudentsProps) => {
     } else {
       setNameError("");
     }
-<<<<<<< HEAD
   
 };
 
@@ -154,17 +153,6 @@ export const FacultyList = ({ isEdit }: SearchStudentsProps) => {
                     />
 
                 </div>
-=======
-  };
-
-  return (
-    <div>
-      <div className="flex flex-col">
-        <div className="flex flex-col mt-5 sm:mx-5 mx-5 space-y-5">
-          <div className="grid grid-cols-2">
-            <div>
-              <p className="text-arma-title mb-5 text-4xl">Faculty</p>
->>>>>>> d05fd6c1866de5ce8b678c0427012cfc1c62bbcd
             </div>
             <div>
               <button
@@ -175,133 +163,5 @@ export const FacultyList = ({ isEdit }: SearchStudentsProps) => {
               </button>
             </div>
           </div>
-
-          {/* <button className="btn" onClick = {() => navigate('/Faculty/EditFaculty')}>EDIT</button> */}
-
-          <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
-            <InputField
-              name="Search by name"
-              type="text"
-              error={nameError}
-              onChange={(e) => {
-                validateName(e);
-              }}
-            />
-
-            <InputField
-              name="Search by roll number"
-              type="text"
-              error={uniqueidError}
-              onChange={(e) => {
-                validateUniqueid(e);
-              }}
-            />
-
-            <Select
-              name="Year"
-              placeholder="Year"
-              options={year}
-              onChange={(e: any) => {
-                setSelectYear(e?.value);
-              }}
-              styles={{
-                control: (base) => ({
-                  ...base,
-                  minHeight: 52,
-                  minWidth: 100,
-                  borderRadius: "0.5rem",
-                  border: "2px solid rgb(200, 200, 200)",
-                }),
-                placeholder: (base) => ({
-                  ...base,
-                  paddingLeft: "16px",
-                }),
-                singleValue: (base) => ({
-                  ...base,
-                  paddingLeft: "16px",
-                  color: "#black",
-                }),
-              }}
-              className="basic-multi-select"
-            />
-
-            <Select
-              name="Branch"
-              placeholder="Branch"
-              options={department}
-              onChange={(e: any) => {
-                setSelectDepartment(e?.value);
-              }}
-              styles={{
-                control: (base) => ({
-                  ...base,
-                  minHeight: 52,
-                  minWidth: 100,
-                  borderRadius: "0.5rem",
-                  border: "2px solid rgb(200, 200, 200)",
-                }),
-                placeholder: (base) => ({
-                  ...base,
-                  paddingLeft: "16px",
-                }),
-                singleValue: (base) => ({
-                  ...base,
-                  paddingLeft: "16px",
-                  color: "black",
-                }),
-              }}
-              className="basic-multi-select"
-            />
-
-            <Select
-              name="Section"
-              placeholder="Section"
-              options={sections}
-              onChange={(e: any) => {
-                setSelectSection(e?.value);
-              }}
-              styles={{
-                control: (base) => ({
-                  ...base,
-                  minHeight: 52,
-                  minWidth: 100,
-                  borderRadius: "0.5rem",
-                  border: "2px solid rgb(200, 200, 200)",
-                }),
-                placeholder: (base) => ({
-                  ...base,
-                  paddingLeft: "16px",
-                }),
-                singleValue: (base) => ({
-                  ...base,
-                  paddingLeft: "16px",
-                  color: "black",
-                }),
-              }}
-              className="basic-multi-select"
-            />
-          </div>
-
-          <Table
-            api={`${process.env.REACT_APP_SERVER_URL + "faculty/getFaculty"}`}
-            rowsPerPage={5}
-            buttonsCount={3}
-            headers={[
-              {
-                displayName: "UNIQUE ID",
-                dataPath: "rollNumber",
-                sortable: false,
-              },
-              { displayName: "NAME", dataPath: "name", sortable: false },
-              {
-                displayName: "DESIGNATION",
-                dataPath: "designation",
-                sortable: false,
-              },
-            ]}
-          />
-        </div>
-      </div>
-    </div>
   );
 };
