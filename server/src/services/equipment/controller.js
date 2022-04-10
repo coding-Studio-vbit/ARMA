@@ -92,4 +92,29 @@ const editEquipment = async (req, res) => {
   }
 };
 
-module.exports = { addEquipment, getEquipment, editEquipment };
+
+const viewEquipment = async (req, res) => {
+  try {
+    let {id} = req.body
+    let equip = await equipment.findOne({_id: id});
+    res.json(response(equip, process.env.SUCCESS_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
+const deleteEquipment = async (req, res) => {
+  try {
+    let {id} = req.body;
+    let equip = await equipment.deleteOne({_id:id})
+    res.json(response(equip, process.env.SUCCESS_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
+
+
+module.exports = { addEquipment, getEquipment, editEquipment, viewEquipment, deleteEquipment };

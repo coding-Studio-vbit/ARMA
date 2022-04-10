@@ -10,10 +10,7 @@ router.use(tokenAuth);
 // will have to add checkRolePermissions after listing out all the permissions
 
 router.get(
-  "/getHalls",
-  (req, res, next) => {
-    checkRolePermissions(req, res, next, READ_HALLS);
-  },
+  "/",
   controller.getHalls
 );
 
@@ -35,4 +32,19 @@ router.put(
   controller.editHall
 );
 
+router.post(
+  "/deleteHall",
+  (req, res, next) => {
+    checkRolePermissions(req, res, next, WRITE_HALLS);
+  },
+  controller.deleteHall
+);
+
+router.post(
+  "/viewHall",
+  (req, res, next) => {
+    checkRolePermissions(req, res, next, WRITE_HALLS);
+  },
+  controller.viewHall
+);
 module.exports = router;

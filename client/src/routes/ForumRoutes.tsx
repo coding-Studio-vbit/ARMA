@@ -20,6 +20,9 @@ const ForumRoutes = () => {
       <div className="flex-1 mt-[60px]">
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/budget" element={<EventBudget />} />
+          <Route path="/eventInfo" element={<div>Event Info</div>} />
+          <Route path="/eventEquipment" element={<div>Event Equipment</div>} />
           <Route path="/eventDashboard" element={<ForumEventDashboard />} />
           <Route path="/reportAndMedia" element={<ReportAndMedia />} />
           <Route path="/createEvent/*" element={<CreateEventRoutes />} />
@@ -28,14 +31,12 @@ const ForumRoutes = () => {
           <Route path="/eventAttendance" element={<EventAttendance />} />
           {/* TODO - creating temp routes */}
           <Route path="/reportAndMedia" element={<div>Report & Media</div>} />
-          <Route path="/eventEquipment" element={<div>Event Equipment</div>} />
           <Route path="/venueInfo" element={<div>Event Venue</div>} />
           
           <Route
             path="/addNewCoreTeamMember"
             element={<AddNewCoreTeamMember />}
           />
-          <Route path="/budget" element={<EventBudget />} />
           <Route path="/addNewForumMember" element={<AddNewForumMember />} />
         </Routes>
       </div>
