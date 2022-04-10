@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EventCard from "./EventCard";
 import axios from "../../../utils/axios";
+import ForumCover from "../event_dashboard/forumCover";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -19,6 +20,10 @@ const Dashboard = () => {
     })
   },[])
 
+  const [profileObj, setprofileObj] = useState(null);
+
+  const [url, setUrl] = useState("");
+
   return (
     <div>
       {/* Forum Cover */}
@@ -26,17 +31,7 @@ const Dashboard = () => {
         id="forumCoverSection"
         className="relative hover:opacity-90 hidden sm:block h-[300px] -mt-5 mx-0 px-0"
       >
-        <img
-          src="/sky.jpg"
-          alt="forum-cover"
-          className="w-full h-full object-cover rounded-sm opacity-60"
-        />
-        <div className="absolute z-40 bottom-10 right-10">
-          <button className="btn text-sm px-6 py-auto" onClick={() => {}}>
-            <Add fontSize="small" />
-            Add Forum Profile
-          </button>
-        </div>
+        <ForumCover profileObj={profileObj} url={url} setUrl={url} setprofileObj={setprofileObj} />
       </div>
 
       <div

@@ -30,10 +30,12 @@ function ForumEventDashboard(props) {
     async function getEventDetails(){
         if(state){
             setUsername("codingStudio();");
-            setEvent(state.name);
-            setStatus(state.eventStatus);  
+            // setEvent(state.name);
+            // setStatus(state.eventStatus);  
+            setEvent("");
+            setStatus("");
             try {
-                const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty", {name: name});
+                const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty", );
                 //get forum Name            
             } catch (error) {
                 setError(error.toString())               
