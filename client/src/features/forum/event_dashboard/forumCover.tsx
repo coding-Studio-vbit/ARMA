@@ -6,7 +6,7 @@ import axios from "../../../utils/axios";
 function ForumCover({ url, setUrl, isEdit=true,profileObj,setprofileObj }) {
   async function getProfileURL() {
     const res = await axios.get(
-      `${process.env.REACT_APP_SERVER_URL}forum/profilePicture`
+      `${process.env.REACT_APP_SERVER_URL}forum/dashboardCover`
     );
     console.log(res.data.response)
     setUrl(res.data.response);
@@ -43,7 +43,7 @@ function ForumCover({ url, setUrl, isEdit=true,profileObj,setprofileObj }) {
               myFormData.append("profilePicture", e.target.files[0]);
               axios
                 .post(
-                  `${process.env.REACT_APP_SERVER_URL}forum/profilePicture`,
+                  `${process.env.REACT_APP_SERVER_URL}forum/dashboardCover`,
                   myFormData
                 )
                 .then((response) => {
@@ -59,8 +59,8 @@ function ForumCover({ url, setUrl, isEdit=true,profileObj,setprofileObj }) {
             <Add fontSize="small" />
             {
                 url.length>0?
-                "Change Forum Profile":
-                "Add Forum Profile"
+                "Change dashboard cover":
+                "Add dashboard cover"
             }
           </div>         
         </label>

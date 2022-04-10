@@ -2,7 +2,7 @@ const { welcomeTemplate } = require("../../email_templates/templates");
 const events = require("../../models/event");
 const forums = require("../../models/forum");
 const response = require("../util/response");
-const base64 = require("../util/base64")
+const base64 = require("../util/base64");
 const fs = require("fs");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
@@ -388,17 +388,20 @@ const uploadProfilePicture = async (req, res) => {
 
 const getProfilePicture = async (req, res) => {
   //console.log(req);
-  try{
-    const myForum = await forums.findOne({email: req.user.email});
+  try {
+    const myForum = await forums.findOne({ email: req.user.email });
     console.log(myForum.profilePictureFilePath);
-    if(myForum.profilePictureFilePath == undefined)
-      res.sendFile("cs.png", {root: __dirname});
-    else
-    {
-      res.json(response(base64.encode(myForum.profilePictureFilePath), process.env.SUCCESS_CODE));   
+    if (myForum.profilePictureFilePath == undefined)
+      res.sendFile("cs.png", { root: __dirname });
+    else {
+      res.json(
+        response(
+          base64.encode(myForum.profilePictureFilePath),
+          process.env.SUCCESS_CODE
+        )
+      );
     }
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
     res.json(response(err, process.env.FAILURE_CODE));
   }
@@ -415,7 +418,8 @@ const uploadDashboardCover = async (req, res) => {
         if (err) {
           throw err;
         } else {
-          fs.unlinkSync(doc.dashboardCoverFilePath);
+          if (doc.dashboardCoverFilePath)
+            fs.unlinkSync(doc.dashboardCoverFilePath);
           res.json(
             response(
               "SUCCESSFULLY UPDATED DASHBOARD COVER IMAGE",
@@ -433,24 +437,21 @@ const uploadDashboardCover = async (req, res) => {
 
 const getDashboardCover = async (req, res) => {
   //console.log(req);
-  try{
-    const myForum = await forums.findOne({email: req.user.email});
-    if(myForum.dashboardCoverFilePath == undefined)
-      res.sendFile("sky.png", {root: __dirname});
-    else
-      res.sendFile(myForum.dashboardCoverFilePath, {root: "/"});   
-  }
-  catch (err) {
+  try {
+    const myForum = await forums.findOne({ email: req.user.email });
+    if (myForum.dashboardCoverFilePath == undefined)
+      res.sendFile("sky.jpg", { root: __dirname });
+    else res.sendFile(myForum.dashboardCoverFilePath, { root: "/" });
+  } catch (err) {
     console.log(err);
     res.json(response(err, process.env.FAILURE_CODE));
   }
 };
 
-
 const viewForum = async (req, res) => {
   try {
-    let {id} = req.body
-    let forum = await forums.findOne({_id: id});
+    let { id } = req.body;
+    let forum = await forums.findOne({ _id: id });
     res.json(response(forum, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
@@ -460,8 +461,8 @@ const viewForum = async (req, res) => {
 
 const deleteForum = async (req, res) => {
   try {
-    let {id} = req.body;
-    let forum = await forums.deleteOne({_id:id})
+    let { id } = req.body;
+    let forum = await forums.deleteOne({ _id: id });
     res.json(response(forum, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
