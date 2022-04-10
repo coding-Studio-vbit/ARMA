@@ -54,16 +54,12 @@ const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
                     {/* <button className="btn" onClick = {() => navigate('/Forums/EditForums')}>EDIT</button> */}
 
                     <Table
-                        api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                        api={`${process.env.REACT_APP_SERVER_URL + "forum"}`}
                         rowsPerPage={5}
                         buttonsCount={3}
                         filter={{rollNumber:roll}}
                         headers={[
-                            { displayName: "S.NO", dataPath: "forum", sortable: false },
-                            { displayName: "FORUM NAME", dataPath: "eventname", sortable: false },
-                            { displayName: "FACULTY COORDINATOR", dataPath: "duration", sortable: false },
-                            { displayName: "POINT OF CONTACT", dataPath: "duration", sortable: false },
-                            { displayName: "ACTIONS", dataPath: "duration", sortable: false },
+                            { displayName: "FORUM NAME", dataPath: "name", sortable: false },
                         ]}
                         />
                 </div>

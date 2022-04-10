@@ -7,7 +7,6 @@ import {
 } from "@material-ui/icons";
 import axiosInstance from "../utils/axios";
 
-
 interface header {
   displayName: string; //Display header name
   dataPath: string; //property path
@@ -103,6 +102,7 @@ const Table = React.memo(
         })
         .then((response) => {
           let newData = response.data.response.data;
+          console.log(response)
           totalPages.current = Math.ceil(
             response.data.response.total / rowsPerPage
           );
@@ -233,7 +233,6 @@ const Table = React.memo(
       </>
     );
   }
-  
 );
 
 export default Table;

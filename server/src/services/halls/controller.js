@@ -87,11 +87,10 @@ const editHall = async (req, res) => {
   }
 };
 
-
 const viewHall = async (req, res) => {
   try {
-    let {id} = req.body
-    let hall = await halls.findOne({_id: id});
+    let { id } = req.body;
+    let hall = await halls.findOne({ _id: id });
     res.json(response(hall, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
@@ -101,8 +100,8 @@ const viewHall = async (req, res) => {
 
 const deleteHall = async (req, res) => {
   try {
-    let {id} = req.body;
-    let hall = await halls.deleteOne({_id:id})
+    let { id } = req.body;
+    let hall = await halls.deleteOne({ _id: id });
     res.json(response(hall, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);

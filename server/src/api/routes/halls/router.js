@@ -10,10 +10,7 @@ router.use(tokenAuth);
 // will have to add checkRolePermissions after listing out all the permissions
 
 router.get(
-  "/getHalls",
-  (req, res, next) => {
-    checkRolePermissions(req, res, next, READ_HALLS);
-  },
+  "/",
   controller.getHalls
 );
 

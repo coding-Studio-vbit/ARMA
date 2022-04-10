@@ -7,6 +7,7 @@ const upload = multer({ storage: multerStorage });
 
 router.use(tokenAuth);
 
+router.get("/", controller.getForumsList)
 router.get("/dashboard", controller.dashboard);
 router.post("/addNewForumMembers", controller.addNewForumMembers);
 router.post("/deleteMember", controller.deleteforumMember);

@@ -184,4 +184,41 @@ const addRole = async (data) => {
   }
 };
 
-module.exports = { login, register, addStudent, addRole, editAdmin, viewAdmin, deleteAdmin };
+const getAdmins = async (req, res) => {
+  //For pagination
+  let page = req.query.page ? Number(req.query.page) : 1;
+  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+  console.log(req.user);
+  //For filters
+  let where = {};
+  if (req.query.name) where.name = { $regex: req.query.name, $options: "i" };
+  if (req.query.email)
+    where.email = { $regex: req.query.email, $options: "i" };
+  //For sorting
+  let sort = {};
+  if (req.query.orderBy && req.query.order)
+    sort[req.query.orderBy] = req.query.order;
+  else sort = { email: "asc" };
+
+  try {
+    result = await admins
+      .find(where)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort(sort);
+    const total = await students.count(where);
+    res.json(
+      response({ data: result, total: total }, process.env.SUCCESS_CODE)
+    );
+  } catch (error) {
+    res.json(
+      response(
+        { message: "admins data fetch error" },
+        process.env.FAILURE_CODE
+      )
+    );
+  }
+};
+
+
+module.exports = { login, register, addStudent, addRole, editAdmin, viewAdmin, deleteAdmin, getAdmins };
