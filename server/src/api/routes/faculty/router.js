@@ -11,6 +11,4 @@ router.put("/editProfile", facultyController.editProfile)
 router.put("/editFaculty", facultyController.editFaculty)
 router.post("/fetchFaculty", facultyController.fetchFaculty);
 
-
-
 module.exports = router;
