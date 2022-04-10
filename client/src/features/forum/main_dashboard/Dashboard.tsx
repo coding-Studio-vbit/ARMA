@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EventCard from "./EventCard";
 import axios from "../../../utils/axios";
-import ForumCover from "../event_dashboard/forumCover";
+import ForumCover from "./forumCover";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const Dashboard = () => {
         id="forumCoverSection"
         className="relative hover:opacity-90 hidden sm:block h-[300px] -mt-5 mx-0 px-0"
       >
-        <ForumCover profileObj={profileObj} url={url} setUrl={url} setprofileObj={setprofileObj} />
+        <ForumCover profileObj={profileObj} url={url} setUrl={setUrl} setprofileObj={setprofileObj} />
       </div>
 
       <div
@@ -74,7 +74,20 @@ const Dashboard = () => {
             return (
               <div className="mx-2 my-4 sm:m-4">
                 <EventCard event={item} onClick={()=>{
-                  navigate('eventDashboard', {state: item})
+                  navigate(
+                    'eventDashboard', 
+                    {
+                      state:{
+                        forumID:item.forumID,
+                        eventStatus:item.eventStatus,
+                        budgetDocPath:item.budgetDocPath,
+                        equipment:item.equipment,
+                        eventDates:item.eventDates,
+                        hasBudget:item.hasBudget,
+                        name:item.name
+                      }
+                    }
+                  )
                 }}/>
               </div>
             );

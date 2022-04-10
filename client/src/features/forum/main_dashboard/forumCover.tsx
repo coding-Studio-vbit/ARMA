@@ -3,7 +3,7 @@ import { Add } from "@material-ui/icons";
 import "../profile/profile.css";
 import axios from "../../../utils/axios";
 
-function ForumCover({ url, setUrl, isEdit=true,profileObj,setprofileObj }) {
+function ForumCover({ url, setUrl,profileObj,setprofileObj }) {
   async function getProfileURL() {
     const res = await axios.get(
       `${process.env.REACT_APP_SERVER_URL}forum/dashboardCover`
@@ -55,7 +55,7 @@ function ForumCover({ url, setUrl, isEdit=true,profileObj,setprofileObj }) {
                 });
             }}
           />
-          <div className=" border-2 border-gray-100 absolute text-white z-40 bottom-10 right-10 bg-arma-blue px-5 py-2 rounded-full ">
+          <div className="font-medium absolute text-white z-40 bottom-10 right-10 bg-arma-blue px-5 py-2 rounded-full ">
             <Add fontSize="small" />
             {
                 url.length>0?

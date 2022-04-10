@@ -2,6 +2,7 @@ import {useEffect,useState} from 'react'
 import { Spinner } from '../../../components/Spinner/Spinner';
 import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from '../../../utils/axios';
+import { log } from 'console';
 
  interface EventInfo{
     name:string,
@@ -17,9 +18,9 @@ const eventInfoList:EventInfo[] = [
     {name:'Report & Media',route:'reportAndMedia'},
 ]
 
-function ForumEventDashboard(props) {
+function ForumEventDashboard() {
     const navigate = useNavigate()
-    const {state} = useLocation()
+    const { state }:{state:any} = useLocation()
     const [loading, setLoading] = useState<boolean>(true);
     const [username, setUsername] = useState<string>("");
     const [event, setEvent] = useState<string>("");
@@ -28,14 +29,16 @@ function ForumEventDashboard(props) {
     const [error, setError] = useState(null);
 
     async function getEventDetails(){
+        console.log(state);        
         if(state){
             setUsername("codingStudio();");
-            // setEvent(state.name);
-            // setStatus(state.eventStatus);  
-            setEvent("");
-            setStatus("");
+           
+            setEvent(state.name);
+            setStatus(state.eventStatus);  
+            
             try {
                 const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty", );
+                console.log(res);                
                 //get forum Name            
             } catch (error) {
                 setError(error.toString())               
