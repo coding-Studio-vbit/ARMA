@@ -100,6 +100,17 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
           {/* <button className="btn" onClick = {() => navigate('/Students/EditStudents')}>EDIT</button> */}
 
           <div className="flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+            
+            <InputField
+                name="Search by roll number"
+                type="text"
+                error={uniqueidError}
+                onChange={(e) => {
+                  setRoll(e.target.value);
+                  validateUniqueid(e);
+                }}
+            />
+            
             <InputField
               name="Search by name"
               type="text"
@@ -107,16 +118,6 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               onChange={(e) => {
                 setName(name);
                 validateName(e);
-              }}
-            />
-
-            <InputField
-              name="Search by roll number"
-              type="text"
-              error={uniqueidError}
-              onChange={(e) => {
-                setRoll(e.target.value);
-                validateUniqueid(e);
               }}
             />
 
@@ -210,6 +211,21 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
             rowsPerPage={5}
             buttonsCount={3}
             filter={{ rollNumber: roll, name: name }}
+            transformer={(item) => {
+              let newItem = item;
+              newItem.actions = (
+                <span
+                  className="text-red-500"
+                  onClick={() => {
+                    //code to delete this item goes here.
+                    console.log("delete me");
+                  }}
+                >
+                  delete
+                </span>
+              );
+              return newItem;
+            }}
             onTableRowClick={(id) => navigate(`/Students/EditStudents/${id}`)}
             headers={[
               {
@@ -221,6 +237,7 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               { displayName: "YEAR", dataPath: "year", sortable: true },
               { displayName: "BRANCH", dataPath: "branch", sortable: false },
               { displayName: "SECTION", dataPath: "section", sortable: false },
+              { displayName: "ACTIONS", dataPath: "actions", sortable: false },
             ]}
           />
         </div>

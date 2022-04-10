@@ -146,21 +146,13 @@ export const FacultyList = ({ isEdit }: SearchStudentsProps) => {
                       headers={[
                         { displayName: "UNIQUE ID", dataPath: "rollNumber", sortable: true },
                         { displayName: "NAME", dataPath: "name", sortable: true },
-                        { displayName: "DESIGNATION", dataPath: "designation", sortable: true },
+                        { displayName: "DESIGNATION", dataPath: "designation", sortable: false },
                         // { displayName: "ROLES", dataPath: "", sortable: false },
                         { displayName: "ACTIONS", dataPath: "actions", sortable: false },
                       ]}
                     />
 
                 </div>
-            </div>
-            <div>
-              <button
-                className="btn  bg-arma-title rounded-[8px] px-6 py-2 ml-auto flex"
-                onClick={() => navigate("/Faculty/AddFaculty")}
-              >
-                Add Faculty
-              </button>
             </div>
           </div>
   );

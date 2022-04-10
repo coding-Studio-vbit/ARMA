@@ -46,7 +46,7 @@ const navigate = useNavigate()
                         headers={[
                             // { displayName: "S.NO", dataPath: "forum", sortable: false },
                             { displayName: "EQUIPMENT", dataPath: "name", sortable: false },
-                            { displayName: "TOTAL", dataPath: "totalCount", sortable: false },
+                            { displayName: "TOTAL", dataPath: "totalCount", sortable: true },
                             { displayName: "ACTIONS", dataPath: "actions", sortable: false },
                         ]}
                         />

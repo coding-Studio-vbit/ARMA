@@ -26,7 +26,7 @@ const navigate = useNavigate()
                     
 
                     <Table
-                        api={`${process.env.REACT_APP_SERVER_URL + "halls/getHalls"}`}
+                        api={`${process.env.REACT_APP_SERVER_URL + "halls"}`}
                         rowsPerPage={3}
                         buttonsCount={4}
                         transformer={(item) => {
@@ -46,7 +46,7 @@ const navigate = useNavigate()
                       }}
                       headers={[
                         { displayName: "HALL NAME", dataPath: "name", sortable: false },
-                        { displayName: "CAPACITY", dataPath: "capacity", sortable: false },
+                        { displayName: "CAPACITY", dataPath: "capacity", sortable: true },
                         { displayName: "ACTIONS", dataPath: "actions", sortable: false },
                       ]}
                     />

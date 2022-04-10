@@ -56,7 +56,7 @@ const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
                     {/* Need Forum End Point to get it working */}
 
                     <Table
-                        api={`${process.env.REACT_APP_SERVER_URL + "forums"}`}
+                        api={`${process.env.REACT_APP_SERVER_URL + "forum"}`}
                         rowsPerPage={5}
                         buttonsCount={3}
                         filter={{ rollNumber: roll, name: name }}
@@ -76,11 +76,8 @@ const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
                         return newItem;
                       }}
                       headers={[
-                        { displayName: "S.NO", dataPath: "forum", sortable: false },
-                        { displayName: "FORUM NAME", dataPath: "eventname", sortable: false },
-                        { displayName: "FACULTY COORDINATOR", dataPath: "duration", sortable: false },
-                        { displayName: "POINT OF CONTACT", dataPath: "duration", sortable: false },
-                        { displayName: "ACTIONS", dataPath: "duration", sortable: false },
+                        { displayName: "FORUM NAME", dataPath: "name", sortable: false },
+                        { displayName: "ACTIONS", dataPath: "actions", sortable: false },
                       ]}
                     />
 
