@@ -21,7 +21,6 @@ const SelectHalls = (props: SelectedHallsProps) => {
   const key = useSelector((state: RootState) => state.selectedDate);
   const eventHalls =
     Object.keys(eventDates).length === 0 ? [] : eventDates[key].halls;
-  const [updater, setUpdater] = useState(true);
   console.log(eventHalls);
 
   const addHalls = (hall) => {
@@ -32,17 +31,10 @@ const SelectHalls = (props: SelectedHallsProps) => {
     } else arr.push(hall);
     console.log(arr);
     if (arr.length === 0) {
-      setUpdater(!updater);
       dispatch(UpdateDatesState(key, []));
     } else {
-      setUpdater(!updater);
       dispatch(UpdateDatesState(key, [...arr]));
     }
-    // props.setEventHalls({
-    //   ...props.eventHalls,
-    //   key: { ...props.eventHalls[key], halls: selectedHalls },
-    // });
-    // console.log(props.eventHalls);
   };
   const HallsList = (halls: string[]) =>
     halls.map((hall: string) => {

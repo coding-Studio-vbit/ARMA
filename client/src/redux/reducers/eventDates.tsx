@@ -6,7 +6,7 @@ const eventDatesReducer = (state = initialState, action) => {
     case "UPDATE_DATES":
       const key = action.key;
       state[key] = { ...state[key], halls: [...action.payload] };
-      return state;
+      return { ...state };
     default:
       return state;
   }
