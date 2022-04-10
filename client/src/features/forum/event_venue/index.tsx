@@ -3,12 +3,27 @@ import "react-modern-calendar-datepicker/lib/DatePicker.css";
 import { Calendar, Day } from "react-modern-calendar-datepicker";
 import Switch from "react-switch";
 import { SelectHalls } from "./selectHalls";
+import { log } from "console";
+
+//redux imports
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../redux/reducers";
+import {
+  createDatesState,
+  UpdateDatesState,
+  selectDate,
+} from "../../../redux/actions";
+
 const EventVenue = () => {
   const [selectedDays, setSelectedDays] = useState<Day[]>([]);
   const [showCalender, setShowCalender] = useState(false);
   const [isLong, setIsLong] = useState(false);
-  const [cardHalls, setCardHalls] = useState([]);
-  const [data, setData] = useState([]);
+
+  //redux
+  const eventDates = useSelector((state: RootState) => state.eventDates);
+  const key = useSelector((state: RootState) => state.selectedDate);
+  const dispatch = useDispatch();
+  console.log(eventDates);
 
   const months = [
     "January",
@@ -25,13 +40,13 @@ const EventVenue = () => {
     "December",
   ];
   const days = [
+    "Sunday",
     "Monday",
     "Tuesday",
     "Wednesday",
     "Thursday",
     "Friday",
     "Saturday",
-    "Sunday",
   ];
   const minimumDate = {
     year: new Date().getFullYear(),
@@ -43,38 +58,43 @@ const EventVenue = () => {
     to: minimumDate,
   };
   const [selectedDayRange, setSelectedDayRange] = useState(defaultValue);
-  const [eventDates, setEventDates] = useState([]);
+  const [eventHalls, setEventHalls] = useState(eventDates);
   const [showHallSelection, setShowHallSelection] = useState(false);
-  const HallsList = (halls: string[]) =>
-    halls.map((hall: string) => {
+  const HallsList = (halls: string[], event: string) => {
+    var temp = halls.map((hall) => hall.split(".")[1]);
+    var filteredHalls = temp.filter(function (elem, index, self) {
+      return index === self.indexOf(elem);
+    });
+    console.log(filteredHalls);
+
+    return filteredHalls.map((hall: string) => {
       return (
         <button
-          onClick={() => setShowHallSelection(true)}
+          onClick={async () => {
+            await dispatch(selectDate(event));
+            await setShowHallSelection(true);
+          }}
           className="flex text-gray-500 flex-row justify-around px-8 mr-4 mb-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
         >
           <div className="">{hall}</div>
         </button>
       );
     });
+  };
 
   const DatesList = () =>
-    eventDates.map((event) => {
+    Object.keys(eventDates).map((event) => {
       const dateString = new Date(
-        event.dateObject.year,
-        event.dateObject.month,
-        event.dateObject.day
+        eventDates[event].dateObject.year,
+        eventDates[event].dateObject.month - 1,
+        eventDates[event].dateObject.day
       );
-      var halls = [];
+
       return (
         <div
           key={dateString.toDateString()}
           className="flex flex-col bg-white w-8/12 my-3 p-5 justify-between items-center rounded-[25px]"
         >
-          <SelectHalls
-            SelectedHalls={event.halls}
-            show={showHallSelection}
-            setShow={setShowHallSelection}
-          />
           <div className="flex flex-col md:flex-row justify-between items-center w-full">
             <button
               onClick={() => setShowCalender(true)}
@@ -84,10 +104,13 @@ const EventVenue = () => {
               {months[dateString.getMonth()]} {dateString.getFullYear()}
             </button>
             <div className="md:w-8/12 flex flex-col md:flex-wrap md:flex-row md:px-16 md:border-l-2">
-              {halls.length === 0 ? (
+              {eventDates[event].halls.length === 0 ? (
                 <button
                   className="flex items-center text-[#88b3cc]"
-                  onClick={() => setShowHallSelection(true)}
+                  onClick={async () => {
+                    await dispatch(selectDate(event));
+                    await setShowHallSelection(true);
+                  }}
                 >
                   add halls
                   <img
@@ -97,7 +120,7 @@ const EventVenue = () => {
                   />
                 </button>
               ) : (
-                HallsList(event.halls)
+                HallsList(eventDates[event].halls, event)
               )}
             </div>
           </div>
@@ -106,13 +129,18 @@ const EventVenue = () => {
     });
   const setDays = (date) => {
     setSelectedDays(date);
-    var temp = [];
+    console.log(date);
+    var obj = {};
     date.map((d) => {
-      const dateString = new Date(d.year, d.month, d.day);
-      var data = { dateObject: d, eventDate: dateString, halls: [] };
-      temp.push(data);
+      const dateString = new Date(d.year, d.month - 1, d.day);
+      obj[dateString.toDateString()] = {
+        dateObject: d,
+        eventDate: dateString,
+        halls: [],
+      };
     });
-    setEventDates(temp);
+    dispatch(createDatesState(obj));
+    if (date.length === 0) dispatch(createDatesState({}));
   };
   const dynamicCalender = () => {
     if (isLong)
@@ -161,7 +189,6 @@ const EventVenue = () => {
           minimumDate={minimumDate}
           onChange={(e) => {
             setDays(e);
-            console.log(e);
           }}
           renderFooter={() => (
             <div
@@ -203,19 +230,44 @@ const EventVenue = () => {
       </div>
     );
   };
+  const test = () => {
+    setEventHalls({
+      ...eventHalls,
+      "Sat May 28 2022": {
+        dateObject: {
+          day: 28,
+          month: 4,
+          year: 2022,
+        },
+        eventDate: "2022-05-27T18:30:00.000Z",
+        halls: ["chetana", "Sumedha"],
+      },
+    });
+  };
 
   return (
     <div
       className="flex flex-col h-screen justify-start items-center"
       style={{ backgroundColor: "#f5f5f5" }}
     >
+      {key.length != 0 ? (
+        <SelectHalls show={showHallSelection} setShow={setShowHallSelection} />
+      ) : (
+        <></>
+      )}
       <div
-        className="flex text-arma-title text-4xl font-bold mx-5 text-justify mb-3 items-center"
+        className="flex text-arma-title text-4xl font-bold mx-5 text-justify mt-3 mb-3 items-center"
         style={{ color: "#1970A3" }}
       >
         Event Venue
-        {selectedDays.length === 0 ? null : (
-          <button className="ml-3" onClick={() => setShowCalender(true)}>
+        {Object.keys(eventDates).length === 0 &&
+        selectedDays.length === 0 ? null : (
+          <button
+            className="ml-3"
+            onClick={() => {
+              setShowCalender(true);
+            }}
+          >
             <img
               alt="edit calender"
               src="https://img.icons8.com/ios-filled/30/88b3cc/edit-calendar.png"
@@ -225,7 +277,7 @@ const EventVenue = () => {
       </div>
 
       {showCalender ? CalenderPopUp() : null}
-      {selectedDays.length === 0 ? (
+      {Object.keys(eventDates).length === 0 && selectedDays.length === 0 ? (
         <div className="flex flex-col items-center">
           <div className="flex flex-row items-center">
             <h4 className="mr-3">Is it a long period of time?</h4>

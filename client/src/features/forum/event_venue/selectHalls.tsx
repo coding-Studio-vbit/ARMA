@@ -1,28 +1,48 @@
-import { Info } from "@material-ui/icons";
+import { InfoOutlined } from "@material-ui/icons";
+import { log } from "console";
 import { useState } from "react";
 
+//redux imports
+import { useDispatch, useSelector } from "react-redux";
+import { UpdateDatesState } from "../../../redux/actions";
+import { RootState } from "../../../redux/reducers";
+
 interface SelectedHallsProps {
-  SelectedHalls: string[];
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SelectHalls = (props: SelectedHallsProps) => {
-  const [halls, setHalls] = useState([
-    "chetana",
-    "Sumedha",
-    "Nalanda",
-    "Prerana",
-  ]);
-  const [selectedHalls, setSelectedHalls] = useState(props.SelectedHalls);
+  //redux
+  const eventDates = useSelector((state: RootState) => state.eventDates);
+  const dispatch = useDispatch();
+
+  const [halls] = useState(["chetana", "sumedha", "nalanda", "prerana"]);
+  const key = useSelector((state: RootState) => state.selectedDate);
+  const eventHalls =
+    Object.keys(eventDates).length === 0 ? [] : eventDates[key].halls;
+  const [updater, setUpdater] = useState(true);
+  console.log(eventHalls);
+
   const addHalls = (hall) => {
-    var sh = selectedHalls;
-    if (selectedHalls.includes(hall)) {
-      var index = sh.indexOf(hall);
-      sh.splice(index, 1);
-    } else sh.push(hall);
-    setSelectedHalls([...sh]);
-    console.log(selectedHalls);
+    var arr = eventHalls;
+    if (eventHalls.includes(hall)) {
+      var index = arr.indexOf(hall);
+      arr.splice(index, 1);
+    } else arr.push(hall);
+    console.log(arr);
+    if (arr.length === 0) {
+      setUpdater(!updater);
+      dispatch(UpdateDatesState(key, []));
+    } else {
+      setUpdater(!updater);
+      dispatch(UpdateDatesState(key, [...arr]));
+    }
+    // props.setEventHalls({
+    //   ...props.eventHalls,
+    //   key: { ...props.eventHalls[key], halls: selectedHalls },
+    // });
+    // console.log(props.eventHalls);
   };
   const HallsList = (halls: string[]) =>
     halls.map((hall: string) => {
@@ -30,12 +50,12 @@ const SelectHalls = (props: SelectedHallsProps) => {
         <div className="mb-4">
           <div className="w-3/4 m-auto text-center pb-1 mb-4 border-b-2 border-b-gray">
             {hall}
-            <Info className="ml-2" />
+            <InfoOutlined className="ml-2" />
           </div>
           <div className="flex">
             <button
               className={
-                selectedHalls.includes("morning." + hall)
+                eventHalls.includes("morning." + hall)
                   ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
                   : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
               }
@@ -45,7 +65,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
             </button>
             <button
               className={
-                selectedHalls.includes("afternoon." + hall)
+                eventHalls.includes("afternoon." + hall)
                   ? "flex px-8 mb-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
                   : "flex text-gray-500 px-8 mb-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
               }
@@ -78,7 +98,9 @@ const SelectHalls = (props: SelectedHallsProps) => {
             style={{
               padding: "0.3rem 2rem",
             }}
-            onClick={() => props.setShow(false)}
+            onClick={() => {
+              props.setShow(false);
+            }}
             className="outlineBtn text-arma-blue border-[1px] rounded-[8px] mt-2 mb-2 px-[25px]"
           >
             Done
