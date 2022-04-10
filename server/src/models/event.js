@@ -53,11 +53,12 @@ const event = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-  equipment:[{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "equipments",
-  }],
-  
+  equipment: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "equipments",
+    },
+  ],
   // halls: [{
   //   date:{type:Date},
   //   timeSlot: [{
@@ -82,10 +83,10 @@ const event = new mongoose.Schema({
   },
   mediaFilePaths: [{ type: String }],
 
-  FOComments: String,
-  
-  SACComments: String,
+  FOComments: { type: String, default: "" },
+
+  SACComments: { type: String, default: "" },
 });
 
-const  events = mongoose.model("events", event);
+const events = mongoose.model("events", event);
 module.exports = events;

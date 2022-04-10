@@ -5,14 +5,21 @@ import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
 import axiosInstance from "../../utils/axios";
+import { useParams } from "react-router-dom";
 
+interface AddRolesProps
+{
+  isEdit: boolean,
+}
 
-export const AddRoles = () => {
+export const AddRoles = ({isEdit}:AddRolesProps) => {
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState<string>();
   const [show, setShow] = useState(false);
   const [showError, setShowError] = useState<string>("");
   const [response, setResponse] = useState("")
+  let {id} = useParams()
+  console.log(id);
 
 
   const options = [
@@ -45,6 +52,8 @@ export const AddRoles = () => {
     ) {
       setShowError("Fill details appropriately");
     } else {
+      if(!isEdit)
+      {
       setShowError("");
       const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "roles/addRoles", {name:name, permissions:selectRoles})
       const data = res.data
@@ -54,15 +63,28 @@ export const AddRoles = () => {
       } else {
           setResponse(data.response)
           setShow(true)             
-      }   
+      }  
+    } 
+    else{
+      setShowError("");
+        const res = await axiosInstance.put(process.env.REACT_APP_SERVER_URL + "roles/editRoles", {id:id, name:name, permissions:selectRoles,})
+        const data = res.data
+        if (data.status === 1) {
+          setResponse("Role Details Edited")
+          setShow(true)
+        } else {
+            setResponse(data.response.message)
+            setShow(true)             
+        }   
+    }
     }
   };
 
   return (
     <div className="flex flex-col grow items-center">
       <div className="mt-12 w-max">
-        <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
-          ADD ROLE
+      <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
+          {isEdit? "EDIT ROLES" : "ADD ROLES"}
         </p>
 
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
@@ -141,7 +163,7 @@ export const AddRoles = () => {
             loginValidate();
           }}
         >
-          ADD
+          {isEdit? "SAVE" : "ADD"}
         </button>
         {showError.length !== 0 && (
           <span className="text-red-500 text-sm flex justify-center mt-2">

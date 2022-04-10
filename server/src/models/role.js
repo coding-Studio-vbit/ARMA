@@ -13,7 +13,6 @@ const role = new mongoose.Schema({
 			"FACULTY"
 		]
 		,unique:true},
-	
 });
 
 const roles = mongoose.model("roles", role)

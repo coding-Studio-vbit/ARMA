@@ -4,6 +4,9 @@ const Reservation = new mongoose.Schema({
   hallId: {
     type: mongoose.Schema.Types.ObjectId,
   },
+  forumId: {
+    type: mongoose.Schema.Types.ObjectId,
+  },
   eventId: {
     type: mongoose.Schema.Types.ObjectId,
   },
@@ -11,7 +14,7 @@ const Reservation = new mongoose.Schema({
     enum: ["COMPLETED", "NOT COMPLETED"],
   },
   dates: [{ type: String }],
-  timeSlots: [String],
+  timeSlots: [[{ type: String, enum: ["MORNING", "AFTERNOON"] }]],
 });
 
 const reservations = mongoose.model("reservations", Reservation);

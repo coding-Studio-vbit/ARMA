@@ -59,6 +59,7 @@ const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
                         api={`${process.env.REACT_APP_SERVER_URL + "forum"}`}
                         rowsPerPage={5}
                         buttonsCount={3}
+<<<<<<< HEAD
                         filter={{ rollNumber: roll, name: name }}
                         transformer={(item) => {
                             let newItem = item;
@@ -84,6 +85,13 @@ const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
                       ]}
                     />
 
+=======
+                        filter={{rollNumber:roll}}
+                        headers={[
+                            { displayName: "FORUM NAME", dataPath: "name", sortable: false },
+                        ]}
+                        />
+>>>>>>> d05fd6c1866de5ce8b678c0427012cfc1c62bbcd
                 </div>
             </div>
         </div>    
