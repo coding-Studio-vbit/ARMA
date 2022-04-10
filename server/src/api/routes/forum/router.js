@@ -29,5 +29,8 @@ router.post(
   controller.uploadDashboardCover
 );
 router.get("/dashboardCover", controller.getDashboardCover);
+router.post("/deleteForum", controller.deleteForum);
+router.post("/viewForum", controller.viewForum);
+
 
 module.exports = router;

@@ -8,7 +8,8 @@ function RolesRoutes() {
   return (
 
       <Routes>
-          <Route path = '/AddRoles' element = {<AddRoles />}/>
+          <Route path = '/AddRoles' element = {<AddRoles isEdit={false}/>}/>
+          <Route path = '/EditRoles/:id' element = {<AddRoles isEdit={true}/>}/>
           <Route path = '/' element = {<RolesList />}/>
 
 

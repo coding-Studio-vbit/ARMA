@@ -211,21 +211,7 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
             rowsPerPage={5}
             buttonsCount={3}
             filter={{ rollNumber: roll, name: name }}
-            transformer={(item) => {
-              let newItem = item;
-              newItem.actions = (
-                <span
-                  className="text-red-500"
-                  onClick={() => {
-                    //code to delete this item goes here.
-                    console.log("delete me");
-                  }}
-                >
-                  delete
-                </span>
-              );
-              return newItem;
-            }}
+            onTableRowClick={(id) => navigate(`/Students/EditStudents/${id}`)}
             headers={[
               {
                 displayName: "ROLL.NO",
@@ -236,7 +222,6 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               { displayName: "YEAR", dataPath: "year", sortable: true },
               { displayName: "BRANCH", dataPath: "branch", sortable: false },
               { displayName: "SECTION", dataPath: "section", sortable: false },
-              { displayName: "ACTIONS", dataPath: "actions", sortable: false },
             ]}
           />
         </div>
@@ -244,3 +229,4 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
     </div>
   );
 };
+

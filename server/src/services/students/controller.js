@@ -110,6 +110,17 @@ const fetchStudents = async (req, res) => {
   }
 };
 
+const deleteStudent = async (req, res) => {
+  try {
+    let {id} = req.body;
+    let student = await students. deleteOne({_id:id})
+    res.json(response(student, process.env.SUCCESS_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
 const studentViewCard = async (req, res) => {
   try {
     let { id } = req.body;
@@ -140,6 +151,7 @@ module.exports = {
   editStudent,
   fetchStudents,
   studentViewCard,
+  deleteStudent,
 };
 
 //eventID 61da9c41ee32a8e65373fcc4
