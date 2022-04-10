@@ -20,10 +20,6 @@ const Dashboard = () => {
     })
   },[])
 
-  const [profileObj, setprofileObj] = useState(null);
-
-  const [url, setUrl] = useState("");
-
   return (
     <div>
       {/* Forum Cover */}
@@ -31,7 +27,7 @@ const Dashboard = () => {
         id="forumCoverSection"
         className="relative hover:opacity-90 hidden sm:block h-[300px] -mt-5 mx-0 px-0"
       >
-        <ForumCover profileObj={profileObj} url={url} setUrl={setUrl} setprofileObj={setprofileObj} />
+        <ForumCover/>
       </div>
 
       <div

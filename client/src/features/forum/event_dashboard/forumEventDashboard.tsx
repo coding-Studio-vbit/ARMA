@@ -2,7 +2,6 @@ import {useEffect,useState} from 'react'
 import { Spinner } from '../../../components/Spinner/Spinner';
 import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from '../../../utils/axios';
-import { log } from 'console';
 
  interface EventInfo{
     name:string,
@@ -25,7 +24,6 @@ function ForumEventDashboard() {
     const [username, setUsername] = useState<string>("");
     const [event, setEvent] = useState<string>("");
     const [status, setStatus] = useState<string>("");
-
     const [error, setError] = useState(null);
 
     async function getEventDetails(){

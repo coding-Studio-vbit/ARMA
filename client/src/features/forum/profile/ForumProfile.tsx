@@ -47,7 +47,7 @@ export default function ForumProfile() {
   const [isEdit, setIsEdit] = useState(false);
   const [message, setMessage] = useState("")
   const [show, setShow] = useState(false)
-  const [link, setLink] = useState("")
+  //const [link, setLink] = useState("")
   const [description, setDescription] = useState<string>(
     forum?.description ?? " "
   );
