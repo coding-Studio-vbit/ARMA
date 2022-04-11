@@ -140,6 +140,7 @@ const EventVenue = () => {
       };
     });
     dispatch(createDatesState(obj));
+    dispatch(selectDate(""));
     if (date.length === 0) dispatch(createDatesState({}));
   };
   const dynamicCalender = () => {
