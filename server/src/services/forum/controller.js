@@ -13,7 +13,6 @@ const dashboard = async (req, res) => {
   try {
     let myEvents = await events.find({ forumID: req.user._id });
     let statistics = { engagement: 4, total: myEvents.length };
-    console.log(myEvents);
     res.json(
       response(
         { events: myEvents, statistics: statistics },
@@ -370,7 +369,8 @@ const uploadProfilePicture = async (req, res) => {
         if (err) {
           throw err;
         } else {
-          fs.unlinkSync(doc.profilePictureFilePath);
+          if (doc.profilePictureFilePath)
+            fs.unlinkSync(doc.profilePictureFilePath);
           res.json(
             response(
               "SUCCESSFULLY UPDATED FORUM PROFILE IMAGE",
@@ -441,7 +441,13 @@ const getDashboardCover = async (req, res) => {
     const myForum = await forums.findOne({ email: req.user.email });
     if (myForum.dashboardCoverFilePath == undefined)
       res.sendFile("sky.jpg", { root: __dirname });
-    else res.sendFile(myForum.dashboardCoverFilePath, { root: "/" });
+    else
+      res.json(
+        response(
+          base64.encode(myForum.dashboardCoverFilePath),
+          process.env.SUCCESS_CODE
+        )
+      );
   } catch (err) {
     console.log(err);
     res.json(response(err, process.env.FAILURE_CODE));
