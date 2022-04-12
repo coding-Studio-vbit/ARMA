@@ -1,6 +1,7 @@
 import { InfoOutlined } from "@material-ui/icons";
 import { log } from "console";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from '../../../utils/axios';
 
 //redux imports
 import { useDispatch, useSelector } from "react-redux";
@@ -13,6 +14,18 @@ interface SelectedHallsProps {
 }
 
 const SelectHalls = (props: SelectedHallsProps) => {
+
+  const [hallList, setHallList] = useState([]);
+
+  useEffect(()=>{
+    axios.get(`${process.env.REACT_APP_SERVER_URL}halls`)
+    .then((response)=>{
+      setHallList(response.data.response.data);
+    })
+    .catch(error=>{
+      console.log(error);
+    })
+  }, [])
   //redux
   const eventDates = useSelector((state: RootState) => state.eventDates);
   const dispatch = useDispatch();

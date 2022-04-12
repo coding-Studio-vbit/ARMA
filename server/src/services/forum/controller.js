@@ -360,7 +360,6 @@ const forumViewCard = async (req, res) => {
 const uploadProfilePicture = async (req, res) => {
   try {
     const imagePath = req.files.profilePicture[0].path;
-    console.log(imagePath);
     forums.findOneAndUpdate(
       { email: req.user.email },
       { profilePictureFilePath: imagePath },
@@ -390,7 +389,6 @@ const getProfilePicture = async (req, res) => {
   //console.log(req);
   try {
     const myForum = await forums.findOne({ email: req.user.email });
-    console.log(myForum.profilePictureFilePath);
     if (myForum.profilePictureFilePath == undefined)
       res.sendFile("cs.png", { root: __dirname });
     else {
