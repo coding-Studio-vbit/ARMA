@@ -47,8 +47,8 @@ const SACRejectedTemplate = {
 
 module.exports = {
   welcomeTemplate,
-  budgetDocUpdateTemplate,
   forgotPasswordTemplate,
+  budgetDocUpdateTemplate,
   budgetApprovedTemplate,
   budgetUpdatedTemplate,
   budgetRejectedTemplate,
