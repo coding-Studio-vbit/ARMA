@@ -179,8 +179,7 @@ export default function AddNewCoreTeamMember() {
             setShow(true)
           } else {
             console.log(data.response);
-            
-              setResponse(data.response)
+              setResponse(data.response.message)
               setShow(true)             
           }   
         }
