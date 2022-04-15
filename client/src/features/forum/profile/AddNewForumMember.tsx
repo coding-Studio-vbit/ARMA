@@ -164,7 +164,11 @@ export default function AddNewForumMember() {
             setShow(true)
           } else {
               setResponse(data.response.message)
+<<<<<<< HEAD
               setShow(true)            
+=======
+              setShow(true)             
+>>>>>>> 7f9ce3d2d8fbb5c48c1f2859ec872cf19a1d9e4f
           }   
         }
       };

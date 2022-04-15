@@ -21,7 +21,11 @@ interface TableProps {
   headers: Array<header>;
   filter?: any;
   onTableRowClick?: (id: string) => void;
-  transformer?: (item: any, i: number,setUpdate:React.Dispatch<React.SetStateAction<boolean>>) => any;
+  transformer?: (
+    item: any,
+    i: number,
+    setUpdate: React.Dispatch<React.SetStateAction<boolean>>
+  ) => any;
 }
 
 interface sortButtonProps {
@@ -74,13 +78,11 @@ const Table = React.memo(
     const [currentPage, setCurrentPage] = useState(1);
     const totalPages = useRef(0);
     ///For forcefully updating the table
-    const [update,setUpdate] = useState<boolean>(false)
+    const [update, setUpdate] = useState<boolean>(false);
     //every time some filter is changed, reset the page number.
     useEffect(() => {
       setCurrentPage(1);
     }, [filter]);
-
-    
 
     useEffect(() => {
       //params object.
@@ -108,7 +110,9 @@ const Table = React.memo(
           //The transformer function is called on each object of the response.
           if (transformer) {
             //console.log("Before transformer: ", newData);
-            newData = newData.map((v:any,i:number)=>transformer(v,i,setUpdate));
+            newData = newData.map((v: any, i: number) =>
+              transformer(v, i, setUpdate)
+            );
             //console.log("After transformer: ", newData);
           }
 
@@ -117,7 +121,7 @@ const Table = React.memo(
         .catch((error) => {
           console.log(error);
         });
-    }, [currentPage, rowsPerPage, order, orderBy, filter, api,update]);
+    }, [currentPage, rowsPerPage, order, orderBy, filter, api, update]);
 
     const nextPage = () => {
       if (currentPage < totalPages.current) setCurrentPage(currentPage + 1);
@@ -229,7 +233,7 @@ const Table = React.memo(
       </>
     );
   },
-  (prev, next) => {    
+  (prev, next) => {
     return deepEqual(prev, next);
   }
 );

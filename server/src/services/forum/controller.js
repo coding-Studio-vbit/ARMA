@@ -2,7 +2,7 @@ const { welcomeTemplate } = require("../../email_templates/templates");
 const events = require("../../models/event");
 const forums = require("../../models/forum");
 const response = require("../util/response");
-const base64 = require("../util/base64")
+const base64 = require("../util/base64");
 const fs = require("fs");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
@@ -13,7 +13,6 @@ const dashboard = async (req, res) => {
   try {
     let myEvents = await events.find({ forumID: req.user._id });
     let statistics = { engagement: 4, total: myEvents.length };
-    console.log(myEvents);
     res.json(
       response(
         { events: myEvents, statistics: statistics },
@@ -361,7 +360,6 @@ const forumViewCard = async (req, res) => {
 const uploadProfilePicture = async (req, res) => {
   try {
     const imagePath = req.files.profilePicture[0].path;
-    console.log(imagePath);
     forums.findOneAndUpdate(
       { email: req.user.email },
       { profilePictureFilePath: imagePath },
@@ -370,7 +368,8 @@ const uploadProfilePicture = async (req, res) => {
         if (err) {
           throw err;
         } else {
-          fs.unlinkSync(doc.profilePictureFilePath);
+          if (doc.profilePictureFilePath)
+            fs.unlinkSync(doc.profilePictureFilePath);
           res.json(
             response(
               "SUCCESSFULLY UPDATED FORUM PROFILE IMAGE",
@@ -388,17 +387,19 @@ const uploadProfilePicture = async (req, res) => {
 
 const getProfilePicture = async (req, res) => {
   //console.log(req);
-  try{
-    const myForum = await forums.findOne({email: req.user.email});
-    console.log(myForum.profilePictureFilePath);
-    if(myForum.profilePictureFilePath == undefined)
-      res.sendFile("cs.png", {root: __dirname});
-    else
-    {
-      res.json(response(base64.encode(myForum.profilePictureFilePath), process.env.SUCCESS_CODE));   
+  try {
+    const myForum = await forums.findOne({ email: req.user.email });
+    if (myForum.profilePictureFilePath == undefined)
+      res.sendFile("cs.png", { root: __dirname });
+    else {
+      res.json(
+        response(
+          base64.encode(myForum.profilePictureFilePath),
+          process.env.SUCCESS_CODE
+        )
+      );
     }
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
     res.json(response(err, process.env.FAILURE_CODE));
   }
@@ -415,7 +416,8 @@ const uploadDashboardCover = async (req, res) => {
         if (err) {
           throw err;
         } else {
-          fs.unlinkSync(doc.dashboardCoverFilePath);
+          if (doc.dashboardCoverFilePath)
+            fs.unlinkSync(doc.dashboardCoverFilePath);
           res.json(
             response(
               "SUCCESSFULLY UPDATED DASHBOARD COVER IMAGE",
@@ -433,16 +435,42 @@ const uploadDashboardCover = async (req, res) => {
 
 const getDashboardCover = async (req, res) => {
   //console.log(req);
-  try{
-    const myForum = await forums.findOne({email: req.user.email});
-    if(myForum.dashboardCoverFilePath == undefined)
-      res.sendFile("sky.png", {root: __dirname});
+  try {
+    const myForum = await forums.findOne({ email: req.user.email });
+    if (myForum.dashboardCoverFilePath == undefined)
+      res.sendFile("sky.jpg", { root: __dirname });
     else
-      res.sendFile(myForum.dashboardCoverFilePath, {root: "/"});   
-  }
-  catch (err) {
+      res.json(
+        response(
+          base64.encode(myForum.dashboardCoverFilePath),
+          process.env.SUCCESS_CODE
+        )
+      );
+  } catch (err) {
     console.log(err);
     res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
+
+const viewForum = async (req, res) => {
+  try {
+    let { id } = req.body;
+    let forum = await forums.findOne({ _id: id });
+    res.json(response(forum, process.env.SUCCESS_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
+const deleteForum = async (req, res) => {
+  try {
+    let { id } = req.body;
+    let forum = await forums.deleteOne({ _id: id });
+    res.json(response(forum, process.env.SUCCESS_CODE));
+  } catch (err) {
+    console.log(err);
+    res.json(response(error, process.env.FAILURE_CODE));
   }
 };
 
@@ -462,5 +490,7 @@ module.exports = {
   uploadProfilePicture,
   getProfilePicture,
   uploadDashboardCover,
-  getDashboardCover
+  getDashboardCover,
+  viewForum,
+  deleteForum,
 };

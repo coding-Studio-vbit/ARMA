@@ -16,10 +16,10 @@ const login = async (email: String, password: String) => {
       }),
     });
     const data = await res.json()
+    localStorage.setItem("adminToken", data.response.token)
     return data
   } catch (error) {
     console.log("Faking the login :)");
-    
     return {response: {user:{name:'FakeUser'}}, status: 1}
   }
 };

@@ -1,28 +1,53 @@
-import { ShopSharp } from "@material-ui/icons";
-import { useState } from "react";
+import { InfoOutlined } from "@material-ui/icons";
+import { log } from "console";
+import { useEffect, useState } from "react";
+import axios from '../../../utils/axios';
+
+//redux imports
+import { useDispatch, useSelector } from "react-redux";
+import { UpdateDatesState } from "../../../redux/actions";
+import { RootState } from "../../../redux/reducers";
 
 interface SelectedHallsProps {
-  SelectedHalls: string[];
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SelectHalls = (props: SelectedHallsProps) => {
-  const [halls, setHalls] = useState([
-    "chetana",
-    "Sumedha",
-    "Nalanda",
-    "Prerana",
-  ]);
-  const [selectedHalls, setSelectedHalls] = useState([]);
+
+  const [hallList, setHallList] = useState([]);
+
+  useEffect(()=>{
+    axios.get(`${process.env.REACT_APP_SERVER_URL}halls`)
+    .then((response)=>{
+      setHallList(response.data.response.data);
+    })
+    .catch(error=>{
+      console.log(error);
+    })
+  }, [])
+  //redux
+  const eventDates = useSelector((state: RootState) => state.eventDates);
+  const dispatch = useDispatch();
+
+  const [halls] = useState(["chetana", "sumedha", "nalanda", "prerana"]);
+  const key = useSelector((state: RootState) => state.selectedDate);
+  const eventHalls =
+    Object.keys(eventDates).length === 0 ? [] : eventDates[key].halls;
+  console.log(eventHalls);
+
   const addHalls = (hall) => {
-    var sh = selectedHalls;
-    if (selectedHalls.includes(hall)) {
-      var index = sh.indexOf(hall);
-      sh.splice(index, 1);
-    } else sh.push(hall);
-    setSelectedHalls([...sh]);
-    console.log(selectedHalls);
+    var arr = eventHalls;
+    if (eventHalls.includes(hall)) {
+      var index = arr.indexOf(hall);
+      arr.splice(index, 1);
+    } else arr.push(hall);
+    console.log(arr);
+    if (arr.length === 0) {
+      dispatch(UpdateDatesState(key, []));
+    } else {
+      dispatch(UpdateDatesState(key, [...arr]));
+    }
   };
   const HallsList = (halls: string[]) =>
     halls.map((hall: string) => {
@@ -30,11 +55,12 @@ const SelectHalls = (props: SelectedHallsProps) => {
         <div className="mb-4">
           <div className="w-3/4 m-auto text-center pb-1 mb-4 border-b-2 border-b-gray">
             {hall}
+            <InfoOutlined className="ml-2" />
           </div>
           <div className="flex">
             <button
               className={
-                selectedHalls.includes("morning." + hall)
+                eventHalls.includes("morning." + hall)
                   ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
                   : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
               }
@@ -44,7 +70,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
             </button>
             <button
               className={
-                selectedHalls.includes("afternoon." + hall)
+                eventHalls.includes("afternoon." + hall)
                   ? "flex px-8 mb-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
                   : "flex text-gray-500 px-8 mb-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
               }
@@ -77,7 +103,9 @@ const SelectHalls = (props: SelectedHallsProps) => {
             style={{
               padding: "0.3rem 2rem",
             }}
-            onClick={() => props.setShow(false)}
+            onClick={() => {
+              props.setShow(false);
+            }}
             className="outlineBtn text-arma-blue border-[1px] rounded-[8px] mt-2 mb-2 px-[25px]"
           >
             Done
