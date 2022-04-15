@@ -19,17 +19,16 @@ function AllRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-      <Route path="/test" element={<Forum_View/>} />
+        <Route path="/test" element={<Forum_View />} />
         <Route path="/" element={<Login />} />
         <Route path="/eventCalendar" element={<EventCalendar />} />
 
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:id" element={<ResetPassword />} />
+        <Route path="/reset-password/:id/:token" element={<ResetPassword />} />
 
         {forum && <Route path="/forum/*" element={<ForumRoutes />} />}
 
         {faculty && <Route path="/faculty/*" element={<FacultyRoutes />} />}
-
 
         <Route path="*" element={<PageNotFound />} />
       </Routes>

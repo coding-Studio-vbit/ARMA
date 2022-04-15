@@ -94,7 +94,7 @@ const register = async (user, userType) => {
   }
 };
 
-const resetPasswordEmail = async (email) => {
+const resetPasswordMail = async (email) => {
   try {
     facultyUser = await facultyModel.findOne({ email: email }).populate("role");
     forumUser = await forums
@@ -105,18 +105,55 @@ const resetPasswordEmail = async (email) => {
 
     if (facultyUser) {
       //mail with tokenID
+      const secret = process.env.JWT_SECRET_KEY + facultyUser.password;
+      const token = jwt.sign(
+        {
+          email: email,
+          _id: facultyUser._id,
+          userType: "FORUM",
+        },
+        secret,
+        { expiresIn: "15m" }
+      );
+      const link = `${process.env.FRONTEND_URL}/reset-password/${facultyUser._id}/${token}`;
+      return response(link, process.env.SUCCESS_CODE);
     }
     if (forumUser) {
       //mail with tokenID
+      const secret = process.env.JWT_SECRET_KEY + forumUser.password;
+      const token = jwt.sign(
+        {
+          email: email,
+          _id: forumUser._id,
+          userType: "FORUM",
+        },
+        secret,
+        { expiresIn: "15m" }
+      );
+      const link = `${process.env.FRONTEND_URL}/reset-password/${forumUser._id}/${token}`;
+      return response(link, process.env.SUCCESS_CODE);
     }
     if (adminUser) {
       //mail with tokenID
+      const secret = process.env.JWT_SECRET_KEY + adminUser.password;
+      const token = jwt.sign(
+        {
+          email: email,
+          _id: adminUser._id,
+          userType: "FORUM",
+        },
+        secret,
+        { expiresIn: "15m" }
+      );
+      const link = `${process.env.FRONTEND_URL}/reset-password/${adminUser._id}/${token}`;
+      return response(link, process.env.SUCCESS_CODE);
     }
     if (!facultyUser && !forumUser && !adminUser)
-      response("Email does not exist.", process.env.FAILURE_CODE);
+      return response("Email does not exist.", process.env.FAILURE_CODE);
   } catch (error) {
     console.log(error);
+    return response(error, process.env.FAILURE_CODE);
   }
 };
 
-module.exports = { login, register };
+module.exports = { login, register, resetPasswordMail };
