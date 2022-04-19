@@ -31,12 +31,14 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
   let { id } = useParams();
 
   const department = [
+    { value: null, label: "Any" },
     { value: "CSE ", label: "CSE" },
     { value: "ECE ", label: "ECE" },
     { value: "IT", label: "IT" },
   ];
 
   const year = [
+    { value: null, label: "Any"},
     { value: "1", label: "1" },
     { value: "2", label: "2" },
     { value: "3", label: "3" },
@@ -44,6 +46,7 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
   ];
 
   const sections = [
+    { value: null, label: "Any"},
     { value: "A", label: "A" },
     { value: "B", label: "B" },
     { value: "C", label: "C" },
@@ -210,7 +213,13 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
             api={`${process.env.REACT_APP_SERVER_URL + "students"}`}
             rowsPerPage={5}
             buttonsCount={3}
-            filter={{ rollNumber: roll, name: name }}
+            filter={{
+              rollNumber: roll,
+              name: name,
+              branch: selectDepartment,
+              year: selectYear,
+              section: selectSection
+            }}
             onTableRowClick={(id) => navigate(`/Students/EditStudents/${id}`)}
             headers={[
               {
