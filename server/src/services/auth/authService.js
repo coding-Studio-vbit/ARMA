@@ -8,6 +8,8 @@ const response = require("../util/response");
 const admins = require("../../models/admin");
 const mongoose = require("mongoose");
 const roles = require("../../models/role");
+const mailer = require("../util/mailer");
+const { forgotPasswordTemplate } = require("../../email_templates/templates");
 
 const login = async (email, password, userAgent, userType) => {
   try {
@@ -94,7 +96,7 @@ const register = async (user, userType) => {
   }
 };
 
-const resetPasswordMail = async (email) => {
+const resetPasswordMail = async (email, res) => {
   try {
     facultyUser = await facultyModel.findOne({ email: email }).populate("role");
     forumUser = await forums
@@ -115,7 +117,10 @@ const resetPasswordMail = async (email) => {
         secret,
         { expiresIn: "15m" }
       );
-      const link = `${process.env.FRONTEND_URL}/reset-password/${facultyUser._id}/${token}`;
+      const link = `${process.env.FRONTEND_URL}/reset-password/${email}/${token}`;
+      await mailer.sendMail(email, forgotPasswordTemplate, {
+        passwordLink: link,
+      });
       return response(link, process.env.SUCCESS_CODE);
     }
     if (forumUser) {
@@ -130,7 +135,10 @@ const resetPasswordMail = async (email) => {
         secret,
         { expiresIn: "15m" }
       );
-      const link = `${process.env.FRONTEND_URL}/reset-password/${forumUser._id}/${token}`;
+      const link = `${process.env.FRONTEND_URL}/reset-password/${email}/${token}`;
+      await mailer.sendMail(email, forgotPasswordTemplate, {
+        passwordLink: link,
+      });
       return response(link, process.env.SUCCESS_CODE);
     }
     if (adminUser) {
@@ -145,15 +153,60 @@ const resetPasswordMail = async (email) => {
         secret,
         { expiresIn: "15m" }
       );
-      const link = `${process.env.FRONTEND_URL}/reset-password/${adminUser._id}/${token}`;
+      const link = `${process.env.FRONTEND_URL}/reset-password/${email}/${token}`;
+      await mailer.sendMail(email, forgotPasswordTemplate, {
+        passwordLink: link,
+      });
       return response(link, process.env.SUCCESS_CODE);
     }
     if (!facultyUser && !forumUser && !adminUser)
-      return response("Email does not exist.", process.env.FAILURE_CODE);
+      res.status(404).send({ error: "Email not found" });
   } catch (error) {
     console.log(error);
-    return response(error, process.env.FAILURE_CODE);
+    res.status(500).send(error);
   }
 };
 
-module.exports = { login, register, resetPasswordMail };
+const resetPassword = async (email, password, token, res) => {
+  try {
+    const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
+    const encryptedPassword = await bcrypt.hash(password, salt);
+
+    facultyUser = await facultyModel.findOne({ email: email }).populate("role");
+    forumUser = await forums
+      .findOne({ email: email })
+      .populate({ path: "role" })
+      .populate({ path: "facultyCoordinatorID", select: "name" });
+    adminUser = await admins.findOne({ email: email });
+
+    if (facultyUser) {
+      const secret = process.env.JWT_SECRET_KEY + facultyUser.password;
+      const payload = jwt.verify(token, secret);
+      facultyUser.password = encryptedPassword;
+      await facultyUser.save();
+      return response("done", process.env.SUCCESS_CODE);
+    }
+    if (forumUser) {
+      const secret = process.env.JWT_SECRET_KEY + forumUser.password;
+      console.log({ token, email, password, oldpassword: forumUser.password });
+      const payload = jwt.verify(token, secret);
+      forumUser.password = encryptedPassword;
+      await forumUser.save();
+      return response("done", process.env.SUCCESS_CODE);
+    }
+    if (adminUser) {
+      const secret = process.env.JWT_SECRET_KEY + adminUser.password;
+      const payload = jwt.verify(token, secret);
+      adminUser.password = encryptedPassword;
+      await adminUser.save();
+      return response("done", process.env.SUCCESS_CODE);
+    }
+    if (!facultyUser && !forumUser && !adminUser)
+      res.status(404).send({ error: "Email not found" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+};
+
+module.exports = { login, register, resetPasswordMail, resetPassword };

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "react-modern-calendar-datepicker/lib/DatePicker.css";
 import { Calendar, Day } from "react-modern-calendar-datepicker";
 import Switch from "react-switch";
 import { SelectHalls } from "./selectHalls";
 import { log } from "console";
+import axios from "../../../utils/axios";
 
 //redux imports
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +19,21 @@ const EventVenue = () => {
   const [selectedDays, setSelectedDays] = useState<Day[]>([]);
   const [showCalender, setShowCalender] = useState(false);
   const [isLong, setIsLong] = useState(false);
+  const [hallList, setHallList] = useState([]);
 
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_SERVER_URL}halls`)
+      .then((response) => {
+        setHallList(response.data.response.data);
+        var temp = [];
+        response.data.response.data.map((data) => temp.push(data.name));
+        setHallList(temp);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
   //redux
   const eventDates = useSelector((state: RootState) => state.eventDates);
   const key = useSelector((state: RootState) => state.selectedDate);
@@ -252,7 +267,11 @@ const EventVenue = () => {
       style={{ backgroundColor: "#f5f5f5" }}
     >
       {key.length != 0 ? (
-        <SelectHalls show={showHallSelection} setShow={setShowHallSelection} />
+        <SelectHalls
+          show={showHallSelection}
+          setShow={setShowHallSelection}
+          hallsData={hallList}
+        />
       ) : (
         <></>
       )}

@@ -24,7 +24,10 @@ function AllRoutes() {
         <Route path="/eventCalendar" element={<EventCalendar />} />
 
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:id/:token" element={<ResetPassword />} />
+        <Route
+          path="/reset-password/:email/:token"
+          element={<ResetPassword />}
+        />
 
         {forum && <Route path="/forum/*" element={<ForumRoutes />} />}
 
