@@ -1,9 +1,23 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import Table from "../../Components/CustomTable";
+import { InputField } from "../../Components/InputField/InputField";
+
 
 export const EquipList = () => {
-const [roll,setRoll] = useState("")
+const location: any = useLocation();
+  const [nameError, setNameError] = useState<string>();
+  const [name, setName] = useState(location.state?.name ?? "");
+
+  const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.value;
+    setName(name);
+    if (name.length === 0) {
+      setNameError("Name field is empty");
+    } else {
+      setNameError("");
+    }
+  };
 const navigate = useNavigate()
     return(
         <div>
@@ -12,6 +26,14 @@ const navigate = useNavigate()
                     <div className="grid grid-cols-2">
                         <div>
                             <p className="text-arma-title mb-5 text-4xl">Facilities</p>
+                            <InputField
+                name="Search by equipment name"
+                type="text"
+                error={nameError}
+                onChange={(e) => {
+                  validateName(e);
+                }}
+              />
                         </div>
                         <div>
                             <button 
@@ -27,6 +49,7 @@ const navigate = useNavigate()
                     <Table
                         api={`${process.env.REACT_APP_SERVER_URL + "equipment/getEquipment"}`}
                         rowsPerPage={5}
+                        filter={{name:name}}
                         buttonsCount={3}
                         headers={[
                             { displayName: "EQUIPMENT", dataPath: "name", sortable: false },
