@@ -361,7 +361,7 @@ const getActiveEvents = async (req, res) => {
       .find({ status: "NOT COMPLETED" })
       .populate("forumId")
       .populate("eventId");
-    const dateString = `${currentDate.getDate()}-${currentDate.getMonth()}-${currentDate.getFullYear()}`;
+    const dateString = `${currentDate.getDate()}-${currentDate.getMonth()+1}-${currentDate.getFullYear()}`;
     const activeEvents = possibleEvents.filter((event) => {
       return event.dates.indexOf(dateString) !== -1;
     });

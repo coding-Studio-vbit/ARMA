@@ -83,39 +83,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
-
-
-// const eventList = [
-  //   {
-  //     name: "codeCraft 3.0",
-  //     eventStatus: "completed",
-  //     isActive: true,
-  //   },
-  //   {
-  //     name: "codeCraft 3.0",
-  //     eventStatus: "approved",
-  //     isActive: true,
-  //   },
-  //   {
-  //     name: "codeCraft 3.0",
-  //     eventStatus: "rejected",
-  //     isActive: true,
-  //   },
-  //   {
-  //     name: "codeCraft 3.0",
-  //     eventStatus: "AWAITING SAC APPROVAL",
-  //     isActive: false,
-  //   },
-  //   {
-  //     name: "codeCraft 3.0",
-  //     eventStatus: "AWAITING BUDGET APPROVAL",
-  //     isActive: false,
-  //   },
-  //   {
-  //     name: "codeCraft 3.0",
-  //     eventStatus: "rejected",
-  //     isActive: false,
-  //   },
-  // ];
