@@ -1,4 +1,5 @@
 const halls = require("../../models/hall");
+const reservations = require("../../models/reservations");
 const response = require("../../services/util/response");
 
 // GET HALLS
@@ -109,4 +110,25 @@ const deleteHall = async (req, res) => {
   }
 };
 
-module.exports = { getHalls, addHall, editHall, viewHall, deleteHall };
+const getSlots = async (req, res) => {
+  try {
+    let { date } = req.body;
+    let result = await reservations
+      .find({ status: "NOT COMPLETED", dates: date })
+      .populate("hallId");
+      res.json(result);
+    const slotsObject = {}
+  } catch (err) {
+    console.log(err);
+    res.json(response);
+  }
+};
+
+module.exports = {
+  getHalls,
+  addHall,
+  editHall,
+  viewHall,
+  deleteHall,
+  getSlots,
+};

@@ -16,6 +16,7 @@ const login = async (email: String, password: String) => {
       }),
     });
     const data = await res.json()
+    console.log("hello")
     localStorage.setItem("adminToken", data.response.token)
     return data
   } catch (error) {

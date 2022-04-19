@@ -17,14 +17,14 @@ const CreateEvent = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-col  mx-6 sm:mx-8 md:mx-32 lg:mx-48 ">
+    <div className="flex flex-col mx-6 sm:mx-8 md:mx-32 lg:mx-48 ">
       <div className="mt-8 mb-4 flex items-center">
         <h1 className=" font-poppins text-arma-dark-blue  text-2xl md:text-4xl">
           Create Event
         </h1>
       </div>
 
-      <div className="flex flex-col justify-center items-center w-full ">
+      <div className="flex flex-col md:pl-6 bg-gray-100 rounded-xl justify-center items-center w-full ">
         <div className="w-full flex flex-col my-6">
           <label
             htmlFor="eventName"

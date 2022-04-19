@@ -12,6 +12,7 @@ const getStudentsList = async (req, res) => {
   if (req.query.rollNumber)
     where.rollNumber = { $regex: req.query.rollNumber, $options: "i" };
   if (req.query.branch) where.branch = req.query.branch;
+  if (req.query.year) where.year = req.query.year;
   if (req.query.section) where.section = req.query.section;
   if (req.query.attendedEvents) where.attendedEvents = req.query.attendedEvents;
   //For sorting
@@ -112,8 +113,8 @@ const fetchStudents = async (req, res) => {
 
 const deleteStudent = async (req, res) => {
   try {
-    let {id} = req.body;
-    let student = await students. deleteOne({_id:id})
+    let { id } = req.body;
+    let student = await students.deleteOne({ _id: id });
     res.json(response(student, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);

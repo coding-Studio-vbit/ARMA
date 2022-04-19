@@ -143,7 +143,7 @@ const Table = React.memo(
           <button
             key={i}
             className={`px-3 py-1 text-sm text-white rounded-full ${
-              i === currentPage ? "bg-arma-dark-blue" : "bg-arma-blue"
+              i === currentPage ? "bg-red-500" : "bg-arma-blue"
             }`}
             onClick={() => {
               setCurrentPage(i);
