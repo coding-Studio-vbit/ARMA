@@ -33,7 +33,6 @@ const ForumRoutes = () => {
           {/* TODO - creating temp routes */}
           <Route path="/reportAndMedia" element={<ReportAndMedia/>} />
           <Route path="/venueInfo" element={<EventVenue/>} />
-          
           <Route
             path="/addNewCoreTeamMember"
             element={<AddNewCoreTeamMember />}
