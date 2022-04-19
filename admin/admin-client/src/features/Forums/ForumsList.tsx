@@ -57,9 +57,11 @@ const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
                         api={`${process.env.REACT_APP_SERVER_URL + "forum"}`}
                         rowsPerPage={5}
                         buttonsCount={3}
-                        filter={{rollNumber:roll}}
+                        filter={{name:name}}
                         headers={[
-                            { displayName: "FORUM NAME", dataPath: "name", sortable: false },
+                            { displayName: "FORUM NAME", dataPath: "name", sortable: true },
+                            { displayName: "FACULTY COORDINATOR", dataPath: "facultyCoordinatorID.name", sortable: false },
+                            { displayName:"PHONE", dataPath:"facultyCoordinatorID.phone", sortable:false}
                         ]}
                         />
                 </div>

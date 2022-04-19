@@ -33,12 +33,12 @@ export const HallsList = () => {
               {
                 displayName: "HALL NAME",
                 dataPath: "name",
-                sortable: false,
+                sortable: true,
               },
               {
                 displayName: "CAPACITY",
                 dataPath: "capacity",
-                sortable: false,
+                sortable: true,
               },
             ]}
           />

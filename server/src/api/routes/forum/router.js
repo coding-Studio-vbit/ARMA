@@ -7,7 +7,7 @@ const upload = multer({ storage: multerStorage });
 
 router.use(tokenAuth);
 
-router.get("/", controller.getForumsList  )
+router.get("/", controller.getForumsList);
 router.get("/dashboard", controller.dashboard);
 router.post("/addNewForumMembers", controller.addNewForumMembers);
 router.post("/deleteMember", controller.deleteforumMember);
@@ -32,6 +32,5 @@ router.post(
 router.get("/dashboardCover", controller.getDashboardCover);
 router.post("/deleteForum", controller.deleteForum);
 router.post("/viewForum", controller.viewForum);
-
 
 module.exports = router;

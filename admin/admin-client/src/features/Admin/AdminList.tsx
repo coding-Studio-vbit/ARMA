@@ -30,8 +30,8 @@ export const AdminList = () => {
             rowsPerPage={5}
             buttonsCount={3}
             headers={[
-              { displayName: "E-Mail", dataPath: "email", sortable: false },
-              { displayName: "Name", dataPath: "name", sortable: false },
+              { displayName: "E-Mail", dataPath: "email", sortable: true },
+              { displayName: "Name", dataPath: "name", sortable: true },
             ]}
           />
         </div>

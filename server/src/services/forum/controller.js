@@ -55,6 +55,7 @@ const getForumsList = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort)
+      .populate('facultyCoordinatorID')
       .select("-password");
     const total = await forums.count(where);
     res.json(

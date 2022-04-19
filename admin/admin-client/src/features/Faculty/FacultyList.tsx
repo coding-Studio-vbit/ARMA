@@ -119,7 +119,7 @@ export const FacultyList = ({ isEdit }: SearchStudentsProps) => {
               }}
             />
 
-            <Select
+            {/* <Select
               name="Year"
               placeholder="Year"
               options={year}
@@ -201,20 +201,21 @@ export const FacultyList = ({ isEdit }: SearchStudentsProps) => {
                 }),
               }}
               className="basic-multi-select"
-            />
+            /> */}
           </div>
 
           <Table
             api={`${process.env.REACT_APP_SERVER_URL + "faculty/getFaculty"}`}
             rowsPerPage={5}
             buttonsCount={3}
+            filter={{ rollNumber: uniqueid, name: name }}
             headers={[
               {
                 displayName: "UNIQUE ID",
                 dataPath: "rollNumber",
-                sortable: false,
+                sortable: true,
               },
-              { displayName: "NAME", dataPath: "name", sortable: false },
+              { displayName: "NAME", dataPath: "name", sortable: true },
               {
                 displayName: "DESIGNATION",
                 dataPath: "designation",
