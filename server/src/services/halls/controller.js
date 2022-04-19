@@ -116,11 +116,20 @@ const getSlots = async (req, res) => {
     let result = await reservations
       .find({ status: "NOT COMPLETED", dates: date })
       .populate("hallId");
-      res.json(result);
-    const slotsObject = {}
+      const slotsObject = {}
+      result.forEach((item)=>{
+        if(!slotsObject.hasOwnProperty(item.hallId.name))
+        {
+          slotsObject[item.hallId.name] = []
+      }
+      const dateIndex = item.dates.indexOf(date);
+      for(let i=0;i<item.slots[dateIndex].length;i++)
+      slotsObject[item.hallId.name].push(item.slots[dateIndex][i]);
+      res.json(response(slotsObject, process.env.SUCCESS_CODE));
+    })
   } catch (err) {
     console.log(err);
-    res.json(response);
+    res.json(response(err, process.env.FAILURE_CODE));
   }
 };
 
