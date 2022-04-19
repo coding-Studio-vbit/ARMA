@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { InputField } from "../InputField/InputField";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -8,8 +9,8 @@ const ResetPassword = () => {
   const [Password, setPassword] = useState<String>("");
   const [ConfirmPassword, setConfirmPassword] = useState<String>("");
   const [showPassword, setShowPassword] = useState(false);
-  const { id } = useParams();
-
+  const { email, token } = useParams();
+  console.log({ email, token });
   const validatePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     var password = e.target.value;
     setPassword(password);
@@ -17,6 +18,23 @@ const ResetPassword = () => {
       setPasswordError("Password field is empty");
     } else {
       setPasswordError("");
+    }
+  };
+  const onSubmit = () => {
+    if (passwordError.length === 0) {
+      axios
+        .post(`${process.env.REACT_APP_SERVER_URL}resetPassword`, {
+          email: email,
+          password: Password,
+          token: token,
+        })
+        .then(async (response) => {
+          console.log(response);
+          navigate("/");
+        })
+        .catch(() => {
+          setPasswordError("Error");
+        });
     }
   };
   const validateConfirmPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +62,7 @@ const ResetPassword = () => {
         <div className="text-gray-500 font-light mx-5 text-justify mb-[35px]">
           Enter your new password below :)
         </div>
-        <form className="flex flex-col items-center">
+        <div className="flex flex-col items-center">
           <InputField
             className="mb-5"
             name="Password"
@@ -65,11 +83,11 @@ const ResetPassword = () => {
           <button
             className="outlineBtn text-arma-blue border-[1px] rounded-[8px] py-[0.5rem]"
             type="submit"
-            onClick={() => navigate("/")}
+            onClick={onSubmit}
           >
             Submit{" "}
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );

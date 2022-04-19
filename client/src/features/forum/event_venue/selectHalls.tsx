@@ -1,7 +1,7 @@
 import { InfoOutlined } from "@material-ui/icons";
 import { log } from "console";
 import { useEffect, useState } from "react";
-import axios from '../../../utils/axios';
+import axios from "../../../utils/axios";
 
 //redux imports
 import { useDispatch, useSelector } from "react-redux";
@@ -11,30 +11,19 @@ import { RootState } from "../../../redux/reducers";
 interface SelectedHallsProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  hallsData: string[];
 }
 
 const SelectHalls = (props: SelectedHallsProps) => {
-
-  const [hallList, setHallList] = useState([]);
-
-  useEffect(()=>{
-    axios.get(`${process.env.REACT_APP_SERVER_URL}halls`)
-    .then((response)=>{
-      setHallList(response.data.response.data);
-    })
-    .catch(error=>{
-      console.log(error);
-    })
-  }, [])
   //redux
   const eventDates = useSelector((state: RootState) => state.eventDates);
   const dispatch = useDispatch();
 
-  const [halls] = useState(["chetana", "sumedha", "nalanda", "prerana"]);
+  const halls = props.hallsData;
   const key = useSelector((state: RootState) => state.selectedDate);
   const eventHalls =
     Object.keys(eventDates).length === 0 ? [] : eventDates[key].halls;
-  console.log(eventHalls);
+  console.log(props.hallsData);
 
   const addHalls = (hall) => {
     var arr = eventHalls;

@@ -15,7 +15,12 @@ router.post("/register", async (req, res) => {
 
 router.post("/forgotPassword", async (req, res) => {
   const { email } = req.body;
-  const result = await authService.forgotPassword(email);
+  const result = await authService.resetPasswordMail(email, res);
+  res.json(result);
+});
+router.post("/resetPassword", async (req, res) => {
+  const { email, password, token } = req.body;
+  const result = await authService.resetPassword(email, password, token, res);
   res.json(result);
 });
 
