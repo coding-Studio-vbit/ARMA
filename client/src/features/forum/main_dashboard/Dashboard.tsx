@@ -8,12 +8,14 @@ import ForumCover from "./forumCover";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [eventList, setEventList] = useState([]);
+  const [todaysEventList, setTodaysEventList] = useState([])
 
   useEffect(()=>{
     axios.get(`${process.env.REACT_APP_SERVER_URL}forum/dashboard`)
     .then(response=>{
       console.log(response.data.response)
       setEventList(response?.data.response.events)
+      setTodaysEventList(response?.data.response.activeEvents)
     })
     .catch(err=>{
       console.log(err);
@@ -52,12 +54,11 @@ const Dashboard = () => {
           </div>
 
           <div className="mt-3 sm:mt-4 h-44 w-48 mx-auto bg-gray-200 rounded-md p-3 drop-shadow-xl border-2">
-            <h2 className="text-arma-blue mx-auto">Active Events</h2>
+            <h2 className="text-arma-blue mx-auto">Today's Events</h2>
             <ul className="pl-8 list-disc list-outside">
-              {eventList.map((item) => {
-                if (item.isActive) return <li>{item.name}</li>;
-                return <></>;
-              })}
+              {todaysEventList.length !== 0 ? todaysEventList.map((item) => {
+                return <li>{item.name}</li>;
+              }) : <li>No events today</li>}
             </ul>
           </div>
         </div>

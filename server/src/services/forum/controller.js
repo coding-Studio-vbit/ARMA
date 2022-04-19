@@ -1,6 +1,7 @@
 const { welcomeTemplate } = require("../../email_templates/templates");
 const events = require("../../models/event");
 const forums = require("../../models/forum");
+const reservations = require("../../models/reservations")
 const response = require("../util/response");
 const base64 = require("../util/base64");
 const fs = require("fs");
@@ -12,10 +13,13 @@ const mongoose = require("mongoose");
 const dashboard = async (req, res) => {
   try {
     let myEvents = await events.find({ forumID: req.user._id });
+    let currentDate = new Date()
+    let dateString = currentDate.getDate() + '-' + currentDate.getMonth() + '-' + currentDate.getFullYear();
+    let activeEvents = await reservations.find({status: "NOT COMPLETED", dates:dateString}).select("name -_id")
     let statistics = { engagement: 4, total: myEvents.length };
     res.json(
       response(
-        { events: myEvents, statistics: statistics },
+        { events: myEvents, statistics: statistics, activeEvents: activeEvents },
         process.env.SUCCESS_CODE
       )
     );

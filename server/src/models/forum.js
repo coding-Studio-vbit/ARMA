@@ -75,7 +75,7 @@ const forum = new mongoose.Schema({
       message: `{VALUE} is not a valid Indian contact number.`,
     },
   },
-  roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "roles" }],
+  role: [{ type: mongoose.Schema.Types.ObjectId, ref: "roles" }],
 });
 
 const forums = mongoose.model("forums", forum);
