@@ -94,7 +94,7 @@ const getAdmins = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort);
-    const total = await students.count(where);
+    const total = await admins.count(where);
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );
