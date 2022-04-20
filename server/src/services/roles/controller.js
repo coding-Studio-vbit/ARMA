@@ -46,8 +46,7 @@ const getRoles = async (req, res) => {
       .limit(limit)
       .sort(sort);
     const total = await role.count(where);
-
-    res.json(
+    return res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );
   } catch (error) {
