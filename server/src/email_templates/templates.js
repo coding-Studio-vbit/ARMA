@@ -54,5 +54,5 @@ module.exports = {
   budgetRejectedTemplate,
   SACApprovedTemplate,
   SACEventUpdatedTemplate,
-  SACRejectedTemplate
+  SACRejectedTemplate,
 };

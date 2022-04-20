@@ -18,33 +18,23 @@ router.get(
 
 router.post(
   "/addHall",
-  (req, res, next) => {
-    checkRolePermissions(req, res, next, WRITE_HALLS);
-  },
   controller.addHall
 );
 
 router.put(
   "/editHall",
-  (req, res, next) => {
-    checkRolePermissions(req, res, next, WRITE_HALLS);
-  },
   controller.editHall
 );
 
 router.post(
   "/deleteHall",
-  (req, res, next) => {
-    checkRolePermissions(req, res, next, WRITE_HALLS);
-  },
   controller.deleteHall
 );
 
 router.post(
   "/viewHall",
-  (req, res, next) => {
-    checkRolePermissions(req, res, next, WRITE_HALLS);
-  },
   controller.viewHall
 );
+
+router.post("/getSlots", controller.getSlots)
 module.exports = router;

@@ -1,7 +1,7 @@
-const checkPermissions = (req, res, next, requiredPermission) => {
+const checkRole = (req, res, next, requiredRoleName) => {
   let flag = false;
-  for (let a = 0; a < req.user.role.length; a++) {
-    if (req.user.role[a].permissions.indexOf(requiredPermission) !== -1) {
+  for (let a = 0; a < req.user.roles.length; a++) {
+    if (req.user.roles[a].name == requiredRoleName) {
       flag = true;
       break;
     }
@@ -9,8 +9,8 @@ const checkPermissions = (req, res, next, requiredPermission) => {
   if (flag) {
     next();
   } else {
-    throw new Error(`user doesn't have the permission ${requiredPermission}!`);
+    throw new Error(`user doesn't have the required role ${requiredRoleName}!`);
   }
 };
 
-module.exports = checkPermissions;
+module.exports = checkRole;

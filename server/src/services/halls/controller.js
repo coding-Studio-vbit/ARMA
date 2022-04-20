@@ -1,4 +1,5 @@
 const halls = require("../../models/hall");
+const reservations = require("../../models/reservations");
 const response = require("../../services/util/response");
 
 // GET HALLS
@@ -109,4 +110,34 @@ const deleteHall = async (req, res) => {
   }
 };
 
-module.exports = { getHalls, addHall, editHall, viewHall, deleteHall };
+const getSlots = async (req, res) => {
+  try {
+    let { date } = req.body;
+    let result = await reservations
+      .find({ status: "NOT COMPLETED", dates: date })
+      .populate("hallId");
+      const slotsObject = {}
+      result.forEach((item)=>{
+        if(!slotsObject.hasOwnProperty(item.hallId.name))
+        {
+          slotsObject[item.hallId.name] = []
+      }
+      const dateIndex = item.dates.indexOf(date);
+      for(let i=0;i<item.slots[dateIndex].length;i++)
+      slotsObject[item.hallId.name].push(item.slots[dateIndex][i]);
+      res.json(response(slotsObject, process.env.SUCCESS_CODE));
+    })
+  } catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
+
+module.exports = {
+  getHalls,
+  addHall,
+  editHall,
+  viewHall,
+  deleteHall,
+  getSlots,
+};

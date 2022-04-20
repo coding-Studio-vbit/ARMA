@@ -18,6 +18,7 @@ let mailTransporter = nodemailer.createTransport({
 });
 
 const sendMail = (toAddress, emailTemplate, emailData) => {
+  console.log("sendmail called");
   return new Promise((resolve, reject) => {
     const mailDetails = {
       from: process.env.NODEMAILER_EMAIL_ID,
@@ -31,6 +32,7 @@ const sendMail = (toAddress, emailTemplate, emailData) => {
         console.log(err);
         reject(new Error("Mailing failed!"));
       } else {
+        console.log("something");
         resolve();
       }
     });
