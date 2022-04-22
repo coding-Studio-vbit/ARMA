@@ -1,4 +1,6 @@
 import React, { ReactElement, useState, useEffect, useRef } from "react";
+import { Dialog } from "./Dialog/Dialog";
+import Spinner from "./Spinner/Spinner";
 import {
   ArrowBackIos,
   ArrowDownward,
@@ -79,6 +81,7 @@ const Table = React.memo(
     ///For forcefully updating the table
     const [update, setUpdate] = useState<boolean>(false);
     //every time some filter is changed, reset the page number.
+    const [show, setShow] = useState<boolean>(true);
     useEffect(() => {
       setCurrentPage(1);
     }, [filter]);
@@ -117,6 +120,7 @@ const Table = React.memo(
           }
 
           setData(newData);
+          setShow(false);
         })
         .catch((error) => {
           console.log(error);
@@ -158,6 +162,8 @@ const Table = React.memo(
     return (
       <>
         <div className="w-full border-2 shadow-md  rounded-[16px] overflow-x-auto ">
+          <Dialog show = {show} setShow ={()=>setShow(!show)} title = "Loading" 
+          children= {<Spinner className="mt-4 mb-2" />} />
           <table className="w-full ">
             <thead className="bg-white border-b-2 rounded-[8px] border-black/30  ">
               <tr className="rounded-[16px]">
