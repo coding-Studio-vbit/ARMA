@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const multer = require("multer");
-const checkRolePermissions = require("../../../services/util/checkRole");
 const controller = require("../../../services/events/controller");
 const multerStorage = require("../../../services/util/multerStorage");
 const tokenAuth = require("../../middleware/tokenAuth");

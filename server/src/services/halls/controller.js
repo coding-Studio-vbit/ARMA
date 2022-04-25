@@ -1,7 +1,6 @@
 const halls = require("../../models/hall");
 const reservations = require("../../models/reservations");
 const response = require("../../services/util/response");
-
 // GET HALLS
 const getHalls = async (req, res) => {
   let page = req.query.page ? Number(req.query.page) : 1;
@@ -116,17 +115,16 @@ const getSlots = async (req, res) => {
     let result = await reservations
       .find({ status: "NOT COMPLETED", dates: date })
       .populate("hallId");
-      const slotsObject = {}
-      result.forEach((item)=>{
-        if(!slotsObject.hasOwnProperty(item.hallId.name))
-        {
-          slotsObject[item.hallId.name] = []
+    const slotsObject = {};
+    result.forEach((item) => {
+      if (!slotsObject.hasOwnProperty(item.hallId.name)) {
+        slotsObject[item.hallId.name] = [];
       }
       const dateIndex = item.dates.indexOf(date);
-      for(let i=0;i<item.slots[dateIndex].length;i++)
-      slotsObject[item.hallId.name].push(item.slots[dateIndex][i]);
+      for (let i = 0; i < item.slots[dateIndex].length; i++)
+        slotsObject[item.hallId.name].push(item.slots[dateIndex][i]);
+      });
       res.json(response(slotsObject, process.env.SUCCESS_CODE));
-    })
   } catch (err) {
     console.log(err);
     res.json(response(err, process.env.FAILURE_CODE));

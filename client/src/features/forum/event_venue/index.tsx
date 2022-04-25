@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "react-modern-calendar-datepicker/lib/DatePicker.css";
 import { Calendar, Day } from "react-modern-calendar-datepicker";
 import Switch from "react-switch";
+import { useNavigate } from "react-router-dom";
 import { SelectHalls } from "./selectHalls";
 import { log } from "console";
 import axios from "../../../utils/axios";
@@ -16,6 +17,7 @@ import {
 } from "../../../redux/actions";
 
 const EventVenue = () => {
+  const navigate = useNavigate();
   const [selectedDays, setSelectedDays] = useState<Day[]>([]);
   const [showCalender, setShowCalender] = useState(false);
   const [isLong, setIsLong] = useState(false);
@@ -325,6 +327,18 @@ const EventVenue = () => {
         </div>
       ) : null}
       {DatesList()}
+      {selectedDays.length > 0 ? (
+        <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
+          <button
+            className="btn px-8 py-3   text-xl tracking-wide  ml-auto my-8"
+            onClick={() => {
+              navigate("/forum/createEvent/equipment");
+            }}
+          >
+            Equipment
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 };
