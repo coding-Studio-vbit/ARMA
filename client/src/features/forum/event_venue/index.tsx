@@ -36,12 +36,24 @@ const EventVenue = () => {
         console.log(error);
       });
   }, []);
+
   //redux
   const eventDates = useSelector((state: RootState) => state.eventDates);
+  const blockedSlots = useState({});
   const key = useSelector((state: RootState) => state.selectedDate);
   const dispatch = useDispatch();
   console.log(eventDates);
-
+  useEffect(() => {
+    selectedDays.forEach((date) => {
+      axios
+        .post(`${process.env.REACT_APP_SERVER_URL}halls/getSlots`, {
+          date: `${date.day}-${date.month}-${date.year}`,
+        })
+        .then((response) => {
+          blockedSlots[`${date.day}-${date.month}-${date.year}`] = response.data.response;
+        });
+    });
+  }, [selectedDays]);
   const months = [
     "January",
     "February",
