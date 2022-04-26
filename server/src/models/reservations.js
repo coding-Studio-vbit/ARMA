@@ -11,6 +11,7 @@ const Reservation = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
   },
   status: {
+    type:String,
     enum: ["COMPLETED", "NOT COMPLETED"],
   },
   dates: [{ type: String }],

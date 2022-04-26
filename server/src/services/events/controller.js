@@ -81,9 +81,11 @@ const createEvent = async (req, res) => {
     for (let i = 0; i < equipmentList.length; i++) {
       let { equipment, quantity } = equipmentList[i];
       quantity = Number(quantity);
-      equipments.findOne({ name: equipment }).then((data) => {
-        if (data) eqs.push(data._id);
-      });
+      equipments
+        .findOne({ name: { $regex: `^${equipment}`, $options: "i" } })
+        .then((data) => {
+          if (data) eqs.push(data._id);
+        });
     }
     let newEvent = new events({
       forumID: req.user._id,
@@ -120,9 +122,13 @@ const createEvent = async (req, res) => {
       for (let j = 0; j < eventHalls[datesList[i]].halls.length; j++) {
         let info = eventHalls[datesList[i]].halls[j].split(".");
         let slot = info[0];
-        let hall = await halls.findOne({ name: info[1] });
+        let hall = await halls.findOne({
+          name: { $regex: `^${info[1]}`, $options: "i" },
+        });
         if (Object.hasOwnProperty(reservationsObject, hall._id)) {
-          if (Object.hasOwnProperty(reservationsObject[hall._id], datesList[i])) {
+          if (
+            Object.hasOwnProperty(reservationsObject[hall._id], datesList[i])
+          ) {
             reservationsObject[hall._id][datesList[i]].push(slot);
           } else {
             reservationsObject[hall._id][datesList[i]] = [];
@@ -134,25 +140,28 @@ const createEvent = async (req, res) => {
       }
     }
 
-    let reservationsList = []
-    HallsList = [...HallsList]
-    for(let i=0;i<HallsList.length;i++)
-    {
+    let reservationsList = [];
+    HallsList = [...HallsList];
+    for (let i = 0; i < HallsList.length; i++) {
       reservationsList.push({
         HallID: HallsList[i],
-        dates:Object.keys(reservationsObject[HallsList[i]]),
-        slots:Object.keys(reservationsObject[HallsList[i]]).map(date=>{return reservationObject[HallsList[i]][date]})
-      })
+        dates: Object.keys(reservationsObject[HallsList[i]]),
+        slots: Object.keys(reservationsObject[HallsList[i]]).map((date) => {
+          return reservationObject[HallsList[i]][date];
+        }),
+      });
     }
     const eventReservations = reservationsList;
     eventReservations.forEach(async (obj) => {
       //first check if the dates are valid
       //see if an already reserved date is being booked again.
-      const currentReservations = reservations.find({
+      const currentReservations = await reservations.find({
         status: "NOT COMPLETED",
         hallId: obj.hallId,
       });
       const blocked = [];
+
+      console.log("current reservations:", currentReservations);
 
       currentReservations.forEach((r) => {
         for (let i = 0; i < r.dates.length; i++) {
