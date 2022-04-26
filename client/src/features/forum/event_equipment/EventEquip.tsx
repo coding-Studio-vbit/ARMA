@@ -1,23 +1,32 @@
 import { BusinessCenter, Close } from '@material-ui/icons'
 import { userInfo } from 'os';
+import { useSelector } from "react-redux";
 import React, { useEffect, useState } from 'react'
 import Select from "react-select";
+import { useNavigate } from "react-router-dom";
 import { InputField } from '../../../components/InputField/InputField'
 import { useUser } from '../../../providers/user/UserProvider';
 import axiosInstance from '../../../utils/axios';
+import { RootState } from "../../../redux/reducers";
+import axios from '../../../utils/axios';
+
 
 export default function EventEquip() {
+    const navigate = useNavigate();
     const [equipment, setEquipment] = useState("")
     const [quantity, setQuantity] = useState("")
     const [addError, setAddError] = useState("")
     const [list, setList] = useState<{}[]>([])
     const {forum} = useUser()
     const [myequip, setMyequip] = useState<{}[]>()
-    
+    const eventDates = useSelector((state: RootState) => state.eventDates);
+    const eventDetails = useSelector((state: RootState) => state.eventDetails);
+
     useEffect(() => {
+      if(Object.keys(eventDates).length === 0)
+        navigate(-1)
       const getequip = async () => {
         const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"forum/getEquipments");
-        console.log(res.data);
         const data = res.data.response;
         let arr = []
         for(let i = 0; i < data.length; i++){
@@ -31,7 +40,7 @@ export default function EventEquip() {
 
     return (
         <div className="flex flex-col sm:mx-24 mt-8 md:items-start items-center mb-8 ">
-      <span className='text-arma-title sm:text-4xl  text-2xl mb-8 font-semibold'>[eventname] -  Equipment</span>
+      <span className='text-arma-title sm:text-4xl  text-2xl mb-8 font-semibold'>Choose Equipment</span>
         <div className='flex gap-2'>
         <span className = 'text-arma-gray text-lg mb-8 font-semibold'>Choose Equipment</span>
         <BusinessCenter className="text-arma-title" />
@@ -83,6 +92,27 @@ export default function EventEquip() {
             }}
         >
           ADD
+        </button>
+        <button
+          className="btn  bg-arma-title rounded-[8px] px-6 py-2 my-auto"
+          onClick={()=>{
+            console.log({eventDates, eventDetails, list})
+            const newData = new FormData()
+            newData.append("eventDocument", eventDetails.pdf1);
+            newData.append("budgetDocument", eventDetails.pdf2);
+            newData.append("equipmentList", JSON.stringify(list));
+            newData.append("eventHalls", JSON.stringify(eventDates));
+            newData.append("eventDetails", JSON.stringify(eventDetails))
+            axios.post(`${process.env.REACT_APP_SERVER_URL}events/`,newData)
+            .then(response=>{
+              console.log(response)
+            })
+            .catch(error=>{
+              console.log(error);
+            })
+          }}
+        >
+          submit
         </button>
           </div>
          <span className='text-red-500 ml-2 mt-4 mb-4 h-6 '>{addError}</span>

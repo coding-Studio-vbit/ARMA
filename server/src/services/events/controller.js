@@ -71,23 +71,28 @@ const getEvents = async (req, res) => {
 const createEvent = async (req, res) => {
   try {
     // Create a new attendance document for this event.
+    let { eventDetails, eventHalls, equipmentList } = req.body;
+    equipmentList = JSON.parse(equipmentList);
+    eventHalls = JSON.parse(eventHalls);
+    eventDetails = JSON.parse(eventDetails);
     let newAttendanceDoc = new attendance();
     // Set the required equipment array
-    let equipment = [];
-    for (let i = 0; i < req.body.equipment.length; i++) {
-      const { name, totalCount } = req.body.equipment[i];
-      const eq = await equipments.findOne({ name: name });
-      equipment.push(eq._id);
+    let eqs = [];
+    for (let i = 0; i < equipmentList.length; i++) {
+      let { equipment, quantity } = equipmentList[i];
+      quantity = Number(quantity);
+      equipments.findOne({ name: equipment }).then((data) => {
+        if (data) eqs.push(data._id);
+      });
     }
-
     let newEvent = new events({
       forumID: req.user._id,
-      description: req.body.description,
-      name: req.body.name,
+      description: eventDetails.desc,
+      name: eventDetails.name,
       eventProposalDocPath: req.files.eventDocument[0].path,
       budgetDocPath: req.files.budgetDocument[0].path,
       hasBudget: req.files.budgetDocument !== null,
-      equipment: equipment,
+      equipment: eqs,
     });
     newAttendanceDoc.eventID = String(newEvent._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
@@ -96,17 +101,50 @@ const createEvent = async (req, res) => {
         ? "AWAITING BUDGET APPROVAL"
         : "AWAITING SAC APPROVAL";
 
-    // Create reservations.
-    /**
-     *  [
-     *   {
-     *     HallID: hallID,
-     *     dates: ["2-3-2022", "3-3-2022"]
-     *     timeSlots: [["MORNING", "AFTERNOON"], ["MORNING"]]
-     *   }
-     *  ]
-     */
-    const eventReservations = req.body.reservations;
+    // // Create reservations.
+    // /**
+    //  *  [
+    //  *   {
+    //  *     HallID: hallID,
+    //  *     dates: ["2-3-2022", "3-3-2022"]
+    //  *     timeSlots: [["MORNING", "AFTERNOON"], ["MORNING"]]
+    //  *   }
+    //  *  ]
+    //  */
+
+    let reservationsObject = {};
+    let datesList = Object.keys(eventHalls);
+    let HallsList = new Set();
+
+    for (let i = 0; i < datesList.length; i++) {
+      for (let j = 0; j < eventHalls[datesList[i]].halls.length; j++) {
+        let info = eventHalls[datesList[i]].halls[j].split(".");
+        let slot = info[0];
+        let hall = await halls.findOne({ name: info[1] });
+        if (Object.hasOwnProperty(reservationsObject, hall._id)) {
+          if (Object.hasOwnProperty(reservationsObject[hall._id], datesList[i])) {
+            reservationsObject[hall._id][datesList[i]].push(slot);
+          } else {
+            reservationsObject[hall._id][datesList[i]] = [];
+          }
+        } else {
+          reservationsObject[hall._id] = {};
+        }
+        HallsList.add(hall._id);
+      }
+    }
+
+    let reservationsList = []
+    HallsList = [...HallsList]
+    for(let i=0;i<HallsList.length;i++)
+    {
+      reservationsList.push({
+        HallID: HallsList[i],
+        dates:Object.keys(reservationsObject[HallsList[i]]),
+        slots:Object.keys(reservationsObject[HallsList[i]]).map(date=>{return reservationObject[HallsList[i]][date]})
+      })
+    }
+    const eventReservations = reservationsList;
     eventReservations.forEach(async (obj) => {
       //first check if the dates are valid
       //see if an already reserved date is being booked again.
@@ -361,7 +399,9 @@ const getActiveEvents = async (req, res) => {
       .find({ status: "NOT COMPLETED" })
       .populate("forumId")
       .populate("eventId");
-    const dateString = `${currentDate.getDate()}-${currentDate.getMonth()+1}-${currentDate.getFullYear()}`;
+    const dateString = `${currentDate.getDate()}-${
+      currentDate.getMonth() + 1
+    }-${currentDate.getFullYear()}`;
     const activeEvents = possibleEvents.filter((event) => {
       return event.dates.indexOf(dateString) !== -1;
     });

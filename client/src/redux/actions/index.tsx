@@ -1,3 +1,10 @@
+export const createEventDetails = (details) => {
+  return {
+    type: "CREATE_EVENT_DETAILS",
+    payload: details
+  }
+}
+
 export const createDatesState = (DatesState) => {
   return {
     type: "CREATE_DATES",
