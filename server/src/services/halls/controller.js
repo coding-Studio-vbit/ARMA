@@ -113,16 +113,16 @@ const getSlots = async (req, res) => {
   try {
     let { date } = req.body;
     let result = await reservations
-      .find({ status: "NOT COMPLETED", dates: date })
-      .populate("hallId");
+      .find({ status: "NOT COMPLETED", dates: date }).populate("hallId");
     const slotsObject = {};
+    console.log("reservations are:",result);
     result.forEach((item) => {
       if (!slotsObject.hasOwnProperty(item.hallId.name)) {
         slotsObject[item.hallId.name] = [];
       }
       const dateIndex = item.dates.indexOf(date);
-      for (let i = 0; i < item.slots[dateIndex].length; i++)
-        slotsObject[item.hallId.name].push(item.slots[dateIndex][i]);
+      for (let i = 0; i < item.timeSlots[dateIndex].length; i++)
+        slotsObject[item.hallId.name].push(item.timeSlots[dateIndex][i]);
       });
       res.json(response(slotsObject, process.env.SUCCESS_CODE));
   } catch (err) {

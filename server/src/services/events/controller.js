@@ -119,7 +119,6 @@ const createEvent = async (req, res) => {
     
     for (let i = 0; i < datesList.length; i++) {
       for (let j = 0; j < eventHalls[datesList[i]].halls.length; j++) {
-        console.log(datesList[i], eventHalls[datesList[i]].halls[j],reservationsObject);
         let info = eventHalls[datesList[i]].halls[j].split(".");
         let slot = info[0];
         let hall = await halls.findOne({
@@ -127,13 +126,11 @@ const createEvent = async (req, res) => {
         });
         if (reservationsObject[String(hall._id)]) {
           if (reservationsObject[String(hall._id)][datesList[i]]){
-            console.log("HELOOOO")
             reservationsObject[String(hall._id)][datesList[i]].push(slot);
           } else {
             reservationsObject[String(hall._id)][datesList[i]] = [slot];
           }
         } else {
-          console.log("Hall ", String(hall._id), "not found")
           reservationsObject[String(hall._id)] = {};
           reservationsObject[String(hall._id)][datesList[i]] = [slot];
         }
@@ -155,7 +152,6 @@ const createEvent = async (req, res) => {
         }),
       });
     }
-    //console.log("reservationsList is", reservationsList)
     const eventReservations = reservationsList;
     eventReservations.forEach(async (obj) => {
       //first check if the dates are valid

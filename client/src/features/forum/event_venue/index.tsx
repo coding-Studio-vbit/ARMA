@@ -22,8 +22,11 @@ const EventVenue = () => {
   const [showCalender, setShowCalender] = useState(false);
   const [isLong, setIsLong] = useState(false);
   const [hallList, setHallList] = useState([]);
+  const eventDetails = useSelector((state: RootState) => state.eventDetails);
 
   useEffect(() => {
+    if(Object.keys(eventDetails).length === 0)
+        navigate(-1)
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}halls`)
       .then((response) => {
@@ -39,7 +42,7 @@ const EventVenue = () => {
 
   //redux
   const eventDates = useSelector((state: RootState) => state.eventDates);
-  const blockedSlots = useState({});
+  const [blockedSlots, setBlockedSlots] = useState({});
   const key = useSelector((state: RootState) => state.selectedDate);
   const dispatch = useDispatch();
   console.log(eventDates);
@@ -50,7 +53,10 @@ const EventVenue = () => {
           date: `${date.day}-${date.month}-${date.year}`,
         })
         .then((response) => {
-          blockedSlots[`${date.day}-${date.month}-${date.year}`] = response.data.response;
+          console.log(response, "HELLO");
+          const temp = {...blockedSlots};
+          temp[`${date.day}-${date.month}-${date.year}`] = response.data.response;
+          setBlockedSlots(temp)
         });
     });
   }, [selectedDays]);
