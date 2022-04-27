@@ -81,11 +81,10 @@ const createEvent = async (req, res) => {
     for (let i = 0; i < equipmentList.length; i++) {
       let { equipment, quantity } = equipmentList[i];
       quantity = Number(quantity);
-      equipments
-        .findOne({ name: { $regex: `^${equipment}`, $options: "i" } })
-        .then((data) => {
-          if (data) eqs.push(data._id);
-        });
+      let eq = await equipments.findOne({
+        name: { $regex: `^${equipment}`, $options: "i" },
+      });
+      eqs.push(eq._id);
     }
     let newEvent = new events({
       forumID: req.user._id,
@@ -117,7 +116,7 @@ const createEvent = async (req, res) => {
     let reservationsObject = {};
     let datesList = Object.keys(eventHalls);
     let HallsList = new Set();
-
+    
     for (let i = 0; i < datesList.length; i++) {
       for (let j = 0; j < eventHalls[datesList[i]].halls.length; j++) {
         let info = eventHalls[datesList[i]].halls[j].split(".");
@@ -135,19 +134,23 @@ const createEvent = async (req, res) => {
           }
         } else {
           reservationsObject[hall._id] = {};
+          reservationsObject[hall._id][datesList[i]] = [slot];
         }
         HallsList.add(hall._id);
       }
     }
-
+    console.log("reservationsObject is", reservationsObject)
     let reservationsList = [];
     HallsList = [...HallsList];
     for (let i = 0; i < HallsList.length; i++) {
       reservationsList.push({
         HallID: HallsList[i],
-        dates: Object.keys(reservationsObject[HallsList[i]]),
-        slots: Object.keys(reservationsObject[HallsList[i]]).map((date) => {
-          return reservationObject[HallsList[i]][date];
+        dates: Object.keys(reservationsObject[HallsList[i]]).map((date)=>{
+          const temp = new Date(date);
+          return `${temp.getDate()}-${temp.getMonth()+1}-${temp.getFullYear()}`
+        }),
+        timeSlots: Object.keys(reservationsObject[HallsList[i]]).map((date) => {
+          return reservationsObject[HallsList[i]][date];
         }),
       });
     }
@@ -157,11 +160,9 @@ const createEvent = async (req, res) => {
       //see if an already reserved date is being booked again.
       const currentReservations = await reservations.find({
         status: "NOT COMPLETED",
-        hallId: obj.hallId,
+        hallId: obj.HallID,
       });
       const blocked = [];
-
-      console.log("current reservations:", currentReservations);
 
       currentReservations.forEach((r) => {
         for (let i = 0; i < r.dates.length; i++) {
@@ -174,7 +175,7 @@ const createEvent = async (req, res) => {
         for (let i = 0; i < r.dates.length; i++) {
           for (let j = 0; j < r.timeSlots[i].length; j++) {
             d = r.dates[i] + "." + r.timeSlots[i][j];
-            if (booked.indexOf(d) !== -1) {
+            if (blocked.indexOf(d) !== -1) {
               throw new Error("Invalid dates");
             }
           }
@@ -182,7 +183,7 @@ const createEvent = async (req, res) => {
       });
 
       const record = new reservations();
-      record.hallId = obj.hallId;
+      record.hallId = obj.HallID;
       record.forumId = req.user._id;
       record.status = "NOT COMPLETED";
       record.eventId = newEvent._id;
