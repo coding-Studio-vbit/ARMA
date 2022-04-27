@@ -15,7 +15,7 @@ const dashboard = async (req, res) => {
     let myEvents = await events.find({ forumID: req.user._id });
     let currentDate = new Date()
     let dateString = currentDate.getDate() + '-' + (currentDate.getMonth()+1) + '-' + currentDate.getFullYear();
-    let activeEvents = await reservations.find({status: "NOT COMPLETED", dates:dateString}).select("name -_id")
+    let activeEvents = await reservations.find({status: "NOT COMPLETED", dates:dateString}).populate({path:"eventId",select:{name:1}})
     let statistics = { engagement: 4, total: myEvents.length };
     res.json(
       response(

@@ -57,7 +57,7 @@ const Dashboard = () => {
             <h2 className="text-arma-blue mx-auto">Today's Events</h2>
             <ul className="pl-8 list-disc list-outside">
               {todaysEventList.length !== 0 ? todaysEventList.map((item) => {
-                return <li>{item.name}</li>;
+                return <li>{item.eventId.name}</li>;
               }) : <li>No events today</li>}
             </ul>
           </div>

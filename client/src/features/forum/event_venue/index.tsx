@@ -45,7 +45,6 @@ const EventVenue = () => {
   const [blockedSlots, setBlockedSlots] = useState({});
   const key = useSelector((state: RootState) => state.selectedDate);
   const dispatch = useDispatch();
-  console.log(eventDates);
   useEffect(() => {
     selectedDays.forEach((date) => {
       axios
@@ -164,7 +163,6 @@ const EventVenue = () => {
     });
   const setDays = (date) => {
     setSelectedDays(date);
-    console.log(date);
     var obj = {};
     date.map((d) => {
       const dateString = new Date(d.year, d.month - 1, d.day);
