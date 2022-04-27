@@ -15,6 +15,8 @@ const Dashboard = () => {
     .then(response=>{
       console.log(response.data.response)
       setEventList(response?.data.response.events)
+      response.data.response.activeEvents = new Set(response.data.response.activeEvents);
+      response.data.response.activeEvents = [...response.data.response.activeEvents];
       setTodaysEventList(response?.data.response.activeEvents)
     })
     .catch(err=>{
@@ -57,7 +59,7 @@ const Dashboard = () => {
             <h2 className="text-arma-blue mx-auto">Today's Events</h2>
             <ul className="pl-8 list-disc list-outside">
               {todaysEventList.length !== 0 ? todaysEventList.map((item) => {
-                return <li>{item.eventId.name}</li>;
+                return <li>{item}</li>;
               }) : <li>No events today</li>}
             </ul>
           </div>

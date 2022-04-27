@@ -106,6 +106,7 @@ export default function EventEquip() {
             axios.post(`${process.env.REACT_APP_SERVER_URL}events/`,newData)
             .then(response=>{
               console.log(response)
+              navigate("/forum")
             })
             .catch(error=>{
               console.log(error);

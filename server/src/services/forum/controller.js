@@ -16,10 +16,13 @@ const dashboard = async (req, res) => {
     let currentDate = new Date()
     let dateString = currentDate.getDate() + '-' + (currentDate.getMonth()+1) + '-' + currentDate.getFullYear();
     let activeEvents = await reservations.find({status: "NOT COMPLETED", dates:dateString}).populate({path:"eventId",select:{name:1}})
+
     let statistics = { engagement: 4, total: myEvents.length };
     res.json(
       response(
-        { events: myEvents, statistics: statistics, activeEvents: activeEvents },
+        { events: myEvents, statistics: statistics, activeEvents: activeEvents.map((item)=>{
+          return item.eventId.name
+        }) },
         process.env.SUCCESS_CODE
       )
     );
