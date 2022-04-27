@@ -136,10 +136,9 @@ const createEvent = async (req, res) => {
           reservationsObject[hall._id] = {};
           reservationsObject[hall._id][datesList[i]] = [slot];
         }
-        HallsList.add(hall._id);
+        HallsList.add(String(hall._id));
       }
     }
-    console.log("reservationsObject is", reservationsObject)
     let reservationsList = [];
     HallsList = [...HallsList];
     for (let i = 0; i < HallsList.length; i++) {
@@ -154,6 +153,7 @@ const createEvent = async (req, res) => {
         }),
       });
     }
+    console.log("reservationsList is", reservationsList)
     const eventReservations = reservationsList;
     eventReservations.forEach(async (obj) => {
       //first check if the dates are valid
