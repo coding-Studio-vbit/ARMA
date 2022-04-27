@@ -119,26 +119,28 @@ const createEvent = async (req, res) => {
     
     for (let i = 0; i < datesList.length; i++) {
       for (let j = 0; j < eventHalls[datesList[i]].halls.length; j++) {
+        console.log(datesList[i], eventHalls[datesList[i]].halls[j],reservationsObject);
         let info = eventHalls[datesList[i]].halls[j].split(".");
         let slot = info[0];
         let hall = await halls.findOne({
           name: { $regex: `^${info[1]}`, $options: "i" },
         });
-        if (Object.hasOwnProperty(reservationsObject, hall._id)) {
-          if (
-            Object.hasOwnProperty(reservationsObject[hall._id], datesList[i])
-          ) {
-            reservationsObject[hall._id][datesList[i]].push(slot);
+        if (reservationsObject[String(hall._id)]) {
+          if (reservationsObject[String(hall._id)][datesList[i]]){
+            console.log("HELOOOO")
+            reservationsObject[String(hall._id)][datesList[i]].push(slot);
           } else {
-            reservationsObject[hall._id][datesList[i]] = [];
+            reservationsObject[String(hall._id)][datesList[i]] = [slot];
           }
         } else {
-          reservationsObject[hall._id] = {};
-          reservationsObject[hall._id][datesList[i]] = [slot];
+          console.log("Hall ", String(hall._id), "not found")
+          reservationsObject[String(hall._id)] = {};
+          reservationsObject[String(hall._id)][datesList[i]] = [slot];
         }
         HallsList.add(String(hall._id));
       }
     }
+    //console.log("reservationsObject is", reservationsObject);
     let reservationsList = [];
     HallsList = [...HallsList];
     for (let i = 0; i < HallsList.length; i++) {
@@ -153,7 +155,7 @@ const createEvent = async (req, res) => {
         }),
       });
     }
-    console.log("reservationsList is", reservationsList)
+    //console.log("reservationsList is", reservationsList)
     const eventReservations = reservationsList;
     eventReservations.forEach(async (obj) => {
       //first check if the dates are valid
