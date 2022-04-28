@@ -83,7 +83,7 @@ const editFaculty = async(req,res)=>{
   const viewFaculty = async (req, res) => {
     try {
       let {id} = req.body
-      let faculty = await facultyModel.findOne({_id: id});
+      let faculty = await facultyModel.findOne({_id: id}).populate('role');
       res.json(response(faculty, process.env.SUCCESS_CODE));
     } catch (err) {
       console.log(err);

@@ -4,10 +4,39 @@ import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { Close } from "@material-ui/icons";
 import axiosInstance from "../../utils/axios";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
+interface AddStudentsProps
+{
+  isEdit: boolean,
+}
 
-
-export const AddFaculty = () => {
+export const AddFaculty = ({isEdit}:AddStudentsProps) => {
+  const nav = useNavigate()
+  const location:any = useLocation()
+  let {id} = useParams()
+  console.log(id);
+  useEffect(() => {
+    const student = async () => {
+      const res = await axiosInstance.post(
+        process.env.REACT_APP_SERVER_URL + "faculty/viewFaculty",
+        { id: id }
+      );
+      const data = res.data.response;
+      console.log(data);
+       setName(data?.name)
+       setuniqueid(data?.rollNumber)
+       setDesignation(data?.designation)
+       setSelectRolesL(data?.role)
+       setEmail(data?.email)
+       setPassword(data?.password)
+      setPhone(data?.phone)
+    };
+    if(isEdit)
+    {
+    student();
+    }
+  }, []);
   const [uniqueid, setuniqueid] = useState("");
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("");
@@ -15,13 +44,14 @@ export const AddFaculty = () => {
   const [span, setSpan] = useState(false)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [uniqueidError, setUniqueidError] = useState<string>();
-  const [passwordError, setPasswordError] = useState<string>();
-  const [emailError, setEmailError] = useState<string>();
-  const [nameError, setNameError] = useState<string>();
-  const [designationError, setDesignationError] = useState<string>();
-  const [phoneError, setPhoneError] = useState<string>();
+  const [uniqueidError, setUniqueidError] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<string>("");
+  const [emailError, setEmailError] = useState<string>("");
+  const [nameError, setNameError] = useState<string>("");
+  const [designationError, setDesignationError] = useState<string>("");
+  const [phoneError, setPhoneError] = useState<string>("");
   const [show, setShow] = useState(false);
+  const [show1, setShow1] = useState(false);
   const [showError, setShowError] = useState<String>("");
   const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
   const [selectRolesL, setSelectRolesL] = useState<(string | undefined) []>([])
@@ -124,8 +154,21 @@ export const AddFaculty = () => {
       }  
   };
 
+  const deleteItem = async() => {
+    setShowError("");
+    const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "faculty/deleteFaculty", {id:id})
+    const data = res.data
+    if (data.status === 1) {
+      setResponse("Deleted")
+      setShow(true)
+      nav('/Faculty/')
+    } else {
+        setResponse(data.response.message)
+        setShow(true)             
+    }  
+  }
+
   const loginValidate = async() => {
-    try {
     if (
       uniqueid.length === 0 ||
       name.length === 0 ||
@@ -142,7 +185,10 @@ export const AddFaculty = () => {
       designationError?.length !== 0
     ) {
       setShowError("Fill details appropriately");
-    } else {
+    } 
+    else {
+     if(!isEdit)
+     {
       setShowError("");
         const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "admin/addFaculty", {name:name, rollNumber:uniqueid, phone:phone, designation:designation,email:email,rolesF:selectRoles, password:password})
 
@@ -152,26 +198,53 @@ export const AddFaculty = () => {
         setResponse("New Faculty Added")
         setShow(true)
       } else {
-          setResponse(data.response)
+          setResponse(data.response.message)
+          setShow(true)             
+      }
+    }
+    else{
+      setShowError("");
+      const res = await axiosInstance.put(process.env.REACT_APP_SERVER_URL + "students/editFaculty", {id:id, name:name, rollNumber:uniqueid, phone:phone, designation:designation,email:email,rolesF:selectRoles, password:password})
+      const data = res.data
+      if (data.status === 1) {
+        setResponse("Faculty Details Edited")
+        setShow(true)
+        
+      } else {
+          setResponse(data.response.message)
           setShow(true)             
       }   
-    }
-  } catch (error) {
-        
-  }
-  };
+    }   
+  } 
+};
 
   return (
     <div className="flex flex-col grow items-center">
       <div className="mt-12 w-max">
+      <div className="flex flex-row justify-between">
         <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
-          ADD FACULTY
+          {isEdit? "EDIT FACULTY" : "ADD FACULTY"}
         </p>
+        {isEdit &&
+        <button
+          className="btn  bg-arma-red hover:bg-arma-red rounded-[8px] px-6 py-2 mb-12 flex" onClick={() => {setShow1(true)}}>
+         Delete
+        </button>
+        }
+         <Dialog show={show1} setShow={setShow1} title="Are you sure you want to proceed?">
+         <button className="outlineBtn" onClick={()=>setShow1(false)} >Cancel</button>
+         <button className="btn" onClick={()=>{
+          deleteItem();
+        }} >Proceed</button>
+        </Dialog>
+
+        </div>
 
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
           <InputField
             name="Unique ID"
             type="text"
+            value={uniqueid}
             error={uniqueidError}
             onChange={(e) => {
               validateUniqueid(e);
@@ -180,6 +253,7 @@ export const AddFaculty = () => {
           <InputField
             name="Name"
             type="text"
+            value={name}
             error={nameError}
             onChange={(e) => {
               validateName(e);
@@ -191,6 +265,7 @@ export const AddFaculty = () => {
           <InputField
             name="Designation"
             type="text"
+            value={designation}
             error={designationError}
             onChange={(e) => {
               validateDesignation(e);
@@ -263,6 +338,7 @@ export const AddFaculty = () => {
          <InputField
             name="Login Email"
             type="text"
+            value={email}
             error={emailError}
             onChange={(e) => {
               validateEmail(e);
@@ -271,6 +347,7 @@ export const AddFaculty = () => {
           <InputField
             name="Password"
             type="password"
+            value={password}
             error={passwordError}
             onChange={(e) => {
               validatePass(e);
@@ -281,6 +358,7 @@ export const AddFaculty = () => {
         <InputField
             name="Phone Number"
             type="text"
+            value={phone}
             error={phoneError}
             onChange={(e) => {
               validatePhone(e);

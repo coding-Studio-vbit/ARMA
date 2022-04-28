@@ -34,6 +34,18 @@ export const RolesList = () => {
                   validateName(e);
                 }}
               />
+                    {/* <button className="btn" onClick = {() => navigate('/Admins/EditRoles')}>EDIT</button> */}
+                    
+                    <Table
+                        api={`${process.env.REACT_APP_SERVER_URL + "roles/getRoles"}`}
+                        rowsPerPage={5}
+                        buttonsCount={3}
+                        onTableRowClick={(id) => navigate(`/Roles/EditRoles/${id}`)}
+                        headers={[
+                            { displayName: "S.NO", dataPath: "name", sortable: false },
+                        ]}
+                        />
+                </div>
             </div>
             <div>
               <button
@@ -58,6 +70,5 @@ export const RolesList = () => {
           />
         </div>
       </div>
-    </div>
   );
 };
