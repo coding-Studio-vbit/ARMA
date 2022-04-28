@@ -167,8 +167,12 @@ const generatePDF = async (req, res) => {
       let filename = md5(student.name + student.year + student.section + String(Date.now())) +
       "." + "pdf";
 
-      const result = await fs.writeFile(`${dirPath}/${filename}`, pdfBuffer);
-      res.sendFile(`${dirPath}/${filename}`)
+      const filePath = `${dirPath}/${filename}`
+
+      const result = await fs.writeFile(filePath, pdfBuffer);
+      student.reportFilePath = filePath;
+      await student.save();
+      res.sendFile(filePath)
     });
   } catch (err) {
     console.log(err);
