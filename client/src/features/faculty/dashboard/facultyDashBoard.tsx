@@ -67,12 +67,14 @@ function FacultyDashBoard() {
     axiosInstance
       .get(process.env.REACT_APP_SERVER_URL + "faculty/dashboardInfo",{params:{isFO:faculty?.role.SAC ? false:faculty?.role.FO}})
       .then((response) => {
-        // console.log("Success");
+        console.log("Success");
         
         if(response.data.status===1){
-          // console.log("got Events");
+          console.log("got Events");
 
           const eventList = response.data.response;
+          console.log(eventList);
+          
           if(eventList.length!==0){
             let data =[];
             for (let i = 0; i < eventList.length; i++) {
@@ -107,17 +109,19 @@ function FacultyDashBoard() {
                eD=eD.concat(eventList[i].eventDates)
                data.push(event);
                setEventDays(eD);
-            }          
+            }       
+            console.log(data);
+               
             setCurrentRequests(data);
             setTodaysEvents(data);  
             setPendingRequests(eventList.length); 
           }else{
-            // console.log("No Events");
+            console.log("No Events");
             setError("No Event Requests Found");
           }
           //data :set
         }else{
-          // console.log("Failure");
+          console.log("Failure");
           setError(response.data.response);
         }
         setLoading(false);
@@ -137,10 +141,14 @@ function FacultyDashBoard() {
   return !loading ? (
     <div>
         <div className="mx-auto w-full px-4  md:px-8 lg:px-0 lg:w-10/12 flex flex-col justify-center items-center mt-6 gap-10 py-8 pb-14">
+          
           {/* First Row */}
-          { error==null &&
+
+          {
+           error==null &&
             (faculty?.role.ADMIN || faculty?.role.SAC || faculty?.role.FO ) &&(
               <div className="flex flex-row gap-y-10 flex-wrap  lg:flex-nowrap justify-around w-full md:w-5/6 lg:w-11/12  xl:w-9/12 gap-4 xl:gap-6">
+            
             {/* Current Requests */}
 
             <div
@@ -227,6 +235,7 @@ function FacultyDashBoard() {
             </div>
           </div>
         </div>:
+        
         <div className="flex justify-center items-center">
           {error}
         </div>
