@@ -83,9 +83,7 @@ export default function EventBudget() {
           </div>
         ) : (
           <div className="flex flex-col mt-10 cursor-pointer">
-            <CloudDownloadTwoTone className="!w-20  !h-20 mx-auto  text-arma-blue " />
-            <span>
-              <a
+              <a className="flex flex-col   cursor-pointer"
                 onClick={async () => {
                   const result = await axios({responseType: 'blob', method: 'GET', url:`${process.env.REACT_APP_SERVER_URL}events/getBudgetDocument/${location.state.eventId}`})
                   const url = window.URL.createObjectURL(
@@ -99,9 +97,11 @@ export default function EventBudget() {
                 }}
                 download
               >
+            <CloudDownloadTwoTone className="!w-20  !h-20 mx-auto  text-arma-blue " />
+            <span>
                 Click here to download the budget document
-              </a>
             </span>
+              </a>
           </div>
         )}
       </div>
