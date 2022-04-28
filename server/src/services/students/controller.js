@@ -1,7 +1,8 @@
 const students = require("../../models/student");
 const response = require("../util/response");
 const fs = require("fs/promises");
-const html_to_pdf = require("html-pdf-node");
+const path = require("path")
+const pdf = require("html-pdf");
 const md5 = require("md5");
 
 const getStudentsList = async (req, res) => {
@@ -156,24 +157,32 @@ const generatePDF = async (req, res) => {
     const student = await students.findById(studentId);
     const options = { format: "A4" };
     const file = { content: htmlContent };
-    html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
-      let dirPath = md5(student.name + Date.now());
-      pathValue = path.join(
-        __dirname,
-        "../../../data/static/",
-        hashValue.slice(0, 1),
-        hashValue.slice(0, 2)
-      );
-      let filename = md5(student.name + student.year + student.section + String(Date.now())) +
-      "." + "pdf";
+    let temp = md5(student.name + Date.now());
+    let dirPath = path.join(
+      __dirname,
+      "../../../data/static/",
+      temp.slice(0, 1),
+      temp.slice(0, 2)
+    );
+    let filename =
+      md5(student.name + student.year + student.section + String(Date.now())) +
+      "." +
+      "pdf";
 
-      const filePath = `${dirPath}/${filename}`
+    const filePath = `${dirPath}/${filename}`;
+    console.log(filePath);
 
-      const result = await fs.writeFile(filePath, pdfBuffer);
+    pdf.create(htmlContent).toFile(filePath, (err, result)=>{
+      if(err){
+        return console.log(err);
+      }
       student.reportFilePath = filePath;
-      await student.save();
-      res.sendFile(filePath)
-    });
+      student.save()
+      .then(()=>{
+        res.sendFile(filePath);
+      })
+    })
+
   } catch (err) {
     console.log(err);
     res.json(response(err, process.env.FAILURE_CODE));
