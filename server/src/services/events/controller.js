@@ -441,8 +441,7 @@ const getBudgetDocument = async (req, res) => {
 
 const updateReservations = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { eventHalls } = req.body;
+    const { eventHalls,id } = req.body;
     const event = await events.findById(id);
     if (event.forumID == req.user._id && event.eventStatus !== "COMPLETED") {
       //delete all reservations of this event.
@@ -531,18 +530,45 @@ const updateReservations = async (req, res) => {
         response("Successfully updated reservations", process.env.SUCCESS_CODE)
       );
     } else {
-      res.json(response("unaithorized", process.env.FAILURE_CODE));
+      res.json(response("unauthorized", process.env.FAILURE_CODE));
     }
   } catch (error) {
     console.log(error);
     res.json(
-      response("Failed to send budget document", process.env.FAILURE_CODE)
+      response("Failed to update reservations", process.env.FAILURE_CODE)
     );
   }
 };
 
+const updateEquipment = async (req, res)=>{
+  try
+  {
+    const { id, equipmentList } = req.body;
+    let eqs = [];
+    for (let i = 0; i < equipmentList.length; i++) {
+      let { equipment, quantity } = equipmentList[i];
+      quantity = Number(quantity);
+      let eq = await equipments.findOne({
+        name: { $regex: `^${equipment}`, $options: "i" },
+      });
+      eqs.push(eq._id);
+    }
+    const event = await events.findById(id);
+    event.equipment = eqs;
+    await event.save()
+    res.json(response("Updated event equipment", process.env.SUCCESS_CODE))
+  }
+  catch (error) {
+    console.log(error);
+    res.json(
+      response("Failed to update event equipment", process.env.FAILURE_CODE)
+    );
+  }
+}
+
 module.exports = {
   updateReservations,
+  updateEquipment,
   getEventById,
   getBudgetDocument,
   getEvents,
