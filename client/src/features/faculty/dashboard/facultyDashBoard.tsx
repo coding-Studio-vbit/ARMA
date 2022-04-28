@@ -42,6 +42,7 @@ function FacultyDashBoard() {
     let x:any;
     x = todaysEvents?.filter(
       function(element){
+        console.log(element)
         for (let i = 0; i < element.date.length; i++) {
           if(element.date[i].day === selectedDate?.day && 
              element.date[i].month === selectedDate?.month &&

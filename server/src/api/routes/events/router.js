@@ -44,4 +44,5 @@ router.put("/postAttendance",controller.postAttendance)
 router.get("activeEvents", controller.getActiveEvents)
 router.get("/calendarEvents",controller.getCalendarEvents)
 router.get("/getEvent/:id",controller.getEventById)
+router.get("/getBudgetDocument/:id", controller.getBudgetDocument);
 module.exports = router;

@@ -353,7 +353,6 @@ const getRequests = async (req, res) => {
         .find({ eventStatus: { $nin: ["COMPLETED", "REJECTED"] } })
         .populate("forumID");
     }
-
     res.json(response(result, process.env.SUCCESS_CODE));
     //console.log("Get",result);
   } catch (error) {
@@ -420,8 +419,31 @@ const getActiveEvents = async (req, res) => {
   }
 };
 
+const getBudgetDocument = async (req, res)=>{
+  try
+  {
+    const forumId = req.user._id;
+    const {id} = req.params;
+    const event = await events.findById(id);
+    if(event.forumID == forumId)
+    {
+      res.sendFile(event.budgetDocPath);
+    }
+    else
+    {
+      res.json(response("unauthorized", process.env.FAILURE_CODE));
+    }
+  }
+  catch(error)
+  {
+    console.log(error);
+    res.json(response("Failed to send budget document", process.env.FAILURE_CODE))
+  }
+}
+
 module.exports = {
   getEventById,
+  getBudgetDocument,
   getEvents,
   createEvent,
   updateBudgetDoc,
