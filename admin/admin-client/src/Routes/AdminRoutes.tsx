@@ -8,13 +8,9 @@ function AdminRoutes() {
   return (
 
       <Routes>
-          <Route path = '/AddAdmin' element = {<AddAdmin />}/>
-          <Route path = '/EditAdmin' element = {<EditAdmin />}/>
+          <Route path = '/AddAdmin' element = {<AddAdmin isEdit={false} />}/>
+          <Route path = '/EditAdmin/:id' element = {<AddAdmin isEdit={true} />}/>
           <Route path = '/' element = {<AdminList />}/>
-
-
-
-       
       </Routes>
 
   );
