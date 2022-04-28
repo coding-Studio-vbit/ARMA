@@ -116,7 +116,7 @@ const createEvent = async (req, res) => {
     let reservationsObject = {};
     let datesList = Object.keys(eventHalls);
     let HallsList = new Set();
-    
+
     for (let i = 0; i < datesList.length; i++) {
       for (let j = 0; j < eventHalls[datesList[i]].halls.length; j++) {
         let info = eventHalls[datesList[i]].halls[j].split(".");
@@ -125,7 +125,7 @@ const createEvent = async (req, res) => {
           name: { $regex: `^${info[1]}`, $options: "i" },
         });
         if (reservationsObject[String(hall._id)]) {
-          if (reservationsObject[String(hall._id)][datesList[i]]){
+          if (reservationsObject[String(hall._id)][datesList[i]]) {
             reservationsObject[String(hall._id)][datesList[i]].push(slot);
           } else {
             reservationsObject[String(hall._id)][datesList[i]] = [slot];
@@ -143,9 +143,11 @@ const createEvent = async (req, res) => {
     for (let i = 0; i < HallsList.length; i++) {
       reservationsList.push({
         HallID: HallsList[i],
-        dates: Object.keys(reservationsObject[HallsList[i]]).map((date)=>{
+        dates: Object.keys(reservationsObject[HallsList[i]]).map((date) => {
           const temp = new Date(date);
-          return `${temp.getDate()}-${temp.getMonth()+1}-${temp.getFullYear()}`
+          return `${temp.getDate()}-${
+            temp.getMonth() + 1
+          }-${temp.getFullYear()}`;
         }),
         timeSlots: Object.keys(reservationsObject[HallsList[i]]).map((date) => {
           return reservationsObject[HallsList[i]][date];
@@ -419,29 +421,128 @@ const getActiveEvents = async (req, res) => {
   }
 };
 
-const getBudgetDocument = async (req, res)=>{
-  try
-  {
+const getBudgetDocument = async (req, res) => {
+  try {
     const forumId = req.user._id;
-    const {id} = req.params;
+    const { id } = req.params;
     const event = await events.findById(id);
-    if(event.forumID == forumId)
-    {
+    if (event.forumID == forumId) {
       res.sendFile(event.budgetDocPath);
-    }
-    else
-    {
+    } else {
       res.json(response("unauthorized", process.env.FAILURE_CODE));
     }
-  }
-  catch(error)
-  {
+  } catch (error) {
     console.log(error);
-    res.json(response("Failed to send budget document", process.env.FAILURE_CODE))
+    res.json(
+      response("Failed to send budget document", process.env.FAILURE_CODE)
+    );
   }
-}
+};
+
+const updateReservations = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { eventHalls } = req.body;
+    const event = await events.findById(id);
+    if (event.forumID == req.user._id && event.eventStatus !== "COMPLETED") {
+      //delete all reservations of this event.
+      const deletionResult = await reservations.deleteMany({ eventId: id });
+      let reservationsObject = {};
+      let datesList = Object.keys(eventHalls);
+      let HallsList = new Set();
+
+      for (let i = 0; i < datesList.length; i++) {
+        for (let j = 0; j < eventHalls[datesList[i]].halls.length; j++) {
+          let info = eventHalls[datesList[i]].halls[j].split(".");
+          let slot = info[0];
+          let hall = await halls.findOne({
+            name: { $regex: `^${info[1]}`, $options: "i" },
+          });
+          if (reservationsObject[String(hall._id)]) {
+            if (reservationsObject[String(hall._id)][datesList[i]]) {
+              reservationsObject[String(hall._id)][datesList[i]].push(slot);
+            } else {
+              reservationsObject[String(hall._id)][datesList[i]] = [slot];
+            }
+          } else {
+            reservationsObject[String(hall._id)] = {};
+            reservationsObject[String(hall._id)][datesList[i]] = [slot];
+          }
+          HallsList.add(String(hall._id));
+        }
+      }
+      //console.log("reservationsObject is", reservationsObject);
+      let reservationsList = [];
+      HallsList = [...HallsList];
+      for (let i = 0; i < HallsList.length; i++) {
+        reservationsList.push({
+          HallID: HallsList[i],
+          dates: Object.keys(reservationsObject[HallsList[i]]).map((date) => {
+            const temp = new Date(date);
+            return `${temp.getDate()}-${
+              temp.getMonth() + 1
+            }-${temp.getFullYear()}`;
+          }),
+          timeSlots: Object.keys(reservationsObject[HallsList[i]]).map(
+            (date) => {
+              return reservationsObject[HallsList[i]][date];
+            }
+          ),
+        });
+      }
+      const eventReservations = reservationsList;
+      eventReservations.forEach(async (obj) => {
+        //first check if the dates are valid
+        //see if an already reserved date is being booked again.
+        const currentReservations = await reservations.find({
+          status: "NOT COMPLETED",
+          hallId: obj.HallID,
+        });
+        const blocked = [];
+
+        currentReservations.forEach((r) => {
+          for (let i = 0; i < r.dates.length; i++) {
+            for (let j = 0; j < r.timeSlots[i].length; j++) {
+              blocked.push(r.dates[i] + "." + r.timeSlots[i][j]);
+            }
+          }
+        });
+        eventReservations.forEach((r) => {
+          for (let i = 0; i < r.dates.length; i++) {
+            for (let j = 0; j < r.timeSlots[i].length; j++) {
+              d = r.dates[i] + "." + r.timeSlots[i][j];
+              if (blocked.indexOf(d) !== -1) {
+                throw new Error("Invalid dates");
+              }
+            }
+          }
+        });
+
+        const record = new reservations();
+        record.hallId = obj.HallID;
+        record.forumId = req.user._id;
+        record.status = "NOT COMPLETED";
+        record.eventId = newEvent._id;
+        record.dates = obj.dates;
+        record.timeSlots = obj.timeSlots;
+        await record.save();
+      });
+      res.json(
+        response("Successfully updated reservations", process.env.SUCCESS_CODE)
+      );
+    } else {
+      res.json(response("unaithorized", process.env.FAILURE_CODE));
+    }
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response("Failed to send budget document", process.env.FAILURE_CODE)
+    );
+  }
+};
 
 module.exports = {
+  updateReservations,
   getEventById,
   getBudgetDocument,
   getEvents,

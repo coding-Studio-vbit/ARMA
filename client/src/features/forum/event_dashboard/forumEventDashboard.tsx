@@ -10,9 +10,9 @@ interface EventInfo {
 
 const eventInfoList: EventInfo[] = [
   { name: "Event Details", route: "eventInfo" },
-  { name: "Event Venue", route: "venueInfo" },
+  { name: "Event Venue", route: "dashboardUpdateVenue" },
   { name: "Budget", route: "budget" },
-  { name: "Equipment", route: "eventEquipment" },
+  { name: "Equipment", route: "dashboardUpdateEquipment" },
   { name: "Attendance", route: "eventAttendance" },
   { name: "Report & Media", route: "reportAndMedia" },
 ];

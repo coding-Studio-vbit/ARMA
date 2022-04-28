@@ -13,13 +13,11 @@ export default function EventBudget() {
   const [event, setEvent] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   useEffect(() => {
-    console.log(location.state);
     axios
       .get(
         `${process.env.REACT_APP_SERVER_URL}events/getEvent/${location.state.eventId}`
       )
       .then((response) => {
-        console.log(response.data.response);
         setEvent(response.data.response);
       })
       .catch((error) => {
