@@ -160,7 +160,7 @@ const generatePDF = async (req, res) => {
     let temp = md5(student.name + Date.now());
     let dirPath = path.join(
       __dirname,
-      "../../../data/static/",
+      "../../../../data/static/",
       temp.slice(0, 1),
       temp.slice(0, 2)
     );
