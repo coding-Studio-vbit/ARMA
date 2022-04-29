@@ -1,4 +1,5 @@
 import { InfoOutlined } from "@material-ui/icons";
+import { log } from "console";
 import { useEffect, useState } from "react";
 import axios from "../../../utils/axios";
 
@@ -20,21 +21,9 @@ const SelectHalls = (props: SelectedHallsProps) => {
 
   const halls = props.hallsData;
   const key = useSelector((state: RootState) => state.selectedDate);
-  const reservedDate = useSelector((state: RootState) => state.reservations);
-  const reservations =
-    useSelector((state: RootState) => state.reservations) || {};
   const eventHalls =
     Object.keys(eventDates).length === 0 ? [] : eventDates[key].halls;
-  console.log(reservations);
-  useEffect(() => {
-    axios
-      .post(`${process.env.REACT_APP_SERVER_URL}halls/getSlots`, {
-        date: reservedDate,
-      })
-      .then(async (response) => {
-        console.log(response);
-      });
-  }, [reservedDate]);
+  console.log(props.hallsData);
 
   const addHalls = (hall) => {
     var arr = eventHalls;
@@ -49,7 +38,6 @@ const SelectHalls = (props: SelectedHallsProps) => {
       dispatch(UpdateDatesState(key, [...arr]));
     }
   };
-
   const HallsList = (halls: string[]) =>
     halls.map((hall: string) => {
       return (
@@ -61,39 +49,21 @@ const SelectHalls = (props: SelectedHallsProps) => {
           <div className="flex">
             <button
               className={
-                reservations[hall.toUpperCase()] &&
-                reservations[hall.toUpperCase()].includes("morning")
-                  ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
-                  : eventHalls.includes("morning." + hall)
+                eventHalls.includes("morning." + hall)
                   ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
                   : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
               }
-              onClick={() => {
-                if (
-                  reservations[hall.toUpperCase()] &&
-                  !reservations[hall.toUpperCase()].includes("morning")
-                )
-                  addHalls("morning." + hall);
-              }}
+              onClick={() => addHalls("morning." + hall)}
             >
               <div className="">Morning</div>
             </button>
             <button
               className={
-                reservations[hall.toUpperCase()] &&
-                reservations[hall.toUpperCase()].includes("afternoon")
-                  ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
-                  : eventHalls.includes("afternoon." + hall)
-                  ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
-                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
+                eventHalls.includes("afternoon." + hall)
+                  ? "flex px-8 mb-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
+                  : "flex text-gray-500 px-8 mb-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
               }
-              onClick={() => {
-                if (
-                  reservations[hall.toUpperCase()] &&
-                  !reservations[hall.toUpperCase()].includes("afternoon")
-                )
-                  addHalls("afternoon." + hall);
-              }}
+              onClick={() => addHalls("afternoon." + hall)}
             >
               <div className="">Afternoon</div>
             </button>
@@ -129,9 +99,6 @@ const SelectHalls = (props: SelectedHallsProps) => {
           >
             Done
           </button>
-          <div className="text-gray-400 text-xs">
-            *The grayed out slots are the ones already reserved by a forum.
-          </div>
         </div>
       </div>
     );

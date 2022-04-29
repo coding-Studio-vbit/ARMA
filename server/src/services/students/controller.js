@@ -1,5 +1,9 @@
 const students = require("../../models/student");
 const response = require("../util/response");
+const fs = require("fs/promises");
+const path = require("path")
+const pdf = require("html-pdf");
+const md5 = require("md5");
 
 const getStudentsList = async (req, res) => {
   //For pagination
@@ -146,7 +150,45 @@ const studentViewCard = async (req, res) => {
     res.json(response(err, process.env.FAILURE_CODE));
   }
 };
+
+const generatePDF = async (req, res) => {
+  try {
+    const { htmlContent, studentId } = req.body;
+    const student = await students.findById(studentId);
+    let temp = md5(student.name + Date.now());
+    let dirPath = path.join(
+      __dirname,
+      "../../../../data/static/",
+      temp.slice(0, 1),
+      temp.slice(0, 2)
+    );
+    let filename =
+      md5(student.name + student.year + student.section + String(Date.now())) +
+      "." +
+      "pdf";
+
+    const filePath = `${dirPath}/${filename}`;
+    console.log(filePath);
+
+    pdf.create(htmlContent).toFile(filePath, (err, result)=>{
+      if(err){
+        return console.log(err);
+      }
+      student.reportFilePath = filePath;
+      student.save()
+      .then(()=>{
+        res.sendFile(filePath);
+      })
+    })
+
+  } catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
+
 module.exports = {
+  generatePDF,
   getStudentsList,
   uploadStudentsList,
   editStudent,

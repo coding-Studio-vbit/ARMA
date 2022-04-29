@@ -4,15 +4,31 @@ import {
   Edit,
   Feedback,
 } from "@material-ui/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import axios from "../../../utils/axios";
 
 export default function EventBudget() {
+  const location: any = useLocation();
+  const [event, setEvent] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+  useEffect(() => {
+    axios
+      .get(
+        `${process.env.REACT_APP_SERVER_URL}events/getEvent/${location.state.eventId}`
+      )
+      .then((response) => {
+        setEvent(response.data.response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
   return (
     <div className="flex flex-col sm:mt-12 ">
       <div className="flex justify-center items-center mb-16  gap-2">
         <span className="sm:text-2xl shrink text-xl font-semibold  text-arma-dark-blue ">
-          Event Name - Budget
+          {event?.name} - Budget
         </span>
         {!isEdit && (
           <Edit onClick={() => setIsEdit(true)} className="cursor-pointer" />
@@ -27,10 +43,7 @@ export default function EventBudget() {
             <Feedback className="text-arma-title" />
           </div>
           <div className="p-4 rounded-xl shadow-xl">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis
-            odio repellendus quidem? Odit totam optio recusandae cupiditate ea
-            distinctio iste, dolorum placeat voluptates adipisci repudiandae
-            esse velit nobis itaque architecto!
+            {event?.FOComments ? event.FOCOmments : "No Comments"}
           </div>
         </div>
         {!isEdit && (
@@ -68,8 +81,25 @@ export default function EventBudget() {
           </div>
         ) : (
           <div className="flex flex-col mt-10 cursor-pointer">
+              <a className="flex flex-col   cursor-pointer"
+                onClick={async () => {
+                  const result = await axios({responseType: 'blob', method: 'GET', url:`${process.env.REACT_APP_SERVER_URL}events/getBudgetDocument/${location.state.eventId}`})
+                  const url = window.URL.createObjectURL(
+                    new Blob([result.data])
+                  );
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.setAttribute("download", "budget.pdf"); //or any other extension
+                  document.body.appendChild(link);
+                  link.click();
+                }}
+                download
+              >
             <CloudDownloadTwoTone className="!w-20  !h-20 mx-auto  text-arma-blue " />
-            <span>Click here to download the budget document</span>
+            <span>
+                Click here to download the budget document
+            </span>
+              </a>
           </div>
         )}
       </div>

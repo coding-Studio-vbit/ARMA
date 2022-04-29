@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const multer = require("multer");
-const checkRolePermissions = require("../../../services/util/checkRole");
 const controller = require("../../../services/events/controller");
 const multerStorage = require("../../../services/util/multerStorage");
 const tokenAuth = require("../../middleware/tokenAuth");
@@ -45,4 +44,7 @@ router.put("/postAttendance",controller.postAttendance)
 router.get("activeEvents", controller.getActiveEvents)
 router.get("/calendarEvents",controller.getCalendarEvents)
 router.get("/getEvent/:id",controller.getEventById)
+router.get("/getBudgetDocument/:id", controller.getBudgetDocument);
+router.post("/updateEventReservations", controller.updateReservations);
+router.post("/updateEventEquipment", controller.updateEquipment);
 module.exports = router;

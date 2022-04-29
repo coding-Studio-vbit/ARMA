@@ -14,7 +14,6 @@ import {
   createDatesState,
   UpdateDatesState,
   selectDate,
-  createReservations,
 } from "../../../redux/actions";
 
 const EventVenue = () => {
@@ -26,7 +25,6 @@ const EventVenue = () => {
   const eventDetails = useSelector((state: RootState) => state.eventDetails);
 
   useEffect(() => {
-    if (Object.keys(eventDetails).length === 0) navigate(-1);
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}halls`)
       .then((response) => {
@@ -42,8 +40,22 @@ const EventVenue = () => {
 
   //redux
   const eventDates = useSelector((state: RootState) => state.eventDates);
+  const [blockedSlots, setBlockedSlots] = useState({});
   const key = useSelector((state: RootState) => state.selectedDate);
   const dispatch = useDispatch();
+  useEffect(() => {
+    selectedDays.forEach((date) => {
+      axios
+        .post(`${process.env.REACT_APP_SERVER_URL}halls/getSlots`, {
+          date: `${date.day}-${date.month}-${date.year}`,
+        })
+        .then((response) => {
+          const temp = {...blockedSlots};
+          temp[`${date.day}-${date.month}-${date.year}`] = response.data.response;
+          setBlockedSlots(temp)
+        });
+    });
+  }, [selectedDays]);
   const months = [
     "January",
     "February",
@@ -76,34 +88,21 @@ const EventVenue = () => {
     from: minimumDate,
     to: minimumDate,
   };
-  const setReservations = (date) => {
-    axios
-      .post(`${process.env.REACT_APP_SERVER_URL}halls/getSlots`, {
-        date: date,
-      })
-      .then(async (response) => {
-        dispatch(createReservations(response.data.response));
-        console.log({ date, response: response.data.response });
-      });
-  };
   const [selectedDayRange, setSelectedDayRange] = useState(defaultValue);
+  const [eventHalls, setEventHalls] = useState(eventDates);
   const [showHallSelection, setShowHallSelection] = useState(false);
-  const HallsList = (halls: string[], event: string, dateString: Date) => {
+  const HallsList = (halls: string[], event: string) => {
     var temp = halls.map((hall) => hall.split(".")[1]);
     var filteredHalls = temp.filter(function (elem, index, self) {
       return index === self.indexOf(elem);
     });
     console.log(filteredHalls);
+
     return filteredHalls.map((hall: string) => {
       return (
         <button
           onClick={async () => {
             await dispatch(selectDate(event));
-            await setReservations(
-              `${dateString.getDay() + 1}-${
-                dateString.getMonth() + 1
-              }-${dateString.getFullYear()}`
-            );
             await setShowHallSelection(true);
           }}
           className="flex text-gray-500 flex-row justify-around px-8 mr-4 mb-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
@@ -141,11 +140,6 @@ const EventVenue = () => {
                   className="flex items-center text-[#88b3cc]"
                   onClick={async () => {
                     await dispatch(selectDate(event));
-                    await setReservations(
-                      `${dateString.getDay() + 1}-${
-                        dateString.getMonth() + 1
-                      }-${dateString.getFullYear()}`
-                    );
                     await setShowHallSelection(true);
                   }}
                 >
@@ -157,7 +151,7 @@ const EventVenue = () => {
                   />
                 </button>
               ) : (
-                HallsList(eventDates[event].halls, event, dateString)
+                HallsList(eventDates[event].halls, event)
               )}
             </div>
           </div>
@@ -267,6 +261,21 @@ const EventVenue = () => {
       </div>
     );
   };
+  const test = () => {
+    setEventHalls({
+      ...eventHalls,
+      "Sat May 28 2022": {
+        dateObject: {
+          day: 28,
+          month: 4,
+          year: 2022,
+        },
+        eventDate: "2022-05-27T18:30:00.000Z",
+        halls: ["chetana", "Sumedha"],
+      },
+    });
+  };
+
   return (
     <div
       className="flex flex-col h-screen justify-start items-center"
@@ -285,7 +294,7 @@ const EventVenue = () => {
         className="flex text-arma-title text-4xl font-bold mx-5 text-justify mt-3 mb-3 items-center"
         style={{ color: "#1970A3" }}
       >
-        Event Venue
+        Update Event Venue
         {Object.keys(eventDates).length === 0 &&
         selectedDays.length === 0 ? null : (
           <button
@@ -296,7 +305,7 @@ const EventVenue = () => {
           >
             <img
               alt="edit calender"
-              src="https://img.icons8.com/ios-filled/30/1970a3/edit-calendar.png"
+              src="https://img.icons8.com/ios-filled/30/88b3cc/edit-calendar.png"
             />
           </button>
         )}
@@ -305,24 +314,22 @@ const EventVenue = () => {
       {showCalender ? CalenderPopUp() : null}
       {Object.keys(eventDates).length === 0 && selectedDays.length === 0 ? (
         <div className="flex flex-col items-center">
-          {
-            // <div className="flex flex-row items-center">
-            //   <h4 className="mr-3">Is it a long period of time?</h4>
-            //   <Switch
-            //     onChange={setIsLong}
-            //     checked={isLong}
-            //     onColor="#86d3ff"
-            //     onHandleColor="#2693e6"
-            //     handleDiameter={30}
-            //     uncheckedIcon={false}
-            //     checkedIcon={false}
-            //     boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-            //     activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-            //     height={20}
-            //     width={48}
-            //   />
-            // </div>
-          }
+          <div className="flex flex-row items-center">
+            <h4 className="mr-3">Is it a long period of time?</h4>
+            <Switch
+              onChange={setIsLong}
+              checked={isLong}
+              onColor="#86d3ff"
+              onHandleColor="#2693e6"
+              handleDiameter={30}
+              uncheckedIcon={false}
+              checkedIcon={false}
+              boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+              activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+              height={20}
+              width={48}
+            />
+          </div>
           <div className="mt-3">Please select event dates</div>
           <button className="mt-[50px]" onClick={() => setShowCalender(true)}>
             <img

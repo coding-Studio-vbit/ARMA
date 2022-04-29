@@ -23,8 +23,6 @@ export default function EventEquip() {
     const eventDetails = useSelector((state: RootState) => state.eventDetails);
 
     useEffect(() => {
-      if(Object.keys(eventDates).length === 0)
-        navigate(-1)
       const getequip = async () => {
         const res = await axiosInstance.get(process.env.REACT_APP_SERVER_URL +"forum/getEquipments");
         const data = res.data.response;
@@ -40,7 +38,7 @@ export default function EventEquip() {
 
     return (
         <div className="flex flex-col sm:mx-24 mt-8 md:items-start items-center mb-8 ">
-      <span className='text-arma-title sm:text-4xl  text-2xl mb-8 font-semibold'>Choose Equipment</span>
+      <span className='text-arma-title sm:text-4xl  text-2xl mb-8 font-semibold'>Update Equipment</span>
         <div className='flex gap-2'>
         <span className = 'text-arma-gray text-lg mb-8 font-semibold'>Choose Equipment</span>
         <BusinessCenter className="text-arma-title" />

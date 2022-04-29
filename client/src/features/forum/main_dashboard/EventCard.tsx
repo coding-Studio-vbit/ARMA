@@ -11,8 +11,6 @@ interface EventCardProps {
 const EventCard = ({ event, onClick }: EventCardProps) => {
   let eventStatusColor: string = "";
   event.eventStatus = event.eventStatus.toUpperCase();
-  console.log(event.eventStatus);
-
   switch (event.eventStatus) {
     case "COMPLETED":
     case "APPROVED":

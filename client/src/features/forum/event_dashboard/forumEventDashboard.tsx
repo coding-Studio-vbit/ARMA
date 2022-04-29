@@ -10,9 +10,9 @@ interface EventInfo {
 
 const eventInfoList: EventInfo[] = [
   { name: "Event Details", route: "eventInfo" },
-  { name: "Event Venue", route: "venueInfo" },
+  { name: "Event Venue", route: "dashboardUpdateVenue" },
   { name: "Budget", route: "budget" },
-  { name: "Equipment", route: "eventEquipment" },
+  { name: "Equipment", route: "dashboardUpdateEquipment" },
   { name: "Attendance", route: "eventAttendance" },
   { name: "Report & Media", route: "reportAndMedia" },
 ];
@@ -27,7 +27,6 @@ function ForumEventDashboard() {
   const [error, setError] = useState(null);
 
   async function getEventDetails() {
-    console.log(state);
     if (state) {
       setUsername(JSON.parse(localStorage.getItem("forum")).name);
       setEvent(state.name);
@@ -36,7 +35,6 @@ function ForumEventDashboard() {
         const res = await axiosInstance.post(
           process.env.REACT_APP_SERVER_URL + "faculty/fetchFaculty"
         );
-        console.log(res);
         //get forum Name
       } catch (error) {
         setError(error.toString());
@@ -80,7 +78,7 @@ function ForumEventDashboard() {
                       className="w-full sm:w-3/4 md:w-1/3 px-6 py-6 lg:py-8 lg:p-10 m-0 
                                             arma-card-gradient text-white  text-lg sm:text-xl lg:text-2xl
                                             shadow-2xl rounded-2xl min-h-max h-40 lg:h-60"
-                      onClick={() => navigate(`../${eventInfo.route}`)}
+                      onClick={() => navigate(`../${eventInfo.route}`, {state: {eventId:state._id}})}
                     >
                       <div className=" flex flex-wrap justify-between items-center">
                         <span>{eventInfo.name}</span>

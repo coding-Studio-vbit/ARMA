@@ -12,6 +12,8 @@ import AddNewForumMember from "../features/forum/profile/AddNewForumMember";
 import EventBudget from "../features/forum/event_budget/EventBudget";
 import CreateEventRoutes from "./CreateEventRoutes";
 import EventEquip from "../features/forum/event_equipment/EventEquip";
+import UpdateEquip from "../features/forum/update_equipment/EventEquip";
+import { EventVenue as UpdateVenue } from "../features/forum/update_venue";
 import { EventVenue } from "../features/forum/event_venue";
 
 const ForumRoutes = () => {
@@ -23,7 +25,10 @@ const ForumRoutes = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/budget" element={<EventBudget />} />
           <Route path="/eventInfo" element={<div>Event Info</div>} />
-          <Route path="/eventEquipment" element={<EventEquip/>} />
+          <Route path="/eventEquipment" element={<EventEquip />} />
+
+          <Route path="/dashboardUpdateEquipment" element={<UpdateEquip />} />
+
           <Route path="/eventDashboard" element={<ForumEventDashboard />} />
           <Route path="/reportAndMedia" element={<ReportAndMedia />} />
           <Route path="/createEvent/*" element={<CreateEventRoutes />} />
@@ -31,8 +36,11 @@ const ForumRoutes = () => {
           <Route path="/profile" element={<ForumProfile />} />
           <Route path="/eventAttendance" element={<EventAttendance />} />
           {/* TODO - creating temp routes */}
-          <Route path="/reportAndMedia" element={<ReportAndMedia/>} />
-          <Route path="/venueInfo" element={<EventVenue/>} />
+          <Route path="/reportAndMedia" element={<ReportAndMedia />} />
+          <Route path="/venueInfo" element={<EventVenue />} />
+
+          <Route path="/dashboardUpdateVenue" element={<UpdateVenue />} />
+
           <Route
             path="/addNewCoreTeamMember"
             element={<AddNewCoreTeamMember />}

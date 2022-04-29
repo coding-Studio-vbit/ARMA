@@ -69,6 +69,7 @@ const student = new mongoose.Schema({
     },
   ],
   forumMemberships: [{ type: mongoose.Schema.Types.ObjectId, ref: "forums" }],
+  reportFilePath: {type:String}
 });
 
 const students = mongoose.model("students", student);

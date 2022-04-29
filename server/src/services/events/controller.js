@@ -71,23 +71,29 @@ const getEvents = async (req, res) => {
 const createEvent = async (req, res) => {
   try {
     // Create a new attendance document for this event.
+    let { eventDetails, eventHalls, equipmentList } = req.body;
+    equipmentList = JSON.parse(equipmentList);
+    eventHalls = JSON.parse(eventHalls);
+    eventDetails = JSON.parse(eventDetails);
     let newAttendanceDoc = new attendance();
     // Set the required equipment array
-    let equipment = [];
-    for (let i = 0; i < req.body.equipment.length; i++) {
-      const { name, totalCount } = req.body.equipment[i];
-      const eq = await equipments.findOne({ name: name });
-      equipment.push(eq._id);
+    let eqs = [];
+    for (let i = 0; i < equipmentList.length; i++) {
+      let { equipment, quantity } = equipmentList[i];
+      quantity = Number(quantity);
+      let eq = await equipments.findOne({
+        name: { $regex: `^${equipment}`, $options: "i" },
+      });
+      eqs.push(eq._id);
     }
-
     let newEvent = new events({
       forumID: req.user._id,
-      description: req.body.description,
-      name: req.body.name,
+      description: eventDetails.desc,
+      name: eventDetails.name,
       eventProposalDocPath: req.files.eventDocument[0].path,
       budgetDocPath: req.files.budgetDocument[0].path,
       hasBudget: req.files.budgetDocument !== null,
-      equipment: equipment,
+      equipment: eqs,
     });
     newAttendanceDoc.eventID = String(newEvent._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
@@ -96,23 +102,66 @@ const createEvent = async (req, res) => {
         ? "AWAITING BUDGET APPROVAL"
         : "AWAITING SAC APPROVAL";
 
-    // Create reservations.
-    /**
-     *  [
-     *   {
-     *     HallID: hallID,
-     *     dates: ["2-3-2022", "3-3-2022"]
-     *     timeSlots: [["MORNING", "AFTERNOON"], ["MORNING"]]
-     *   }
-     *  ]
-     */
-    const eventReservations = req.body.reservations;
+    // // Create reservations.
+    // /**
+    //  *  [
+    //  *   {
+    //  *     HallID: hallID,
+    //  *     dates: ["2-3-2022", "3-3-2022"]
+    //  *     timeSlots: [["MORNING", "AFTERNOON"], ["MORNING"]]
+    //  *   }
+    //  *  ]
+    //  */
+
+    let reservationsObject = {};
+    let datesList = Object.keys(eventHalls);
+    newEvent.eventDates = datesList;
+    let HallsList = new Set();
+
+    for (let i = 0; i < datesList.length; i++) {
+      for (let j = 0; j < eventHalls[datesList[i]].halls.length; j++) {
+        let info = eventHalls[datesList[i]].halls[j].split(".");
+        let slot = info[0];
+        let hall = await halls.findOne({
+          name: { $regex: `^${info[1]}`, $options: "i" },
+        });
+        if (reservationsObject[String(hall._id)]) {
+          if (reservationsObject[String(hall._id)][datesList[i]]) {
+            reservationsObject[String(hall._id)][datesList[i]].push(slot);
+          } else {
+            reservationsObject[String(hall._id)][datesList[i]] = [slot];
+          }
+        } else {
+          reservationsObject[String(hall._id)] = {};
+          reservationsObject[String(hall._id)][datesList[i]] = [slot];
+        }
+        HallsList.add(String(hall._id));
+      }
+    }
+    //console.log("reservationsObject is", reservationsObject);
+    let reservationsList = [];
+    HallsList = [...HallsList];
+    for (let i = 0; i < HallsList.length; i++) {
+      reservationsList.push({
+        HallID: HallsList[i],
+        dates: Object.keys(reservationsObject[HallsList[i]]).map((date) => {
+          const temp = new Date(date);
+          return `${temp.getDate()}-${
+            temp.getMonth() + 1
+          }-${temp.getFullYear()}`;
+        }),
+        timeSlots: Object.keys(reservationsObject[HallsList[i]]).map((date) => {
+          return reservationsObject[HallsList[i]][date];
+        }),
+      });
+    }
+    const eventReservations = reservationsList;
     eventReservations.forEach(async (obj) => {
       //first check if the dates are valid
       //see if an already reserved date is being booked again.
-      const currentReservations = reservations.find({
+      const currentReservations = await reservations.find({
         status: "NOT COMPLETED",
-        hallId: obj.hallId,
+        hallId: obj.HallID,
       });
       const blocked = [];
 
@@ -127,7 +176,7 @@ const createEvent = async (req, res) => {
         for (let i = 0; i < r.dates.length; i++) {
           for (let j = 0; j < r.timeSlots[i].length; j++) {
             d = r.dates[i] + "." + r.timeSlots[i][j];
-            if (booked.indexOf(d) !== -1) {
+            if (blocked.indexOf(d) !== -1) {
               throw new Error("Invalid dates");
             }
           }
@@ -135,7 +184,7 @@ const createEvent = async (req, res) => {
       });
 
       const record = new reservations();
-      record.hallId = obj.hallId;
+      record.hallId = obj.HallID;
       record.forumId = req.user._id;
       record.status = "NOT COMPLETED";
       record.eventId = newEvent._id;
@@ -307,7 +356,6 @@ const getRequests = async (req, res) => {
         .find({ eventStatus: { $nin: ["COMPLETED", "REJECTED"] } })
         .populate("forumID");
     }
-
     res.json(response(result, process.env.SUCCESS_CODE));
     //console.log("Get",result);
   } catch (error) {
@@ -361,7 +409,9 @@ const getActiveEvents = async (req, res) => {
       .find({ status: "NOT COMPLETED" })
       .populate("forumId")
       .populate("eventId");
-    const dateString = `${currentDate.getDate()}-${currentDate.getMonth()+1}-${currentDate.getFullYear()}`;
+    const dateString = `${currentDate.getDate()}-${
+      currentDate.getMonth() + 1
+    }-${currentDate.getFullYear()}`;
     const activeEvents = possibleEvents.filter((event) => {
       return event.dates.indexOf(dateString) !== -1;
     });
@@ -372,8 +422,156 @@ const getActiveEvents = async (req, res) => {
   }
 };
 
+const getBudgetDocument = async (req, res) => {
+  try {
+    const forumId = req.user._id;
+    const { id } = req.params;
+    const event = await events.findById(id);
+    if (event.forumID == forumId) {
+      res.sendFile(event.budgetDocPath);
+    } else {
+      res.json(response("unauthorized", process.env.FAILURE_CODE));
+    }
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response("Failed to send budget document", process.env.FAILURE_CODE)
+    );
+  }
+};
+
+const updateReservations = async (req, res) => {
+  try {
+    const { eventHalls,id } = req.body;
+    const event = await events.findById(id);
+    if (event.forumID == req.user._id && event.eventStatus !== "COMPLETED") {
+      //delete all reservations of this event.
+      const deletionResult = await reservations.deleteMany({ eventId: id });
+      let reservationsObject = {};
+      let datesList = Object.keys(eventHalls);
+      let HallsList = new Set();
+
+      for (let i = 0; i < datesList.length; i++) {
+        for (let j = 0; j < eventHalls[datesList[i]].halls.length; j++) {
+          let info = eventHalls[datesList[i]].halls[j].split(".");
+          let slot = info[0];
+          let hall = await halls.findOne({
+            name: { $regex: `^${info[1]}`, $options: "i" },
+          });
+          if (reservationsObject[String(hall._id)]) {
+            if (reservationsObject[String(hall._id)][datesList[i]]) {
+              reservationsObject[String(hall._id)][datesList[i]].push(slot);
+            } else {
+              reservationsObject[String(hall._id)][datesList[i]] = [slot];
+            }
+          } else {
+            reservationsObject[String(hall._id)] = {};
+            reservationsObject[String(hall._id)][datesList[i]] = [slot];
+          }
+          HallsList.add(String(hall._id));
+        }
+      }
+      //console.log("reservationsObject is", reservationsObject);
+      let reservationsList = [];
+      HallsList = [...HallsList];
+      for (let i = 0; i < HallsList.length; i++) {
+        reservationsList.push({
+          HallID: HallsList[i],
+          dates: Object.keys(reservationsObject[HallsList[i]]).map((date) => {
+            const temp = new Date(date);
+            return `${temp.getDate()}-${
+              temp.getMonth() + 1
+            }-${temp.getFullYear()}`;
+          }),
+          timeSlots: Object.keys(reservationsObject[HallsList[i]]).map(
+            (date) => {
+              return reservationsObject[HallsList[i]][date];
+            }
+          ),
+        });
+      }
+      const eventReservations = reservationsList;
+      eventReservations.forEach(async (obj) => {
+        //first check if the dates are valid
+        //see if an already reserved date is being booked again.
+        const currentReservations = await reservations.find({
+          status: "NOT COMPLETED",
+          hallId: obj.HallID,
+        });
+        const blocked = [];
+
+        currentReservations.forEach((r) => {
+          for (let i = 0; i < r.dates.length; i++) {
+            for (let j = 0; j < r.timeSlots[i].length; j++) {
+              blocked.push(r.dates[i] + "." + r.timeSlots[i][j]);
+            }
+          }
+        });
+        eventReservations.forEach((r) => {
+          for (let i = 0; i < r.dates.length; i++) {
+            for (let j = 0; j < r.timeSlots[i].length; j++) {
+              d = r.dates[i] + "." + r.timeSlots[i][j];
+              if (blocked.indexOf(d) !== -1) {
+                throw new Error("Invalid dates");
+              }
+            }
+          }
+        });
+
+        const record = new reservations();
+        record.hallId = obj.HallID;
+        record.forumId = req.user._id;
+        record.status = "NOT COMPLETED";
+        record.eventId = newEvent._id;
+        record.dates = obj.dates;
+        record.timeSlots = obj.timeSlots;
+        await record.save();
+      });
+      res.json(
+        response("Successfully updated reservations", process.env.SUCCESS_CODE)
+      );
+    } else {
+      res.json(response("unauthorized", process.env.FAILURE_CODE));
+    }
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response("Failed to update reservations", process.env.FAILURE_CODE)
+    );
+  }
+};
+
+const updateEquipment = async (req, res)=>{
+  try
+  {
+    const { id, equipmentList } = req.body;
+    let eqs = [];
+    for (let i = 0; i < equipmentList.length; i++) {
+      let { equipment, quantity } = equipmentList[i];
+      quantity = Number(quantity);
+      let eq = await equipments.findOne({
+        name: { $regex: `^${equipment}`, $options: "i" },
+      });
+      eqs.push(eq._id);
+    }
+    const event = await events.findById(id);
+    event.equipment = eqs;
+    await event.save()
+    res.json(response("Updated event equipment", process.env.SUCCESS_CODE))
+  }
+  catch (error) {
+    console.log(error);
+    res.json(
+      response("Failed to update event equipment", process.env.FAILURE_CODE)
+    );
+  }
+}
+
 module.exports = {
+  updateReservations,
+  updateEquipment,
   getEventById,
+  getBudgetDocument,
   getEvents,
   createEvent,
   updateBudgetDoc,

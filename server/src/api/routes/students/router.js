@@ -12,6 +12,6 @@ router.get("/fetchStudents", controller.fetchStudents);
 
 router.post("/studentViewCard", controller.studentViewCard);
 router.post("/deleteStudent", controller.deleteStudent);
-
+router.post("/generatePDF", controller.generatePDF);
 
 module.exports = router;

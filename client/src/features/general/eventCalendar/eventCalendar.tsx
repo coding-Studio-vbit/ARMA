@@ -46,7 +46,8 @@ function EventCalendar() {
              element.date[i].year === selectedDate?.year){
                return element;
             } 
-        }  
+        } 
+        return undefined; 
       }
     );
     if (x !== undefined) {
@@ -63,7 +64,8 @@ function EventCalendar() {
       .then((response) => {
         // console.log("Success");
         if(response.data.status===1){
-          // console.log("got Events");
+          console.log("got Events");
+          console.log(response.data.response)
           const eventList = response.data.response;
           if(eventList.length!==0){
             let data =[];
@@ -117,8 +119,8 @@ function EventCalendar() {
       .catch((error) => {
         console.log("Fetch Failed");
         setLoading(false);
-        // setError(null);
-        setError(error.toString());
+        setError(null);
+        // setError(error.toString());
       });    
   }
   
@@ -144,7 +146,7 @@ function EventCalendar() {
                     <div className='bg-arma-blue 
                         flex flex-col lg:flex-row rounded-3xl
                         h-3/4 w-5/6 lg:w-5/6 xl:w-2/3 text-white mt-12'>
-                        <div className="h-auto px-8 py-12 justify-between lg:justify-center lg:px-2 lg:h-full lg:py-5 w-full lg:w-1/3 flex flex-row lg:flex-col justify-center items-center gap-5 text-white ">
+                        <div className="h-auto px-8 py-12 justify-between lg:justify-center lg:px-2 lg:h-full lg:py-5 w-full lg:w-1/3 flex flex-row lg:flex-col items-center gap-5 text-white ">
                             <div className='text-left lg:text-center'>
                                 <p className="text-5xl lg:text-9xl ">
                                 {selectedDate.day}
@@ -187,4 +189,4 @@ function EventCalendar() {
     )
 }
 
-export default EventCalendar
+export default EventCalendar;

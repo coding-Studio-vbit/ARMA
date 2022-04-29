@@ -15,7 +15,6 @@ function ForumCover() {
       const res = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}forum/dashboardCover`
       );
-      console.log(res.data);
       setUrl(res.data.response);
     } catch (error) {
       console.log(error);
@@ -42,7 +41,6 @@ function ForumCover() {
   }
 
   useEffect(() => {
-    console.log("Fetching URL");
     getProfileURL();
   }, []);
 
@@ -80,7 +78,6 @@ function ForumCover() {
           type="file"
           name="file"
           onChange={(e) => {
-            console.log(URL.createObjectURL(e.target.files[0]));
             setprofileObj(URL.createObjectURL(e.target.files[0]));
 
             let myFormData = new FormData();
