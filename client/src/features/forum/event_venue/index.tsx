@@ -296,7 +296,7 @@ const EventVenue = () => {
           >
             <img
               alt="edit calender"
-              src="https://img.icons8.com/ios-filled/30/88b3cc/edit-calendar.png"
+              src="https://img.icons8.com/ios-filled/30/1970a3/edit-calendar.png"
             />
           </button>
         )}
