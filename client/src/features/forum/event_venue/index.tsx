@@ -42,24 +42,8 @@ const EventVenue = () => {
 
   //redux
   const eventDates = useSelector((state: RootState) => state.eventDates);
-  const [blockedSlots, setBlockedSlots] = useState({});
   const key = useSelector((state: RootState) => state.selectedDate);
   const dispatch = useDispatch();
-  useEffect(() => {
-    selectedDays.forEach((date) => {
-      axios
-        .post(`${process.env.REACT_APP_SERVER_URL}halls/getSlots`, {
-          date: `${date.day}-${date.month}-${date.year}`,
-        })
-        .then(async (response) => {
-          const temp = { ...blockedSlots };
-          temp[`${date.day}-${date.month}-${date.year}`] =
-            response.data.response;
-          setBlockedSlots(temp);
-          console.log(blockedSlots);
-        });
-    });
-  }, [selectedDays]);
   const months = [
     "January",
     "February",
@@ -92,6 +76,16 @@ const EventVenue = () => {
     from: minimumDate,
     to: minimumDate,
   };
+  const setReservations = (date) => {
+    axios
+      .post(`${process.env.REACT_APP_SERVER_URL}halls/getSlots`, {
+        date: date,
+      })
+      .then(async (response) => {
+        dispatch(createReservations(response.data.response));
+        console.log({ date, response: response.data.response });
+      });
+  };
   const [selectedDayRange, setSelectedDayRange] = useState(defaultValue);
   const [eventHalls, setEventHalls] = useState(eventDates);
   const [showHallSelection, setShowHallSelection] = useState(false);
@@ -101,18 +95,15 @@ const EventVenue = () => {
       return index === self.indexOf(elem);
     });
     console.log(filteredHalls);
-
     return filteredHalls.map((hall: string) => {
       return (
         <button
           onClick={async () => {
             await dispatch(selectDate(event));
-            await dispatch(
-              createReservations(
-                `${dateString.getDay() + 1}-${
-                  dateString.getMonth() + 1
-                }-${dateString.getFullYear()}`
-              )
+            await setReservations(
+              `${dateString.getDay() + 1}-${
+                dateString.getMonth() + 1
+              }-${dateString.getFullYear()}`
             );
             await setShowHallSelection(true);
           }}
@@ -151,12 +142,10 @@ const EventVenue = () => {
                   className="flex items-center text-[#88b3cc]"
                   onClick={async () => {
                     await dispatch(selectDate(event));
-                    await dispatch(
-                      createReservations(
-                        `${dateString.getDay() + 1}-${
-                          dateString.getMonth() + 1
-                        }-${dateString.getFullYear()}`
-                      )
+                    await setReservations(
+                      `${dateString.getDay() + 1}-${
+                        dateString.getMonth() + 1
+                      }-${dateString.getFullYear()}`
                     );
                     await setShowHallSelection(true);
                   }}
@@ -289,7 +278,6 @@ const EventVenue = () => {
           show={showHallSelection}
           setShow={setShowHallSelection}
           hallsData={hallList}
-          reservedHalls={blockedSlots}
         />
       ) : (
         <></>

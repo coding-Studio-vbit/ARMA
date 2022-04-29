@@ -1,5 +1,4 @@
 import { InfoOutlined } from "@material-ui/icons";
-import { log } from "console";
 import { useEffect, useState } from "react";
 import axios from "../../../utils/axios";
 
@@ -12,7 +11,6 @@ interface SelectedHallsProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   hallsData: string[];
-  reservedHalls: {};
 }
 
 const SelectHalls = (props: SelectedHallsProps) => {
@@ -22,10 +20,20 @@ const SelectHalls = (props: SelectedHallsProps) => {
 
   const halls = props.hallsData;
   const key = useSelector((state: RootState) => state.selectedDate);
-  const reservedDate = useSelector((state: RootState) => state.reservedDate);
-  const reservations = props.reservedHalls[reservedDate];
+  const reservedDate = useSelector((state: RootState) => state.reservations);
+  const reservations = useSelector((state: RootState) => state.reservations);
   const eventHalls =
     Object.keys(eventDates).length === 0 ? [] : eventDates[key].halls;
+  console.log(reservations);
+  useEffect(() => {
+    axios
+      .post(`${process.env.REACT_APP_SERVER_URL}halls/getSlots`, {
+        date: reservedDate,
+      })
+      .then(async (response) => {
+        console.log(response);
+      });
+  }, [reservedDate]);
 
   const addHalls = (hall) => {
     var arr = eventHalls;
