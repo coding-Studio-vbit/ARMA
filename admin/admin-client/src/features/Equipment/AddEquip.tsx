@@ -201,7 +201,7 @@ export const AddEquip = ({isEdit}:AddEquipProps) => {
             options={myfac}
             placeholder="faculty coordinator"
             onInputChange={handleInputChange}
-            value = {isEdit? {value: name, label: name} : "faculty coordinator"}
+            value = {name? {value: name, label: name} : "faculty coordinator"}
             noOptionsMessage={() => null}
             onChange={(e:any) => {
             setSelectIncharge(e?.value)
