@@ -64,7 +64,8 @@ function EventCalendar() {
       .then((response) => {
         // console.log("Success");
         if(response.data.status===1){
-          // console.log("got Events");
+          console.log("got Events");
+          console.log(response.data.response)
           const eventList = response.data.response;
           if(eventList.length!==0){
             let data =[];
