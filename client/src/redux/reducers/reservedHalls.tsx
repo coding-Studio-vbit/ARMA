@@ -1,5 +1,5 @@
-const initialString = "";
-const reservedDateReducer = (state = initialString, action) => {
+const initialString = {};
+const reservationsReducer = (state = initialString, action) => {
   switch (action.type) {
     case "CREATE_RESERVATIONS":
       return action.payload;
@@ -8,4 +8,4 @@ const reservedDateReducer = (state = initialString, action) => {
   }
 };
 
-export default reservedDateReducer;
+export default reservationsReducer;
