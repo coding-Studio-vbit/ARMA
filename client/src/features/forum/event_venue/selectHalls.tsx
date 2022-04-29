@@ -129,6 +129,9 @@ const SelectHalls = (props: SelectedHallsProps) => {
           >
             Done
           </button>
+          <div className="text-gray-400 text-xs">
+            *The grayed out slots are the ones already reserved by a forum.
+          </div>
         </div>
       </div>
     );
