@@ -3,9 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom"
 import Table from "../../Components/CustomTable";
 import { InputField } from "../../Components/InputField/InputField";
 
+interface SearchStudentsProps {
+  isEdit: boolean;
+}
 
-export const EquipList = () => {
-const location: any = useLocation();
+export const EquipList = ({ isEdit }: SearchStudentsProps) => {
+  const nav = useNavigate()
+  const location: any = useLocation();
   const [nameError, setNameError] = useState<string>();
   const [name, setName] = useState(location.state?.name ?? "");
 
@@ -50,6 +54,7 @@ const navigate = useNavigate()
                         api={`${process.env.REACT_APP_SERVER_URL + "equipment/getEquipment"}`}
                         rowsPerPage={5}
                         filter={{name:name}}
+                        onTableRowClick={(id) => nav(`/Facilities/EditEquip/${id}`)}
                         buttonsCount={3}
                         headers={[
                             { displayName: "EQUIPMENT", dataPath: "name", sortable: false },

@@ -96,7 +96,9 @@ const editEquipment = async (req, res) => {
 const viewEquipment = async (req, res) => {
   try {
     let {id} = req.body
-    let equip = await equipment.findOne({_id: id});
+    let equip = await equipment
+    .findOne({_id: id})
+    .populate("facultyIncharge");
     res.json(response(equip, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);

@@ -4,39 +4,12 @@ import { Dialog } from "../../Components/Dialog/Dialog"
 import { InputField } from "../../Components/InputField/InputField"
 import axiosInstance from "../../utils/axios";
 
-
-const adminAdd = async (name:string, email: string, password: string) => {
-  try {
-    const res = await fetch(process.env.REACT_APP_SERVER_URL + "admin/addAdmin", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        name:name,
-        email: email,
-        password: password,
-      }),
-    });
-    const data = await res.json()   
-    return data
-  } catch (error) {
-    return {response: "Server not available. Try again later", status: -1}
-  }
-};
-
 interface AddAdminProps
 {
   isEdit: boolean,
 }
 
 export const AddAdmin = ({isEdit}:AddAdminProps) => {
-  const nav = useNavigate()
-  const location:any = useLocation()
-  let {id} = useParams()
-  console.log(id);
   useEffect(() => {
     const student = async () => {
       const res = await axiosInstance.post(
@@ -66,7 +39,11 @@ export const AddAdmin = ({isEdit}:AddAdminProps) => {
     const [response, setResponse] = useState("")
     const [showError, setShowError] = useState<String>("")
     const [showError1, setShowError1] = useState<String>("")
-   console.log(name);
+    const nav = useNavigate()
+    const location:any = useLocation()
+    let {id} = useParams()
+    console.log(id);
+    console.log(name);
    
     
     const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,19 +116,33 @@ export const AddAdmin = ({isEdit}:AddAdminProps) => {
         if((email.length === 0) ||  (password.length === 0)  || (confirmPass.length === 0) || (emailError?.length !== 0)  || (passwordError?.length !== 0) || (passwordConfirmError?.length !== 0))
         {
             setShowError("Fill details appropriately")
-         }else{
-             setShowError("")
-             const res = await adminAdd(name,email, password);
-             console.log(res);
-          
-          if (res.status === 1) {
+         }
+         else {
+          if(!isEdit)
+          {
+          setShowError("");
+          const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "admin/addAdmin", {name:name, email: email, password:password})
+          const data = res.data
+          if (data.status === 1) {
             setResponse("New Admin Added")
             setShow(true)
           } else {
-              setResponse(res.response)
+              setResponse(data.response)
+              setShow(true)             
+          }  
+        } 
+        else{
+          setShowError("");
+            const res = await axiosInstance.put(process.env.REACT_APP_SERVER_URL + "admin/editAdmin", {id:id, name:name, email:email, password:password})
+            const data = res.data
+            if (data.status === 1) {
+              setResponse("Admin Details Edited")
               setShow(true)
-              
-          }
+            } else {
+                setResponse(data.response.message)
+                setShow(true)             
+            }   
+        }
         }
 
         }
@@ -212,7 +203,7 @@ export const AddAdmin = ({isEdit}:AddAdminProps) => {
             <Dialog show={show} setShow={setShow} title= {response}> </Dialog>
 
 
-            <button className='btn  bg-arma-title rounded-[8px] px-6 py-2 mt-12 ml-auto mr-auto flex justify-center' onClick={async() => { loginValidate()}} >ADD</button>
+            <button className='btn  bg-arma-title rounded-[8px] px-6 py-2 mt-12 ml-auto mr-auto flex justify-center' onClick={async() => { loginValidate()}} >{isEdit? "SAVE" : "ADD"}</button>
             {(showError.length !== 0) && <span className="text-red-500 text-sm flex justify-center mt-2">{showError}</span> }
 
             </div>
