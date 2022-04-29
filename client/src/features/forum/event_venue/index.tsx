@@ -53,10 +53,10 @@ const EventVenue = () => {
         })
         .then(async (response) => {
           const temp = { ...blockedSlots };
+          console.log(blockedSlots);
           temp[`${date.day}-${date.month}-${date.year}`] =
             response.data.response;
           setBlockedSlots(temp);
-          console.log(blockedSlots);
         });
     });
   }, [selectedDays]);
