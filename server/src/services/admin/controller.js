@@ -9,9 +9,16 @@ const admins = require("../../models/admin");
 const mongoose = require("mongoose");
 const roles = require("../../models/role");
 
+const updateStudentReport  = async () => {
+
+}
+
 const addStudent = async (data) => {
   try {
     let student = new students(data);
+    /*
+     * Add student report here
+     */
     await student.save();
     return response("Success", process.env.SUCCESS_CODE);
   } catch (error) {
