@@ -24,6 +24,7 @@ const event = new mongoose.Schema({
       `description has to consist of maximum ${process.env.MAX_EVENT_DESCRIPTION_LENGTH} characters.`,
     ],
   },
+  eventDates: [{type:String}],
   forumID: {
     required: true,
     type: mongoose.Schema.Types.ObjectId,

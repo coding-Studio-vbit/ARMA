@@ -155,8 +155,6 @@ const generatePDF = async (req, res) => {
   try {
     const { htmlContent, studentId } = req.body;
     const student = await students.findById(studentId);
-    const options = { format: "A4" };
-    const file = { content: htmlContent };
     let temp = md5(student.name + Date.now());
     let dirPath = path.join(
       __dirname,

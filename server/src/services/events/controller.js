@@ -115,6 +115,7 @@ const createEvent = async (req, res) => {
 
     let reservationsObject = {};
     let datesList = Object.keys(eventHalls);
+    newEvent.eventDates = datesList;
     let HallsList = new Set();
 
     for (let i = 0; i < datesList.length; i++) {
