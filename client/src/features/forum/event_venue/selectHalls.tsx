@@ -12,6 +12,7 @@ interface SelectedHallsProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   hallsData: string[];
+  reservedHalls: {};
 }
 
 const SelectHalls = (props: SelectedHallsProps) => {
@@ -21,9 +22,10 @@ const SelectHalls = (props: SelectedHallsProps) => {
 
   const halls = props.hallsData;
   const key = useSelector((state: RootState) => state.selectedDate);
+  const reservedDate = useSelector((state: RootState) => state.reservedDate);
+  const reservations = props.reservedHalls[reservedDate];
   const eventHalls =
     Object.keys(eventDates).length === 0 ? [] : eventDates[key].halls;
-  console.log(props.hallsData);
 
   const addHalls = (hall) => {
     var arr = eventHalls;
@@ -38,6 +40,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
       dispatch(UpdateDatesState(key, [...arr]));
     }
   };
+
   const HallsList = (halls: string[]) =>
     halls.map((hall: string) => {
       return (
@@ -49,21 +52,31 @@ const SelectHalls = (props: SelectedHallsProps) => {
           <div className="flex">
             <button
               className={
-                eventHalls.includes("morning." + hall)
+                reservations[hall.toUpperCase()].includes("morning")
+                  ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
+                  : eventHalls.includes("morning." + hall)
                   ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
                   : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
               }
-              onClick={() => addHalls("morning." + hall)}
+              onClick={() => {
+                if (!reservations[hall.toUpperCase()].includes("morning"))
+                  addHalls("morning." + hall);
+              }}
             >
               <div className="">Morning</div>
             </button>
             <button
               className={
-                eventHalls.includes("afternoon." + hall)
-                  ? "flex px-8 mb-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
-                  : "flex text-gray-500 px-8 mb-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
+                reservations[hall.toUpperCase()].includes("afternoon")
+                  ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
+                  : eventHalls.includes("afternoon." + hall)
+                  ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
+                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
               }
-              onClick={() => addHalls("afternoon." + hall)}
+              onClick={() => {
+                if (!reservations[hall.toUpperCase()].includes("afternoon"))
+                  addHalls("afternoon." + hall);
+              }}
             >
               <div className="">Afternoon</div>
             </button>

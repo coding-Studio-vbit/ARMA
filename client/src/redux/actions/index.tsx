@@ -1,9 +1,9 @@
 export const createEventDetails = (details) => {
   return {
     type: "CREATE_EVENT_DETAILS",
-    payload: details
-  }
-}
+    payload: details,
+  };
+};
 
 export const createDatesState = (DatesState) => {
   return {
@@ -24,5 +24,12 @@ export const selectDate = (date) => {
   return {
     type: "SELECT_DATE",
     payload: date,
+  };
+};
+
+export const createReservations = (reservatinosState) => {
+  return {
+    type: "CREATE_RESERVATIONS",
+    payload: reservatinosState,
   };
 };
