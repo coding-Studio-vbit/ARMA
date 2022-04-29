@@ -26,7 +26,7 @@ const EventVenue = () => {
   const eventDetails = useSelector((state: RootState) => state.eventDetails);
 
   useEffect(() => {
-    // if (Object.keys(eventDetails).length === 0) navigate(-1);
+    if (Object.keys(eventDetails).length === 0) navigate(-1);
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}halls`)
       .then((response) => {
@@ -87,7 +87,6 @@ const EventVenue = () => {
       });
   };
   const [selectedDayRange, setSelectedDayRange] = useState(defaultValue);
-  const [eventHalls, setEventHalls] = useState(eventDates);
   const [showHallSelection, setShowHallSelection] = useState(false);
   const HallsList = (halls: string[], event: string, dateString: Date) => {
     var temp = halls.map((hall) => hall.split(".")[1]);
