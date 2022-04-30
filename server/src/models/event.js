@@ -50,8 +50,7 @@ const event = new mongoose.Schema({
       "COMPLETED",
     ],
   },
-  budgetAccepted: {type: Boolean, default: false},
-  eventAccepted: {type:Boolean, default: false},
+ eventCompleted: {type:Boolean, default: false},
   hasBudget: {
     type: Boolean,
     required: true,

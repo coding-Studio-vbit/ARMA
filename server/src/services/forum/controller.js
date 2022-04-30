@@ -482,6 +482,21 @@ const deleteForum = async (req, res) => {
   }
 };
 
+const completeEvent = async (req, res)=> {
+  try
+  {
+    const {eventId} = req.body;
+    const event = await events.findById(eventId);
+    event.eventCompleted = true;
+    await event.save();
+    res.json("successfully marked event as complete", process.env.SUCCESS_CODE);
+  }
+  catch (err) {
+    console.log(err);
+    res.json(response("failed to mark event as completed.", process.env.FAILURE_CODE));
+  }
+}
+
 module.exports = {
   dashboard,
   getForumsList,
