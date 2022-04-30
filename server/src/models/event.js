@@ -24,7 +24,7 @@ const event = new mongoose.Schema({
       `description has to consist of maximum ${process.env.MAX_EVENT_DESCRIPTION_LENGTH} characters.`,
     ],
   },
-  eventDates: [{type:String}],
+  eventDates: [{ type: String }],
   forumID: {
     required: true,
     type: mongoose.Schema.Types.ObjectId,
@@ -40,7 +40,7 @@ const event = new mongoose.Schema({
     enum: [
       "AWAITING BUDGET APPROVAL",
       "REQUESTED BUDGET CHANGES",
-      "BUDGET CHANGES UPDATED",
+      "BUDGET UPDATED",
       "BUDGET REJECTED",
       "AWAITING SAC APPROVAL",
       "REQUESTED CHANGES BY SAC",
@@ -50,7 +50,7 @@ const event = new mongoose.Schema({
       "COMPLETED",
     ],
   },
- eventCompleted: {type:Boolean, default: false},
+  eventCompleted: { type: Boolean, default: false },
   hasBudget: {
     type: Boolean,
     required: true,

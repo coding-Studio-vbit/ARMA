@@ -22,7 +22,7 @@ const getEvents = async (req, res) => {
     where.eventStatus = [
       "AWAITING BUDGET APPROVAL",
       "REQUESTED BUDGET CHANGES",
-      "BUDGET CHANGES UPDATED",
+      "BUDGET UPDATED",
       "BUDGET REJECTED",
     ];
   }
@@ -209,6 +209,8 @@ const updateBudgetDoc = async (req, res) => {
   console.log(req.files);
   try {
     let event = await events.findById(req.body.eventID);
+    if(event.eventStatus !== "AWAITING BUDGET APPROVAL" && event.eventStatus !== "BUDGET UPDATED" && event.eventStatus !== "REQUESTED BUDGET CHANGES")
+      throw new Error("Cannot update budget during current status of event")
     event.budgetDocPath = req.files.budgetDocument[0].path;
     await event.save();
     //send notif to FO.
@@ -347,7 +349,7 @@ const getRequests = async (req, res) => {
           eventStatus: [
             "AWAITING BUDGET APPROVAL",
             "REQUESTED BUDGET CHANGES",
-            "BUDGET CHANGES UPDATED",
+            "BUDGET UPDATED",
           ],
         })
         .populate("forumID");
@@ -442,7 +444,7 @@ const getBudgetDocument = async (req, res) => {
 
 const updateReservations = async (req, res) => {
   try {
-    const { eventHalls,id } = req.body;
+    const { eventHalls, id } = req.body;
     const event = await events.findById(id);
     if (event.forumID == req.user._id && event.eventStatus !== "COMPLETED") {
       //delete all reservations of this event.
@@ -541,9 +543,8 @@ const updateReservations = async (req, res) => {
   }
 };
 
-const updateEquipment = async (req, res)=>{
-  try
-  {
+const updateEquipment = async (req, res) => {
+  try {
     const { id, equipmentList } = req.body;
     let eqs = [];
     for (let i = 0; i < equipmentList.length; i++) {
@@ -556,24 +557,22 @@ const updateEquipment = async (req, res)=>{
     }
     const event = await events.findById(id);
     event.equipment = eqs;
-    await event.save()
-    res.json(response("Updated event equipment", process.env.SUCCESS_CODE))
-  }
-  catch (error) {
+    await event.save();
+    res.json(response("Updated event equipment", process.env.SUCCESS_CODE));
+  } catch (error) {
     console.log(error);
     res.json(
       response("Failed to update event equipment", process.env.FAILURE_CODE)
     );
   }
-}
+};
 
 const updateEventDetails = async (req, res) => {
-  try
-  {
-    const {name, description, eventId} = req.body;
+  try {
+    const { name, description, eventId } = req.body;
     name = name.trim();
     description = description.trim();
-    if(name == "" || description == ""){
+    if (name == "" || description == "") {
       throw new error("Invalid details");
     }
     const event = await events.findById(eventId);
@@ -581,14 +580,13 @@ const updateEventDetails = async (req, res) => {
     event.description = description;
     await event.save();
     res.json(response("updated event details", process.env.SUCCESS_CODE));
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error);
     res.json(
       response("Failed to update event equipment", process.env.FAILURE_CODE)
     );
   }
-}
+};
 
 module.exports = {
   updateEventDetails,

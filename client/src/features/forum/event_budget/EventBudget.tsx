@@ -12,6 +12,7 @@ export default function EventBudget() {
   const location: any = useLocation();
   const [event, setEvent] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+  const [newFile, setFile]  = useState(null);
   useEffect(() => {
     axios
       .get(
@@ -23,7 +24,7 @@ export default function EventBudget() {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [location.state.eventId]);
   return (
     <div className="flex flex-col sm:mt-12 ">
       <div className="flex justify-center items-center mb-16  gap-2">
@@ -69,9 +70,7 @@ export default function EventBudget() {
                 disabled={!isEdit}
                 onChange={(e: any) => {
                   console.log(e.target.files[0].size);
-                  console.log("dihdiuj");
-
-                  //   setPdf2(e.target.files[0]);
+                  setFile(e.target.files[0]);
                 }}
                 className="hidden"
                 type="file"
@@ -107,6 +106,12 @@ export default function EventBudget() {
         <button
           onClick={() => {
             setIsEdit(false);
+            let formData = new FormData();
+            formData.append("budgetDocument", newFile);
+            axios.post(`${process.env.REACT_APP_SERVER_URL}events/updateBudget`, formData)
+            .then(response=>{
+              console.log(response);
+            })
           }}
           className="btn mx-auto mt-10"
         >
