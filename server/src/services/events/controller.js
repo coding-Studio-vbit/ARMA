@@ -567,7 +567,31 @@ const updateEquipment = async (req, res)=>{
   }
 }
 
+const updateEventDetails = async (req, res) => {
+  try
+  {
+    const {name, description, eventId} = req.body;
+    name = name.trim();
+    description = description.trim();
+    if(name == "" || description == ""){
+      throw new error("Invalid details");
+    }
+    const event = await events.findById(eventId);
+    event.name = name;
+    event.description = description;
+    await event.save();
+    res.json(response("updated event details", process.env.SUCCESS_CODE));
+  }
+  catch (error) {
+    console.log(error);
+    res.json(
+      response("Failed to update event equipment", process.env.FAILURE_CODE)
+    );
+  }
+}
+
 module.exports = {
+  updateEventDetails,
   updateReservations,
   updateEquipment,
   getEventById,

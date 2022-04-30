@@ -119,7 +119,8 @@ const acceptBudget = async (req, res) => {
   try{
     let {eventId} = req.body;
     let event = await events.findById(eventId).populate("forumID");
-    let SAC = await faculty.findOne({role: mongoose.Schema.Types.ObjectId("61d29b056fe5397a01f615a9")})
+    const SACRoleId = await roles.findOne().where("name").in(["SAC"]);
+    const SAC = faculty.findOne({ role: [SACRoleId._id] });
 
     if(event.eventStatus !== "AWAITING BUDGET APPROVAL" || event.eventStatus !== "BUDGET STATUS UPDATED" || event.eventStatus !== "REQUESTED BUDGET CHANGES")
     {

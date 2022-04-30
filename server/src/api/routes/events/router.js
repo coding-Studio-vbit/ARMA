@@ -23,6 +23,8 @@ router.post(
   controller.createEvent
 );
 
+router.post("/updateEventDetails", controller.updateEventDetails);
+
 router.post(
   "/updateBudget",
   upload.fields([{ name: "budgetDocument", maxCount: 1 }]),
