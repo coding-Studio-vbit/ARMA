@@ -86,17 +86,34 @@ const createEvent = async (req, res) => {
       let eq = await equipments.findOne({
         name: { $regex: `^${equipment}`, $options: "i" },
       });
-      eqs.push(eq._id);
+      eqs.push({ equipmentType: eq._id, quantity: quantity });
     }
-    let newEvent = new events({
-      forumID: req.user._id,
-      description: eventDetails.desc,
-      name: eventDetails.name,
-      eventProposalDocPath: req.files.eventDocument[0].path,
-      budgetDocPath: req.files.budgetDocument[0].path,
-      hasBudget: req.files.budgetDocument !== null,
-      equipment: eqs,
-    });
+    let newEvent = {}
+    if(req.files.budgetDocument !== null)
+    {
+      newEvent = new events({
+        forumID: req.user._id,
+        description: eventDetails.desc,
+        name: eventDetails.name,
+        eventProposalDocPath: req.files.eventDocument[0].path,
+        budgetDocPath: req.files.budgetDocument[0].path,
+        hasBudget: true,
+        equipment: eqs,
+      });
+    }
+    else
+    {
+      newEvent = new events({
+        forumID: req.user._id,
+        description: eventDetails.desc,
+        name: eventDetails.name,
+        eventProposalDocPath: req.files.eventDocument[0].path,
+        budgetDocPath: null,
+        hasBudget: false,
+        equipment: eqs,
+      });
+    }
+    
     newAttendanceDoc.eventID = String(newEvent._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
     newEvent.eventStatus =
@@ -211,16 +228,20 @@ const updateBudgetDoc = async (req, res) => {
   console.log(req.files);
   try {
     let event = await events.findById(req.body.eventID).populate("forumID");
-    if(event.eventStatus !== "AWAITING BUDGET APPROVAL" && event.eventStatus !== "BUDGET UPDATED" && event.eventStatus !== "REQUESTED BUDGET CHANGES")
-      throw new Error("Cannot update budget during current status of event")
+    if (
+      event.eventStatus !== "AWAITING BUDGET APPROVAL" &&
+      event.eventStatus !== "BUDGET UPDATED" &&
+      event.eventStatus !== "REQUESTED BUDGET CHANGES"
+    )
+      throw new Error("Cannot update budget during current status of event");
     event.budgetDocPath = req.files.budgetDocument[0].path;
+    event.eventStatus = "BUDGET UPDATED";
     await event.save();
     //send notif to FO.
     const FORoleID = await roles.findOne().where("name").in(["FO"]);
     console.log(FORoleID);
-    const FO = await faculty.findOne({ role:(FORoleID._id) });
-    if(FO == null)
-      throw new error("FO not found");
+    const FO = await faculty.findOne({ role: FORoleID._id });
+    if (FO == null) throw new error("FO not found");
     await mailer.sendMail(FO.email, budgetDocUpdateTemplate, {
       FOName: FO.name,
       forumName: event.forumID.name,
@@ -558,7 +579,7 @@ const updateEquipment = async (req, res) => {
       let eq = await equipments.findOne({
         name: { $regex: `^${equipment}`, $options: "i" },
       });
-      eqs.push(eq._id);
+      eqs.push({equipmentType: eq._id, quantity:quantity});
     }
     const event = await events.findById(id);
     event.equipment = eqs;
@@ -588,12 +609,27 @@ const updateEventDetails = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.json(
-      response("Failed to update event equipment", process.env.FAILURE_CODE)
+      response("Failed to update event details", process.env.FAILURE_CODE)
     );
   }
 };
 
+const getEventEquipment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const event = await events.findById(id).populate("forumID").populate("equipment.equipmentType");
+    if (event == null) throw new Error("event not found");
+    if (event.forumID._id == req.user._id) {
+      res.json(response(event.equipment));
+    }
+  } catch (error) {
+    console.log(error);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
 module.exports = {
+  getEventEquipment,
   updateEventDetails,
   updateReservations,
   updateEquipment,

@@ -14,7 +14,7 @@ const EventCard = ({ event, onClick }: EventCardProps) => {
   switch (event.eventStatus) {
     case "COMPLETED":
     case "APPROVED":
-      eventStatusColor = "text-green-600";
+      eventStatusColor = "text-green-500";
       break;
     case "REJECTED":
       eventStatusColor = "text-red-600";
@@ -27,7 +27,7 @@ const EventCard = ({ event, onClick }: EventCardProps) => {
       eventStatusColor = "text-yellow-600";
       break;
     default:
-      eventStatusColor = "text-black";
+      eventStatusColor = "text-blue-600";
       break;
   }
 

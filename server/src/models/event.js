@@ -57,8 +57,11 @@ const event = new mongoose.Schema({
   },
   equipment: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "equipments",
+      equipmentType: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "equipments",
+      },
+      quantity: { type: Number },
     },
   ],
   // halls: [{

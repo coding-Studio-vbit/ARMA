@@ -49,4 +49,5 @@ router.get("/getEvent/:id",controller.getEventById)
 router.get("/getBudgetDocument/:id", controller.getBudgetDocument);
 router.post("/updateEventReservations", controller.updateReservations);
 router.post("/updateEventEquipment", controller.updateEquipment);
+router.get("/getEventEquipment/:id",controller.getEventEquipment);
 module.exports = router;

@@ -99,7 +99,7 @@ export default function EventEquip() {
             console.log({eventDates, eventDetails, list})
             const newData = new FormData()
             newData.append("eventDocument", eventDetails.pdf1);
-            newData.append("budgetDocument", eventDetails.pdf2);
+            newData.append("budgetDocument", eventDetails.pdf2 ? eventDetails.pdf2 : null);
             newData.append("equipmentList", JSON.stringify(list));
             newData.append("eventHalls", JSON.stringify(eventDates));
             newData.append("eventDetails", JSON.stringify(eventDetails))
