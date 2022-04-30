@@ -620,7 +620,22 @@ const getEventEquipment = async (req, res) => {
     const event = await events.findById(id).populate("forumID").populate("equipment.equipmentType");
     if (event == null) throw new Error("event not found");
     if (event.forumID._id == req.user._id) {
-      res.json(response(event.equipment));
+      res.json(response(event.equipment, process.env.SUCCESS_CODE));
+    }
+  } catch (error) {
+    console.log(error);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
+const getEventReservations = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const event = await events.findById(id);
+    const res = await reservations.find({eventId: id})
+    if (event == null) throw new Error("event not found");
+    if (event.forumID._id == req.user._id) {
+      res.json(response(res,process.env.SUCCESS_CODE));
     }
   } catch (error) {
     console.log(error);
@@ -629,6 +644,7 @@ const getEventEquipment = async (req, res) => {
 };
 
 module.exports = {
+  getEventReservations,
   getEventEquipment,
   updateEventDetails,
   updateReservations,
