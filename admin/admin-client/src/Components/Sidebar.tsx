@@ -1,6 +1,6 @@
 import React, { FC, useState } from "react";
 import logo from "../Assests/cs_white_logo.png";
-import { School, Close, CastForEducation , Group, AccountBalance, Router, AccountTree,Security } from "@material-ui/icons";
+import { School, Close } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
 
 interface SidebarProps{
@@ -42,22 +42,7 @@ export const Sidebar: FC<SidebarProps> = ({showSidebar, setShowSidebar}) => {
           localStorage.setItem("Active", value)
           navigate(`/${value}/`)
         }} > 
-          {/* <PanTool className="text-white" /> */}
-          {value == "Students" && 
-          <School className="text-white" />}
-          {value == "Faculty" && 
-          <CastForEducation className="text-white" />}
-          {value == "Forums" && 
-          <Group className="text-white" />}
-          {value == "Halls" && 
-          <AccountBalance className="text-white" />}
-          {value == "Facilities" && 
-          <Router className="text-white" />}
-          {value == "Roles" && 
-          <AccountTree className="text-white" />}
-          {value == "Admins" && 
-          <Security className="text-white" />}
-
+          <School className="text-white" />
           <span className="text-white font-normal ">{value}</span>
         </div>
       ))}

@@ -33,14 +33,8 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
   const department = [
     { value: null, label: "Any" },
     { value: "CSE ", label: "CSE" },
-    { value: "CSM", label: "CSM" },
-    { value: "CSC", label: "CSC" },
-    { value: "CSB", label: "CSB" },
     { value: "ECE ", label: "ECE" },
-    { value: "EEE", label: "EEE" },
     { value: "IT", label: "IT" },
-    { value: "ME", label: "ME" },
-    { value: "CE", label: "CE" },
   ];
 
   const year = [
