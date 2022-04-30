@@ -24,7 +24,7 @@ const ForumRoutes = () => {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/budget" element={<EventBudget />} />
-          <Route path="/eventInfo" element={<div>Event Info</div>} />
+          <Route path="/eventInfo" element={<UpdateEventDetails/>} />
           <Route path="/eventEquipment" element={<EventEquip />} />
 
           <Route path="/dashboardUpdateEquipment" element={<UpdateEquip />} />

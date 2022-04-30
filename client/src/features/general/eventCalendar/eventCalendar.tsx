@@ -82,7 +82,16 @@ function EventCalendar() {
                event.event = eventList[i].name;
                event.eventStatus = eventList[i].eventStatus;
                //actual code
-               event.date = eventList[i].eventDates;
+               let dates = eventList[i].eventDates;
+               for (let i = 0; i < dates.length; i++) {
+                 let d = new Date(dates[i]);
+                 dates[i] = {
+                   day:d.getDate(),
+                   month:d.getMonth()+1,
+                   year:d.getFullYear()
+                 }                 
+               }
+               event.date = dates
                //testing
               //  event.date=[
               //    {
@@ -142,11 +151,13 @@ function EventCalendar() {
           {
             !loading?
                 error == null?
-                <div className='h-screen bg-teal-100 flex justify-center items-center'>
+                <div className='h-screen bg-teal-100 flex justify-center items-start pt-20 md:m-auto md:items-center'>
                     <div className='bg-arma-blue 
                         flex flex-col lg:flex-row rounded-3xl
-                        h-3/4 w-5/6 lg:w-5/6 xl:w-2/3 text-white mt-12'>
-                        <div className="h-auto px-8 py-12 justify-between lg:justify-center lg:px-2 lg:h-full lg:py-5 w-full lg:w-1/3 flex flex-row lg:flex-col items-center gap-5 text-white ">
+                        lg:h-3/4 w-5/6 lg:w-5/6 xl:w-2/3 text-white mt-12'>
+                        <div className="h-auto px-8 py-8 md:py-10 justify-between 
+                        lg:justify-center lg:px-2 lg:h-full lg:py-5 w-full lg:w-1/3 
+                        flex flex-row lg:flex-col items-center gap-5 text-white ">
                             <div className='text-left lg:text-center'>
                                 <p className="text-5xl lg:text-9xl ">
                                 {selectedDate.day}
@@ -174,8 +185,13 @@ function EventCalendar() {
                             <Calendar
                                 value={eventDays}
                                 onChange={(e) => handleSelectedDate(e)}
-                                colorPrimary="#0B5B8A"
+                                // colorPrimary="#0B5B8A"
                                 calendarClassName="publicCalendar"
+                                calendarSelectedDayClassName="eventDays"
+                                calendarRangeStartClassName="eventDays"
+                                calendarRangeBetweenClassName="eventDays"
+                                calendarRangeEndClassName="eventDays"
+                                // customDaysClassName={"eventDays"}
                                 shouldHighlightWeekends
                             />
                         </div>                    

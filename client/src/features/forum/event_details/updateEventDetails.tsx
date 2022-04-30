@@ -1,15 +1,37 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { CloudUploadTwoTone, Edit } from "@material-ui/icons";
+import axiosInstance from "../../../utils/axios";
+// import { useLocation } from "react-router-dom";
+
 const UpdateEventDetails = () => {
+  // const { state } : { state: any } = useLocation();
   const [pdf1, setPdf1] = useState<File>();
+  const [forumName, setForumName] = useState("");
   const [isEdit, setIsEdit] = useState(false);
-  const [desc, setDesc] = useState(
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
-  );
+  const [desc, setDesc] = useState("Lorem ipsum dolor sit ami");
+
+  useEffect(() => {
+    setForumName(JSON.parse(localStorage.getItem("forum")).name);
+
+  }, [])
+ 
+  async function updateEventDetails() {
+    try {
+      const res = await axiosInstance.post(
+        process.env.REACT_APP_SERVER_URL+"events/updateEventDetails",{
+          
+        });
+    } catch (error) {
+      setIsEdit(false);      
+    }        
+  }
+  
+
   return (
-    <div className="my-8 ">
-      <h1 className="font-sans text-arma-dark-blue font-semibold text-xl md:text-4xl inline-block ml-4 md:ml-28 mt-2">
-        c.S(); SoC - Event Details
+    <div className="my-8 w-11/12 md:w-4/5 lg:w-3/5 mx-auto">
+      {/* Header */}
+      <h1 className="font-sans text-arma-dark-blue font-semibold text-xl md:text-4xl inline-block  mt-2">
+        {forumName} SoC - Event Details
         {!isEdit && (
           <Edit
             className="ml-3 text-black !text-xl md:!text-3xl cursor-pointer"
@@ -19,14 +41,19 @@ const UpdateEventDetails = () => {
           />
         )}
       </h1>
-      <div className="mx-auto mt-12 w-[85%] sm:w-[70%] flex flex-col ">
+
+      <div className="mx-auto mt-12 flex flex-col ">
+
+        {/* First Row */}
         <div className="mb-8">
+
           <div className="flex items-center">
             <h1 className="text-gray-500 text-md md:text-xl">
               Event Description
             </h1>
             <span className="material-icons text-arma-blue ml-3">help</span>
           </div>
+
           <textarea
             className="bg-white border border-solid shadow-xl w-full min-h-max outline-none rounded-2xl border-white mt-3 p-6 h-fit text-xs md:text-sm"
             rows={5}
@@ -36,15 +63,22 @@ const UpdateEventDetails = () => {
               setDesc(e.target.value);
             }}
           ></textarea>
+
         </div>
+
+        {/* Second Row */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-24 w-full justify-items-center items-center">
+          
+          {/* -1- */}
           <div className=" ">
+
             <div className="flex items-center w-full  ">
               <h1 className="text-gray-500 text-md md:text-xl">SAC Comments</h1>
               <span className="material-icons ml-3 text-arma-blue">
                 feedback
               </span>
             </div>
+            
             <div className="bg-white border shadow-xl border-solid rounded-2xl pointer-events-none border-white mt-3 p-6 h-fit text-xs md:text-sm">
               <p className="w-full text-justify">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -53,9 +87,14 @@ const UpdateEventDetails = () => {
                 Quibusdam corrupti ullam omnis cupiditate maiores.
               </p>
             </div>
+
           </div>
+
+          {/* -2- */}
           <div className="flex flex-col md:flex-row  w-full  justify-center">
+            
             <div className="">
+
               <div className="flex w-max">
                 <h1 className="text-gray-500 text-md md:text-xl ">
                   Event Proposal Document
@@ -64,6 +103,7 @@ const UpdateEventDetails = () => {
                   library_books
                 </span>
               </div>
+
               <div className="flex p-5  text-xs md:text-sm  justify-center">
                 <div className="flex flex-col items-center gap-4 ">
                   <span className="text-xs md:text-md  text-gray-400">
@@ -91,20 +131,26 @@ const UpdateEventDetails = () => {
                   {pdf1 && <p className="m-0 p-0 truncate">{pdf1.name}</p>}
                 </div>
               </div>
+
             </div>
+
           </div>
         </div>
+
       </div>
-      <div className="flex">
-        {isEdit && (
-          <button
-            className="btn  bg-arma-title rounded-[8px] px-6 py-2 m-auto"
-            onClick={() => setIsEdit(false)}
-          >
-            Update
-          </button>
-        )}
+
+      {/* Edit Button */}
+      <div className="flex mt-10">
+        {
+          isEdit && (
+            <button className="btn text-lg  bg-arma-title rounded-[8px] px-8 py-3 m-auto"
+              onClick={() => updateEventDetails()}>
+              UPDATE
+            </button>
+          )
+        }
       </div>
+
     </div>
   );
 };
