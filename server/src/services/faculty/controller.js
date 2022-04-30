@@ -121,6 +121,10 @@ const acceptBudget = async (req, res) => {
     let event = await events.findById(eventId).populate("forumID");
     let SAC = await faculty.findOne({role: mongoose.Schema.Types.ObjectId("61d29b056fe5397a01f615a9")})
 
+    if(event.eventStatus !== "AWAITING BUDGET APPROVAL" || event.eventStatus !== "BUDGET STATUS UPDATED" || event.eventStatus !== "REQUESTED BUDGET CHANGES")
+    {
+      throw new Error("cannot accept budget of event during the current status");
+    }
     if(req.user.role.name == "FO")
     {
       event.eventStatus = "AWAITING SAC APPROVAL";
@@ -142,7 +146,7 @@ const acceptBudget = async (req, res) => {
   catch(err)
   {
     console.log(err);
-    res.json(response("failed to accept budget", process.env.FAILURE_CODE));
+    res.json(response(err, process.env.FAILURE_CODE));
   }
 }
 
@@ -151,6 +155,10 @@ const commentBudget = async (req, res) => {
   {
     const {eventId, FOComments} = req.body;
     const event = await events.findById(eventId).populate("forumID");
+    if(event.eventStatus !== "AWAITING BUDGET APPROVAL" || event.eventStatus !== "REQUESTED BUDGET CHANGES")
+    {
+      throw new Error("cannot comment for current status of event");
+    }
     if(req.user.role.name == "FO")
     {
       event.FOComments = FOComments;
@@ -169,7 +177,7 @@ const commentBudget = async (req, res) => {
   catch(err)
   {
     console.log(err);
-    res.json(response("failed to comment on budget", process.env.FAILURE_CODE))
+    res.json(response(err, process.env.FAILURE_CODE))
   }
 }
 
@@ -178,6 +186,10 @@ const rejectBudget = async (req, res) => {
     let {eventId, FOComments} = req.body;
     let event = await events.findById(eventId).populate("forumID");
     let SAC = await faculty.findOne({role: mongoose.Schema.Types.ObjectId("61d29b056fe5397a01f615a9")})
+    if(event.eventStatus !== "AWAITING BUDGET APPROVAL" || event.eventStatus !== "BUDGET CHANGES UPDATED" || event.eventStatus !== "REQUESTED BUDGET CHANGES")
+    {
+      throw new Error("not awaiting budget approval");
+    }
 
     if(req.user.role.name == "FO")
     {
@@ -201,7 +213,7 @@ const rejectBudget = async (req, res) => {
   catch(err)
   {
     console.log(err);
-    res.json(response("failed to reject budget", process.env.FAILURE_CODE));
+    res.json(response(err, process.env.FAILURE_CODE));
   }
 }
 
@@ -210,6 +222,10 @@ const approveEvent = async (req, res)=>{
   {
     const {eventId} = req.body;
     const event = await events.findById(eventId).populate("forumID");
+    if(event.eventStatus !== "AWAITING SAC APPROVAL" || event.eventStatus !== "REQUESTED CHANGES BY SAC" || event.eventStatus !== "SAC CHANGES UPDATED")
+    {
+      throw new Error("cannot approve event during current status");
+    }
     if(req.user.role.name == "SAC")
     {
       event.eventStatus = "ACCEPTED";
@@ -236,6 +252,10 @@ const commentEvent = async (req, res)=>{
   {
     const {eventId, SACComments} = req.body;
     const event = await events.findById(eventId).populate("forumID");
+    if(event.eventStatus !== "AWAITING SAC APPROVAL" || event.eventStatus !== "REQUESTED CHANGES BY SAC" || event.eventStatus !== "SAC CHANGES UPDATED")
+    {
+      throw new Error("cannot comment on event during current status");
+    }
     if(req.user.role.name == "SAC")
     {
       event.eventStatus = "REQUESTED CHANGES BY SAC";
@@ -263,6 +283,10 @@ const rejectEvent = async (req, res)=>{
   {
     const {eventId, SACComments} = req.body;
     const event = await events.findById(eventId).populate("forumID");
+    if(event.eventStatus !== "AWAITING SAC APPROVAL" || event.eventStatus !== "REQUESTED CHANGES BY SAC" || event.eventStatus !== "SAC CHANGES UPDATED")
+    {
+      throw new Error("cannot reject event during current status");
+    }
     if(req.user.role.name == "SAC")
     {
       event.eventStatus = "REJECTED";
