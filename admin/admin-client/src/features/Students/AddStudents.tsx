@@ -57,8 +57,14 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
   
   const departments = [
     { value: "CSE ", label: "CSE" },
+    { value: "CSM", label: "CSM" },
+    { value: "CSC", label: "CSC" },
+    { value: "CSB", label: "CSB" },
     { value: "ECE ", label: "ECE" },
+    { value: "EEE", label: "EEE" },
     { value: "IT", label: "IT" },
+    { value: "ME", label: "ME" },
+    { value: "CE", label: "CE" },
   ];
 
   
@@ -75,6 +81,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
     { value: "A", label: "A" },
     { value: "B", label: "B" },
     { value: "C", label: "C" },
+    { value: "D", label: "D" },
   ];
 
   const validateUniqueid = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -250,7 +257,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
             name="Year"
             placeholder="Year"
             options={years}
-            value={isEdit ? {value: `${selectYear}`, label: `${selectYear}`} : "Year" }
+            value={selectYear ? {value: `${selectYear}`, label: `${selectYear}`} : "Year" }
             onChange={(e:any) => {
               setSelectYear(e?.value)
           }}
@@ -280,7 +287,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
           <Select
             name="Branch"
             placeholder="Branch"
-            value={isEdit ? {value: `${selectDepartment}`, label: `${selectDepartment}`} : "Branch"}
+            value={selectDepartment ? {value: `${selectDepartment}`, label: `${selectDepartment}`} : "Branch"}
             options={departments}
             onChange={(e:any) => {
               setSelectDepartment(e?.value)
