@@ -1,4 +1,5 @@
 const events = require("../../models/event");
+const faculty = require("../../models/faculty");
 const reservations = require("../../models/reservations");
 const response = require("../util/response");
 const attendance = require("../../models/attendance");
@@ -216,8 +217,8 @@ const updateBudgetDoc = async (req, res) => {
     //send notif to FO.
     const FORoleID = await roles.findOne().where("name").in(["FO"]);
     const FO = faculty.findOne({ role: [FORoleID._id] });
-    await mailer.sendMail(element.email, budgetDocUpdateTemplate, {
-      FOName: FO,
+    await mailer.sendMail(FO.email, budgetDocUpdateTemplate, {
+      FOName: FO.name,
       forumName: req.user.name,
       eventName: event.name,
     });
