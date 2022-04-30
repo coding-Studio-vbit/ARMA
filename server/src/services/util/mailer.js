@@ -10,7 +10,7 @@ const fillTemplateWithData = (template, data) => {
 };
 
 let mailTransporter = nodemailer.createTransport({
-  service: "gmail",
+  service: "yandex",
   auth: {
     user: process.env.NODEMAILER_EMAIL_ID,
     pass: process.env.NODEMAILER_EMAIL_PASSWORD,

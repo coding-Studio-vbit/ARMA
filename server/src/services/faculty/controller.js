@@ -130,8 +130,9 @@ const acceptBudget = async (req, res) => {
     let { eventId } = req.body;
     let event = await events.findById(eventId).populate("forumID");
     const SACRoleId = await roles.findOne().where("name").in(["SAC"]);
-    const SAC = faculty.findOne({ role: [SACRoleId._id] });
-
+    const SAC = await faculty.findOne({ role: [SACRoleId._id] });
+    if(SAC == null)
+      throw new Error("SAC not found")
     if (
       event.eventStatus !== "AWAITING BUDGET APPROVAL" &&
       event.eventStatus !== "BUDGET STATUS UPDATED" &&

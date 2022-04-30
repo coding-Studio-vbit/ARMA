@@ -111,7 +111,7 @@ export default function EventBudget() {
             formData.append("eventID", location.state.eventId)
             axios.post(`${process.env.REACT_APP_SERVER_URL}events/updateBudget`, formData)
             .then(response=>{
-              console.log(response);
+              //hi, display the message as a popup here.
             })
             .catch(error=>{
               console.log(error);

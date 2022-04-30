@@ -9,6 +9,7 @@ const { budgetDocUpdateTemplate } = require("../../email_templates/templates");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
 const halls = require("../../models/hall");
+const mongoose = require("mongoose");
 
 const getEvents = async (req, res) => {
   //For pagination
@@ -209,17 +210,20 @@ const updateBudgetDoc = async (req, res) => {
   //update the budget here.
   console.log(req.files);
   try {
-    let event = await events.findById(req.body.eventID);
+    let event = await events.findById(req.body.eventID).populate("forumID");
     if(event.eventStatus !== "AWAITING BUDGET APPROVAL" && event.eventStatus !== "BUDGET UPDATED" && event.eventStatus !== "REQUESTED BUDGET CHANGES")
       throw new Error("Cannot update budget during current status of event")
     event.budgetDocPath = req.files.budgetDocument[0].path;
     await event.save();
     //send notif to FO.
     const FORoleID = await roles.findOne().where("name").in(["FO"]);
-    const FO = faculty.findOne({ role: [FORoleID._id] });
+    console.log(FORoleID);
+    const FO = await faculty.findOne({ role:(FORoleID._id) });
+    if(FO == null)
+      throw new error("FO not found");
     await mailer.sendMail(FO.email, budgetDocUpdateTemplate, {
       FOName: FO.name,
-      forumName: req.user.name,
+      forumName: event.forumID.name,
       eventName: event.name,
     });
     res.json(response("updated budget document", process.env.SUCCESS_CODE));
