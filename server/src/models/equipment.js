@@ -17,6 +17,7 @@ const equipment = new mongoose.Schema({
   },
   totalCount: { type: Number, min: [1, "totalCount cannot be less than 1"] },
   facultyIncharge:{
+    required: true,
     type: mongoose.Schema.Types.ObjectId,
     ref: "faculty",
   }

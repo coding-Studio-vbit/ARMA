@@ -7,7 +7,9 @@ function FacultyRoutes() {
 
       <Routes>
           <Route path = '/' element = {<FacultyList isEdit={false} />}/>
-          <Route path = '/AddFaculty' element = {<AddFaculty/>}/>
+          <Route path = '/AddFaculty' element = {<AddFaculty isEdit={false}/>}/>
+          <Route path = '/EditFaculty/:id' element = {<AddFaculty isEdit={true}/>}/>
+
 
 
 

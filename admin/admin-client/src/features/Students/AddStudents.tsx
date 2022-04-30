@@ -170,8 +170,6 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
     ) 
     {
       setShowError("Fill details appropriately");
-      console.log(uniqueidError?.length + nameError?.length + emailError?.length);
-      
     }
     else
     {
@@ -215,7 +213,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
         </p>
         {isEdit &&
         <button
-          className="btn  bg-arma-red hover:bg-arma-red rounded-[8px] px-6 py-2 mb-12 flex" onClick={() => {setShow1(true)}}>
+          className="btn  bg-arma-red hover:bg-arma-red rounded-[8px] px-2 py-1 mb-12 flex" onClick={() => {setShow1(true)}}>
          Delete
         </button>
         }

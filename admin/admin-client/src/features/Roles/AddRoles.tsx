@@ -1,11 +1,11 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
 import axiosInstance from "../../utils/axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface AddRolesProps
 {
@@ -13,20 +13,31 @@ interface AddRolesProps
 }
 
 export const AddRoles = ({isEdit}:AddRolesProps) => {
+  useEffect(() => {
+    const role = async () => {
+      const res = await axiosInstance.post(
+        process.env.REACT_APP_SERVER_URL + "roles/viewRoles",
+        { id: id }
+      );
+      const data = res.data.response;
+      console.log(data);
+      setName(data?.name)
+    };
+    if(isEdit)
+    {
+    role();
+    }
+  }, []);
+  const nav = useNavigate()
   const [name, setName] = useState("");
-  const [nameError, setNameError] = useState<string>();
+  const [nameError, setNameError] = useState<string>("");
   const [show, setShow] = useState(false);
+  const [show1, setShow1] = useState(false);
   const [showError, setShowError] = useState<string>("");
   const [response, setResponse] = useState("")
   let {id} = useParams()
   console.log(id);
 
-
-  const options = [
-    { value: "Create ", label: "Create" },
-    { value: "Edit ", label: "Edit" },
-    { value: "Delete", label: "Delete" },
-  ];
   
    const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
 
@@ -44,7 +55,20 @@ export const AddRoles = ({isEdit}:AddRolesProps) => {
     
   };
 
-  
+  const deleteItem = async() => {
+    setShowError("");
+    const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "roles/deleteRole", {id:id})
+    const data = res.data
+    if (data.status === 1) {
+      setResponse("Deleted")
+      setShow(true)
+      nav('/Students/')
+    } else {
+        setResponse(data.response.message)
+        setShow(true)             
+    }  
+  }
+
   const loginValidate = async() => {
     if (
       name.length === 0 ||
@@ -55,7 +79,7 @@ export const AddRoles = ({isEdit}:AddRolesProps) => {
       if(!isEdit)
       {
       setShowError("");
-      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "roles/addRoles", {name:name, permissions:selectRoles})
+      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "roles/addRoles", {name:name,})
       const data = res.data
       if (data.status === 1) {
         setResponse("New Role Added")
@@ -67,7 +91,7 @@ export const AddRoles = ({isEdit}:AddRolesProps) => {
     } 
     else{
       setShowError("");
-        const res = await axiosInstance.put(process.env.REACT_APP_SERVER_URL + "roles/editRoles", {id:id, name:name, permissions:selectRoles,})
+        const res = await axiosInstance.put(process.env.REACT_APP_SERVER_URL + "roles/editRoles", {id:id, name:name,})
         const data = res.data
         if (data.status === 1) {
           setResponse("Role Details Edited")
@@ -83,76 +107,32 @@ export const AddRoles = ({isEdit}:AddRolesProps) => {
   return (
     <div className="flex flex-col grow items-center">
       <div className="mt-12 w-max">
-      <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
+      <p className="text-center  text-arma-title text-2xl font-medium mb-4 ml-2 ">
           {isEdit? "EDIT ROLES" : "ADD ROLES"}
         </p>
-
+        {isEdit &&
+        <button
+          className="btn flex justify-center ml-auto mr-auto bg-arma-red hover:bg-arma-red rounded-[8px] px-2 py-1 mb-16" onClick={() => {setShow1(true)}}>
+         Delete
+        </button>
+        }
+        <Dialog show={show1} setShow={setShow1} title="Are you sure you want to proceed?">
+         <button className="outlineBtn" onClick={()=>setShow1(false)} >Cancel</button>
+         <button className="btn" onClick={()=>{
+          deleteItem();
+        }} >Proceed</button>
+        </Dialog>
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
           <InputField
             name="Name"
             type="text"
+            value={name}
             error={nameError}
             onChange={(e) => {
               validateName(e);
             }}
           />
         </div>
-
-        <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
-          <Select
-            name="Roles"
-            placeholder="Roles"
-            options={options}
-            onChange={(e) => {
-                for(let i = 0; i < selectRoles.length; i++){
-                   if(e?.value === selectRoles[i]) return        
-                }
-                setSelectRoles([...selectRoles, e?.value])
-            }}
-            styles={{
-                control: (base) => ({
-                ...base,
-                minHeight: 52,
-                minWidth: 270,
-                borderRadius: "0.5rem",
-                border: "2px solid rgb(200, 200, 200)",
-                }),
-
-                placeholder: (base) => ({
-                  ...base,
-                  paddingLeft: '16px'
-                }),
-                singleValue: (base) => ({
-                    ...base,
-                    paddingLeft: '16px',
-                    color: 'black'
-                }) 
-            }}
-            
-            className="basic-multi-select w-full h-full"
-           
-          /> 
-        </div>
-         
-         <div className="flex flex-col">
-             {
-                 selectRoles.map((r,i) => {
-                     return(
-                         <div className="flex justify-between shadow-md px-4 py-2 hover:bg-black/[0.05]">
-                             <span>{r}</span>
-                             <Close className="cursor-pointer"onClick ={() => {
-                                 let temp = [...selectRoles]
-                                 temp.splice(i,1)
-                                 setSelectRoles(temp)
-                             }}/>
-                         </div>
-                     )
-                 })
-             }
-
-         </div>
-
-
         <Dialog show={show} setShow={setShow} title={response}>
           {" "}
         </Dialog>

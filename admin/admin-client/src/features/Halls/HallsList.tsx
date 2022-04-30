@@ -3,7 +3,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Table from "../../Components/CustomTable";
 import { InputField } from "../../Components/InputField/InputField";
 
-export const HallsList = () => {
+interface SearchStudentsProps {
+  isEdit: boolean;
+}
+
+export const HallsList = ({ isEdit }: SearchStudentsProps) => {
+  const nav = useNavigate()
   const location: any = useLocation();
   const [nameError, setNameError] = useState<string>();
   const [name, setName] = useState(location.state?.name ?? "");
@@ -51,6 +56,7 @@ export const HallsList = () => {
             rowsPerPage={5}
             filter={{ name: name }}
             buttonsCount={3}
+            onTableRowClick={(id) => nav(`/Halls/EditHall/${id}`)}
             headers={[
               {
                 displayName: "HALL NAME",

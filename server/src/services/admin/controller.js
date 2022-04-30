@@ -86,20 +86,20 @@ const editAdmin = async (email, newEmail, newpassword) => {
 const viewAdmin = async (id) => {
   try {
     let admin = await admins.findOne({ _id: id });
-    res.json(response(admin, process.env.SUCCESS_CODE));
+    return response(admin, process.env.SUCCESS_CODE);
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    return response(error, process.env.FAILURE_CODE);
   }
 };
 
 const deleteAdmin = async (id) => {
   try {
     let admin = await admins.deleteOne({ _id: id });
-    res.json(response(admin, process.env.SUCCESS_CODE));
+    return response(admin, process.env.SUCCESS_CODE);
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    return response(error, process.env.FAILURE_CODE);
   }
 };
 

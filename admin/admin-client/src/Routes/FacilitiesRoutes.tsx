@@ -7,12 +7,9 @@ function FacilitiesRoutes() {
   return (
 
       <Routes>
-          <Route path = '/AddEquip' element = {<AddEquip />}/>
-          <Route path = '/' element = {<EquipList />}/>
-
-
-
-       
+          <Route path = '/AddEquip' element = {<AddEquip isEdit={false} />}/>
+          <Route path = '/EditEquip/:id' element = {<AddEquip isEdit={true} />}/>
+          <Route path = '/' element = {<EquipList isEdit={false} />}/>      
       </Routes>
 
   );
