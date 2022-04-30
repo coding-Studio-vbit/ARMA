@@ -3,7 +3,7 @@ const faculty = require("../../models/faculty");
 const events = require("../../models/event");
 const response = require("../util/response");
 const mailer = require("../util/mailer");
-const {budgetAcceptedForumUpdateTemplate, budgetAcceptedSACUpdateTemplate, budgetUpdatedTemplate, budgetRejectedTemplate, budgetRejectedForumTemplate, budgetRejectedSACTemplate} = require("../../email_templates/templates");  
+const {budgetAcceptedForumUpdateTemplate, budgetAcceptedSACUpdateTemplate, budgetUpdatedTemplate, budgetRejectedTemplate, budgetRejectedForumTemplate, budgetRejectedSACTemplate, SACApprovedTemplate, SACCommentedTemplate, SACRejectedTemplate} = require("../../email_templates/templates");  
 const mongoose = require("mongoose");
 
 //get Faculty list
@@ -205,6 +205,86 @@ const rejectBudget = async (req, res) => {
   }
 }
 
+const approveEvent = async (req, res)=>{
+  try
+  {
+    const {eventId} = req.body;
+    const event = await events.findById(eventId).populate("forumID");
+    if(req.user.role.name == "SAC")
+    {
+      event.eventStatus = "ACCEPTED";
+      await event.save();
+
+      mailer.sendMail(event.forumID.email, SACApprovedTemplate, {eventName: event.name})
+      .then(response=>{
+        res.json(response("successfully approved the event", process.env.SUCCESS_CODE));
+      })
+    }else
+    {
+      res.json(response("unauthorized", process.env.FAILURE_CODE))
+    }
+  }
+  catch(err)
+  {
+    console.log(err);
+    res.json(response("failed to approve event", process.env.FAILURE_CODE));
+  }
+}
+
+const commentEvent = async (req, res)=>{
+  try
+  {
+    const {eventId, SACComments} = req.body;
+    const event = await events.findById(eventId).populate("forumID");
+    if(req.user.role.name == "SAC")
+    {
+      event.eventStatus = "REQUESTED CHANGES BY SAC";
+      event.SACComments = SACComments;
+      await event.save();
+
+      mailer.sendMail(event.forumID.email, SACCommentedTemplate, {eventName: event.name})
+      .then(response=>{
+        res.json(response("successfully commented on the event", process.env.SUCCESS_CODE));
+      })
+    }else
+    {
+      res.json(response("unauthorized", process.env.FAILURE_CODE))
+    }
+  }
+  catch(err)
+  {
+    console.log(err);
+    res.json(response("failed to comment on the event", process.env.FAILURE_CODE));
+  }
+}
+
+const rejectEvent = async (req, res)=>{
+  try
+  {
+    const {eventId, SACComments} = req.body;
+    const event = await events.findById(eventId).populate("forumID");
+    if(req.user.role.name == "SAC")
+    {
+      event.eventStatus = "REJECTED";
+      event.SACComments = SACComments;
+      await event.save();
+
+      mailer.sendMail(event.forumID.email, SACRejectedTemplate, {eventName: event.name})
+      .then(response=>{
+        res.json(response("successfully rejected the event", process.env.SUCCESS_CODE));
+      })
+    }else
+    {
+      res.json(response("unauthorized", process.env.FAILURE_CODE))
+    }
+  }
+  catch(err)
+  {
+    console.log(err);
+    res.json(response("failed to reject the event", process.env.FAILURE_CODE));
+  }
+}
+
 
 module.exports = {
   getFacultyList,
@@ -216,4 +296,7 @@ module.exports = {
   acceptBudget,
   commentBudget,
   rejectBudget,
+  approveEvent,
+  commentEvent,
+  rejectEvent,
 };

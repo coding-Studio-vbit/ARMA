@@ -41,13 +41,13 @@ const budgetRejectedSACTemplate = {
 }
 
 const SACApprovedTemplate = {
-  template: "",
+  template: "Hey there, Congratulations! The SAC has approved your event ${eventName}! Please log on to ARMA to check the status :)",
   subject: "Event Approved by SAC",
 };
 
-const SACEventUpdatedTemplate = {
-  template: "",
-  subject: "Event Approved by SAC",
+const SACCommentedTemplate = {
+  template: "Hey there, The SAC has commented on your event ${eventName}. Please logon to ARMA to check the comments.",
+  subject: "SAC commented on your event",
 };
 
 const SACRejectedTemplate = {
@@ -65,6 +65,6 @@ module.exports = {
   budgetRejectedForumTemplate,
   budgetRejectedSACTemplate,
   SACApprovedTemplate,
-  SACEventUpdatedTemplate,
+  SACCommentedTemplate,
   SACRejectedTemplate,
 };
