@@ -18,11 +18,14 @@ let mailTransporter = nodemailer.createTransport({
 });
 
 const sendMail = (toAddress, emailTemplate, emailData) => {
-  console.log("sendmail called");
   return new Promise((resolve, reject) => {
     const mailDetails = {
       from: process.env.NODEMAILER_EMAIL_ID,
       to: toAddress,
+      envelope:{
+        from: `A.R.M.A ${process.env.NODEMAILER_EMAIL_ID}`,
+        to: toAddress
+      },
       subject: emailTemplate.subject,
       html: fillTemplateWithData(emailTemplate.template, emailData),
     };
@@ -32,7 +35,6 @@ const sendMail = (toAddress, emailTemplate, emailData) => {
         console.log(err);
         reject(new Error("Mailing failed!"));
       } else {
-        console.log("something");
         resolve();
       }
     });

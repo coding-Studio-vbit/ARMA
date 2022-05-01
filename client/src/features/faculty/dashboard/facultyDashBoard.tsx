@@ -187,7 +187,7 @@ const weekDay = [
                       }
                     }}
                   >
-                    <p>Current Requests</p>
+                    <p className="text-2xl text-arma-dark-blue font-bold">Current Requests</p>
                     <ul className="list-disc list-inside text-xl ">
                       {currentRequests?.map((element) => {
                         return <li key={element._id} >{element.forum + " - " + element.event}</li>;
