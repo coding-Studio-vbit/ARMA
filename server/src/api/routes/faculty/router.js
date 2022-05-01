@@ -3,6 +3,12 @@ const controller = require("../../../services/forum/controller");
 const eventController = require("../../../services/events/controller");
 const facultyController = require("../../../services/faculty/controller");
 
+router.post("/acceptBudget", facultyController.acceptBudget);
+router.post("/commentBudget", facultyController.commentBudget);
+router.post("/rejectBudget", facultyController.rejectBudget);
+router.post("/acceptEvent", facultyController.approveEvent);
+router.post("/rejectEvent", facultyController.rejectEvent);
+router.post("/commentEvent", facultyController.commentEvent);
 router.get("/getForums", controller.getForumsList);
 router.get("/dashboardInfo",eventController.getRequests);
 router.get("/getFaculty",facultyController.getFacultyList);

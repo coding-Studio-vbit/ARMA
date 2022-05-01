@@ -6,6 +6,7 @@ import axios from "../../../utils/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { UpdateDatesState } from "../../../redux/actions";
 import { RootState } from "../../../redux/reducers";
+import { log } from "console";
 
 interface SelectedHallsProps {
   show: boolean;
@@ -71,9 +72,10 @@ const SelectHalls = (props: SelectedHallsProps) => {
               onClick={() => {
                 if (
                   reservations[hall.toUpperCase()] &&
-                  !reservations[hall.toUpperCase()].includes("morning")
+                  reservations[hall.toUpperCase()].includes("morning")
                 )
-                  addHalls("morning." + hall);
+                  console.log("already exists");
+                else addHalls("morning." + hall);
               }}
             >
               <div className="">Morning</div>
@@ -90,9 +92,10 @@ const SelectHalls = (props: SelectedHallsProps) => {
               onClick={() => {
                 if (
                   reservations[hall.toUpperCase()] &&
-                  !reservations[hall.toUpperCase()].includes("afternoon")
+                  reservations[hall.toUpperCase()].includes("afternoon")
                 )
-                  addHalls("afternoon." + hall);
+                  console.log("already exists");
+                else addHalls("afternoon." + hall);
               }}
             >
               <div className="">Afternoon</div>

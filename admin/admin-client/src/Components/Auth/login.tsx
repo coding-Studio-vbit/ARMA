@@ -18,7 +18,7 @@ function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate("/Admins", { replace: true });
+      navigate("/Students", { replace: true });
     }
   }, [user]);
 

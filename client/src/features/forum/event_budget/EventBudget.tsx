@@ -12,6 +12,7 @@ export default function EventBudget() {
   const location: any = useLocation();
   const [event, setEvent] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+  const [newFile, setFile]  = useState(null);
   useEffect(() => {
     axios
       .get(
@@ -23,7 +24,7 @@ export default function EventBudget() {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [location.state.eventId]);
   return (
     <div className="flex flex-col sm:mt-12 ">
       <div className="flex justify-center items-center mb-16  gap-2">
@@ -31,7 +32,7 @@ export default function EventBudget() {
           {event?.name} - Budget
         </span>
         {!isEdit && (
-          <Edit onClick={() => setIsEdit(true)} className="cursor-pointer" />
+          <Edit onClick={() => setIsEdit(true)} className="cursor-pointer text-arma-dark-blue" />
         )}
       </div>
       <div className="flex flex-col items-center  sm:mx-auto ">
@@ -59,7 +60,7 @@ export default function EventBudget() {
             </span>
             <label className="rounded-[8px] flex justify-center hover:bg-slate-500/10 !cursor-pointer  px-20 py-10  lg:px-24 lg:py-14 outline-dashed outline-gray-500">
               <div className="flex flex-col">
-                <CloudUploadTwoTone className="!w-20  !h-20 mx-auto  text-arma-blue " />
+                <CloudUploadTwoTone className="!w-20  !h-20 mx-auto  text-arma-blue hover:opacity-40 " />
                 <span>Click here to upload the budget document</span>
               </div>
 
@@ -69,9 +70,7 @@ export default function EventBudget() {
                 disabled={!isEdit}
                 onChange={(e: any) => {
                   console.log(e.target.files[0].size);
-                  console.log("dihdiuj");
-
-                  //   setPdf2(e.target.files[0]);
+                  setFile(e.target.files[0]);
                 }}
                 className="hidden"
                 type="file"
@@ -95,7 +94,7 @@ export default function EventBudget() {
                 }}
                 download
               >
-            <CloudDownloadTwoTone className="!w-20  !h-20 mx-auto  text-arma-blue " />
+            <CloudDownloadTwoTone className="!w-20  !h-20 mx-auto  text-arma-blue hover:opacity-40 " />
             <span>
                 Click here to download the budget document
             </span>
@@ -107,6 +106,16 @@ export default function EventBudget() {
         <button
           onClick={() => {
             setIsEdit(false);
+            let formData = new FormData();
+            formData.append("budgetDocument", newFile);
+            formData.append("eventID", location.state.eventId)
+            axios.post(`${process.env.REACT_APP_SERVER_URL}events/updateBudget`, formData)
+            .then(response=>{
+              //hi, display the message as a popup here.
+            })
+            .catch(error=>{
+              console.log(error);
+            })
           }}
           className="btn mx-auto mt-10"
         >

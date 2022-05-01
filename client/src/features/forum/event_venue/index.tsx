@@ -30,7 +30,7 @@ const EventVenue = () => {
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}halls`)
       .then((response) => {
-        setHallList(response.data.response.data);
+        console.log(response.data.response.data);
         var temp = [];
         response.data.response.data.map((data) => temp.push(data.name));
         setHallList(temp);

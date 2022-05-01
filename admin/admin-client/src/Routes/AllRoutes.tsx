@@ -35,13 +35,13 @@ const ProtectedRoutes = () => {
       <div className="flex flex-col">
         <Topnav showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <Routes>
+        <Route path="/Students/*" element={<StudentsRoutes />} />
         <Route path="/Admins/*" element={<AdminRoutes />} />
         <Route path="/Faculty/*" element={<FacultyRoutes />} />
         <Route path="/Halls/*" element={<HallsRoutes />} />
         <Route path="/Roles/*" element={<RolesRoutes />} />
         <Route path="/Facilities/*" element={<FacilitiesRoutes />} />
         <Route path="/Forums/*" element={<ForumsRoutes />} />
-        <Route path="/Students/*" element={<StudentsRoutes />} />
 
         
 

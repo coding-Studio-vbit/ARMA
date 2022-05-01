@@ -15,29 +15,39 @@ const forgotPasswordTemplate = {
   subject: "Forgot Password update",
 };
 
-const budgetApprovedTemplate = {
-  template: "",
+const budgetAcceptedForumUpdateTemplate = {
+  template: "Hey there, your budget for the event ${eventName} has been accepted",
   subject: "Budget Approved",
 };
+
+const budgetAcceptedSACUpdateTemplate = {
+  template: "Hey SAC, the budget for the event ${eventName} by ${forumName} has been accepted, please review the event and accept the event proposal in ARMA",
+  subject: "Event Budget Approved"
+}
 
 const budgetUpdatedTemplate = {
-  template: "",
-  subject: "Budget Approved",
+  template: "Hey there, the FO has commented upon your event ${eventName}, please check  the comments on ARMA",
+  subject: "FO Commented on Budget",
 };
 
-const budgetRejectedTemplate = {
-  template: "",
+const budgetRejectedForumTemplate = {
+  template: "Hey there, The FO has rejected the budget for the event ${eventName}, please approach the FO for further clarification.",
   subject: "Budget Rejected",
 };
 
+const budgetRejectedSACTemplate = {
+  template: "Hey SAC, the FO has rejected the budget for the event ${eventName}. The forum has been informed about the issue.",
+  subject: "Budget Reject for event"
+}
+
 const SACApprovedTemplate = {
-  template: "",
+  template: "Hey there, Congratulations! The SAC has approved your event ${eventName}! Please log on to ARMA to check the status :)",
   subject: "Event Approved by SAC",
 };
 
-const SACEventUpdatedTemplate = {
-  template: "",
-  subject: "Event Approved by SAC",
+const SACCommentedTemplate = {
+  template: "Hey there, The SAC has commented on your event ${eventName}. Please logon to ARMA to check the comments.",
+  subject: "SAC commented on your event",
 };
 
 const SACRejectedTemplate = {
@@ -49,10 +59,12 @@ module.exports = {
   welcomeTemplate,
   forgotPasswordTemplate,
   budgetDocUpdateTemplate,
-  budgetApprovedTemplate,
+  budgetAcceptedForumUpdateTemplate,
+  budgetAcceptedSACUpdateTemplate,
   budgetUpdatedTemplate,
-  budgetRejectedTemplate,
+  budgetRejectedForumTemplate,
+  budgetRejectedSACTemplate,
   SACApprovedTemplate,
-  SACEventUpdatedTemplate,
+  SACCommentedTemplate,
   SACRejectedTemplate,
 };

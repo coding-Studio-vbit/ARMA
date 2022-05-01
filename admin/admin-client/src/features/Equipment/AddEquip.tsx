@@ -5,17 +5,45 @@ import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
 import axiosInstance from "../../utils/axios";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
+interface AddEquipProps
+{
+  isEdit: boolean,
+}
 
-
-export const AddEquip = () => {
-  const [name, setName] = useState("");
+export const AddEquip = ({isEdit}:AddEquipProps) => {
+  const nav = useNavigate()
+  const location:any = useLocation()
+  let {id} = useParams()
+  console.log(id);
+  useEffect(() => {
+    const student = async () => {
+      const res = await axiosInstance.post(
+        process.env.REACT_APP_SERVER_URL + "equipment/viewEquipment",
+        { id: id }
+      );
+      const data = res.data.response;
+      console.log(data);
+      setName(data?.name)
+      setQuantity(data?.totalCount)
+      setSelectIncharge(data?.facultyIncharge.name)
+    };
+    if(isEdit)
+    {
+    student();
+    }
+  }, []);
+  
+  const [equipname, setName] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [nameError, setNameError] = useState<string>();
-  const [quantityError, setQuantityError] = useState<string>();
+  const [nameError, setNameError] = useState<string>("");
+  const [quantityError, setQuantityError] = useState<string>("");
   const [show, setShow] = useState(false);
+  const [show1, setShow1] = useState(false);
   const [showError, setShowError] = useState<String>("");
-  const [incharge, setSelectIncharge] = useState("");
+  const [showError1, setShowError1] = useState<String>("");
+  const [name, setSelectIncharge] = useState("");
   const [myfac, setMyFac] = useState<{value:string, label:string}[]>()
   const [response, setResponse] = useState("")
 
@@ -24,9 +52,9 @@ export const AddEquip = () => {
 
 
   const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value;
-    setName(name);
-    if (name.length === 0) {
+    const equipname = e.target.value;
+    setName(equipname);
+    if (equipname.length === 0) {
       setNameError("Name field is empty");
     } 
     else {
@@ -47,28 +75,58 @@ export const AddEquip = () => {
       }
     
   };
-
+  const deleteItem = async() => {
+    setShowError("");
+    const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "equipment/deleteEquipment", {id:id})
+    const data = res.data
+    if (data.status === 1) {
+      setResponse("Deleted")
+      setShow(true)
+      nav('/Facilities/')
+    } else {
+        setResponse(data.response.message)
+        setShow(true)             
+    }  
+  }
   const loginValidate = async() => {
     if (
-      name.length === 0 ||
+      equipname.length === 0 ||
       quantity.length === 0 ||
-      incharge.length === 0 ||
+      name.length === 0 ||
       nameError?.length !== 0 ||
       quantityError?.length !== 0
     ) {
       setShowError("Fill details appropriately");
-    } else {
-      setShowError("");
-      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "equipment/addEquipment", {name:name, totalCount:quantity, facultyIncharge:incharge})
-      const data = res.data
-      if (data.status === 1) {
-        setResponse("New Equipment Added")
-        setShow(true)
-      } else {
-          setResponse(data.response)
-          setShow(true)             
-      }   
+    } else
+    {
+      if(!isEdit)
+    {
+        setShowError("");
+        const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL + "equipment/addEquipment", {name:equipname, totalCount: quantity, facultyIncharge: name})
+        const data = res.data
+        if (data.status === 1) {
+          setResponse("New Equipment Added")
+          setShow(true)
+        } else {
+            setResponse(data.response.message)
+            setShow(true)             
+        }   
     }
+    else{
+      setShowError("");
+        const res = await axiosInstance.put(process.env.REACT_APP_SERVER_URL + "equipment/editEquipment", {id:id, name:equipname, totalCount: quantity, facultyIncharge: name})
+        const data = res.data
+        if (data.status === 1) {
+          setResponse("Equipment Details Edited")
+          setShow(true)
+          
+        } else {
+            setResponse(data.response.message)
+            setShow(true)             
+        }   
+    }
+    }
+  
   };
   
   useEffect(() => {
@@ -92,22 +150,34 @@ export const AddEquip = () => {
     
   },[name])
   const handleInputChange = (characterEntered: SetStateAction<string>) => {
-    setName(characterEntered)
-    
-    console.log(name);
+    setSelectIncharge(characterEntered)
   };
   
 
   return (
     <div className="flex flex-col grow items-center">
       <div className="mt-12 w-max">
-        <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
-          ADD EQUIPMENT
+      <div className="flex flex-row justify-between">
+      <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
+          {isEdit? "EDIT EQUIPMENT" : "ADD EQUIPMENT"}
         </p>
-
+        {isEdit &&
+        <button
+          className="btn  bg-arma-red hover:bg-arma-red rounded-[8px] px-2 py-1 mb-12 flex" onClick={() => {setShow1(true)}}>
+         Delete
+        </button>
+        }
+         <Dialog show={show1} setShow={setShow1} title="Are you sure you want to proceed?">
+         <button className="outlineBtn" onClick={()=>setShow1(false)} >Cancel</button>
+         <button className="btn" onClick={()=>{
+          deleteItem();
+        }} >Proceed</button>
+        </Dialog>
+        </div>
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
           <InputField
             name="Name"
+            value={equipname}
             type="text"
             error={nameError}
             onChange={(e) => {
@@ -116,6 +186,7 @@ export const AddEquip = () => {
           />
           <InputField
             name="Quantity"
+            value={quantity}
             type="text"
             error={quantityError}
             onChange={(e) => {
@@ -130,6 +201,7 @@ export const AddEquip = () => {
             options={myfac}
             placeholder="faculty coordinator"
             onInputChange={handleInputChange}
+            value = {name? {value: name, label: name} : "faculty coordinator"}
             noOptionsMessage={() => null}
             onChange={(e:any) => {
             setSelectIncharge(e?.value)
@@ -170,7 +242,8 @@ export const AddEquip = () => {
             loginValidate();
           }}
         >
-          ADD
+          {isEdit? "SAVE" : "ADD"}
+          
         </button>
         {showError.length !== 0 && (
           <span className="text-red-500 text-sm flex justify-center mt-2">

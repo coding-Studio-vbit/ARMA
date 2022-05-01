@@ -1,4 +1,5 @@
 const events = require("../../models/event");
+const faculty = require("../../models/faculty");
 const reservations = require("../../models/reservations");
 const response = require("../util/response");
 const attendance = require("../../models/attendance");
@@ -8,6 +9,7 @@ const { budgetDocUpdateTemplate } = require("../../email_templates/templates");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
 const halls = require("../../models/hall");
+const mongoose = require("mongoose");
 
 const getEvents = async (req, res) => {
   //For pagination
@@ -22,7 +24,7 @@ const getEvents = async (req, res) => {
     where.eventStatus = [
       "AWAITING BUDGET APPROVAL",
       "REQUESTED BUDGET CHANGES",
-      "BUDGET CHANGES UPDATED",
+      "BUDGET UPDATED",
       "BUDGET REJECTED",
     ];
   }
@@ -84,17 +86,34 @@ const createEvent = async (req, res) => {
       let eq = await equipments.findOne({
         name: { $regex: `^${equipment}`, $options: "i" },
       });
-      eqs.push(eq._id);
+      eqs.push({ equipmentType: eq._id, quantity: quantity });
     }
-    let newEvent = new events({
-      forumID: req.user._id,
-      description: eventDetails.desc,
-      name: eventDetails.name,
-      eventProposalDocPath: req.files.eventDocument[0].path,
-      budgetDocPath: req.files.budgetDocument[0].path,
-      hasBudget: req.files.budgetDocument !== null,
-      equipment: eqs,
-    });
+    let newEvent = {}
+    if(req.files.budgetDocument !== null)
+    {
+      newEvent = new events({
+        forumID: req.user._id,
+        description: eventDetails.desc,
+        name: eventDetails.name,
+        eventProposalDocPath: req.files.eventDocument[0].path,
+        budgetDocPath: req.files.budgetDocument[0].path,
+        hasBudget: true,
+        equipment: eqs,
+      });
+    }
+    else
+    {
+      newEvent = new events({
+        forumID: req.user._id,
+        description: eventDetails.desc,
+        name: eventDetails.name,
+        eventProposalDocPath: req.files.eventDocument[0].path,
+        budgetDocPath: null,
+        hasBudget: false,
+        equipment: eqs,
+      });
+    }
+    
     newAttendanceDoc.eventID = String(newEvent._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
     newEvent.eventStatus =
@@ -206,17 +225,25 @@ const createEvent = async (req, res) => {
 };
 const updateBudgetDoc = async (req, res) => {
   //update the budget here.
-  console.log(req.files);
   try {
-    let event = await events.findById(req.body.eventID);
+    let event = await events.findById(req.body.eventID).populate("forumID");
+    if (
+      event.eventStatus !== "AWAITING BUDGET APPROVAL" &&
+      event.eventStatus !== "BUDGET UPDATED" &&
+      event.eventStatus !== "REQUESTED BUDGET CHANGES"
+    )
+      throw new Error("Cannot update budget during current status of event");
     event.budgetDocPath = req.files.budgetDocument[0].path;
+    event.eventStatus = "BUDGET UPDATED";
     await event.save();
     //send notif to FO.
     const FORoleID = await roles.findOne().where("name").in(["FO"]);
-    const FO = faculty.findOne({ role: [FORoleID._id] });
-    await mailer.sendMail(element.email, budgetDocUpdateTemplate, {
-      FOName: FO,
-      forumName: req.user.name,
+    console.log(FORoleID);
+    const FO = await faculty.findOne({ role: FORoleID._id });
+    if (FO == null) throw new error("FO not found");
+    await mailer.sendMail(FO.email, budgetDocUpdateTemplate, {
+      FOName: FO.name,
+      forumName: event.forumID.name,
       eventName: event.name,
     });
     res.json(response("updated budget document", process.env.SUCCESS_CODE));
@@ -347,7 +374,7 @@ const getRequests = async (req, res) => {
           eventStatus: [
             "AWAITING BUDGET APPROVAL",
             "REQUESTED BUDGET CHANGES",
-            "BUDGET CHANGES UPDATED",
+            "BUDGET UPDATED",
           ],
         })
         .populate("forumID");
@@ -442,7 +469,7 @@ const getBudgetDocument = async (req, res) => {
 
 const updateReservations = async (req, res) => {
   try {
-    const { eventHalls,id } = req.body;
+    const { eventHalls, id } = req.body;
     const event = await events.findById(id);
     if (event.forumID == req.user._id && event.eventStatus !== "COMPLETED") {
       //delete all reservations of this event.
@@ -541,9 +568,8 @@ const updateReservations = async (req, res) => {
   }
 };
 
-const updateEquipment = async (req, res)=>{
-  try
-  {
+const updateEquipment = async (req, res) => {
+  try {
     const { id, equipmentList } = req.body;
     let eqs = [];
     for (let i = 0; i < equipmentList.length; i++) {
@@ -552,22 +578,115 @@ const updateEquipment = async (req, res)=>{
       let eq = await equipments.findOne({
         name: { $regex: `^${equipment}`, $options: "i" },
       });
-      eqs.push(eq._id);
+      eqs.push({equipmentType: eq._id, quantity:quantity});
     }
     const event = await events.findById(id);
     event.equipment = eqs;
-    await event.save()
-    res.json(response("Updated event equipment", process.env.SUCCESS_CODE))
-  }
-  catch (error) {
+    await event.save();
+    res.json(response("Updated event equipment", process.env.SUCCESS_CODE));
+  } catch (error) {
     console.log(error);
     res.json(
       response("Failed to update event equipment", process.env.FAILURE_CODE)
     );
   }
-}
+};
+
+const updateEventDetails = async (req, res) => {
+  try {
+    const { name, description, eventId } = req.body;
+
+    name = name.trim();
+    description = description.trim();
+    if (name == "" || description == "") {
+      throw new error("Invalid details");
+    }
+    const event = await events.findById(eventId);
+    event.name = name;
+    event.description = description;
+    if(req.files.eventDocument[0]){
+      event.eventProposalDocPath = req.files.eventDocument[0].path;
+    }
+    await event.save();
+    res.json(response("updated event details", process.env.SUCCESS_CODE));
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response("Failed to update event details", process.env.FAILURE_CODE)
+    );
+  }
+};
+
+const getEventEquipment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const event = await events.findById(id).populate("forumID").populate("equipment.equipmentType");
+    if (event == null) throw new Error("event not found");
+    if (event.forumID._id == req.user._id) {
+      res.json(response(event.equipment, process.env.SUCCESS_CODE));
+    }
+  } catch (error) {
+    console.log(error);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
+const getEventReservations = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const event = await events.findById(id);
+    const res = await reservations.find({eventId: id})
+    if (event == null) throw new Error("event not found");
+    if (event.forumID._id == req.user._id) {
+      res.json(response(res,process.env.SUCCESS_CODE));
+    }
+  } catch (error) {
+    console.log(error);
+    res.json(response(error, process.env.FAILURE_CODE));
+  }
+};
+
+const completeEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const event = await events.findById(eventId);
+    if (event.eventStatus !== "APPROVED")
+      throw new Error(
+        "Cannot mark event as complete during its current status"
+      );
+    event.eventCompleted = true;
+    await event.save();
+    res.json("successfully marked event as complete", process.env.SUCCESS_CODE);
+  } catch (err) {
+    console.log(err);
+    res.json(
+      response("failed to mark event as completed.", process.env.FAILURE_CODE)
+    );
+  }
+};
+
+const cancelEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const event = await events.findById(eventId);
+    if (event.eventStatus == "CANCELLED")
+      throw new Error("already cancelled event");
+    event.eventStatus = "CANCELLED";
+    await event.save();
+    res.json(
+      "successfully marked event as cancelled",
+      process.env.SUCCESS_CODE
+    );
+  } catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
 
 module.exports = {
+  getEventReservations,
+  getEventEquipment,
+  updateEventDetails,
   updateReservations,
   updateEquipment,
   getEventById,
@@ -582,4 +701,6 @@ module.exports = {
   uploadRegistrantsList,
   eventAttendance,
   postAttendance,
+  cancelEvent,
+  completeEvent,
 };

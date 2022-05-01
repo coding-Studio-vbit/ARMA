@@ -187,7 +187,7 @@ const weekDay = [
                       }
                     }}
                   >
-                    <p>Current Requests</p>
+                    <p className="text-2xl text-arma-dark-blue font-bold">Current Requests</p>
                     <ul className="list-disc list-inside text-xl ">
                       {currentRequests?.map((element) => {
                         return <li key={element._id} >{element.forum + " - " + element.event}</li>;
@@ -239,7 +239,8 @@ const weekDay = [
                 {selectedDate != null && filterWithDates().length > 0 ? (
                   <ul className="mt-3 list-disc list-inside text-xl">
                     {filterWithDates().map((e) => {
-                      return <li key={e._id}>{e.event}</li>;
+                      console.log(e)
+                      return <li key={e._id}>{e.event} by {e.forum}</li>;
                     })}
                   </ul>
                 ) : (

@@ -105,11 +105,9 @@ const Table = React.memo(
         })
         .then((response) => {
           let newData = response.data.response.data;
-          console.log(response)
           totalPages.current = Math.ceil(
             response.data.response.total / rowsPerPage
           );
-
           //The transformer function is called on each object of the response.
           if (transformer) {
             //console.log("Before transformer: ", newData);
