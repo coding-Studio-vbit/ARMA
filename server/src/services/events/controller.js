@@ -225,7 +225,6 @@ const createEvent = async (req, res) => {
 };
 const updateBudgetDoc = async (req, res) => {
   //update the budget here.
-  console.log(req.files);
   try {
     let event = await events.findById(req.body.eventID).populate("forumID");
     if (
@@ -596,6 +595,7 @@ const updateEquipment = async (req, res) => {
 const updateEventDetails = async (req, res) => {
   try {
     const { name, description, eventId } = req.body;
+
     name = name.trim();
     description = description.trim();
     if (name == "" || description == "") {
@@ -604,6 +604,9 @@ const updateEventDetails = async (req, res) => {
     const event = await events.findById(eventId);
     event.name = name;
     event.description = description;
+    if(req.files.eventDocument[0]){
+      event.eventProposalDocPath = req.files.eventDocument[0].path;
+    }
     await event.save();
     res.json(response("updated event details", process.env.SUCCESS_CODE));
   } catch (error) {

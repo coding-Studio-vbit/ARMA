@@ -26,6 +26,12 @@ const sendMail = (toAddress, emailTemplate, emailData) => {
         from: `A.R.M.A ${process.env.NODEMAILER_EMAIL_ID}`,
         to: toAddress
       },
+      dsn:{
+        id: "MAILTO_"+toAddress+"_SUBJECT_"+emailTemplate.subject,
+        return: 'headers',
+        notify:['failure', 'delay'],
+        recipient: process.env.NODEMAILER_EMAIL_ID
+      },
       subject: emailTemplate.subject,
       html: fillTemplateWithData(emailTemplate.template, emailData),
     };
