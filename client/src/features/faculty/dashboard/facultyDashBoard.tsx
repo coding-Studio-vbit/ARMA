@@ -239,7 +239,8 @@ const weekDay = [
                 {selectedDate != null && filterWithDates().length > 0 ? (
                   <ul className="mt-3 list-disc list-inside text-xl">
                     {filterWithDates().map((e) => {
-                      return <li key={e._id}>{e.event}</li>;
+                      console.log(e)
+                      return <li key={e._id}>{e.event} by {e.forum}</li>;
                     })}
                   </ul>
                 ) : (
