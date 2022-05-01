@@ -1,7 +1,7 @@
 const { welcomeTemplate } = require("../../email_templates/templates");
 const events = require("../../models/event");
 const forums = require("../../models/forum");
-const reservations = require("../../models/reservations")
+const reservations = require("../../models/reservations");
 const response = require("../util/response");
 const base64 = require("../util/base64");
 const fs = require("fs");
@@ -13,16 +13,27 @@ const mongoose = require("mongoose");
 const dashboard = async (req, res) => {
   try {
     let myEvents = await events.find({ forumID: req.user._id });
-    let currentDate = new Date()
-    let dateString = currentDate.getDate() + '-' + (currentDate.getMonth()+1) + '-' + currentDate.getFullYear();
-    let activeEvents = await reservations.find({status: "NOT COMPLETED", dates:dateString}).populate({path:"eventId",select:{name:1}})
+    let currentDate = new Date();
+    let dateString =
+      currentDate.getDate() +
+      "-" +
+      (currentDate.getMonth() + 1) +
+      "-" +
+      currentDate.getFullYear();
+    let activeEvents = await reservations
+      .find({ status: "NOT COMPLETED", dates: dateString })
+      .populate({ path: "eventId", select: { name: 1 } });
 
     let statistics = { engagement: 4, total: myEvents.length };
     res.json(
       response(
-        { events: myEvents, statistics: statistics, activeEvents: activeEvents.map((item)=>{
-          return item.eventId.name
-        }) },
+        {
+          events: myEvents,
+          statistics: statistics,
+          activeEvents: activeEvents.map((item) => {
+            return item.eventId.name;
+          }),
+        },
         process.env.SUCCESS_CODE
       )
     );
@@ -62,7 +73,7 @@ const getForumsList = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort)
-      .populate('facultyCoordinatorID')
+      .populate("facultyCoordinatorID")
       .select("-password");
     const total = await forums.count(where);
     res.json(
@@ -269,7 +280,7 @@ const forumEventNumber = async (req, res) => {
     const result = await events
       .find({
         forumID: forumID,
-        eventStatus: { $nin: ["REJECTED", "APPROVED", "COMPLETED"] },
+        eventStatus: { $in: ["APPROVED"] },
       })
       .count();
     res.json(response(result, process.env.SUCCESS_CODE));
@@ -307,8 +318,6 @@ const deleteforumMember = async (req, res) => {
   try {
     const { forumName, studentID, userType } = req.body;
     if (userType === "core") {
-      console.log(forumName, studentID);
-      console.log(mongoose.Types.ObjectId(studentID));
       await forums.updateOne(
         { name: forumName },
         {
@@ -348,7 +357,6 @@ const forumViewCard = async (req, res) => {
         populate: { path: "attendanceDocID" },
       });
     forum = forum.toObject();
-    console.log(forum.events);
     for (let i = 0; i < forum.events.length; i++) {
       forum.events[i].participants =
         forum.events[i].attendanceDocID.presence.length;
@@ -482,20 +490,7 @@ const deleteForum = async (req, res) => {
   }
 };
 
-const completeEvent = async (req, res)=> {
-  try
-  {
-    const {eventId} = req.body;
-    const event = await events.findById(eventId);
-    event.eventCompleted = true;
-    await event.save();
-    res.json("successfully marked event as complete", process.env.SUCCESS_CODE);
-  }
-  catch (err) {
-    console.log(err);
-    res.json(response("failed to mark event as completed.", process.env.FAILURE_CODE));
-  }
-}
+
 
 module.exports = {
   dashboard,

@@ -52,4 +52,6 @@ router.post("/updateEventReservations", controller.updateReservations);
 router.post("/updateEventEquipment", controller.updateEquipment);
 router.get("/getEventEquipment/:id", controller.getEventEquipment);
 router.get("/getEventReservations/:id", controller.getEventReservations);
+router.get("completeEvent/:eventId", controller.completeEvent);
+router.get("cancelEvent/:eventId", controller.cancelEvent);
 module.exports = router;

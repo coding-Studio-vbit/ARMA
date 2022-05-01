@@ -45,6 +45,7 @@ const RequestsList = () => {
           { value: "APPROVED", label: "APPROVED" },
           { value: "REJECTED", label: "REJECTED" },
           { value: "COMPLETED", label: "COMPLETED" },
+          {value: "CANCELLED", label: "CANCELLED"}
         ]}
         value={requestStatus}
         onChange={(value) => {

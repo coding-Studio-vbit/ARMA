@@ -48,6 +48,7 @@ const event = new mongoose.Schema({
       "APPROVED",
       "REJECTED",
       "COMPLETED",
+      "CANCELLED"
     ],
   },
   eventCompleted: { type: Boolean, default: false },

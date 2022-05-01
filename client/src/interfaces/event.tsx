@@ -11,6 +11,7 @@ type Status =
   | "SAC CHANGES UPDATED"
   | "APPROVED"
   | "REJECTED"
+  | "CANCELLED"
   | "COMPLETED";
 
 export interface Equipment {

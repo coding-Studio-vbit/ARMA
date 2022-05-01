@@ -646,6 +646,43 @@ const getEventReservations = async (req, res) => {
   }
 };
 
+const completeEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const event = await events.findById(eventId);
+    if (event.eventStatus !== "APPROVED")
+      throw new Error(
+        "Cannot mark event as complete during its current status"
+      );
+    event.eventCompleted = true;
+    await event.save();
+    res.json("successfully marked event as complete", process.env.SUCCESS_CODE);
+  } catch (err) {
+    console.log(err);
+    res.json(
+      response("failed to mark event as completed.", process.env.FAILURE_CODE)
+    );
+  }
+};
+
+const cancelEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const event = await events.findById(eventId);
+    if (event.eventStatus == "CANCELLED")
+      throw new Error("already cancelled event");
+    event.eventStatus = "CANCELLED";
+    await event.save();
+    res.json(
+      "successfully marked event as cancelled",
+      process.env.SUCCESS_CODE
+    );
+  } catch (err) {
+    console.log(err);
+    res.json(response(err, process.env.FAILURE_CODE));
+  }
+};
+
 module.exports = {
   getEventReservations,
   getEventEquipment,
@@ -664,4 +701,6 @@ module.exports = {
   uploadRegistrantsList,
   eventAttendance,
   postAttendance,
+  cancelEvent,
+  completeEvent,
 };
