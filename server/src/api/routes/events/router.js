@@ -48,6 +48,7 @@ router.get("activeEvents", controller.getActiveEvents);
 router.get("/calendarEvents", controller.getCalendarEvents);
 router.get("/getEvent/:id", controller.getEventById);
 router.get("/getBudgetDocument/:id", controller.getBudgetDocument);
+router.get("/getEventDocument/:id", controller.getEventDocument);
 router.post("/updateEventReservations", controller.updateReservations);
 router.post("/updateEventEquipment", controller.updateEquipment);
 router.get("/getEventEquipment/:id", controller.getEventEquipment);
