@@ -1,10 +1,12 @@
 import { useState,useEffect } from "react";
 import { CloudUploadTwoTone, Edit } from "@material-ui/icons";
 import axiosInstance from "../../../utils/axios";
+import { useUser } from "../../../providers/user/UserProvider";
 // import { useLocation } from "react-router-dom";
 
 const UpdateEventDetails = () => {
   // const { state } : { state: any } = useLocation();
+  const {faculty} = useUser();
   const [pdf1, setPdf1] = useState<File>();
   const [forumName, setForumName] = useState("");
   const [isEdit, setIsEdit] = useState(false);
