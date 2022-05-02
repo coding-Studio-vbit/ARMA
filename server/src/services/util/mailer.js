@@ -10,7 +10,7 @@ const fillTemplateWithData = (template, data) => {
 };
 
 let mailTransporter = nodemailer.createTransport({
-  service: "gmail",
+  service: "yandex",
   auth: {
     user: process.env.NODEMAILER_EMAIL_ID,
     pass: process.env.NODEMAILER_EMAIL_PASSWORD,
@@ -18,11 +18,20 @@ let mailTransporter = nodemailer.createTransport({
 });
 
 const sendMail = (toAddress, emailTemplate, emailData) => {
-  console.log("sendmail called");
   return new Promise((resolve, reject) => {
     const mailDetails = {
       from: process.env.NODEMAILER_EMAIL_ID,
       to: toAddress,
+      envelope:{
+        from: `A.R.M.A ${process.env.NODEMAILER_EMAIL_ID}`,
+        to: toAddress
+      },
+      dsn:{
+        id: "MAILTO_"+toAddress+"_SUBJECT_"+emailTemplate.subject,
+        return: 'headers',
+        notify:['failure', 'delay'],
+        recipient: process.env.NODEMAILER_EMAIL_ID
+      },
       subject: emailTemplate.subject,
       html: fillTemplateWithData(emailTemplate.template, emailData),
     };
@@ -32,7 +41,6 @@ const sendMail = (toAddress, emailTemplate, emailData) => {
         console.log(err);
         reject(new Error("Mailing failed!"));
       } else {
-        console.log("something");
         resolve();
       }
     });

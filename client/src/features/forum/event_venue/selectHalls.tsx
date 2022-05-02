@@ -6,6 +6,7 @@ import axios from "../../../utils/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { UpdateDatesState } from "../../../redux/actions";
 import { RootState } from "../../../redux/reducers";
+import { log } from "console";
 
 interface SelectedHallsProps {
   show: boolean;
@@ -66,14 +67,15 @@ const SelectHalls = (props: SelectedHallsProps) => {
                   ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
                   : eventHalls.includes("morning." + hall)
                   ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
-                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
+                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] cursor-pointer"
               }
               onClick={() => {
                 if (
                   reservations[hall.toUpperCase()] &&
-                  !reservations[hall.toUpperCase()].includes("morning")
+                  reservations[hall.toUpperCase()].includes("morning")
                 )
-                  addHalls("morning." + hall);
+                  console.log("already exists");
+                else addHalls("morning." + hall);
               }}
             >
               <div className="">Morning</div>
@@ -85,14 +87,15 @@ const SelectHalls = (props: SelectedHallsProps) => {
                   ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
                   : eventHalls.includes("afternoon." + hall)
                   ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
-                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
+                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] cursor-pointer"
               }
               onClick={() => {
                 if (
                   reservations[hall.toUpperCase()] &&
-                  !reservations[hall.toUpperCase()].includes("afternoon")
+                  reservations[hall.toUpperCase()].includes("afternoon")
                 )
-                  addHalls("afternoon." + hall);
+                  console.log("already exists");
+                else addHalls("afternoon." + hall);
               }}
             >
               <div className="">Afternoon</div>
