@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Add, CloudUploadOutlined } from "@material-ui/icons";
+import { Add, CloudUploadOutlined, Redo } from "@material-ui/icons";
 import "../profile/profile.css";
 import axios from "../../../utils/axios";
 import { Dialog } from "../../../components/Dialog/Dialog";
@@ -97,7 +97,9 @@ function ForumCover() {
           }}
         />
         <div className="font-medium absolute text-white z-40 bottom-10 right-20 bg-arma-blue px-5 py-2 rounded-full ">
-          <Add fontSize="small" />
+          {/* <Add fontSize="small" /> */}
+          <Redo fontSize="small"/>
+          {" "}
           {url?.length > 0 ? "Change dashboard cover" : "Add dashboard cover"}
         </div>
       </label>

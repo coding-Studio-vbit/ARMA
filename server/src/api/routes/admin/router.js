@@ -21,11 +21,13 @@ router.put("/editAdmin", async (req, res) => {
 router.post("/deleteAdmin", async (req, res) => {
   let { id } = req.body;
   let result = await controller.deleteAdmin(id);
+  res.json(result)
 });
 
 router.post("/viewAdmin", async (req, res) => {
   let { id } = req.body;
   let result = await controller.viewAdmin(id);
+  res.json(result)
 });
 
 router.post("/addFaculty", async (req, res) => {
