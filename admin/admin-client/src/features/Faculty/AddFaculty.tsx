@@ -330,7 +330,6 @@ export const AddFaculty = ({isEdit}:AddStudentsProps) => {
                             if(selectRoles.length === 1) setSpan(false)
                         }}/>
                     </div>
-
                   ):
                   (
                     <div key = {i} className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]">
@@ -345,13 +344,9 @@ export const AddFaculty = ({isEdit}:AddStudentsProps) => {
                             if(selectRoles.length === 1) setSpan(false)
                         }}/>
                     </div>
-                  )
-                    
-                )
-            })
-                 
-             }
-          
+                  ))
+                 })
+              }
          </div>
          <div className=" flex flex-col mt-2 gap-y-6 mb-6  md:flex-row sm:gap-x-8">
          <InputField
