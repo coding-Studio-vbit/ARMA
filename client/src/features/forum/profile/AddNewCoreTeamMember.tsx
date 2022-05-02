@@ -10,19 +10,28 @@ export default function AddNewCoreTeamMember() {
   const {forum} = useUser()
   const nav = useNavigate()
   const departmentoptions = [
-      { value: "CSE ", label: "CSE" },
-      { value: "ECE ", label: "ECE" },
-      { value: "IT", label: "IT" },
+    { value: "CSE ", label: "CSE" },
+    { value: "CSM", label: "CSM" },
+    { value: "CSC", label: "CSC" },
+    { value: "CSB", label: "CSB" },
+    { value: "ECE ", label: "ECE" },
+    { value: "EEE", label: "EEE" },
+    { value: "IT", label: "IT" },
+    { value: "ME", label: "ME" },
+    { value: "CE", label: "CE" },
     ];
     const yearoptions = [
       { value: "1 ", label: "1" },
       { value: "2 ", label: "2" },
       { value: "3", label: "3" },
+      { value: "4", label: "4" },
+
     ];
     const sectionoptions = [
       { value: "A ", label: "A" },
       { value: "B ", label: "B" },
       { value: "C", label: "C" },
+      { value: "D", label: "D" },
     ];
 
     const [rollNumber, setRollNumber] = useState("")

@@ -51,7 +51,7 @@ const RequestsList = () => {
         onChange={(value) => {
           setRequestStatus(value);
         }}
-        className="w-40"
+        className="w-60"
       />
       </div>
       {/* Table */}
