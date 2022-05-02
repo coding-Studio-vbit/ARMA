@@ -277,7 +277,8 @@ export const AddFaculty = ({isEdit}:AddStudentsProps) => {
             options={myrole}
             onChange={(e:any) => {
                 for(let i = 0; i < selectRoles.length; i++){
-                   if(e?.value === selectRoles[i]) return        
+                   if(e?.value === selectRoles[i])  return   
+                   console.log(selectRoles);     
                 }
                 setSelectRoles([...selectRoles, e?.value])
                 setSelectRolesL([...selectRolesL, e?.label])
@@ -319,7 +320,7 @@ export const AddFaculty = ({isEdit}:AddStudentsProps) => {
                 return(
                   isEdit? (
                     <div key = {i} className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]">
-                        <span>{r.name}</span>
+                        <span>{(r.name)? r.name : r}</span>:
                         <Close className="cursor-pointer"onClick ={() => {
                             let temp = [...selectRoles]
                             temp.splice(i,1)
