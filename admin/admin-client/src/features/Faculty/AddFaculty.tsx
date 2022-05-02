@@ -319,7 +319,7 @@ export const AddFaculty = ({isEdit}:AddStudentsProps) => {
                 return(
                   isEdit? (
                     <div key = {i} className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]">
-                        <span>{(r.name)? r.name : r}</</span>
+                        <span>{(r.name)? r.name : r}</span>
                         <Close className="cursor-pointer"onClick ={() => {
                             let temp = [...selectRoles]
                             temp.splice(i,1)
