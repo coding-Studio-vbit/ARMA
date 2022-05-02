@@ -67,7 +67,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
                   ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
                   : eventHalls.includes("morning." + hall)
                   ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
-                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
+                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] cursor-pointer"
               }
               onClick={() => {
                 if (
@@ -87,7 +87,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
                   ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
                   : eventHalls.includes("afternoon." + hall)
                   ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
-                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
+                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] cursor-pointer"
               }
               onClick={() => {
                 if (
