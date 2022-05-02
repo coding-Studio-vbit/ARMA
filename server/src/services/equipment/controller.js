@@ -77,10 +77,10 @@ const addEquipment = async (req, res) => {
 
 const editEquipment = async (req, res) => {
   try {
-    const { id, name, totalCount } = req.body;
+    const { id, name, totalCount,facultyIncharge } = req.body;
     await equipment.findOneAndUpdate(
       { _id: id },
-      { $set: { name: name, totalCount: totalCount } },
+      { $set: { name: name, totalCount: totalCount, facultyIncharge: facultyIncharge } },
       { new: true }
     );
     res.json(
@@ -97,7 +97,7 @@ const viewEquipment = async (req, res) => {
   try {
     let {id} = req.body
     let equip = await equipment
-    .findOne({_id: id})
+    .findById(id)
     .populate("facultyIncharge");
     res.json(response(equip, process.env.SUCCESS_CODE));
   } catch (err) {

@@ -86,6 +86,7 @@ const editAdmin = async (email, newEmail, newpassword) => {
 const viewAdmin = async (id) => {
   try {
     let admin = await admins.findOne({ _id: id });
+    console.log(admin)
     return response(admin, process.env.SUCCESS_CODE);
   } catch (err) {
     console.log(err);

@@ -467,6 +467,24 @@ const getBudgetDocument = async (req, res) => {
   }
 };
 
+const getEventDocument = async (req, res) => {
+  try {
+    const forumId = req.user._id;
+    const { id } = req.params;
+    const event = await events.findById(id);
+    if (event.forumID == forumId) {
+      res.sendFile(event.eventProposalDocPath);
+    } else {
+      res.json(response("unauthorized", process.env.FAILURE_CODE));
+    }
+  } catch (error) {
+    console.log(error);
+    res.json(
+      response("Failed to send event document", process.env.FAILURE_CODE)
+    );
+  }
+};
+
 const updateReservations = async (req, res) => {
   try {
     const { eventHalls, id } = req.body;
@@ -691,6 +709,7 @@ module.exports = {
   updateEquipment,
   getEventById,
   getBudgetDocument,
+  getEventDocument,
   getEvents,
   createEvent,
   updateBudgetDoc,
