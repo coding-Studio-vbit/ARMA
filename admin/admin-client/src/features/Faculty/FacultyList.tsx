@@ -208,6 +208,7 @@ export const FacultyList = ({ isEdit }: SearchStudentsProps) => {
             api={`${process.env.REACT_APP_SERVER_URL + "faculty/getFaculty"}`}
             rowsPerPage={5}
             buttonsCount={3}
+            onTableRowClick={(id) => navigate(`/Faculty/EditFaculty/${id}`)}
             filter={{ rollNumber: uniqueid, name: name }}
             headers={[
               {

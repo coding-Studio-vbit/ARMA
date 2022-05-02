@@ -54,7 +54,7 @@ export const AddFaculty = ({isEdit}:AddStudentsProps) => {
   const [show1, setShow1] = useState(false);
   const [showError, setShowError] = useState<String>("");
   const [selectRoles, setSelectRoles] = useState<(string | undefined) []>([])
-  const [selectRolesL, setSelectRolesL] = useState<(string | undefined) []>([])
+  const [selectRolesL, setSelectRolesL] = useState<any>([])
 
   const [myrole, setMyRole] = useState<{}[]>()
   const [response, setResponse] = useState("")
@@ -315,22 +315,41 @@ export const AddFaculty = ({isEdit}:AddStudentsProps) => {
           <span className="text-arma-title mb-2">Roles:</span>
            }
              {
-                 selectRolesL.map((r,i) => {
-                     return(
-                         <div className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]">
-                             <span>{r}</span>
-                             <Close className="cursor-pointer"onClick ={() => {
-                                 let temp = [...selectRoles]
-                                 temp.splice(i,1)
-                                 setSelectRoles(temp)
-                                 let tempL = [...selectRolesL]
-                                 tempL.splice(i,1)
-                                 setSelectRolesL(tempL)
-                                 if(selectRoles.length === 1) setSpan(false)
-                             }}/>
-                         </div>
-                     )
-                 })
+               selectRolesL.map((r:any,i:any) => {
+                return(
+                  isEdit? (
+                    <div key = {i} className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]">
+                        <span>{r.name}</span>
+                        <Close className="cursor-pointer"onClick ={() => {
+                            let temp = [...selectRoles]
+                            temp.splice(i,1)
+                            setSelectRoles(temp)
+                            let tempL = [...selectRolesL]
+                            tempL.splice(i,1)
+                            setSelectRolesL(tempL)
+                            if(selectRoles.length === 1) setSpan(false)
+                        }}/>
+                    </div>
+
+                  ):
+                  (
+                    <div key = {i} className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]">
+                        <span>{r}</span>
+                        <Close className="cursor-pointer"onClick ={() => {
+                            let temp = [...selectRoles]
+                            temp.splice(i,1)
+                            setSelectRoles(temp)
+                            let tempL = [...selectRolesL]
+                            tempL.splice(i,1)
+                            setSelectRolesL(tempL)
+                            if(selectRoles.length === 1) setSpan(false)
+                        }}/>
+                    </div>
+                  )
+                    
+                )
+            })
+                 
              }
           
          </div>

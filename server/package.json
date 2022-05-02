@@ -17,6 +17,7 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
+    "ejs": "^3.1.7",
     "express": "^4.17.2",
     "express-router": "0.0.1",
     "html-pdf": "^3.0.1",
