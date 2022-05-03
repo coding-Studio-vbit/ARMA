@@ -609,7 +609,7 @@ const updateEquipment = async (req, res) => {
 
 const updateEventDetails = async (req, res) => {
   try {
-    const { name, description, eventId } = req.body;
+    let { name, description, eventId } = req.body;
 
     name = name.trim();
     description = description.trim();

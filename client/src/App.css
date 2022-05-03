@@ -10,9 +10,37 @@
   /* background-color: red !important; */
   box-shadow: none !important;
   border-radius:1.5rem !important;
-
 }
 
+.Calendar__day{
+  margin-left: 1px !important;
+  margin-right: 1px !important;
+}
+
+.Calendar__day:hover{
+  border-radius: 9999px !important;
+  
+}
+
+.eventDays{
+  background-color: #f5f5f5 !important;
+  color: whitesmoke !important;
+  font-weight: bolder !important;
+  border-radius: 9999px !important;
+  background-color: #149BEB !important;
+}
+
+@media only screen and (max-width: 450px) {
+  .Calendar__day{
+    border-radius: 10px !important;
+  }
+  .Calendar__day:hover{
+    border-radius: 10px !important;
+  }
+  .eventDays{
+    border-radius: 10px !important;
+  }
+}
 
 
 .responsiveCalendar{
