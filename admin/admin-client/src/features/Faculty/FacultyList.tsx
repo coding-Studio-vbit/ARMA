@@ -222,6 +222,16 @@ export const FacultyList = ({ isEdit }: SearchStudentsProps) => {
                 dataPath: "designation",
                 sortable: false,
               },
+              {
+                displayName: "email",
+                dataPath: "email",
+                sortable: false,
+              },
+              {
+                displayName: "phone",
+                dataPath: "phone",
+                sortable: false,
+              },
             ]}
           />
         </div>

@@ -389,6 +389,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
         <div className=" flex flex-col mt-2 gap-y-6 mb-6  md:flex-row sm:gap-x-8">
           <InputField
             name="Login Email"
+            disabled={isEdit}
             type="text"
             value={email}
             error={emailError}
