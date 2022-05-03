@@ -216,7 +216,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
       <div className="mt-12 w-max">
         <div className="flex flex-row justify-between">
         <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
-          {isEdit? "SAVE" : "ADD STUDENT"}
+          {isEdit? "EDIT STUDENT" : "ADD STUDENT"}
         </p>
         {isEdit &&
         <button

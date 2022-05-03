@@ -204,7 +204,7 @@ export const AddEquip = ({ isEdit }: AddEquipProps) => {
             }}
           />
           <InputField
-            name="Quantity"
+            name="Total Quantity"
             value={quantity}
             type="text"
             error={quantityError}
@@ -216,7 +216,7 @@ export const AddEquip = ({ isEdit }: AddEquipProps) => {
 
         <div className=" w-full sm:w-[270px] ">
           <Select
-            name="Faculty Coordinator"
+            name="Faculty Coordintator"
             options={myfac}
             placeholder="faculty coordinator"
             onInputChange={(e)=>{

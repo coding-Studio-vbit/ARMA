@@ -10,10 +10,8 @@ function ForumsRoutes() {
       <Routes>
           <Route path = '/ForumsView' element = {<ForumsView />}/>
           <Route path = '/AddForums' element = {<AddForums />}/>
+          
           <Route path = '/' element = {<ForumsList />}/>
-
-
-
        
       </Routes>
 
