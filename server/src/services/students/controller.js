@@ -56,23 +56,18 @@ const uploadStudentsList = async (req, res) => {
         console.log(data);
         let newStudent = students(data);
         await newStudent.save();
-      } else if (data.attendedEvents.length > 0) {
-        await students.findOneAndUpdate(
-          { rollNumber: data.rollNumber },
-          { $addToSet: { attendedEvents: [data.attendedEvents] } }
-        );
       }
     }
     res.json(
       response(
-        { message: "Students added successfully" },
+        { message: "Students added successfully!" },
         process.env.SUCCESS_CODE
       )
     );
   } catch (error) {
     console.log(error);
     res.json(
-      response({ message: "Internal Server Error" }, process.env.SUCCESS_CODE)
+      response({ message: "Internal Server Error, try again after sometime" }, process.env.FAILURE_CODE)
     );
   }
 };

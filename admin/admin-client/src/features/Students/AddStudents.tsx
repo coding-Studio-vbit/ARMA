@@ -6,6 +6,7 @@ import { containerCSS } from "react-select/dist/declarations/src/components/cont
 import { Close } from "@material-ui/icons";
 import axiosInstance from "../../utils/axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { UploadStudentList } from "./UploadStudentList";
 
 interface AddStudentsProps
 {
@@ -214,15 +215,17 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
   return (
     <div className="flex flex-col grow items-center">
       <div className="mt-12 w-max">
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-wrap justify-between">
         <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
           {isEdit? "EDIT STUDENT" : "ADD STUDENT"}
         </p>
-        {isEdit &&
-        <button
+        {isEdit ? 
+        (<button
           className="btn  bg-arma-red hover:bg-arma-red rounded-[8px] px-2 py-1 mb-12 flex" onClick={() => {setShow1(true)}}>
          Delete
-        </button>
+        </button>)
+        :
+        (<UploadStudentList />)
         }
          <Dialog show={show1} setShow={setShow1} title="Are you sure you want to proceed?">
          <button className="outlineBtn" onClick={()=>setShow1(false)} >Cancel</button>
@@ -232,6 +235,7 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
         </Dialog>
 
         </div>
+        
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
           <InputField
             name="Name"
@@ -388,4 +392,3 @@ export const AddStudents = ({isEdit}:AddStudentsProps) => {
     </div>
   );
 };
-
