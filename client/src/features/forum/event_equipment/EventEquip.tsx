@@ -1,4 +1,5 @@
 import { BusinessCenter, Close } from '@material-ui/icons'
+import { Dialog } from '../../../components/Dialog/Dialog';
 import { userInfo } from 'os';
 import { useSelector } from "react-redux";
 import React, { useEffect, useState } from 'react'
@@ -21,6 +22,7 @@ export default function EventEquip() {
     const [myequip, setMyequip] = useState<{}[]>()
     const eventDates = useSelector((state: RootState) => state.eventDates);
     const eventDetails = useSelector((state: RootState) => state.eventDetails);
+    const [showDialog, setShowDialog] = useState(false);
 
     useEffect(() => {
       if(Object.keys(eventDates).length === 0)
@@ -107,6 +109,7 @@ export default function EventEquip() {
             .then(response=>{
               console.log(response)
               navigate("/forum")
+              setShowDialog(true);
             })
             .catch(error=>{
               console.log(error);
@@ -135,6 +138,7 @@ export default function EventEquip() {
                    })
                  }
             </div>
+
 
         
          

@@ -9,42 +9,42 @@ router.use(tokenAuth);
 router.post(
   "/acceptBudget",
   (req, res, next) => {
-    checkRole(req, res, next, "FO");
+    checkRole(req, res, next, ["FO"]);
   },
   facultyController.acceptBudget
 );
 router.post(
   "/commentBudget",
   (req, res, next) => {
-    checkRole(req, res, next, "FO");
+    checkRole(req, res, next, ["FO"]);
   },
   facultyController.commentBudget
 );
 router.post(
   "/rejectBudget",
   (req, res, next) => {
-    checkRole(req, res, next, "FO");
+    checkRole(req, res, next, ["FO"]);
   },
   facultyController.rejectBudget
 );
 router.post(
   "/acceptEvent",
   (req, res, next) => {
-    checkRole(req, res, next, "SAC");
+    checkRole(req, res, next, ["SAC"]);
   },
   facultyController.approveEvent
 );
 router.post(
   "/rejectEvent",
   (req, res, next) => {
-    checkRole(req, res, next, "SAC");
+    checkRole(req, res, next, ["SAC"]);
   },
   facultyController.rejectEvent
 );
 router.post(
   "/commentEvent",
   (req, res, next) => {
-    checkRole(req, res, next, "SAC");
+    checkRole(req, res, next, ["SAC"]);
   },
   facultyController.commentEvent
 );
@@ -55,7 +55,7 @@ router.put("/editProfile", facultyController.editProfile);
 router.put(
   "/editFaculty",
   (req, res, next) => {
-    checkRole(req, res, next, "ADMIN");
+    checkRole(req, res, next, ["ADMIN"]);
   },
   facultyController.editFaculty
 );

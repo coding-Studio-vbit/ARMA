@@ -8,10 +8,34 @@ const upload = multer({ storage: multerStorage });
 router.use(tokenAuth);
 
 router.get("/", controller.getForumsList);
-router.get("/dashboard", controller.dashboard);
-router.post("/addNewForumMembers", controller.addNewForumMembers);
-router.post("/deleteMember", controller.deleteforumMember);
-router.post("/addNewCoreForumMember", controller.addNewCoreForumMember);
+router.get(
+  "/dashboard",
+  (req, res, next) => {
+    checkRole(req, res, next, ["FORUM"]);
+  },
+  controller.dashboard
+);
+router.post(
+  "/addNewForumMembers",
+  (req, res, next) => {
+    checkRole(req, res, next, ["FC", "ADMIN", "FORUM"]);
+  },
+  controller.addNewForumMembers
+);
+router.post(
+  "/deleteMember",
+  (req, res, next) => {
+    checkRole(req, res, next, ["ADMIN", "FC", "FORUM"]);
+  },
+  controller.deleteforumMember
+);
+router.post(
+  "/addNewCoreForumMember",
+  (req, res, next) => {
+    checkRole(req, res, next, ["ADMIN", "FC", "FORUM"]);
+  },
+  controller.addNewCoreForumMember
+);
 router.get("/getEquipments", controller.getEquipments);
 router.get("/getCoreForumMembers", controller.getCoreForumMembers);
 router.get("/getForumMembers", controller.getForumMembers);
@@ -26,11 +50,20 @@ router.post(
 router.get("/profilePicture", controller.getProfilePicture);
 router.post(
   "/dashboardCover",
+  (req, res, next) => {
+    checkRole(req, res, next, ["FORUM"]);
+  },
   upload.fields([{ name: "dashboardCover", maxCount: 1 }]),
   controller.uploadDashboardCover
 );
 router.get("/dashboardCover", controller.getDashboardCover);
-router.post("/deleteForum", controller.deleteForum);
+router.post(
+  "/deleteForum",
+  (req, res, next) => {
+    checkRole(req, res, next, ["ADMIN"]);
+  },
+  controller.deleteForum
+);
 router.post("/viewForum", controller.viewForum);
 
 module.exports = router;
