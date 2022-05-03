@@ -471,7 +471,10 @@ const getDashboardCover = async (req, res) => {
 const viewForum = async (req, res) => {
   try {
     let { id } = req.body;
-    let forum = await forums.findOne({ _id: id });
+    let forum = await forums
+    .findOne({ _id: id })
+    .populate("facultyCoordinatorID")
+    .populate("forumHeads")
     res.json(response(forum, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);

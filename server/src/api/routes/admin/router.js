@@ -2,10 +2,7 @@ const controller = require("../../../services/admin/controller");
 const facultyController = require("../../../services/faculty/controller")
 const router = require("express").Router();
 
-router.get("/", async (req, res) => {
-  const result = await controller.getAdmins(req, res);
-  res.json(result);
-});
+router.get("/", controller.getAdmins);
 
 router.post("/addAdmin", async (req, res) => {
   const user = req.body;

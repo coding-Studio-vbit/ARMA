@@ -107,7 +107,10 @@ const editStudent = async (req, res) => {
 
 const fetchStudents = async (req, res) => {
   try {
-    let student = await students.find({});
+    let { rollNumber } = req.body;
+    let student = await students.find({
+      name: { $regex: `^${rollNumber}`, $options: "i" },
+    });
     res.json(response(student, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
