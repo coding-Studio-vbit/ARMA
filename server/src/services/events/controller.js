@@ -5,7 +5,12 @@ const response = require("../util/response");
 const attendance = require("../../models/attendance");
 const roles = require("../../models/role");
 const mailer = require("../util/mailer");
-const { budgetDocUpdateTemplate, newEventCreatedForum, newEventCreatedFO, newEventCreatedSAC } = require("../../email_templates/templates");
+const {
+  budgetDocUpdateTemplate,
+  newEventCreatedForum,
+  newEventCreatedFO,
+  newEventCreatedSAC,
+} = require("../../email_templates/templates");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
 const halls = require("../../models/hall");
@@ -211,19 +216,24 @@ const createEvent = async (req, res) => {
     await newAttendanceDoc.save();
     await newEvent.save();
 
-
-    let res = await mailer.sendMail(req.user.email, newEventCreatedForum, {forumName:req.user.name, eventName: eventDetails.name})
-    if(newEvent.hasBudget)
-    {
+    let res = await mailer.sendMail(req.user.email, newEventCreatedForum, {
+      forumName: req.user.name,
+      eventName: eventDetails.name,
+    });
+    if (newEvent.hasBudget) {
       const FORoleID = await roles.findOne().where("name").in(["FO"]);
       const FO = await faculty.findOne({ role: FORoleID._id });
-      res = await mailer.sendMail(FO.email, newEventCreatedFO, {forumName:req.user.name, FOName:FO.name})
-    }
-    else
-    {
+      res = await mailer.sendMail(FO.email, newEventCreatedFO, {
+        forumName: req.user.name,
+        FOName: FO.name,
+      });
+    } else {
       const SACRoleID = await roles.findOne().where("name").in(["SAC"]);
-      const SAC = await faculty.findOne({role: SACRoleID._id});
-      res = await mailer.sendMail(SAC.email, newEventCreatedSAC,{forumName:req.user.name,SACName:SAC.name});
+      const SAC = await faculty.findOne({ role: SACRoleID._id });
+      res = await mailer.sendMail(SAC.email, newEventCreatedSAC, {
+        forumName: req.user.name,
+        SACName: SAC.name,
+      });
     }
 
     res.json(
@@ -280,7 +290,7 @@ const reportAndMedia = async (req, res) => {
       response("updated Event Report and Media files", process.env.SUCCESS_CODE)
     );
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.json(
       response(
         "updated Event Report and Media failed",
@@ -665,10 +675,32 @@ const getEventReservations = async (req, res) => {
   try {
     const { id } = req.params;
     const event = await events.findById(id);
-    const res = await reservations.find({ eventId: id });
+    const r = await reservations.find({ eventId: id }).populate("hallId");
     if (event == null) throw new Error("event not found");
     if (event.forumID._id == req.user._id) {
-      res.json(response(res, process.env.SUCCESS_CODE));
+      const result = {};
+
+      r.forEach((reservation) => {
+        const dateList = reservation.dates;
+        dateList.forEach((date) => {
+          if (result[date]) {
+            result[date].halls = [
+              ...result[date].halls,
+              reservation.timeSlots.map(
+                (slot) => reservation.hallId.name + "." + slot
+              ),
+            ].flat();
+          } else {
+            result[date] = {
+              halls: reservation.timeSlots.map(
+                (slot) => reservation.hallId.name + "." + slot
+              ),
+            };
+          }
+        });
+      });
+
+      res.json(response(result, process.env.SUCCESS_CODE));
     }
   } catch (error) {
     console.log(error);
