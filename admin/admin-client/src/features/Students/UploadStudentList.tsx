@@ -38,9 +38,7 @@ export const UploadStudentList = () =>{
 
       const validateBranch = (val: any) => {
         if (Object.values(branch).includes(val.toUpperCase())) {
-            console.log("ooook");
-            
-          return String(val.toUpperCase());
+            return String(val.toUpperCase());
         } else {
             console.log("error")
             setDialogTitle("Invalid Branch in row "+ indx);
@@ -48,7 +46,7 @@ export const UploadStudentList = () =>{
             throw Error;
         }
       }
-
+      ;
       const validateSection = (val :any) =>{
           console.log("secOK")  
           if(typeof(val) == "number"){
@@ -63,10 +61,9 @@ export const UploadStudentList = () =>{
           else {
             setDialogTitle("Invalid Section in row "+ indx);
             setShow(true);
-            throw Error;
-              
+            throw Error;   
           }
-      }
+      };
       const validateUniqueid = (val:any) => {
         const uniqueid = val
         var rollNumber = uniqueid.toUpperCase();
@@ -138,7 +135,6 @@ export const UploadStudentList = () =>{
       };
       
       const validateYear = (val:any) =>{
-          console.log("ooYear")
         if (year.includes(val)) {
             return val;
           } else {
@@ -146,10 +142,7 @@ export const UploadStudentList = () =>{
             setShow(true);
             throw Error;
           }
-      }
-
-    
-
+      };
       const handleFileToJson = (e: { target: { files: any } }) => {
         data = e.target.files;
         if (data != null) {
@@ -193,10 +186,7 @@ export const UploadStudentList = () =>{
             .catch((error: any) => {
               data = null
               list = []
-              setDataUploaded(false);
-            //   setDialogTitle("err"+indx);
-            //   setShow(true);
-              
+              setDataUploaded(false);  
             });
         }
       };
@@ -224,6 +214,4 @@ export const UploadStudentList = () =>{
         </div>
         </div>
       )
-
-
 }

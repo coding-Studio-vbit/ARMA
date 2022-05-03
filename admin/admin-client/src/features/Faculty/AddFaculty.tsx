@@ -309,15 +309,6 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
             name="Roles"
             placeholder="Roles"
             options={myrole}
-<<<<<<< HEAD
-            onChange={(e:any) => {
-                for(let i = 0; i < selectRoles.length; i++){
-                   if(e?.value === selectRoles[i]) return        
-                }
-                setSelectRoles([...selectRoles, e?.value])
-                setSelectRolesL([...selectRolesL, e?.label])
-                setSpan(true)
-=======
             onChange={(e: any) => {
               for (let i = 0; i < selectRoles.length; i++) {
                 if (e?.value   === selectRoles[i]) return;
@@ -327,7 +318,6 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
               setSelectRolesL([...selectRolesL, e?.label]);
 
               setSpan(true);
->>>>>>> 75234fe139d3154ae4b2cbe7a7d39fb1c78c907e
             }}
             styles={{
               control: (base) => ({
