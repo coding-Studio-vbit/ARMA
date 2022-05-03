@@ -193,7 +193,7 @@ export const UploadStudentList = () =>{
 
       return (
         <div>
-        <Dialog show={show} setShow={() => setShow(!show)} title={dialogTitle} />
+        <Dialog show={show} setShow={setShow} title={dialogTitle} />
         <div className="pl-10 pb-10 ">
           <label htmlFor="upload" className="btn cursor-pointer">
             Upload New Students list
