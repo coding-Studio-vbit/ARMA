@@ -199,8 +199,19 @@ const getBranches = async (req, res) => {
 const getTotalYears = async (req, res) => {
   try{
     const {course} = req.params;
+    res.json(response((coursesInfo[course]['totalYears']),process.env.SUCCESS_CODE))
+  }
+  catch(error)
+  {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
+  }
+}
+const getTotalSections = async (req, res) => {
+  try{
+    const {course,branch} = req.params;
     console.log(coursesInfo);
-    res.json(response(Object.keys(coursesInfo[course]['totalYears']),process.env.SUCCESS_CODE))
+    res.json(response(coursesInfo[course].branches[branch].sections,process.env.SUCCESS_CODE))
   }
   catch(error)
   {
@@ -231,6 +242,7 @@ module.exports = {
   getBranches,
   getCourses,
   getTotalYears,
+  getTotalSections,
 };
 
 //eventID 61da9c41ee32a8e65373fcc4

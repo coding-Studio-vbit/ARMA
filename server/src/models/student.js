@@ -32,9 +32,9 @@ const student = new mongoose.Schema({
     min: [1, "year can only go as low as 1"],
     max: [4, "year can only go as high as 4"],
   },
+  course:{type:String,required:true},
   branch: {
     type: String,
-    enum: ["CSE", "CSM", "CSM", "CSC", "CSB", "ME", "CE", "EEE", "ECE", "IT"],
     required: true,
   },
   section: {

@@ -27,6 +27,7 @@ router.post(
 router.post("/generatePDF", controller.generatePDF);
 router.get("/getBranches/:course",controller.getBranches)
 router.get("/getTotalYears/:course",controller.getTotalYears)
+router.get("/getTotalSections/:course/:branch", controller.getTotalSections);
 router.get("/getCourses", controller.getCourses);
 
 
