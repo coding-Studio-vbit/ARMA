@@ -57,7 +57,7 @@ const UpdateEventDetails = () => {
   async function updateEventDetails() {
     let formData = new FormData();
     formData.append("eventDocument", pdf1);
-    formData.append("eventID", state.eventId);
+    formData.append("eventId", state.eventId);
     formData.append("name", eventName);
     formData.append("description",desc);
 
@@ -170,7 +170,7 @@ const UpdateEventDetails = () => {
               <div className="flex p-5  text-xs md:text-sm  justify-start">
                 <div className="flex flex-col items-start gap-4 ">
                   <span className="text-xs md:text-md  text-gray-400">
-                    Upload New Document
+                    {isEdit ? "upload New Document" : "download the document"}
                   </span>
                   {
                     isEdit?

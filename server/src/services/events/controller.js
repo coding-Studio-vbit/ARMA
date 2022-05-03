@@ -477,7 +477,7 @@ const getEventDocument = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.json(
-      response("Failed to send event document", process.env.FAILURE_CODE)
+      response(error.message, process.env.FAILURE_CODE)
     );
   }
 };

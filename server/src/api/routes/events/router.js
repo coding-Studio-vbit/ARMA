@@ -1,11 +1,13 @@
 const router = require("express").Router();
 const multer = require("multer");
 const controller = require("../../../services/events/controller");
+const checkRole = require("../../../services/util/checkRole");
 const multerStorage = require("../../../services/util/multerStorage");
 const tokenAuth = require("../../middleware/tokenAuth");
 const upload = multer({ storage: multerStorage });
 
-// router.use(tokenAuth);
+
+router.use(tokenAuth);
 
 //GET EVENTS
 router.get(
