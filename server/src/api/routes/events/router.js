@@ -5,7 +5,7 @@ const multerStorage = require("../../../services/util/multerStorage");
 const tokenAuth = require("../../middleware/tokenAuth");
 const upload = multer({ storage: multerStorage });
 
-router.use(tokenAuth);
+// router.use(tokenAuth);
 
 //GET EVENTS
 router.get("/", controller.getEvents);

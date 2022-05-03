@@ -1,17 +1,20 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState,useEffect } from "react";
 import { CloudDownloadOutlined, CloudUploadTwoTone, Edit } from "@material-ui/icons";
 import axiosInstance from "../../../utils/axios";
-// import { useUser } from "../../../providers/user/UserProvider";
 import { useLocation } from "react-router-dom";
+import {Dialog} from '../../../components/Dialog/Dialog';
+import { Spinner } from "../../../components/Spinner/Spinner";
 
 const UpdateEventDetails = () => {
   const { state } : { state: any } = useLocation();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState(null);
-  // console.log(state);
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
   
-  // const { faculty } = useUser();
   const [pdf1, setPdf1] = useState<File>();
   const [forumName, setForumName] = useState("");
   const [isEdit, setIsEdit] = useState(false);
@@ -21,25 +24,23 @@ const UpdateEventDetails = () => {
 
   const [eventName, seteventName] = useState("");
 
-  const [eventProposalDocPath, seteventProposalDocPath] = useState("");
+  // const [eventProposalDocPath, seteventProposalDocPath] = useState("");
 
   async function getEventInfo() {
     try {
       const res = await axiosInstance.get(
         process.env.REACT_APP_SERVER_URL+"events/getEvent/"+state.eventId);
         if(res.data.status===1){
-          console.log(res.data.response);
-          seteventProposalDocPath(res.data.response.eventProposalDocPath);
+          // console.log(res.data.response);
+          // seteventProposalDocPath(res.data.response.eventProposalDocPath);
           seteventName(res.data.response.name);
-          
           setError(null);
           setDesc(res.data.response.description);
           setSacComments(res.data.response.SACComments);
-          
-
         }else{
           setError("Unable to load event details");
         }
+        // setError("efjhrfuruihrf")
     } catch (error) {
       setError(error.toString())
       console.log(error);
@@ -55,17 +56,21 @@ const UpdateEventDetails = () => {
  
   async function updateEventDetails() {
     let formData = new FormData();
-    formData.append("eventProposalDocPath", pdf1);
+    formData.append("eventDocument", pdf1);
     formData.append("eventID", state.eventId);
+    formData.append("name", eventName);
+    formData.append("description",desc);
+
     try {
       const res = await axiosInstance.post(
-        process.env.REACT_APP_SERVER_URL+"events/updateEventDetails",{
-          name:eventName,
-          description:desc,
-          eventId:state.eventId,
-          formData:formData                    
-        });
-      console.log(res);        
+        process.env.REACT_APP_SERVER_URL+"events/updateEventDetails",formData);
+        setDialogMessage(res.data.response);
+        setShowDialog(true);
+        if(res.data.status===1){
+          setTimeout(() => {
+            location.reload();
+          }, 3000);   
+        }     
     } catch (error) {
       setIsEdit(false);      
     }        
@@ -73,7 +78,20 @@ const UpdateEventDetails = () => {
   
 
   return (
-    <div className="my-8 w-11/12 md:w-4/5 lg:w-3/5 mx-auto">
+    loading?
+    <div className="flex justify-center items-center h-full"><Spinner/></div>:
+    
+      error == null?
+
+      <div className="my-8 w-11/12 md:w-4/5 lg:w-3/5 mx-auto">
+      
+      <Dialog show={showDialog} setShow={setShowDialog} title={"Alert"}
+        children={
+          <div className="flex justify-center items-center">
+            <p>{dialogMessage}</p>
+          </div>
+        }
+      />
       {/* Header */}
       <h1 className="font-sans text-arma-dark-blue font-semibold text-xl md:text-4xl inline-block  mt-2">
         {forumName} SoC - Event Details
@@ -167,36 +185,45 @@ const UpdateEventDetails = () => {
                         value={fileName}
                         disabled={!isEdit}
                         onChange={(e: any) => {
-                          
-                          console.log(e.target.files[0].size);
-
+                          // console.log(e.target.files[0].size);
                           setPdf1(e.target.files[0]);
                         }}
                         className="hidden"
                         type="file"
                       ></input>                    
-                    </label>:
-                  //   <a className="flex flex-col   cursor-pointer"
-                  //   onClick={async () => {
-                  //     const result = await axiosInstance({responseType: 'blob', method: 'GET', url:`${process.env.REACT_APP_SERVER_URL}events/getBudgetDocument/${location.state.eventId}`})
-                  //     const url = window.URL.createObjectURL(
-                  //       new Blob([result.data])
-                  //     );
-                  //     const link = document.createElement("a");
-                  //     link.href = url;
-                  //     link.setAttribute("download", "budget.pdf"); //or any other extension
-                  //     document.body.appendChild(link);
-                  //     link.click();
-                  //   }}
-                  //   download
-                  // >
-                    <button
-                    className={`rounded-[8px] hover:bg-slate-500/10 
-                    !cursor-pointer px-20 py-4 outline-dashed outline-gray-500 `}
-                    onClick={()=>console.log(eventProposalDocPath)}
-                    >                      
-                      <CloudDownloadOutlined className="!w-16 !h-16 text-arma-blue justify-auto"/>
-                    </button>                    
+                    </label>:                    
+                    <a className="flex flex-col 
+                    rounded-[8px] hover:bg-slate-500/10 
+                    !cursor-pointer px-20 py-4 outline-dashed outline-gray-500" 
+                    onClick={async function(){
+                      let result;
+                      try {
+                        result = await axiosInstance({
+                          responseType: 'blob', 
+                          method: 'GET', 
+                          url:`${process.env.REACT_APP_SERVER_URL}events/getEventDocument/${state.eventId}`
+                        })
+                      } catch (error) {
+                        console.log("Failed")                        
+                      }
+                      console.log(result)
+                        const url = window.URL.createObjectURL(
+                          new Blob([result.data])
+                        );
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.setAttribute("download", "eventProposalDoc.pdf"); //or any other extension
+                        document.body.appendChild(link);
+                        link.click();
+                        
+                      
+                    }}                      
+                    download
+                  >
+                    <CloudDownloadOutlined className="!w-16 !h-16 text-arma-blue justify-auto"/>
+                  </a>
+                                         
+                                     
                   }
                   {pdf1 && <p className="m-0 p-0 truncate">{pdf1.name}</p>}
                 </div>
@@ -213,7 +240,7 @@ const UpdateEventDetails = () => {
       <div className="flex mt-10">
         {
           isEdit && (
-            <button className="btn text-lg  bg-arma-title rounded-[8px] px-8 py-3 m-auto"
+            <button className="btn text-lg border-lg  bg-arma-title rounded-[8px] px-6 py-2 m-auto"
               onClick={() => updateEventDetails()}>
               UPDATE
             </button>
@@ -221,7 +248,10 @@ const UpdateEventDetails = () => {
         }
       </div>
 
-    </div>
+    </div>:
+    <div className="flex justify-center items-center h-full">
+      {error}
+    </div>   
   );
 };
 export default UpdateEventDetails;
