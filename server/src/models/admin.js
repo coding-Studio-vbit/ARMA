@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const validator = require("validator")
+const validator = require("validator");
 
 const Admin = new mongoose.Schema({
   email: {
@@ -25,6 +25,7 @@ const Admin = new mongoose.Schema({
       `Name must be max ${process.env.MAX_NAME_LENGTH} characters`,
     ],
   },
+  role: [{ type: mongoose.Schema.Types.ObjectId, ref: "roles" }],
 });
 
 const admins = mongoose.model("Admins", Admin);
