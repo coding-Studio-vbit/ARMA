@@ -25,5 +25,9 @@ router.post(
   controller.deleteStudent
 );
 router.post("/generatePDF", controller.generatePDF);
+router.get("/getBranches/:course",controller.getBranches)
+router.get("/getTotalYears/:course",controller.getTotalYears)
+router.get("/getCourses", controller.getCourses);
+
 
 module.exports = router;

@@ -1,6 +1,7 @@
 {
   "B.Tech": {
     "code": "A",
+    "totalYears":"4",
     "branches": {
       "CIV": { "code": "01", "sections": 4 },
       "EEE": { "code": "02", "sections": 4 },

@@ -7,6 +7,7 @@ const ejs = require("ejs");
 const pdf = require("html-pdf");
 const path = require("path");
 const roles = require("../../models/role");
+const { readFileSync, writeFileSync } = require("fs");
 
 const updateStudentReport = async () => {};
 
@@ -16,11 +17,13 @@ const addStudent = async (data) => {
     /**Generate new report file for the student
      * keep updating that file everytime this student participates in an event.
      */
-    ejs
-      .renderFile(path.join(__dirname,"../../static_data/student_report.ejs"), {
+    ejs.renderFile(
+      path.join(__dirname, "../../static_data/student_report.ejs"),
+      {
         details: data,
         statistics: { totalEventsParticipated: 0 },
-      },(err, data) => {
+      },
+      (err, data) => {
         let options = {
           height: "11.25in",
           width: "8.5in",
@@ -30,7 +33,8 @@ const addStudent = async (data) => {
           footer: {
             height: "20mm",
           },
-        };let temp = md5(data.name + Date.now());
+        };
+        let temp = md5(data.name + Date.now());
         let dirPath = path.join(
           __dirname,
           "../../../../data/static/",
@@ -41,21 +45,21 @@ const addStudent = async (data) => {
           md5(data.name + data.year + data.section + String(Date.now())) +
           "." +
           "pdf";
-    
+
         const filePath = `${dirPath}/${filename}`;
         student.reportFilePath = filePath;
 
-         pdf.create(data, options).toFile(filePath, async (err, data)=>{
-           if(err){
-             return console.log("error occured while generating pdf", err);
-           }
-           else{
+        pdf.create(data, options).toFile(filePath, async (err, data) => {
+          if (err) {
+            return console.log("error occured while generating pdf", err);
+          } else {
             console.log("created new pdf");
             await student.save();
             return response("Success", process.env.SUCCESS_CODE);
-           }
-         })
-      })
+          }
+        });
+      }
+    );
   } catch (error) {
     console.log(error);
     return response("failure", process.env.FAILURE_CODE);
@@ -87,7 +91,7 @@ const editAdmin = async (email, newEmail, newpassword) => {
 const viewAdmin = async (id) => {
   try {
     let admin = await admins.findOne({ _id: id });
-    console.log(admin)
+    console.log(admin);
     return response(admin, process.env.SUCCESS_CODE);
   } catch (err) {
     console.log(err);
@@ -109,7 +113,7 @@ const register = async (user, userType) => {
     const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
     const password = await bcrypt.hash(user.password, salt);
     if (userType === "FACULTY") {
-      const myRole = await roles.findOne({name: "FACULTY"});
+      const myRole = await roles.findOne({ name: "FACULTY" });
       let { rolesF, ...newuser } = user;
       console.log(rolesF);
       const arr = [];
@@ -120,11 +124,14 @@ const register = async (user, userType) => {
       }
 
       console.log(rolesF);
-      let faculty = new facultyModel({ role: [...arr, myRole._id], ...newuser });
+      let faculty = new facultyModel({
+        role: [...arr, myRole._id],
+        ...newuser,
+      });
       faculty.password = password;
       await faculty.save();
     } else if (userType === "FORUM") {
-      const myRole = await roles.findOne({name: "FORUM"});
+      const myRole = await roles.findOne({ name: "FORUM" });
       let { facultyCoordinatorID, forumHeads, ...newuser } = user;
       facultyCoordinatorID = facultyCoordinatorID.map((f) => {
         return mongoose.Types.ObjectId(f._id);
@@ -132,12 +139,17 @@ const register = async (user, userType) => {
       forumHeads = forumHeads.map((f) => {
         return mongoose.Types.ObjectId(f._id);
       });
-      let forum = new forums({ facultyCoordinatorID, forumHeads, ...newuser,role:[myRole._id] });
+      let forum = new forums({
+        facultyCoordinatorID,
+        forumHeads,
+        ...newuser,
+        role: [myRole._id],
+      });
       forum.password = password;
       await forum.save();
     } else if (userType === "ADMIN") {
-      const myRole = await roles.findOne({name: "ADMIN"});
-      let admin = new admins({...user, role: [myRole._id]});
+      const myRole = await roles.findOne({ name: "ADMIN" });
+      let admin = new admins({ ...user, role: [myRole._id] });
       admin.password = password;
       await admin.save();
     }
@@ -194,6 +206,46 @@ const getAdmins = async (req, res) => {
   }
 };
 
+const addCourse = async (req, res) => {
+  try {
+    const { newCourse } = req.body;
+    const dataObject = JSON.parse(
+      String(readFileSync("../static_data/courses.json"))
+    );
+    dataObject[newCourse.name] = newCourse;
+    const r = writeFileSync(
+      "../static_data/courses.json",
+      JSON.stringify(dataObject)
+    );
+    res.json(response("added course", process.env.SUCCESS_CODE));
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
+  }
+};
+const editCourse = async (req, res) => {
+  try {
+    const { courseName, newData } = req.body;
+    const dataObject = JSON.parse(
+      String(readFileSync("../static_data/courses.json"))
+    );
+    if (Object.hasOwnProperty(courseName)) {
+      dataObject[courseName] = newData;
+      const r = writeFileSync(
+        "../static_data/courses.json",
+        JSON.stringify(dataObject)
+      );
+      res.json(response("edited course", process.env.SUCCESS_CODE));
+    }else
+    {
+      res.json(response("no such course", process.env.FAILURE_CODE));
+    }
+  } catch (error) {
+    console.log(error);
+    res.json(error.message, process.env.FAILURE_CODE);
+  }
+};
+
 module.exports = {
   addStudent,
   addRole,
@@ -201,5 +253,7 @@ module.exports = {
   viewAdmin,
   deleteAdmin,
   getAdmins,
-  register
+  register,
+  addCourse,
+  editCourse
 };

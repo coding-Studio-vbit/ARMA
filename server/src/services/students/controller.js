@@ -2,6 +2,7 @@ const students = require("../../models/student");
 const response = require("../util/response");
 const fs = require("fs/promises");
 const path = require("path");
+const coursesInfo = require("../../static_data/courses.json");
 const pdf = require("html-pdf");
 const md5 = require("md5");
 
@@ -183,6 +184,42 @@ const generatePDF = async (req, res) => {
   }
 };
 
+const getBranches = async (req, res) => {
+  try{
+    const {course} = req.params;
+    console.log(coursesInfo);
+    res.json(response(Object.keys(coursesInfo[course]['branches']),process.env.SUCCESS_CODE))
+  }
+  catch(error)
+  {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
+  }
+}
+const getTotalYears = async (req, res) => {
+  try{
+    const {course} = req.params;
+    console.log(coursesInfo);
+    res.json(response(Object.keys(coursesInfo[course]['totalYears']),process.env.SUCCESS_CODE))
+  }
+  catch(error)
+  {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
+  }
+}
+const getCourses = async (req, res) => {
+  try{
+    console.log(coursesInfo);
+    res.json(response(Object.keys(coursesInfo),process.env.SUCCESS_CODE))
+  }
+  catch(error)
+  {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
+  }
+}
+
 module.exports = {
   generatePDF,
   getStudentsList,
@@ -191,6 +228,9 @@ module.exports = {
   fetchStudents,
   studentViewCard,
   deleteStudent,
+  getBranches,
+  getCourses,
+  getTotalYears,
 };
 
 //eventID 61da9c41ee32a8e65373fcc4

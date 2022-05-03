@@ -54,4 +54,7 @@ router.post("/addStudent", async (req, res) => {
   res.json(result);
 });
 
+router.post("addCourse", controller.addCourse);
+router.post("editCourse", controller.editCourse);
+
 module.exports = router;
