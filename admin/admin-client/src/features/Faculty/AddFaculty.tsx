@@ -277,12 +277,10 @@ export const AddFaculty = ({isEdit}:AddStudentsProps) => {
             options={myrole}
             onChange={(e:any) => {
                 for(let i = 0; i < selectRoles.length; i++){
-                   if(e?.value === selectRoles[i])  return   
-                   console.log(selectRoles);     
+                   if(e?.value === selectRoles[i]) return        
                 }
                 setSelectRoles([...selectRoles, e?.value])
                 setSelectRolesL([...selectRolesL, e?.label])
-                
                 setSpan(true)
             }}
             styles={{
@@ -320,15 +318,7 @@ export const AddFaculty = ({isEdit}:AddStudentsProps) => {
                 return(
                   isEdit? (
                     <div key = {i} className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]">
-<<<<<<< HEAD
-<<<<<<< HEAD
-                        <span>{(r.name)? r.name : r}</span>:
-=======
-                        <span>{(r.name)? r.name : r}</</span>
->>>>>>> a4b9fe1bccc602a3ec3da44ef30305b42e216cb5
-=======
                         <span>{(r.name)? r.name : r}</span>
->>>>>>> d6b657c7d621caebe4fa5fbeceecc2cc74cbf1ed
                         <Close className="cursor-pointer"onClick ={() => {
                             let temp = [...selectRoles]
                             temp.splice(i,1)
