@@ -39,7 +39,7 @@ const dashboard = async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 const getEquipments = async (req, res) => {
@@ -48,7 +48,7 @@ const getEquipments = async (req, res) => {
     res.json(response(myEquip, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -118,7 +118,7 @@ const addNewForumMembers = async (req, res) => {
     res.json(response("New Forum Member Added", process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -159,7 +159,7 @@ const addNewCoreForumMember = async (req, res) => {
     res.json(response("New Core Forum Member Added", process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -270,7 +270,7 @@ const editForum = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -286,7 +286,7 @@ const forumEventNumber = async (req, res) => {
     res.json(response(result, process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -369,7 +369,7 @@ const forumViewCard = async (req, res) => {
     res.json(response(forum, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -397,7 +397,7 @@ const uploadProfilePicture = async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -417,7 +417,7 @@ const getProfilePicture = async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -445,7 +445,7 @@ const uploadDashboardCover = async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -464,7 +464,7 @@ const getDashboardCover = async (req, res) => {
       );
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -475,7 +475,7 @@ const viewForum = async (req, res) => {
     res.json(response(forum, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -486,11 +486,9 @@ const deleteForum = async (req, res) => {
     res.json(response(forum, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
-
-
 
 module.exports = {
   dashboard,

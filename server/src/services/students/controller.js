@@ -1,7 +1,7 @@
 const students = require("../../models/student");
 const response = require("../util/response");
 const fs = require("fs/promises");
-const path = require("path")
+const path = require("path");
 const pdf = require("html-pdf");
 const md5 = require("md5");
 
@@ -101,7 +101,7 @@ const editStudent = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -111,7 +111,7 @@ const fetchStudents = async (req, res) => {
     res.json(response(student, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -122,7 +122,7 @@ const deleteStudent = async (req, res) => {
     res.json(response(student, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -147,7 +147,7 @@ const studentViewCard = async (req, res) => {
     res.json(response(stu, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -170,20 +170,18 @@ const generatePDF = async (req, res) => {
     const filePath = `${dirPath}/${filename}`;
     console.log(filePath);
 
-    pdf.create(htmlContent).toFile(filePath, (err, result)=>{
-      if(err){
+    pdf.create(htmlContent).toFile(filePath, (err, result) => {
+      if (err) {
         return console.log(err);
       }
       student.reportFilePath = filePath;
-      student.save()
-      .then(()=>{
+      student.save().then(() => {
         res.sendFile(filePath);
-      })
-    })
-
+      });
+    });
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 

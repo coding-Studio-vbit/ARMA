@@ -88,9 +88,8 @@ const createEvent = async (req, res) => {
       });
       eqs.push({ equipmentType: eq._id, quantity: quantity });
     }
-    let newEvent = {}
-    if(req.files.budgetDocument !== null)
-    {
+    let newEvent = {};
+    if (req.files.budgetDocument !== null) {
       newEvent = new events({
         forumID: req.user._id,
         description: eventDetails.desc,
@@ -100,9 +99,7 @@ const createEvent = async (req, res) => {
         hasBudget: true,
         equipment: eqs,
       });
-    }
-    else
-    {
+    } else {
       newEvent = new events({
         forumID: req.user._id,
         description: eventDetails.desc,
@@ -113,7 +110,7 @@ const createEvent = async (req, res) => {
         equipment: eqs,
       });
     }
-    
+
     newAttendanceDoc.eventID = String(newEvent._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
     newEvent.eventStatus =
@@ -596,7 +593,7 @@ const updateEquipment = async (req, res) => {
       let eq = await equipments.findOne({
         name: { $regex: `^${equipment}`, $options: "i" },
       });
-      eqs.push({equipmentType: eq._id, quantity:quantity});
+      eqs.push({ equipmentType: eq._id, quantity: quantity });
     }
     const event = await events.findById(id);
     event.equipment = eqs;
@@ -622,7 +619,7 @@ const updateEventDetails = async (req, res) => {
     const event = await events.findById(eventId);
     event.name = name;
     event.description = description;
-    if(req.files.eventDocument[0]){
+    if (req.files.eventDocument[0]) {
       event.eventProposalDocPath = req.files.eventDocument[0].path;
     }
     await event.save();
@@ -638,14 +635,17 @@ const updateEventDetails = async (req, res) => {
 const getEventEquipment = async (req, res) => {
   try {
     const { id } = req.params;
-    const event = await events.findById(id).populate("forumID").populate("equipment.equipmentType");
+    const event = await events
+      .findById(id)
+      .populate("forumID")
+      .populate("equipment.equipmentType");
     if (event == null) throw new Error("event not found");
     if (event.forumID._id == req.user._id) {
       res.json(response(event.equipment, process.env.SUCCESS_CODE));
     }
   } catch (error) {
     console.log(error);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -653,14 +653,14 @@ const getEventReservations = async (req, res) => {
   try {
     const { id } = req.params;
     const event = await events.findById(id);
-    const res = await reservations.find({eventId: id})
+    const res = await reservations.find({ eventId: id });
     if (event == null) throw new Error("event not found");
     if (event.forumID._id == req.user._id) {
-      res.json(response(res,process.env.SUCCESS_CODE));
+      res.json(response(res, process.env.SUCCESS_CODE));
     }
   } catch (error) {
     console.log(error);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -697,7 +697,7 @@ const cancelEvent = async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 

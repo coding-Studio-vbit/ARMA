@@ -1,7 +1,7 @@
 const checkRole = (req, res, next, requiredRoleName) => {
   let flag = false;
-  for (let a = 0; a < req.user.roles.length; a++) {
-    if (req.user.roles[a].name == requiredRoleName) {
+  for (let a = 0; a < req.user.role.length; a++) {
+    if (req.user.role[a].name == requiredRoleName) {
       flag = true;
       break;
     }
