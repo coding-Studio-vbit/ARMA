@@ -1,10 +1,13 @@
 const controller = require("../../../services/admin/controller");
 const facultyController = require("../../../services/faculty/controller")
 const router = require("express").Router();
+const checkRole = require("../../../services/util/checkRole");
 
-router.get("/", async (req, res) => {
-  const result = await controller.getAdmins(req, res);
-  res.json(result);
+router.get("/", controller.getAdmins);
+
+//MUST BE ADMIN TO USE THESE.
+router.use((req, res,next)=>{
+  checkRole(req,res,next, ["ADMIN"])
 });
 
 router.post("/addAdmin", async (req, res) => {

@@ -77,10 +77,16 @@ const addEquipment = async (req, res) => {
 
 const editEquipment = async (req, res) => {
   try {
-    const { id, name, totalCount,facultyIncharge } = req.body;
+    const { id, name, totalCount, facultyIncharge } = req.body;
     await equipment.findOneAndUpdate(
       { _id: id },
-      { $set: { name: name, totalCount: totalCount, facultyIncharge: facultyIncharge } },
+      {
+        $set: {
+          name: name,
+          totalCount: totalCount,
+          facultyIncharge: facultyIncharge,
+        },
+      },
       { new: true }
     );
     res.json(
@@ -88,35 +94,36 @@ const editEquipment = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
-
 const viewEquipment = async (req, res) => {
   try {
-    let {id} = req.body
-    let equip = await equipment
-    .findById(id)
-    .populate("facultyIncharge");
+    let { id } = req.body;
+    let equip = await equipment.findById(id).populate("facultyIncharge");
     res.json(response(equip, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
 const deleteEquipment = async (req, res) => {
   try {
-    let {id} = req.body;
-    let equip = await equipment.deleteOne({_id:id})
+    let { id } = req.body;
+    let equip = await equipment.deleteOne({ _id: id });
     res.json(response(equip, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
-
-
-module.exports = { addEquipment, getEquipment, editEquipment, viewEquipment, deleteEquipment };
+module.exports = {
+  addEquipment,
+  getEquipment,
+  editEquipment,
+  viewEquipment,
+  deleteEquipment,
+};

@@ -44,7 +44,7 @@ export default function EventBudget() {
             <Feedback className="text-arma-title" />
           </div>
           <div className="p-4 rounded-xl shadow-xl">
-            {event?.FOComments ? event.FOCOmments : "No Comments"}
+            {event?.FOComments ? event.FOComments : "No Comments"}
           </div>
         </div>
         {!isEdit && (
