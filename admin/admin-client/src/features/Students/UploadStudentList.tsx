@@ -92,7 +92,7 @@ export const UploadStudentList = () =>{
         if (name.length === 0) {
             setDialogTitle("Name required in row "+ indx);
             setShow(true);
-            throw Error;
+            throw new Error("Name required in row "+ indx);
         } 
         else {
             return name;
@@ -104,14 +104,14 @@ export const UploadStudentList = () =>{
         if (email === null) {
           setDialogTitle("Email ID is required in row "+ indx);
           setShow(true);
-          throw Error;
+          throw new Error("Email ID is required in row "+ indx);
         } else {
           var validRegex =
             /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
           if (!validRegex.test(email)) {
             setDialogTitle(" Invalid Email ID in row "+ indx);
             setShow(true);
-            throw Error
+            throw new Error(" Invalid Email ID in row "+ indx);
           } else {
             return email;
           }
@@ -127,7 +127,7 @@ export const UploadStudentList = () =>{
         else if(!phone.match(phoneno)){
             setDialogTitle("Invalid Phone number in row "+ indx);
             setShow(true);
-            throw Error
+            throw new Error("Invalid Phone number in row "+ indx);
         }
         else {
             return phone;
@@ -140,12 +140,12 @@ export const UploadStudentList = () =>{
           } else {
             setDialogTitle("Invalid Year in row " + indx);
             setShow(true);
-            throw Error;
+            throw new Error("Invalid Year in row " + indx);
           }
       };
       const handleFileToJson = (e: { target: { files: any } }) => {
         data = e.target.files;
-        if (data != null) {
+        if (data !== null) {
           setDataUploaded(true);
           let list: Student[] = [];
           readXlsxFile(data[0])
