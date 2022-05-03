@@ -134,12 +134,13 @@ const acceptBudget = async (req, res) => {
     const SAC = await faculty.findOne({ role: [SACRoleId._id] });
     if (SAC == null) throw new Error("SAC not found");
     if (
-      event.eventStatus !== "AWAITING BUDGET APPROVAL" &&
+      event.eventStatus !== "AWAITING FO APPROVAL" &&
       event.eventStatus !== "BUDGET UPDATED" &&
       event.eventStatus !== "REQUESTED BUDGET CHANGES"
     ) {
       throw new Error(
-        "cannot accept budget of event during the current status:" + event.eventStatus
+        "cannot accept budget of event during the current status:" +
+          event.eventStatus
       );
     }
     console.log(req.user.role);
@@ -172,29 +173,30 @@ const commentBudget = async (req, res) => {
     const { eventId, FOComments } = req.body;
     const event = await events.findById(eventId).populate("forumID");
     if (
-      event.eventStatus !== "AWAITING BUDGET APPROVAL" &&
+      event.eventStatus !== "AWAITING FO APPROVAL" &&
       event.eventStatus !== "REQUESTED BUDGET CHANGES" &&
       event.eventStatus !== "BUDGET UPDATED"
     ) {
-      throw new Error("cannot comment for current status of event:" + event.eventStatus);
+      throw new Error(
+        "cannot comment for current status of event:" + event.eventStatus
+      );
     }
-      event.FOComments = FOComments;
-      event.eventStatus = "REQUESTED BUDGET CHANGES";
-      await event.save();
-      //send the mail to the forum about the comments.
-      mailer
-        .sendMail(event.forumID.email, budgetUpdatedTemplate, {
-          eventName: event.name,
-        })
-        .then((r) => {
-          res.json(
-            response(
-              "Successfully commented on the budget",
-              process.env.SUCCESS_CODE
-            )
-          );
-        });
-    
+    event.FOComments = FOComments;
+    event.eventStatus = "REQUESTED BUDGET CHANGES";
+    await event.save();
+    //send the mail to the forum about the comments.
+    mailer
+      .sendMail(event.forumID.email, budgetUpdatedTemplate, {
+        eventName: event.name,
+      })
+      .then((r) => {
+        res.json(
+          response(
+            "Successfully commented on the budget",
+            process.env.SUCCESS_CODE
+          )
+        );
+      });
   } catch (err) {
     console.log(err);
     res.json(response(err.message, process.env.FAILURE_CODE));
@@ -209,36 +211,32 @@ const rejectBudget = async (req, res) => {
     const SAC = await faculty.findOne({ role: [SACRoleId._id] });
     if (SAC == null) throw new Error("SAC not found");
     if (
-      event.eventStatus !== "AWAITING BUDGET APPROVAL" &&
+      event.eventStatus !== "AWAITING FO APPROVAL" &&
       event.eventStatus !== "BUDGET UPDATED" &&
       event.eventStatus !== "REQUESTED BUDGET CHANGES"
     ) {
-      throw new Error("not awaiting budget approval");
+      throw new Error("not AWAITING FO APPROVAL");
     }
 
-      event.eventStatus = "BUDGET REJECTED";
-      event.FOComments = FOComments;
-      //now send update email to both the forum and the SAC.
-      await event.save();
-      mailer
-        .sendMail(event.forumID.email, budgetRejectedForumTemplate, {
+    event.eventStatus = "BUDGET REJECTED";
+    event.FOComments = FOComments;
+    //now send update email to both the forum and the SAC.
+    await event.save();
+    mailer
+      .sendMail(event.forumID.email, budgetRejectedForumTemplate, {
+        eventName: event.name,
+      })
+      .then((response) => {
+        return mailer.sendMail(SAC.email, budgetRejectedSACTemplate, {
           eventName: event.name,
-        })
-        .then((response) => {
-          return mailer.sendMail(SAC.email, budgetRejectedSACTemplate, {
-            eventName: event.name,
-            forumName: event.forumID.name,
-          });
-        })
-        .then((r) => {
-          res.json(
-            response(
-              "budget rejected successfully.",
-              process.env.SUCCESS_CODE
-            )
-          );
+          forumName: event.forumID.name,
         });
-    
+      })
+      .then((r) => {
+        res.json(
+          response("budget rejected successfully.", process.env.SUCCESS_CODE)
+        );
+      });
   } catch (err) {
     console.log(err);
     res.json(response(err.message, process.env.FAILURE_CODE));
@@ -256,23 +254,19 @@ const approveEvent = async (req, res) => {
     ) {
       throw new Error("cannot approve event during current status");
     }
-  
-      event.eventStatus = "ACCEPTED";
-      await event.save();
 
-      mailer
-        .sendMail(event.forumID.email, SACApprovedTemplate, {
-          eventName: event.name,
-        })
-        .then((r) => {
-          res.json(
-            response(
-              "successfully approved the event",
-              process.env.SUCCESS_CODE
-            )
-          );
-        });
-    
+    event.eventStatus = "APPROVED";
+    await event.save();
+
+    mailer
+      .sendMail(event.forumID.email, SACApprovedTemplate, {
+        eventName: event.name,
+      })
+      .then((r) => {
+        res.json(
+          response("successfully approved the event", process.env.SUCCESS_CODE)
+        );
+      });
   } catch (err) {
     console.log(err);
     res.json(response("failed to approve event", process.env.FAILURE_CODE));
@@ -290,23 +284,22 @@ const commentEvent = async (req, res) => {
     ) {
       throw new Error("cannot comment on event during current status");
     }
-      event.eventStatus = "REQUESTED CHANGES BY SAC";
-      event.SACComments = SACComments;
-      await event.save();
+    event.eventStatus = "REQUESTED CHANGES BY SAC";
+    event.SACComments = SACComments;
+    await event.save();
 
-      mailer
-        .sendMail(event.forumID.email, SACCommentedTemplate, {
-          eventName: event.name,
-        })
-        .then((r) => {
-          res.json(
-            response(
-              "successfully commented on the event",
-              process.env.SUCCESS_CODE
-            )
-          );
-        });
-    
+    mailer
+      .sendMail(event.forumID.email, SACCommentedTemplate, {
+        eventName: event.name,
+      })
+      .then((r) => {
+        res.json(
+          response(
+            "successfully commented on the event",
+            process.env.SUCCESS_CODE
+          )
+        );
+      });
   } catch (err) {
     console.log(err);
     res.json(
@@ -326,23 +319,19 @@ const rejectEvent = async (req, res) => {
     ) {
       throw new Error("cannot reject event during current status");
     }
-      event.eventStatus = "REJECTED";
-      event.SACComments = SACComments;
-      await event.save();
+    event.eventStatus = "REJECTED";
+    event.SACComments = SACComments;
+    await event.save();
 
-      mailer
-        .sendMail(event.forumID.email, SACRejectedTemplate, {
-          eventName: event.name,
-        })
-        .then((r) => {
-          res.json(
-            response(
-              "successfully rejected the event",
-              process.env.SUCCESS_CODE
-            )
-          );
-        });
-    
+    mailer
+      .sendMail(event.forumID.email, SACRejectedTemplate, {
+        eventName: event.name,
+      })
+      .then((r) => {
+        res.json(
+          response("successfully rejected the event", process.env.SUCCESS_CODE)
+        );
+      });
   } catch (err) {
     console.log(err);
     res.json(response("failed to reject the event", process.env.FAILURE_CODE));

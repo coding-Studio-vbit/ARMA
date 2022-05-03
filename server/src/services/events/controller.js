@@ -22,7 +22,7 @@ const getEvents = async (req, res) => {
   if (req.query.hasBudget) {
     where.hasBudget = req.query.hasBudget;
     where.eventStatus = [
-      "AWAITING BUDGET APPROVAL",
+      "AWAITING FO APPROVAL",
       "REQUESTED BUDGET CHANGES",
       "BUDGET UPDATED",
       "BUDGET REJECTED",
@@ -89,12 +89,13 @@ const createEvent = async (req, res) => {
       eqs.push({ equipmentType: eq._id, quantity: quantity });
     }
     let newEvent = {};
-    if (req.files.budgetDocument !== null) {
+    if (req.files.budgetDocument) {
       newEvent = new events({
         forumID: req.user._id,
         description: eventDetails.desc,
         name: eventDetails.name,
         eventProposalDocPath: req.files.eventDocument[0].path,
+        eventStatus: "AWAITING FO APPROVAL",
         budgetDocPath: req.files.budgetDocument[0].path,
         hasBudget: true,
         equipment: eqs,
@@ -106,6 +107,7 @@ const createEvent = async (req, res) => {
         name: eventDetails.name,
         eventProposalDocPath: req.files.eventDocument[0].path,
         budgetDocPath: null,
+        eventStatus: "AWAITING SAC APPROVAL",
         hasBudget: false,
         equipment: eqs,
       });
@@ -113,10 +115,6 @@ const createEvent = async (req, res) => {
 
     newAttendanceDoc.eventID = String(newEvent._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
-    newEvent.eventStatus =
-      req.files.budgetDocument !== null
-        ? "AWAITING BUDGET APPROVAL"
-        : "AWAITING SAC APPROVAL";
 
     // // Create reservations.
     // /**
@@ -225,7 +223,7 @@ const updateBudgetDoc = async (req, res) => {
   try {
     let event = await events.findById(req.body.eventID).populate("forumID");
     if (
-      event.eventStatus !== "AWAITING BUDGET APPROVAL" &&
+      event.eventStatus !== "AWAITING FO APPROVAL" &&
       event.eventStatus !== "BUDGET UPDATED" &&
       event.eventStatus !== "REQUESTED BUDGET CHANGES"
     )
@@ -369,7 +367,7 @@ const getRequests = async (req, res) => {
       result = await events
         .find({
           eventStatus: [
-            "AWAITING BUDGET APPROVAL",
+            "AWAITING FO APPROVAL",
             "REQUESTED BUDGET CHANGES",
             "BUDGET UPDATED",
           ],
@@ -476,9 +474,7 @@ const getEventDocument = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.json(
-      response(error.message, process.env.FAILURE_CODE)
-    );
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -619,7 +615,7 @@ const updateEventDetails = async (req, res) => {
     const event = await events.findById(eventId);
     event.name = name;
     event.description = description;
-    if (req.files.eventDocument[0]) {
+    if (req.files.eventDocument && req.files?.eventDocument[0]) {
       event.eventProposalDocPath = req.files.eventDocument[0].path;
     }
     await event.save();

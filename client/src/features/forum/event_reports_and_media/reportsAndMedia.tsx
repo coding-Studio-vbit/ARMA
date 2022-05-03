@@ -108,6 +108,7 @@ const EventReport: FC<{
           }}
           className="hidden"
           type="file"
+          multiple={true}
         ></input>
       </label>
     <p className="m-0 p-0 truncate text-arma-gray text-[14px]">{pdf?.name ?? 'You can select one document'}</p>

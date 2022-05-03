@@ -22,7 +22,7 @@ const EventCard = ({ event, onClick }: EventCardProps) => {
       eventStatusColor = "text-red-600";
       break;
     case "AWAITING SAC APPROVAL":
-    case "AWAITING BUDGET APPROVAL":
+    case "AWAITING FO APPROVAL":
     case "REQUESTED BUDGET CHANGES":
     case "BUDGET REJECTED":
     case "REQUESTED CHANGES BY SAC":
@@ -39,7 +39,11 @@ const EventCard = ({ event, onClick }: EventCardProps) => {
       onClick={onClick}
     >
       <div className="grow text-center px-3 align-text-middle font-bold text-lg mt-2 border border-slate-300 border-b-1 border-t-0 border-l-0 border-r-0">
-        <p className="mt-10">{event.name.length > 15 ? (event.name.slice(0, 15) + "...") : (event.name)}</p>
+        <p className="mt-10">
+          {event.name.length > 15
+            ? event.name.slice(0, 15) + "..."
+            : event.name}
+        </p>
       </div>
       <div
         className={`p-2 text-center align-text-middle mt-auto font-medium text-md ${eventStatusColor}`}

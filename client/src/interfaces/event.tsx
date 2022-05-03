@@ -2,7 +2,7 @@ import { Attendance } from "./attendance";
 import { Faculty, Forum } from "./user";
 
 type Status =
-  | "AWAITING BUDGET APPROVAL"
+  | "AWAITING FO APPROVAL"
   | "REQUESTED BUDGET CHANGES"
   | "BUDGET UPDATED"
   | "BUDGET REJECTED"
