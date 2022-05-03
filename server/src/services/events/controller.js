@@ -225,6 +225,7 @@ const createEvent = async (req, res) => {
       const FO = await faculty.findOne({ role: FORoleID._id });
       res = await mailer.sendMail(FO.email, newEventCreatedFO, {
         forumName: req.user.name,
+        eventName:eventDetails.name,
         FOName: FO.name,
       });
     } else {
@@ -232,6 +233,7 @@ const createEvent = async (req, res) => {
       const SAC = await faculty.findOne({ role: SACRoleID._id });
       res = await mailer.sendMail(SAC.email, newEventCreatedSAC, {
         forumName: req.user.name,
+        eventName:eventDetails.name,
         SACName: SAC.name,
       });
     }

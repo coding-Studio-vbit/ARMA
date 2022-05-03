@@ -6,19 +6,19 @@ const welcomeTemplate = {
 
 const newEventCreatedForum = {
   template:
-    "Hey there ${forumName}, New event ${eventName} has been created. The authorities will be notified shortly :)",
+    "Hey there ${forumName}, New event '${eventName}' has been created. The authorities will be notified shortly :)",
   subject: "New Event Created",
 };
 
 const newEventCreatedFO = {
   template:
-    "Hey there ${FOName}, New event ${eventName} has been created. pls check on ARMA",
+    "Hey there ${FOName}, New event '${eventName}' has been created by ${forumName}. pls check on ARMA",
   subject: "New Event Created",
 };
 
 const newEventCreatedSAC = {
   template:
-    "Hey there ${SACName}, New event ${eventName} has been created.pls check on ARMA",
+    "Hey there ${SACName}, New event '${eventName}' has been created by ${forumName}.pls check on ARMA",
   subject: "New Event Created",
 };
 
