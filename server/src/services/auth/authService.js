@@ -24,7 +24,6 @@ const login = async (email, password, userAgent, userType) => {
     } else if (userType === "ADMIN") {
       //Admin
       user = await admins.findOne({ email: email }).populate("role");
-      console.log(user);
     }
 
     if (!user) {
