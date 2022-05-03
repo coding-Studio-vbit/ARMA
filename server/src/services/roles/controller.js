@@ -71,7 +71,7 @@ const editRole = async (req, res) => {
     res.json(response("Role edited successfully!", process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -81,31 +81,37 @@ const fetchRoles = async (req, res) => {
     res.json(response(role, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
 const viewRoles = async (req, res) => {
   try {
-    let {id} = req.body
-    let role = await roles.findOne({_id: id});
+    let { id } = req.body;
+    let role = await roles.findOne({ _id: id });
     res.json(response(role, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
 const deleteRoles = async (req, res) => {
   try {
-    let {id} = req.body;
-    let role = await roles.deleteOne({_id:id})
+    let { id } = req.body;
+    let role = await roles.deleteOne({ _id: id });
     res.json(response(role, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
-
-module.exports = { addRoles, getRoles, editRole, fetchRoles, viewRoles, deleteRoles };
+module.exports = {
+  addRoles,
+  getRoles,
+  editRole,
+  fetchRoles,
+  viewRoles,
+  deleteRoles,
+};

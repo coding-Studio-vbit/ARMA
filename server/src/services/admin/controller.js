@@ -5,7 +5,8 @@ const response = require("../util/response");
 const admins = require("../../models/admin");
 const ejs = require("ejs");
 const pdf = require("html-pdf");
-const path = require("path")
+const path = require("path");
+const roles = require("../../models/role");
 
 const updateStudentReport = async () => {};
 
@@ -103,6 +104,52 @@ const deleteAdmin = async (id) => {
     return response(error, process.env.FAILURE_CODE);
   }
 };
+const register = async (user, userType) => {
+  try {
+    const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
+    const password = await bcrypt.hash(user.password, salt);
+    if (userType === "FACULTY") {
+      const myRole = await roles.findOne({name: "FACULTY"});
+      let { rolesF, ...newuser } = user;
+      console.log(rolesF);
+      const arr = [];
+      for (let index = 0; index < rolesF.length; index++) {
+        const element = rolesF[index];
+        const rol = await roles.findById(element);
+        arr.push(rol);
+      }
+
+      console.log(rolesF);
+      let faculty = new facultyModel({ role: [...arr, myRole._id], ...newuser });
+      faculty.password = password;
+      await faculty.save();
+    } else if (userType === "FORUM") {
+      const myRole = await roles.findOne({name: "FORUM"});
+      let { facultyCoordinatorID, forumHeads, ...newuser } = user;
+      facultyCoordinatorID = facultyCoordinatorID.map((f) => {
+        return mongoose.Types.ObjectId(f._id);
+      });
+      forumHeads = forumHeads.map((f) => {
+        return mongoose.Types.ObjectId(f._id);
+      });
+      let forum = new forums({ facultyCoordinatorID, forumHeads, ...newuser,role:[myRole._id] });
+      forum.password = password;
+      await forum.save();
+    } else if (userType === "ADMIN") {
+      const myRole = await roles.findOne({name: "ADMIN"});
+      let admin = new admins({...user, role: [myRole._id]});
+      admin.password = password;
+      await admin.save();
+    }
+
+    return response("Success", process.env.SUCCESS_CODE);
+  } catch (error) {
+    console.log(error);
+    if (error.code === 11000) {
+      return response("Email Already Exists.", process.env.FAILURE_CODE);
+    } else return response(error, process.env.FAILURE_CODE);
+  }
+};
 
 const addRole = async (data) => {
   try {
@@ -154,4 +201,5 @@ module.exports = {
   viewAdmin,
   deleteAdmin,
   getAdmins,
+  register
 };
