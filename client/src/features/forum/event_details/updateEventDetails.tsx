@@ -19,6 +19,8 @@ const UpdateEventDetails = () => {
   const [sacComments, setSacComments] = useState("");
   const [fileName, setfileName] = useState("");
 
+  const [eventName, seteventName] = useState("");
+
   const [eventProposalDocPath, seteventProposalDocPath] = useState("");
 
   async function getEventInfo() {
@@ -28,6 +30,7 @@ const UpdateEventDetails = () => {
         if(res.data.status===1){
           console.log(res.data.response);
           seteventProposalDocPath(res.data.response.eventProposalDocPath);
+          seteventName(res.data.response.name);
           
           setError(null);
           setDesc(res.data.response.description);
@@ -51,11 +54,18 @@ const UpdateEventDetails = () => {
   }, [])
  
   async function updateEventDetails() {
+    let formData = new FormData();
+    formData.append("eventProposalDocPath", pdf1);
+    formData.append("eventID", state.eventId);
     try {
       const res = await axiosInstance.post(
         process.env.REACT_APP_SERVER_URL+"events/updateEventDetails",{
-          
+          name:eventName,
+          description:desc,
+          eventId:state.eventId,
+          formData:formData                    
         });
+      console.log(res);        
     } catch (error) {
       setIsEdit(false);      
     }        
