@@ -74,10 +74,10 @@ const editProfile = async (req, res) => {
 
 const editFaculty = async (req, res) => {
   try {
-    const { id, name, designation, roles } = req.body;
+    const { id, name, designation, role } = req.body;
     await faculty.findOneAndUpdate(
       { _id: id },
-      { $set: { name: name, designation: designation, role: roles } },
+      { $set: { name: name, designation: designation, role: role } },
       { new: true }
     );
     res.json(

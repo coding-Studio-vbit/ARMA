@@ -6,7 +6,6 @@ export const useLocalStorageState = <T extends unknown>(key:string,initialValue:
 
     const [data,setData] = useState<T>(()=>{
         const value = localStorage.getItem(key)
-        console.log(value);
         
         if(!value || value === 'undefined')
         return initialValue

@@ -1,4 +1,5 @@
 const controller = require("../../../services/admin/controller");
+const facultyController = require("../../../services/faculty/controller")
 const router = require("express").Router();
 
 router.get("/", async (req, res) => {
@@ -35,6 +36,7 @@ router.post("/addFaculty", async (req, res) => {
   const result = await controller.register(user, "FACULTY");
   res.json(result);
 });
+router.put("/editFaculty", facultyController.editFaculty);
 
 router.post("/addForum", async (req, res) => {
   const user = req.body;
