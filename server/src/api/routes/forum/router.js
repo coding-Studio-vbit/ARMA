@@ -3,7 +3,9 @@ const tokenAuth = require("../../middleware/tokenAuth");
 const controller = require("../../../services/forum/controller");
 const multerStorage = require("../../../services/util/multerStorage");
 const multer = require("multer");
+const checkRole = require("../../../services/util/checkRole");
 const upload = multer({ storage: multerStorage });
+
 
 router.use(tokenAuth);
 

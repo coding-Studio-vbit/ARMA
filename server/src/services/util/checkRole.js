@@ -9,7 +9,7 @@ const checkRole = (req, res, next, possibleRoles) => {
   if (flag) {
     next();
   } else {
-    throw new Error(`user doesn't have the required role ${requiredRoleName}!`);
+    throw new Error(`user doesn't have any of the required roles ${String(possibleRoles)}!`);
   }
 };
 

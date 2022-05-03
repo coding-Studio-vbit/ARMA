@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const tokenAuth = require("../../middleware/tokenAuth");
-const checkRolePermissions = require("../../../services/util/checkRole");
+const checkRole = require("../../../services/util/checkRole");
 const controller = require("../../../services/halls/controller");
 
 //GET HALLS

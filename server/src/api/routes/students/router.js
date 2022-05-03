@@ -1,5 +1,5 @@
 const router = require("express").Router();
-
+const checkRole = require("../../../services/util/checkRole");
 const controller = require("../../../services/students/controller");
 
 // GET STUDENTS

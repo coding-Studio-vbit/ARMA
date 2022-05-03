@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const checkRolePermissions = require("../../../services/util/checkRole");
+const checkRole = require("../../../services/util/checkRole");
 const controller = require("../../../services/roles/controller");
 
 // ADD ROLES
