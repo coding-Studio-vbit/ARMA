@@ -91,7 +91,7 @@ function ForumEventDashboard() {
                           state.hasBudget &&
                           state.eventStatus == "BUDGET REJECTED")||(eventInfo.name == "Event Details" &&
                           state.eventStatus == "REQUESTED CHANGES BY SAC")) && (
-                            <span className="material-icons text-right text-red-500   lg:scale-125">
+                            <span className="material-icons text-right text-yellow-400   lg:scale-125">
                               info
                             </span>
                           )}
