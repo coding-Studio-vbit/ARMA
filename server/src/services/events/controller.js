@@ -5,11 +5,12 @@ const response = require("../util/response");
 const attendance = require("../../models/attendance");
 const roles = require("../../models/role");
 const mailer = require("../util/mailer");
-const { budgetDocUpdateTemplate } = require("../../email_templates/templates");
+const { budgetDocUpdateTemplate, newEventCreatedForum, newEventCreatedFO, newEventCreatedSAC } = require("../../email_templates/templates");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
 const halls = require("../../models/hall");
 const mongoose = require("mongoose");
+const facultyModel = require("../../models/faculty");
 
 const getEvents = async (req, res) => {
   //For pagination
@@ -210,6 +211,21 @@ const createEvent = async (req, res) => {
     await newAttendanceDoc.save();
     await newEvent.save();
 
+
+    let res = await mailer.sendMail(req.user.email, newEventCreatedForum, {forumName:req.user.name, eventName: eventDetails.name})
+    if(newEvent.hasBudget)
+    {
+      const FORoleID = await roles.findOne().where("name").in(["FO"]);
+      const FO = await faculty.findOne({ role: FORoleID._id });
+      res = await mailer.sendMail(FO.email, newEventCreatedFO, {forumName:req.user.name, FOName:FO.name})
+    }
+    else
+    {
+      const SACRoleID = await roles.findOne().where("name").in(["SAC"]);
+      const SAC = await faculty.findOne({role: SACRoleID._id});
+      res = await mailer.sendMail(SAC.email, newEventCreatedSAC,{forumName:req.user.name,SACName:SAC.name});
+    }
+
     res.json(
       response({ message: "new event created" }, process.env.SUCCESS_CODE)
     );
@@ -233,7 +249,6 @@ const updateBudgetDoc = async (req, res) => {
     await event.save();
     //send notif to FO.
     const FORoleID = await roles.findOne().where("name").in(["FO"]);
-    console.log(FORoleID);
     const FO = await faculty.findOne({ role: FORoleID._id });
     if (FO == null) throw new error("FO not found");
     await mailer.sendMail(FO.email, budgetDocUpdateTemplate, {
@@ -252,6 +267,7 @@ const updateBudgetDoc = async (req, res) => {
 
 const reportAndMedia = async (req, res) => {
   try {
+    console.log(req.body.eventID + "is the event id");
     let event = await events.findById(req.body.eventID);
     event.reportDocPath = req.files.eventReport[0].path;
     let temp = [];
@@ -259,12 +275,12 @@ const reportAndMedia = async (req, res) => {
       temp.push(req.files.eventImages[p].path);
     }
     event.mediaFilePaths = temp;
-    event.eventStatus = "COMPLETED";
     await event.save();
     res.json(
       response("updated Event Report and Media files", process.env.SUCCESS_CODE)
     );
   } catch (error) {
+    console.log(error)
     res.json(
       response(
         "updated Event Report and Media failed",

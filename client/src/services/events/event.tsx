@@ -21,6 +21,7 @@ const uploadReportAndMedia = async (
         "Content-Type": "multipart/form-data",
       },
     });
+    console.log(res)
     return res.data;
   } catch (error) {
     console.log(error);

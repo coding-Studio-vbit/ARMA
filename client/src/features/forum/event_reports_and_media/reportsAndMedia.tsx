@@ -11,8 +11,8 @@ import { Spinner } from "../../../components/Spinner/Spinner";
 import { Dialog } from "../../../components/Dialog/Dialog";
 ///Only UI
 export const ReportAndMedia = () => {
-  const location = useLocation();
-  const eventID :any = location.state ?? '61da9c41ee32a8e65373fcc4'
+  const location:any = useLocation();
+  const eventID :any = location.state.eventId ?? '61da9c41ee32a8e65373fcc4'
   const [error,setError] = useState("")
   const [loading,setLoading] = useState(false)
   const [show,setShow] = useState(false)
@@ -54,7 +54,7 @@ export const ReportAndMedia = () => {
       </div>
       <Dialog show={show} setShow={setShow} title={error}  >
         <button className="btn" onClick={()=>{
-          navigate('/forum/eventDashboard',{replace:true})
+          navigate(-1)
         }} >Okay</button>
         </Dialog>
       <span className={`mt-8 text-center mb-2 h-6 text-red-600  `} > {error }</span>
@@ -108,7 +108,6 @@ const EventReport: FC<{
           }}
           className="hidden"
           type="file"
-          multiple={true}
         ></input>
       </label>
     <p className="m-0 p-0 truncate text-arma-gray text-[14px]">{pdf?.name ?? 'You can select one document'}</p>

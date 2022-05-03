@@ -4,6 +4,24 @@ const welcomeTemplate = {
   subject: "Welcome from A.R.M.A",
 };
 
+const newEventCreatedForum = {
+  template:
+    "Hey there ${forumName}, New event ${eventName} has been created. The authorities will be notified shortly :)",
+  subject: "New Event Created",
+};
+
+const newEventCreatedFO = {
+  template:
+    "Hey there ${FOName}, New event ${eventName} has been created. pls check on ARMA",
+  subject: "New Event Created",
+};
+
+const newEventCreatedSAC = {
+  template:
+    "Hey there ${SACName}, New event ${eventName} has been created.pls check on ARMA",
+  subject: "New Event Created",
+};
+
 const budgetDocUpdateTemplate = {
   template:
     "Dear ${FOName}, ${forumName} has updated the budget document for event ${eventName}",
@@ -67,4 +85,7 @@ module.exports = {
   SACApprovedTemplate,
   SACCommentedTemplate,
   SACRejectedTemplate,
+  newEventCreatedFO,
+  newEventCreatedSAC,
+  newEventCreatedForum
 };
