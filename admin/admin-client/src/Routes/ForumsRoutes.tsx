@@ -8,9 +8,9 @@ function ForumsRoutes() {
   return (
 
       <Routes>
-          <Route path = '/ForumsView' element = {<ForumsView />}/>
-          <Route path = '/AddForums' element = {<AddForums />}/>
-          <Route path = '/' element = {<ForumsList />}/>
+          <Route path = '/AddForums' element = {<AddForums isEdit={false} />}/>
+          <Route path = '/EditForums/:id' element = {<AddForums isEdit={true} />}/>
+          <Route path = '/' element = {<ForumsList  />}/>
        
       </Routes>
 
