@@ -1,6 +1,6 @@
 import React, { FC, useState } from "react";
 import logo from "../Assests/cs_white_logo.png";
-import { School, Close, CastForEducation , Group, AccountBalance, Router, AccountTree,Security } from "@material-ui/icons";
+import { School, Close , Group, AccountBalance, Router, AccountTree,Security, FaceRounded } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
 
 interface SidebarProps{
@@ -45,7 +45,7 @@ export const Sidebar: FC<SidebarProps> = ({showSidebar, setShowSidebar}) => {
           {value == "Students" && 
           <School className="text-white" />}
           {value == "Faculty" && 
-          <CastForEducation className="text-white" />}
+          <FaceRounded className="text-white" />}
           {value == "Forums" && 
           <Group className="text-white" />}
           {value == "Halls" && 
