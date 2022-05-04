@@ -28,7 +28,7 @@ const Dashboard = () => {
       {/* Forum Cover */}
       <div
         id="forumCoverSection"
-        className="relative hover:opacity-90 hidden sm:block h-[300px] -mt-5 mx-0 px-0"
+        className="relative hidden sm:block h-[300px] -mt-5 mx-0 px-0"
       >
         <ForumCover/>
       </div>

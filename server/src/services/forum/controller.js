@@ -132,6 +132,17 @@ const addNewCoreForumMember = async (req, res) => {
       const studentExists = forum.forumCoreTeamMembers.find((v) => {
         return v.studentID.toString() === stu._id.toString();
       });
+      const membershipExists = stu.forumMemberships.find((v) => {
+        return (
+          v.forumId.toString() === forum._id && v.designation === designation
+        );
+      });
+      if(membershipExists) throw "Membership exists";
+      stu.forumMemberships.push({
+        forumId: forum._id,
+        designation: designation,
+      });
+      await stu.save();
       if (studentExists) throw "Student already exists";
       await forums.findOneAndUpdate(
         { name: forumName },
@@ -472,9 +483,9 @@ const viewForum = async (req, res) => {
   try {
     let { id } = req.body;
     let forum = await forums
-    .findOne({ _id: id })
-    .populate("facultyCoordinatorID")
-    .populate("forumHeads")
+      .findOne({ _id: id })
+      .populate("facultyCoordinatorID")
+      .populate("forumHeads");
     res.json(response(forum, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);

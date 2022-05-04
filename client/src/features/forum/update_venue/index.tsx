@@ -10,11 +10,7 @@ import axios from "../../../utils/axios";
 //redux imports
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/reducers";
-import {
-  createDatesState,
-  UpdateDatesState,
-  selectDate,
-} from "../../../redux/actions";
+import { createDatesState, selectDate } from "../../../redux/actions";
 
 const EventVenue = () => {
   const navigate = useNavigate();
@@ -25,6 +21,7 @@ const EventVenue = () => {
   const eventDetails = useSelector((state: RootState) => state.eventDetails);
 
   useEffect(() => {
+    if (Object.keys(eventDates).length === 0) navigate(-1);
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}halls`)
       .then((response) => {
@@ -44,15 +41,23 @@ const EventVenue = () => {
   const key = useSelector((state: RootState) => state.selectedDate);
   const dispatch = useDispatch();
   useEffect(() => {
+    var dates = [];
+    Object.keys(eventDates).map((key) => {
+      dates.push(eventDates[key].dateObject);
+    });
+    setSelectedDays(dates);
+  }, []);
+  useEffect(() => {
     selectedDays.forEach((date) => {
       axios
         .post(`${process.env.REACT_APP_SERVER_URL}halls/getSlots`, {
           date: `${date.day}-${date.month}-${date.year}`,
         })
         .then((response) => {
-          const temp = {...blockedSlots};
-          temp[`${date.day}-${date.month}-${date.year}`] = response.data.response;
-          setBlockedSlots(temp)
+          const temp = { ...blockedSlots };
+          temp[`${date.day}-${date.month}-${date.year}`] =
+            response.data.response;
+          setBlockedSlots(temp);
         });
     });
   }, [selectedDays]);
@@ -96,7 +101,6 @@ const EventVenue = () => {
     var filteredHalls = temp.filter(function (elem, index, self) {
       return index === self.indexOf(elem);
     });
-    console.log(filteredHalls);
 
     return filteredHalls.map((hall: string) => {
       return (
@@ -314,22 +318,24 @@ const EventVenue = () => {
       {showCalender ? CalenderPopUp() : null}
       {Object.keys(eventDates).length === 0 && selectedDays.length === 0 ? (
         <div className="flex flex-col items-center">
-          <div className="flex flex-row items-center">
-            <h4 className="mr-3">Is it a long period of time?</h4>
-            <Switch
-              onChange={setIsLong}
-              checked={isLong}
-              onColor="#86d3ff"
-              onHandleColor="#2693e6"
-              handleDiameter={30}
-              uncheckedIcon={false}
-              checkedIcon={false}
-              boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-              activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-              height={20}
-              width={48}
-            />
-          </div>
+          {
+            //   <div className="flex flex-row items-center">
+            //   <h4 className="mr-3">Is it a long period of time?</h4>
+            //   <Switch
+            //     onChange={setIsLong}
+            //     checked={isLong}
+            //     onColor="#86d3ff"
+            //     onHandleColor="#2693e6"
+            //     handleDiameter={30}
+            //     uncheckedIcon={false}
+            //     checkedIcon={false}
+            //     boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+            //     activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+            //     height={20}
+            //     width={48}
+            //   />
+            // </div>
+          }
           <div className="mt-3">Please select event dates</div>
           <button className="mt-[50px]" onClick={() => setShowCalender(true)}>
             <img
@@ -344,11 +350,9 @@ const EventVenue = () => {
         <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
           <button
             className="btn px-8 py-3   text-xl tracking-wide  ml-auto my-8"
-            onClick={() => {
-              navigate("/forum/createEvent/equipment");
-            }}
+            onClick={() => {}}
           >
-            Equipment
+            UPDATE
           </button>
         </div>
       ) : null}

@@ -97,10 +97,10 @@ export const Students_View = () => {
             info?.forumMemberships?.map((i: any) => {
               return (
                 <div
-                  key={i.forumID}
+                  key={i.forumId}
                   className="shadow-xl border-2 flex flex-col p-4 w-max rounded-[16px]"
                 >
-                  <span>Forum Name:{i.name}</span>
+                  <span>{i.designation}, {i.forumId.name}</span>
                 </div>
               );
             })
