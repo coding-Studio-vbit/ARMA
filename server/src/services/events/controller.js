@@ -740,7 +740,7 @@ const completeEvent = async (req, res) => {
     for (let i = 0; i < attendanceDoc.presence.length; i++) {
       const attendancePercentage =
         (attendanceDoc.presence[i].dates.length * 100) / totalDays;
-      if (attendancePercentage >= process.env.MIN_EVENT_PERCENTAGE) {
+      if (attendancePercentage >= (process.env.MIN_EVENT_PERCENTAGE ? process.env.MIN_EVENT_PERCENTAGE : 50)) {
         qualifiedStudents.push(attendanceDoc.presence[i].studentId);
       }
     }

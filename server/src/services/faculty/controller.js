@@ -287,11 +287,13 @@ const approveEvent = async (req, res) => {
     //ADD THIS EVENT AS ORGANISED TO ALL THE FORUM STUDENTS.
     const forum = await forums.findById(event.forumID);
     const {forumCoreTeamMembers} = forum;
-    for(let i=0;i<forumCoreTeamMembers;i++)
+    for(let i=0;i<forumCoreTeamMembers.length;i++)
     {
-      const stu = await students.findById(forumCoreTeamMembers[i]);
+      console.log(forumCoreTeamMembers);
+      const stu = await students.findById(forumCoreTeamMembers[i].studentID);
       stu.eventsOrganized.push(eventId);
-      stu.save();
+      console.log(stu);
+      await stu.save();
     }
     //update event status
     event.eventStatus = "APPROVED";

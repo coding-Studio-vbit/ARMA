@@ -159,10 +159,11 @@ const generatePDF = async (req, res) => {
     const { studentId } = req.body;
     const student = await students
       .findById(studentId)
-      .populate("eventsOrganized")
+      .populate({path:"eventsOrganized",populate:{path:'forumID'}})
       .populate("forumMemberships.forumId")
       .populate("eventsParticipated");
     const result = await studentReports.generateNewReport(student);
+    
     pdf.create(result.data).toFile(result.filePath, async (err, data) => {
       if (err) throw err;
       else {

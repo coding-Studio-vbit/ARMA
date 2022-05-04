@@ -4,9 +4,8 @@ import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
-import axiosInstance from "../../utils/axios";
+import axios from "../../utils/axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 
 interface AddEquipProps {
   isEdit: boolean;
@@ -18,7 +17,7 @@ export const AddEquip = ({ isEdit }: AddEquipProps) => {
   let { id } = useParams();
   useEffect(() => {
     const student = async () => {
-      const res = await axiosInstance.post(
+      const res = await axios.post(
         process.env.REACT_APP_SERVER_URL + "equipment/viewEquipment",
         { id: id }
       );
@@ -68,7 +67,7 @@ export const AddEquip = ({ isEdit }: AddEquipProps) => {
   };
   const deleteItem = async () => {
     setShowError("");
-    const res = await axiosInstance.post(
+    const res = await axios.post(
       process.env.REACT_APP_SERVER_URL + "equipment/deleteEquipment",
       { id: id }
     );
@@ -94,7 +93,7 @@ export const AddEquip = ({ isEdit }: AddEquipProps) => {
     } else {
       if (!isEdit) {
         setShowError("");
-        axiosInstance
+        axios
           .post(process.env.REACT_APP_SERVER_URL + "equipment/addEquipment", {
             name: equipname,
             totalCount: quantity,
@@ -112,31 +111,30 @@ export const AddEquip = ({ isEdit }: AddEquipProps) => {
           });
       } else {
         setShowError("");
-        axiosInstance.put(
-          process.env.REACT_APP_SERVER_URL + "equipment/editEquipment",
-          {
+        axios
+          .put(process.env.REACT_APP_SERVER_URL + "equipment/editEquipment", {
             id: id,
             name: equipname,
             totalCount: quantity,
             facultyIncharge: name,
-          }
-        ).then((res)=>{
-          const data = res.data;
-          if (data.status === 1) {
-            setResponse("Equipment Details Edited");
-            setShow(true);
-          } else {
-            setResponse(data.response.message);
-            setShow(true);
-          }
-        })
+          })
+          .then((res) => {
+            const data = res.data;
+            if (data.status === 1) {
+              setResponse("Equipment Details Edited");
+              setShow(true);
+            } else {
+              setResponse(data.response.message);
+              setShow(true);
+            }
+          });
       }
     }
   };
 
   const faculty = async () => {
     console.log("name is now", name);
-    const res = await axiosInstance.post(
+    const res = await axios.post(
       process.env.REACT_APP_SERVER_URL + "faculty/fetchFaculty",
       { name: name }
     );
@@ -219,9 +217,8 @@ export const AddEquip = ({ isEdit }: AddEquipProps) => {
             name="Faculty Coordintator"
             options={myfac}
             placeholder="faculty coordinator"
-            onInputChange={(e)=>{
-              if(e !== "")
-                handleInputChange(e);
+            onInputChange={(e) => {
+              if (e !== "") handleInputChange(e);
             }}
             value={
               isEdit

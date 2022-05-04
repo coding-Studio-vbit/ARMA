@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import readXlsxFile from "read-excel-file";
 import json2ExcelBin from "js2excel";
 import { Dialog } from "../../../components/Dialog/Dialog";
-import axiosInstance from "../../../utils/axios";
+import axios from "../../../utils/axios";
 import { Info } from "@material-ui/icons";
 import { useLocation } from "react-router-dom";
 
@@ -60,21 +60,24 @@ const EventAttendance = () => {
 
   const getEventInfo = async () => {
     try {
-      const res = await axiosInstance.get(
+      const res = await axios.get(
         process.env.REACT_APP_SERVER_URL + "events/getEvent/" + eventID
       );
-      if(res.data.response.status == -1){
+      if (res.data.response.status == -1) {
         console.log(res.data.response.message);
-      }else
-      {
+      } else {
         setEvent(res.data.response);
         setEventName(res.data.response.name + " - Attendance");
       }
-    } catch (error) {console.log(error)}
+    } catch (error) {
+      console.log(error);
+    }
   };
-  useEffect(() => {getEventInfo()}, []);
   useEffect(() => {
-    axiosInstance
+    getEventInfo();
+  }, []);
+  useEffect(() => {
+    axios
       .get(
         process.env.REACT_APP_SERVER_URL +
           "events/eventAttendance?eventID=" +
@@ -82,7 +85,7 @@ const EventAttendance = () => {
       )
       .then((resp) => {
         if (resp.data.response.status == -1) {
-          console.log(resp)
+          console.log(resp);
           throw new Error("Error occured");
         }
         resp.data.response.data.forEach((data: any) => {
@@ -150,7 +153,7 @@ const EventAttendance = () => {
           });
         })
         .then(async () => {
-          await axiosInstance.post(
+          await axios.post(
             process.env.REACT_APP_SERVER_URL +
               "events/uploadRegistrants?attendedEvents=" +
               eventID,
@@ -168,7 +171,7 @@ const EventAttendance = () => {
   };
 
   const handleSave = async () => {
-    const res = await axiosInstance.put(
+    const res = await axios.put(
       process.env.REACT_APP_SERVER_URL + "events/postAttendance",
       { studentPresence: studentPresence, eventID: eventID }
     );
@@ -182,7 +185,7 @@ const EventAttendance = () => {
   };
 
   const handleReport = async () => {
-    axiosInstance
+    axios
       .get(
         process.env.REACT_APP_SERVER_URL +
           "events/eventAttendance?eventID=" +

@@ -7,7 +7,7 @@ import {
   ArrowForwardIos,
   ArrowUpward,
 } from "@material-ui/icons";
-import axiosInstance from "../utils/axios";
+import axios from "../utils/axios";
 
 interface header {
   displayName: string; //Display header name
@@ -99,7 +99,7 @@ const Table = React.memo(
       //Adding the filter
       params = { ...params, ...filter };
 
-      axiosInstance
+      axios
         .get(api, {
           params: params,
         })
@@ -160,8 +160,12 @@ const Table = React.memo(
     return (
       <>
         <div className="w-full border-2 shadow-md  rounded-[16px] overflow-x-auto ">
-          <Dialog show = {show} setShow ={()=>setShow(!show)} title = "Loading" 
-          children= {<Spinner className="mt-4 mb-2" />} />
+          <Dialog
+            show={show}
+            setShow={() => setShow(!show)}
+            title="Loading"
+            children={<Spinner className="mt-4 mb-2" />}
+          />
           <table className="w-full ">
             <thead className="bg-white border-b-2 rounded-[8px] border-black/30  ">
               <tr className="rounded-[16px]">

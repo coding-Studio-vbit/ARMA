@@ -1,4 +1,4 @@
-import axiosInstance from "../../utils/axios";
+import axios from "../../utils/axios";
 
 export default class ForumService {
   static deleteForumMemeber = async (
@@ -7,7 +7,7 @@ export default class ForumService {
     userType: string
   ) => {
     try {
-      const res = await axiosInstance.post(
+      const res = await axios.post(
         process.env.REACT_APP_SERVER_URL + "forum/deleteMember",
         {
           forumName: forumName,
@@ -15,17 +15,14 @@ export default class ForumService {
           userType: userType,
         }
       );
-      const data = res.data
-      if(data.status === 1){
-
-          return "Member successfully deleted"
-      }else{
-
-         return data.response
+      const data = res.data;
+      if (data.status === 1) {
+        return "Member successfully deleted";
+      } else {
+        return data.response;
       }
-      
     } catch (error) {
-        return "Unable to delete the member!"
+      return "Unable to delete the member!";
     }
   };
 }
