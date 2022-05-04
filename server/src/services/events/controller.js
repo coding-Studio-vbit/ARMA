@@ -283,14 +283,11 @@ const updateBudgetDoc = async (req, res) => {
 const reportAndMedia = async (req, res) => {
   try {
     console.log(req.body.eventID + "is the event id");
-    let event = await events.findById(req.body.eventID).populate('forumID');
-    const MORole = await roles.findOne({name: "MO"});
-    if(MORole == null)
-      throw new Error("MO Role not found!");
-    const MO = await faculty.findOne({role: MORole._id});
-    if(MO == null)
-      throw new Error("MO not found!");
-    
+    let event = await events.findById(req.body.eventID).populate("forumID");
+    const MORole = await roles.findOne({ name: "MO" });
+    if (MORole == null) throw new Error("MO Role not found!");
+    const MO = await faculty.findOne({ role: MORole._id });
+    if (MO == null) throw new Error("MO not found!");
 
     event.reportDocPath = req.files.eventReport[0].path;
 
@@ -302,21 +299,23 @@ const reportAndMedia = async (req, res) => {
 
     await event.save();
     temp.push(event.reportDocPath);
-    await mailer.sendMail(MO.email, MOReportAndMedia,{forumName:event.forumID.name, MOName: MO.name, eventName:event.name}, temp.map((fp)=>{return {
-      fileName: fp,
-      path:fp
-    }}))
+    await mailer.sendMail(
+      MO.email,
+      MOReportAndMedia,
+      { forumName: event.forumID.name, MOName: MO.name, eventName: event.name },
+      temp.map((fp) => {
+        return {
+          fileName: fp,
+          path: fp,
+        };
+      })
+    );
     res.json(
       response("updated Event Report and Media files", process.env.SUCCESS_CODE)
     );
   } catch (error) {
     console.log(error);
-    res.json(
-      response(
-        error.message,
-        process.env.FAILURE_CODE
-      )
-    );
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -704,13 +703,13 @@ const getEventReservations = async (req, res) => {
             result[date].halls = [
               ...result[date].halls,
               reservation.timeSlots.map(
-                (slot) => reservation.hallId.name + "." + slot
+                (slot) => slot + "." + reservation.hallId.name
               ),
             ].flat();
           } else {
             result[date] = {
               halls: reservation.timeSlots.map(
-                (slot) => reservation.hallId.name + "." + slot
+                (slot) => slot + "." + reservation.hallId.name
               ),
             };
           }
@@ -738,18 +737,17 @@ const completeEvent = async (req, res) => {
     const attendanceDoc = await attendances.findOne({ eventID: eventId });
     const totalDays = event.eventDates.length;
     const qualifiedStudents = [];
-    for(let i=0;i<attendanceDoc.presence.length;i++)
-    {
-      const attendancePercentage = attendanceDoc.presence[i].dates.length * 100 / totalDays;
-      if(attendancePercentage >= process.env.MIN_EVENT_PERCENTAGE){
+    for (let i = 0; i < attendanceDoc.presence.length; i++) {
+      const attendancePercentage =
+        (attendanceDoc.presence[i].dates.length * 100) / totalDays;
+      if (attendancePercentage >= process.env.MIN_EVENT_PERCENTAGE) {
         qualifiedStudents.push(attendanceDoc.presence[i].studentId);
       }
     }
     //add this event as participated in for each of the qualified students.
-    for(let i=0;i<qualifiedStudents.length;i++)
-    {
+    for (let i = 0; i < qualifiedStudents.length; i++) {
       const stu = await students.findById(qualifiedStudents[i]);
-      if(stu){
+      if (stu) {
         stu.eventsParticipated.push(eventId);
         stu.save();
       }

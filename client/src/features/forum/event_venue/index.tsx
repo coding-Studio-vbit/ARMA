@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/reducers";
 import {
   createDatesState,
-  UpdateDatesState,
   selectDate,
   createReservations,
 } from "../../../redux/actions";

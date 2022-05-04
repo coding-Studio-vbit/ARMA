@@ -5,6 +5,9 @@ import axiosInstance from "../../../utils/axios";
 import axios from "../../../utils/axios";
 import { log } from "console";
 
+import { useDispatch } from "react-redux";
+import { createDatesState } from "../../../redux/actions";
+
 interface EventInfo {
   name: string;
   route: string;
@@ -20,6 +23,8 @@ const eventInfoList: EventInfo[] = [
 ];
 
 function ForumEventDashboard() {
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const { state }: { state: any } = useLocation();
   const [loading, setLoading] = useState<boolean>(true);
@@ -56,7 +61,28 @@ function ForumEventDashboard() {
         `${process.env.REACT_APP_SERVER_URL}events/getEventReservations/${state._id}`
       )
       .then((response) => {
-        console.log(response.data);
+        var res = response.data.response;
+        console.log(res);
+
+        var obj = {};
+        Object.keys(response.data.response).map((d) => {
+          var x = d.split("-");
+          const dateString = new Date(
+            parseInt(x[2]),
+            parseInt(x[1]) - 1,
+            parseInt(x[0])
+          );
+          obj[dateString.toDateString()] = {
+            dateObject: {
+              day: parseInt(x[0]),
+              month: parseInt(x[1]),
+              year: parseInt(x[2]),
+            },
+            eventDate: dateString,
+            halls: res[d].halls,
+          };
+        });
+        dispatch(createDatesState(obj));
       });
   };
   useEffect(() => {
@@ -90,7 +116,7 @@ function ForumEventDashboard() {
                 .map((eventInfo, index) => {
                   return (
                     <div
-                    key={index}
+                      key={index}
                       className="w-full sm:w-3/4 md:w-1/3 px-6 py-6 lg:py-8 lg:p-10 m-0 
                                             arma-card-gradient text-white  text-lg sm:text-xl lg:text-2xl
                                             shadow-2xl rounded-2xl min-h-max h-40 lg:h-60"
@@ -104,12 +130,15 @@ function ForumEventDashboard() {
                         <span>{eventInfo.name}</span>
                         {((eventInfo.name == "Budget" &&
                           state.hasBudget &&
-                          (state.eventStatus == "REQUESTED BUDGET CHANGES" || state.eventStatus == "BUDGET REJECTED"))||(eventInfo.name == "Event Details" &&
-                          state.eventStatus == "REQUESTED CHANGES BY SAC")) && (
-                            <span className="material-icons text-right text-yellow-400   lg:scale-125">
-                              info
-                            </span>
-                          )}
+                          (state.eventStatus == "REQUESTED BUDGET CHANGES" ||
+                            state.eventStatus == "BUDGET REJECTED")) ||
+                          (eventInfo.name == "Event Details" &&
+                            state.eventStatus ==
+                              "REQUESTED CHANGES BY SAC")) && (
+                          <span className="material-icons text-right text-yellow-400   lg:scale-125">
+                            info
+                          </span>
+                        )}
                       </div>
                     </div>
                   );
@@ -125,7 +154,7 @@ function ForumEventDashboard() {
                 .map((eventInfo, index) => {
                   return (
                     <div
-                    key={index}
+                      key={index}
                       className="w-full sm:w-3/4 md:w-1/3 p-6 lg:py-8 lg:p-10 m-0 
                                         arma-card-gradient text-white text-lg sm:text-xl lg:text-2xl
                                         shadow-2xl rounded-2xl min-h-max h-40 lg:h-60"
