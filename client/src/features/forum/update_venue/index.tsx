@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import "react-modern-calendar-datepicker/lib/DatePicker.css";
 import { Calendar, Day } from "react-modern-calendar-datepicker";
 import Switch from "react-switch";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import { SelectHalls } from "./selectHalls";
 import { log } from "console";
 import axios from "../../../utils/axios";
@@ -23,6 +24,8 @@ const EventVenue = () => {
   const [isLong, setIsLong] = useState(false);
   const [hallList, setHallList] = useState([]);
   const eventDetails = useSelector((state: RootState) => state.eventDetails);
+  const [oldEventDates, setOldEventDates] = useState({});
+  const { state }: { state: any } = useLocation();
 
   useEffect(() => {
     if (Object.keys(eventDates).length === 0) navigate(-1);
@@ -36,6 +39,32 @@ const EventVenue = () => {
       })
       .catch((error) => {
         console.log(error);
+      });
+    axios
+      .get(
+        `${process.env.REACT_APP_SERVER_URL}events/getEventReservations/${state.eventId}`
+      )
+      .then((response) => {
+        var res = response.data.response;
+        var obj = {};
+        Object.keys(response.data.response).map((d) => {
+          var x = d.split("-");
+          const dateString = new Date(
+            parseInt(x[2]),
+            parseInt(x[1]) - 1,
+            parseInt(x[0])
+          );
+          obj[dateString.toDateString()] = {
+            dateObject: {
+              day: parseInt(x[0]),
+              month: parseInt(x[1]),
+              year: parseInt(x[2]),
+            },
+            eventDate: dateString,
+            halls: res[d].halls,
+          };
+        });
+        setOldEventDates(obj);
       });
   }, []);
 
@@ -72,7 +101,6 @@ const EventVenue = () => {
       })
       .then(async (response) => {
         dispatch(createReservations(response.data.response));
-        console.log({ date, response: response.data.response });
       });
   };
   const months = [
@@ -116,16 +144,14 @@ const EventVenue = () => {
     year: number;
   }
   const HallsList = (halls: string[], event: string, date: date) => {
-    console.log(date);
-
     var temp = halls.map((hall) => hall.split(".")[1]);
     var filteredHalls = temp.filter(function (elem, index, self) {
       return index === self.indexOf(elem);
     });
-    console.log(filteredHalls);
-    return filteredHalls.map((hall: string) => {
+    return filteredHalls.map((hall: string, i: number) => {
       return (
         <button
+          key={hall + i++}
           onClick={async () => {
             await dispatch(selectDate(event));
             await setReservations(`${date.day}-${date.month}-${date.year}`);
@@ -141,8 +167,6 @@ const EventVenue = () => {
 
   const DatesList = () =>
     Object.keys(eventDates).map((event) => {
-      console.log(eventDates[event].dateObject);
-
       const dateString = new Date(
         eventDates[event].dateObject.year,
         eventDates[event].dateObject.month - 1,
@@ -322,6 +346,7 @@ const EventVenue = () => {
           show={showHallSelection}
           setShow={setShowHallSelection}
           hallsData={hallList}
+          oldEventDates={oldEventDates}
         />
       ) : (
         <></>

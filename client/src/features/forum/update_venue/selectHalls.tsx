@@ -1,6 +1,7 @@
 import { InfoOutlined } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import axios from "../../../utils/axios";
+import { useLocation } from "react-router-dom";
 
 //redux imports
 import { useDispatch, useSelector } from "react-redux";
@@ -12,13 +13,15 @@ interface SelectedHallsProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   hallsData: string[];
+  oldEventDates: {};
 }
 
 const SelectHalls = (props: SelectedHallsProps) => {
   //redux
   const eventDates = useSelector((state: RootState) => state.eventDates);
-  const oldEventDates = JSON.parse(JSON.stringify(eventDates));
+  const [oldEventDates, setOldEventDates] = useState(props.oldEventDates);
   const dispatch = useDispatch();
+  const { state }: { state: any } = useLocation();
 
   const halls = props.hallsData;
   const key = useSelector((state: RootState) => state.selectedDate);
@@ -40,7 +43,6 @@ const SelectHalls = (props: SelectedHallsProps) => {
       dispatch(UpdateDatesState(key, [...arr]));
     }
   };
-  console.log(oldEventDates);
   const HallsList = (halls: string[]) =>
     halls.map((hall: string) => {
       return (
