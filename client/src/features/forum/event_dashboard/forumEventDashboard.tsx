@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Spinner } from "../../../components/Spinner/Spinner";
 import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../../../utils/axios";
+import axios from "../../../utils/axios";
+import { log } from "console";
 
 interface EventInfo {
   name: string;
@@ -45,8 +47,20 @@ function ForumEventDashboard() {
     }
   }
 
+  const getEventDates = () => {
+    console.log(state);
+
+    axios
+      .get(
+        `${process.env.REACT_APP_SERVER_URL}events/getEventReservations/${state._id}`
+      )
+      .then((response) => {
+        console.log(response.data);
+      });
+  };
   useEffect(() => {
     getEventDetails();
+    getEventDates();
   }, []);
 
   return !loading ? (
@@ -78,7 +92,11 @@ function ForumEventDashboard() {
                       className="w-full sm:w-3/4 md:w-1/3 px-6 py-6 lg:py-8 lg:p-10 m-0 
                                             arma-card-gradient text-white  text-lg sm:text-xl lg:text-2xl
                                             shadow-2xl rounded-2xl min-h-max h-40 lg:h-60"
-                      onClick={() => navigate(`../${eventInfo.route}`, {state: {eventId:state._id}})}
+                      onClick={() =>
+                        navigate(`../${eventInfo.route}`, {
+                          state: { eventId: state._id },
+                        })
+                      }
                     >
                       <div className=" flex flex-wrap justify-between items-center">
                         <span>{eventInfo.name}</span>
@@ -105,7 +123,11 @@ function ForumEventDashboard() {
                       className="w-full sm:w-3/4 md:w-1/3 p-6 lg:py-8 lg:p-10 m-0 
                                         arma-card-gradient text-white text-lg sm:text-xl lg:text-2xl
                                         shadow-2xl rounded-2xl min-h-max h-40 lg:h-60"
-                      onClick={() => navigate(`../${eventInfo.route}`, {state: {eventId:state._id}})}
+                      onClick={() =>
+                        navigate(`../${eventInfo.route}`, {
+                          state: { eventId: state._id },
+                        })
+                      }
                     >
                       <div className=" flex flex-wrap justify-between items-center">
                         <span>{eventInfo.name}</span>
