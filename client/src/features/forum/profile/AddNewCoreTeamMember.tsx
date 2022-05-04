@@ -205,6 +205,7 @@ export default function AddNewCoreTeamMember() {
       rollNumber.length === 0 ||
       name.length === 0 ||
       department.value.length === 0 ||
+      course.value.length === 0 ||
       year.value.length === 0 ||
       section.value.length === 0 ||
       email.length === 0 ||
@@ -305,7 +306,7 @@ export default function AddNewCoreTeamMember() {
             }}
           />
           <Select
-          isDisabled={course == null}
+          isDisabled={course.value.length == 0}
             name="Department"
             placeholder="Department"
             className="basic-single"
@@ -336,7 +337,7 @@ export default function AddNewCoreTeamMember() {
             }}
           />
           <Select
-                    isDisabled={course == null}
+                    isDisabled={course.value.length == 0}
 
             name="Year"
             placeholder="Year"

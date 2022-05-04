@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { Dialog } from "../../../components/Dialog/Dialog";
@@ -9,32 +9,19 @@ import axios from "../../../utils/axios";
 export default function AddNewForumMember() {
   const { forum } = useUser();
   const nav = useNavigate();
-  const departmentoptions = [
-    { value: "CSE", label: "CSE" },
-    { value: "CSM", label: "CSM" },
-    { value: "CSC", label: "CSC" },
-    { value: "CSB", label: "CSB" },
-    { value: "ECE", label: "ECE" },
-    { value: "EEE", label: "EEE" },
-    { value: "IT", label: "IT" },
-    { value: "ME", label: "ME" },
-    { value: "CE", label: "CE" },
-  ];
-  const yearoptions = [
-    { value: "1 ", label: "1" },
-    { value: "2 ", label: "2" },
-    { value: "3", label: "3" },
-    { value: "4", label: "4" },
-  ];
-  const sectionoptions = [
-    { value: "A ", label: "A" },
-    { value: "B ", label: "B" },
-    { value: "C", label: "C" },
-    { value: "D", label: "D" },
-  ];
+  const [courses, setCourses] = useState<any>(null);
+  const [departments, setDepartments] = useState<any>(null);
+  const [yearList, setYearList] = useState<any>(null);
+  const [sections, setSections] = useState<any>(null);
 
   const [rollNumber, setRollNumber] = useState("");
   const [name, setName] = useState("");
+  const [course, setCourse] = useState<{
+    value: string;
+    label: string;
+  }>({ value: "", label: "Course" });
+  const [courseError, setCourseError] = useState<string>();
+
   const [department, setDepartment] = useState<{
     value: string;
     label: string;
@@ -61,6 +48,58 @@ export default function AddNewForumMember() {
   const [phoneError, setPhoneError] = useState<string>();
   const [showError, setShowError] = useState<String>("");
 
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_SERVER_URL}students/getCourses`)
+      .then((courseList: any) => {
+        setCourses(
+          courseList.data.response.map((c: any) => {
+            return { value: c, label: c };
+          })
+        );
+      });
+  }, []);
+
+  useEffect(() => {
+    console.log(course, " is course");
+    axios
+      .get(
+        `${process.env.REACT_APP_SERVER_URL}students/getBranches/${course.value}`
+      )
+      .then((branchList: any) => {
+        setDepartments(
+          branchList.data.response.map((c: any) => {
+            return { value: c, label: c };
+          })
+        );
+        return axios.get(
+          `${process.env.REACT_APP_SERVER_URL}students/getTotalYears/${course.value}`
+        );
+      })
+      .then((yrs: any) => {
+        console.log(yrs);
+        let y = [];
+        for (let i = 1; i <= yrs.data.response; i++)
+          y.push({ value: i, label: i });
+        setYearList(y);
+      });
+  }, [course]);
+
+  useEffect(() => {
+    axios
+      .get(
+        `${process.env.REACT_APP_SERVER_URL}students/getTotalSections/${course.value}/${department.value}`
+      )
+      .then((response) => {
+        const totalSections = Number(response.data.response);
+        let y = [];
+        let abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()";
+        for (let i = 0; i < totalSections; i++)
+          y.push({ value: abc[i], label: abc[i] });
+        setSections(y);
+      });
+  }, [department]);
+
   const validateRollNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rollNumber = e.target.value;
     setRollNumber(rollNumber);
@@ -71,7 +110,14 @@ export default function AddNewForumMember() {
       setRollNumberError("");
     }
   };
-
+  const validateCourse = (e: any) => {
+    setCourse(e);
+    if (e.value.length === 0) {
+      setCourseError("Course field is empty");
+    } else {
+      setCourseError("");
+    }
+  };
   const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value;
     setName(name);
@@ -146,6 +192,7 @@ export default function AddNewForumMember() {
       rollNumber.length === 0 ||
       name.length === 0 ||
       department.value.length === 0 ||
+      course.value.length === 0 ||
       year.value.length === 0 ||
       section.value.length === 0 ||
       email.length === 0 ||
@@ -166,6 +213,7 @@ export default function AddNewForumMember() {
         {
           forumName: forum?.name,
           rollNumber: rollNumber,
+          course: course,
           name: name,
           branch: department.value,
           year: year.value,
@@ -210,14 +258,44 @@ export default function AddNewForumMember() {
               validateName(e);
             }}
           />
-
           <Select
+            name="Course"
+            placeholder="Course"
+            className="basic-single"
+            classNamePrefix="select"
+            value={course}
+            options={courses}
+            onChange={(e) => {
+              validateCourse(e);
+            }}
+            styles={{
+              control: (base) => ({
+                ...base,
+                minHeight: 52,
+                minWidth: 270,
+                borderRadius: "0.5rem",
+                border: "2px solid rgb(200, 200, 200)",
+              }),
+
+              placeholder: (base) => ({
+                ...base,
+                paddingLeft: "16px",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                paddingLeft: "16px",
+                color: "#575757e1",
+              }),
+            }}
+          />
+          <Select
+            isDisabled={course.value.length == 0}
             name="Department"
             placeholder="Department"
             className="basic-single"
             classNamePrefix="select"
             value={department}
-            options={departmentoptions}
+            options={departments}
             onChange={(e) => {
               validateDepartment(e);
             }}
@@ -242,12 +320,13 @@ export default function AddNewForumMember() {
             }}
           />
           <Select
+            isDisabled={course.value.length == 0}
             name="Year"
             placeholder="Year"
             className="basic-single"
             classNamePrefix="select"
             value={year}
-            options={yearoptions}
+            options={yearList}
             onChange={(e) => {
               validateYear(e);
             }}
@@ -272,12 +351,17 @@ export default function AddNewForumMember() {
             }}
           />
           <Select
+            isDisabled={
+              course == null ||
+              department == null ||
+              department?.value.length == 0
+            }
             name="Section"
             placeholder="Section"
             className="basic-single"
             classNamePrefix="select"
             value={section}
-            options={sectionoptions}
+            options={sections}
             onChange={(e) => {
               validateSection(e);
             }}
