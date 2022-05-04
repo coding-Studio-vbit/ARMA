@@ -22,7 +22,6 @@ function AllRoutes() {
 }
 const ProtectedRoutes = () => {
   const { user } = useUser();
-  console.log(user);
   const [showSidebar, setShowSidebar] = useState(false);
 
   if (!user) {

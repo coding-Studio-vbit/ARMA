@@ -2,8 +2,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const facultyModel = require("../../models/faculty");
 const forums = require("../../models/forum");
-const students = require("../../models/student");
-const role = require("../../models/role");
 const response = require("../util/response");
 const admins = require("../../models/admin");
 const mongoose = require("mongoose");
@@ -23,7 +21,7 @@ const login = async (email, password, userAgent, userType) => {
         .populate({ path: "facultyCoordinatorID", select: "name" });
     } else if (userType === "ADMIN") {
       //Admin
-      user = await admins.findOne({ email: email });
+      user = await admins.findOne({ email: email }).populate("role");
     }
 
     if (!user) {
@@ -34,6 +32,7 @@ const login = async (email, password, userAgent, userType) => {
       const token = jwt.sign(
         {
           email: email,
+          name: user.name,
           _id: user._id,
           userAgent: userAgent,
           role: user.role,

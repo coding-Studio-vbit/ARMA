@@ -30,6 +30,7 @@ function ForumEventDashboard() {
 
   async function getEventDetails() {
     if (state) {
+      console.log(state._id);
       setUsername(JSON.parse(localStorage.getItem("forum")).name);
       setEvent(state.name);
       setStatus(state.eventStatus);
@@ -89,6 +90,7 @@ function ForumEventDashboard() {
                 .map((eventInfo, index) => {
                   return (
                     <div
+                    key={index}
                       className="w-full sm:w-3/4 md:w-1/3 px-6 py-6 lg:py-8 lg:p-10 m-0 
                                             arma-card-gradient text-white  text-lg sm:text-xl lg:text-2xl
                                             shadow-2xl rounded-2xl min-h-max h-40 lg:h-60"
@@ -100,11 +102,14 @@ function ForumEventDashboard() {
                     >
                       <div className=" flex flex-wrap justify-between items-center">
                         <span>{eventInfo.name}</span>
-                        {/* {(index === 0 || index === 1) && (
-                          <span className="material-icons text-right  lg:scale-125">
-                            info
-                          </span>
-                        )} */}
+                        {((eventInfo.name == "Budget" &&
+                          state.hasBudget &&
+                          (state.eventStatus == "REQUESTED BUDGET CHANGES" || state.eventStatus == "BUDGET REJECTED"))||(eventInfo.name == "Event Details" &&
+                          state.eventStatus == "REQUESTED CHANGES BY SAC")) && (
+                            <span className="material-icons text-right text-yellow-400   lg:scale-125">
+                              info
+                            </span>
+                          )}
                       </div>
                     </div>
                   );
@@ -120,6 +125,7 @@ function ForumEventDashboard() {
                 .map((eventInfo, index) => {
                   return (
                     <div
+                    key={index}
                       className="w-full sm:w-3/4 md:w-1/3 p-6 lg:py-8 lg:p-10 m-0 
                                         arma-card-gradient text-white text-lg sm:text-xl lg:text-2xl
                                         shadow-2xl rounded-2xl min-h-max h-40 lg:h-60"

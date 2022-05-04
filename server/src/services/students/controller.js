@@ -1,7 +1,9 @@
 const students = require("../../models/student");
+const studentReports = require("../util/studentReports");
 const response = require("../util/response");
 const fs = require("fs/promises");
-const path = require("path")
+const path = require("path");
+const coursesInfo = require("../../static_data/courses.json");
 const pdf = require("html-pdf");
 const md5 = require("md5");
 
@@ -56,23 +58,21 @@ const uploadStudentsList = async (req, res) => {
         console.log(data);
         let newStudent = students(data);
         await newStudent.save();
-      } else if (data.attendedEvents.length > 0) {
-        await students.findOneAndUpdate(
-          { rollNumber: data.rollNumber },
-          { $addToSet: { attendedEvents: [data.attendedEvents] } }
-        );
       }
     }
     res.json(
       response(
-        { message: "Students added successfully" },
+        { message: "Students added successfully!" },
         process.env.SUCCESS_CODE
       )
     );
   } catch (error) {
     console.log(error);
     res.json(
-      response({ message: "Internal Server Error" }, process.env.SUCCESS_CODE)
+      response(
+        { message: "Internal Server Error, try again after sometime" },
+        process.env.FAILURE_CODE
+      )
     );
   }
 };
@@ -101,17 +101,20 @@ const editStudent = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
 const fetchStudents = async (req, res) => {
   try {
-    let student = await students.find({});
+    let { rollNumber } = req.body;
+    let student = await students.find({
+      name: { $regex: `^${rollNumber}`, $options: "i" },
+    });
     res.json(response(student, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -122,7 +125,7 @@ const deleteStudent = async (req, res) => {
     res.json(response(student, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -131,8 +134,8 @@ const studentViewCard = async (req, res) => {
     let { id } = req.body;
     let student = await students
       .findOne({ _id: id })
-      .populate("coreTeamMember.forumID")
-      .populate({ path: "attendedEvents", populate: { path: "forumID" } });
+      .populate("forumMemberships.forumId")
+      .populate({ path: "eventsParticipated", populate: { path: "forumID" } });
     let { attendedEvents, ...stu } = student.toObject();
     for (let i = 0; i < attendedEvents.length; i++) {
       let set = new Set();
@@ -147,43 +150,82 @@ const studentViewCard = async (req, res) => {
     res.json(response(stu, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
 const generatePDF = async (req, res) => {
   try {
-    const { htmlContent, studentId } = req.body;
-    const student = await students.findById(studentId);
-    let temp = md5(student.name + Date.now());
-    let dirPath = path.join(
-      __dirname,
-      "../../../../data/static/",
-      temp.slice(0, 1),
-      temp.slice(0, 2)
-    );
-    let filename =
-      md5(student.name + student.year + student.section + String(Date.now())) +
-      "." +
-      "pdf";
-
-    const filePath = `${dirPath}/${filename}`;
-    console.log(filePath);
-
-    pdf.create(htmlContent).toFile(filePath, (err, result)=>{
-      if(err){
-        return console.log(err);
+    const { studentId } = req.body;
+    const student = await students
+      .findById(studentId)
+      .populate("eventsOrganized")
+      .populate("forumMemberships.forumId")
+      .populate("eventsParticipated");
+    const result = await studentReports.generateNewReport(student);
+    pdf.create(result.data).toFile(result.filePath, async (err, data) => {
+      if (err) throw err;
+      else {
+        student.reportFilePath = result.filePath;
+        console.log(result.filePath);
+        await student.save();
+        res.sendFile(result.filePath);
       }
-      student.reportFilePath = filePath;
-      student.save()
-      .then(()=>{
-        res.sendFile(filePath);
-      })
-    })
-
+    });
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
+  }
+};
+
+const getBranches = async (req, res) => {
+  try {
+    const { course } = req.params;
+    console.log(coursesInfo);
+    res.json(
+      response(
+        Object.keys(coursesInfo[course]["branches"]),
+        process.env.SUCCESS_CODE
+      )
+    );
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
+  }
+};
+const getTotalYears = async (req, res) => {
+  try {
+    const { course } = req.params;
+    res.json(
+      response(coursesInfo[course]["totalYears"], process.env.SUCCESS_CODE)
+    );
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
+  }
+};
+const getTotalSections = async (req, res) => {
+  try {
+    const { course, branch } = req.params;
+    console.log(coursesInfo);
+    res.json(
+      response(
+        coursesInfo[course].branches[branch].sections,
+        process.env.SUCCESS_CODE
+      )
+    );
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
+  }
+};
+const getCourses = async (req, res) => {
+  try {
+    console.log(coursesInfo);
+    res.json(response(Object.keys(coursesInfo), process.env.SUCCESS_CODE));
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -195,6 +237,10 @@ module.exports = {
   fetchStudents,
   studentViewCard,
   deleteStudent,
+  getBranches,
+  getCourses,
+  getTotalYears,
+  getTotalSections,
 };
 
 //eventID 61da9c41ee32a8e65373fcc4

@@ -42,6 +42,9 @@ export default function DataTable({data,headers,onTableRowClick}:TableProps) {
               })}
             </tr>
           </thead>
+          {
+            console.log(data)
+          }
           <tbody className="bg-white divide-y divide-gray-300">
             
             {

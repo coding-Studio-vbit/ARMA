@@ -11,7 +11,6 @@ import StudentReport from "../components/StudentReport";
 
 function AllRoutes() {
   const { faculty, forum } = useUser();
-  console.log(faculty?.role);
 
   return (
     <BrowserRouter>

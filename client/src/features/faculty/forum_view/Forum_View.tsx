@@ -54,7 +54,7 @@ export const Forum_View = () => {
               <span className="text-arma-gray text-xl">
                 Faculty Coordinator:
               </span>
-              <span className="text-xl">
+              <span className="text-xl w-min">
                 {info?.facultyCoordinatorID?.name}
               </span>
             </div>

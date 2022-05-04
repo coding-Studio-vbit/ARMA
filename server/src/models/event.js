@@ -38,17 +38,17 @@ const event = new mongoose.Schema({
   eventStatus: {
     type: String,
     enum: [
-      "AWAITING BUDGET APPROVAL",
+      "AWAITING FO APPROVAL",
       "REQUESTED BUDGET CHANGES",
       "BUDGET UPDATED",
-      "BUDGET REJECTED",
+      "BUDGET",
       "AWAITING SAC APPROVAL",
       "REQUESTED CHANGES BY SAC",
       "SAC CHANGES UPDATED",
       "APPROVED",
       "REJECTED",
       "COMPLETED",
-      "CANCELLED"
+      "CANCELLED",
     ],
   },
   eventCompleted: { type: Boolean, default: false },

@@ -4,6 +4,24 @@ const welcomeTemplate = {
   subject: "Welcome from A.R.M.A",
 };
 
+const newEventCreatedForum = {
+  template:
+    "Hey there ${forumName}, New event '${eventName}' has been created. The authorities will be notified shortly :)",
+  subject: "New Event Created",
+};
+
+const newEventCreatedFO = {
+  template:
+    "Hey there ${FOName}, New event '${eventName}' has been created by ${forumName}. pls check on ARMA",
+  subject: "New Event Created",
+};
+
+const newEventCreatedSAC = {
+  template:
+    "Hey there ${SACName}, New event '${eventName}' has been created by ${forumName}.pls check on ARMA",
+  subject: "New Event Created",
+};
+
 const budgetDocUpdateTemplate = {
   template:
     "Dear ${FOName}, ${forumName} has updated the budget document for event ${eventName}",
@@ -51,9 +69,14 @@ const SACCommentedTemplate = {
 };
 
 const SACRejectedTemplate = {
-  template: "",
+  template: "Hey ${forumName}, Unfortunately The SAC has rejected your event ${eventName}. Please check the ARMA app to know more.",
   subject: "Event Rejected by SAC",
 };
+
+const MOReportAndMedia = {
+  template: "Hey there ${MOName}, ${forumName} has sent the following attachments as media from the event ${eventName}. Take a look!",
+  subject: "New Event Media",
+}
 
 module.exports = {
   welcomeTemplate,
@@ -67,4 +90,8 @@ module.exports = {
   SACApprovedTemplate,
   SACCommentedTemplate,
   SACRejectedTemplate,
+  newEventCreatedFO,
+  newEventCreatedSAC,
+  newEventCreatedForum,
+  MOReportAndMedia
 };

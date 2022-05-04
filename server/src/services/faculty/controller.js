@@ -1,5 +1,6 @@
 const facultyModel = require("../../models/faculty");
 const faculty = require("../../models/faculty");
+const roles = require("../../models/role");
 const events = require("../../models/event");
 const response = require("../util/response");
 const mailer = require("../util/mailer");
@@ -15,6 +16,8 @@ const {
   SACRejectedTemplate,
 } = require("../../email_templates/templates");
 const mongoose = require("mongoose");
+const forums = require("../../models/forum");
+const students = require("../../models/student");
 
 //get Faculty list
 
@@ -74,10 +77,37 @@ const editProfile = async (req, res) => {
 
 const editFaculty = async (req, res) => {
   try {
-    const { id, name, designation, roles } = req.body;
+    const { id, name, designation, role } = req.body;
+
+    //Always ensure that there is only one SAC, one MO and one FO only.
+    const SACRole = await roles.findOne({name: "SAC"});
+    const FORole = await roles.findOne({name: "FO"});
+    const MORole = await roles.findOne({name: "MO"});
+
+    const currentSAC = await faculty.findOne({role: SACRole._id});
+    const currentFO = await faculty.findOne({role:FORole._id});
+    const currentMO = await faculty.findOne({role:MORole._id});
+    console.log(role, String(SACRole._id))
+    if(role.indexOf(String(SACRole._id)) !== -1)
+    {
+      currentSAC.role = currentSAC.role.filter((r)=>String(r._id) !== String(SACRole._id));
+      console.log(currentSAC.role)
+      await currentSAC.save();
+    }
+    if(role.indexOf(String(FORole._id)) !== -1)
+    {
+      currentFO.role = currentFO.role.filter((r)=>String(r._id) !== String(FORole._id));
+      await currentFO.save();
+    }
+    if(role.indexOf(String(MORole._id)) !== -1)
+    {
+      currentMO.role = currentMO.role.filter((r)=>String(r._id) !== String(MORole._id));
+      await currentMO.save();
+    }
+
     await faculty.findOneAndUpdate(
       { _id: id },
-      { $set: { name: name, designation: designation, role: roles } },
+      { $set: { name: name, designation: designation, role: role } },
       { new: true }
     );
     res.json(
@@ -85,7 +115,7 @@ const editFaculty = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -99,7 +129,7 @@ const fetchFaculty = async (req, res) => {
     res.json(response(fac, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -110,7 +140,7 @@ const viewFaculty = async (req, res) => {
     res.json(response(faculty, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -121,7 +151,7 @@ const deleteFaculty = async (req, res) => {
     res.json(response(faculty, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -131,42 +161,39 @@ const acceptBudget = async (req, res) => {
     let event = await events.findById(eventId).populate("forumID");
     const SACRoleId = await roles.findOne().where("name").in(["SAC"]);
     const SAC = await faculty.findOne({ role: [SACRoleId._id] });
-    if(SAC == null)
-      throw new Error("SAC not found")
+    if (SAC == null) throw new Error("SAC not found");
     if (
-      event.eventStatus !== "AWAITING BUDGET APPROVAL" &&
-      event.eventStatus !== "BUDGET STATUS UPDATED" &&
+      event.eventStatus !== "AWAITING FO APPROVAL" &&
+      event.eventStatus !== "BUDGET UPDATED" &&
       event.eventStatus !== "REQUESTED BUDGET CHANGES"
     ) {
       throw new Error(
-        "cannot accept budget of event during the current status"
+        "cannot accept budget of event during the current status:" +
+          event.eventStatus
       );
     }
-    if (req.user.role.name == "FO") {
-      event.eventStatus = "AWAITING SAC APPROVAL";
-      //now send update email to both the forum and the SAC.
-      await event.save();
-      mailer
-        .sendMail(event.forumID.email, budgetAcceptedForumUpdateTemplate, {
+    console.log(req.user.role);
+    event.eventStatus = "AWAITING SAC APPROVAL";
+    //now send update email to both the forum and the SAC.
+    await event.save();
+    mailer
+      .sendMail(event.forumID.email, budgetAcceptedForumUpdateTemplate, {
+        eventName: event.name,
+      })
+      .then((response) => {
+        return mailer.sendMail(SAC.email, budgetAcceptedSACUpdateTemplate, {
           eventName: event.name,
-        })
-        .then((response) => {
-          return mailer.sendMail(SAC.email, budgetAcceptedSACUpdateTemplate, {
-            eventName: event.name,
-            forumName: event.forumID.name,
-          });
-        })
-        .then((response) => {
-          res.json(
-            response("Accepted budget successfully.", process.env.SUCCESS_CODE)
-          );
+          forumName: event.forumID.name,
         });
-    } else {
-      res.json(response("unauthorized", process.env.FAILURE_CODE));
-    }
+      })
+      .then((r) => {
+        res.json(
+          response("Accepted budget successfully.", process.env.SUCCESS_CODE)
+        );
+      });
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -175,34 +202,33 @@ const commentBudget = async (req, res) => {
     const { eventId, FOComments } = req.body;
     const event = await events.findById(eventId).populate("forumID");
     if (
-      event.eventStatus !== "AWAITING BUDGET APPROVAL" &&
-      event.eventStatus !== "REQUESTED BUDGET CHANGES"
+      event.eventStatus !== "AWAITING FO APPROVAL" &&
+      event.eventStatus !== "REQUESTED BUDGET CHANGES" &&
+      event.eventStatus !== "BUDGET UPDATED"
     ) {
-      throw new Error("cannot comment for current status of event");
+      throw new Error(
+        "cannot comment for current status of event:" + event.eventStatus
+      );
     }
-    if (req.user.role.name == "FO") {
-      event.FOComments = FOComments;
-      event.eventStatus = "REQUESTED BUDGET CHANGES";
-      await event.save();
-      //send the mail to the forum about the comments.
-      mailer
-        .sendMail(event.forumID.email, budgetUpdatedTemplate, {
-          eventName: event.name,
-        })
-        .then((response) => {
-          res.json(
-            response(
-              "Successfully commented on the budget",
-              process.env.SUCCESS_CODE
-            )
-          );
-        });
-    } else {
-      res.json(response("unauthorized", process.env.FAILURE_CODE));
-    }
+    event.FOComments = FOComments;
+    event.eventStatus = "REQUESTED BUDGET CHANGES";
+    await event.save();
+    //send the mail to the forum about the comments.
+    mailer
+      .sendMail(event.forumID.email, budgetUpdatedTemplate, {
+        eventName: event.name,
+      })
+      .then((r) => {
+        res.json(
+          response(
+            "Successfully commented on the budget",
+            process.env.SUCCESS_CODE
+          )
+        );
+      });
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -210,46 +236,39 @@ const rejectBudget = async (req, res) => {
   try {
     let { eventId, FOComments } = req.body;
     let event = await events.findById(eventId).populate("forumID");
-    let SAC = await faculty.findOne({
-      role: mongoose.Schema.Types.ObjectId("61d29b056fe5397a01f615a9"),
-    });
+    const SACRoleId = await roles.findOne().where("name").in(["SAC"]);
+    const SAC = await faculty.findOne({ role: [SACRoleId._id] });
+    if (SAC == null) throw new Error("SAC not found");
     if (
-      event.eventStatus !== "AWAITING BUDGET APPROVAL" &&
+      event.eventStatus !== "AWAITING FO APPROVAL" &&
       event.eventStatus !== "BUDGET UPDATED" &&
       event.eventStatus !== "REQUESTED BUDGET CHANGES"
     ) {
-      throw new Error("not awaiting budget approval");
+      throw new Error("not AWAITING FO APPROVAL");
     }
 
-    if (req.user.role.name == "FO") {
-      event.eventStatus = "BUDGET REJECTED";
-      event.FOComments = FOComments;
-      //now send update email to both the forum and the SAC.
-      await event.save();
-      mailer
-        .sendMail(event.forumID.email, budgetRejectedForumTemplate, {
+    event.eventStatus = "BUDGET REJECTED";
+    event.FOComments = FOComments;
+    //now send update email to both the forum and the SAC.
+    await event.save();
+    mailer
+      .sendMail(event.forumID.email, budgetRejectedForumTemplate, {
+        eventName: event.name,
+      })
+      .then((response) => {
+        return mailer.sendMail(SAC.email, budgetRejectedSACTemplate, {
           eventName: event.name,
-        })
-        .then((response) => {
-          return mailer.sendMail(SAC.email, budgetRejectedSACTemplate, {
-            eventName: event.name,
-            forumName: event.forumID.name,
-          });
-        })
-        .then((response) => {
-          res.json(
-            response(
-              "Accepted rejected successfully.",
-              process.env.SUCCESS_CODE
-            )
-          );
+          forumName: event.forumID.name,
         });
-    } else {
-      res.json(response("unauthorized", process.env.FAILURE_CODE));
-    }
+      })
+      .then((r) => {
+        res.json(
+          response("budget rejected successfully.", process.env.SUCCESS_CODE)
+        );
+      });
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -264,28 +283,33 @@ const approveEvent = async (req, res) => {
     ) {
       throw new Error("cannot approve event during current status");
     }
-    if (req.user.role.name == "SAC") {
-      event.eventStatus = "ACCEPTED";
-      await event.save();
 
-      mailer
-        .sendMail(event.forumID.email, SACApprovedTemplate, {
-          eventName: event.name,
-        })
-        .then((response) => {
-          res.json(
-            response(
-              "successfully approved the event",
-              process.env.SUCCESS_CODE
-            )
-          );
-        });
-    } else {
-      res.json(response("unauthorized", process.env.FAILURE_CODE));
+    //ADD THIS EVENT AS ORGANISED TO ALL THE FORUM STUDENTS.
+    const forum = await forums.findById(event.forumID);
+    const {forumCoreTeamMembers} = forum;
+    for(let i=0;i<forumCoreTeamMembers;i++)
+    {
+      const stu = await students.findById(forumCoreTeamMembers[i]);
+      stu.eventsOrganized.push(eventId);
+      stu.save();
     }
+    //update event status
+    event.eventStatus = "APPROVED";
+    await event.save();
+
+    //send mails to the forum
+    mailer
+      .sendMail(event.forumID.email, SACApprovedTemplate, {
+        eventName: event.name,
+      })
+      .then((r) => {
+        res.json(
+          response("successfully approved the event", process.env.SUCCESS_CODE)
+        );
+      });
   } catch (err) {
     console.log(err);
-    res.json(response("failed to approve event", process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -300,26 +324,22 @@ const commentEvent = async (req, res) => {
     ) {
       throw new Error("cannot comment on event during current status");
     }
-    if (req.user.role.name == "SAC") {
-      event.eventStatus = "REQUESTED CHANGES BY SAC";
-      event.SACComments = SACComments;
-      await event.save();
+    event.eventStatus = "REQUESTED CHANGES BY SAC";
+    event.SACComments = SACComments;
+    await event.save();
 
-      mailer
-        .sendMail(event.forumID.email, SACCommentedTemplate, {
-          eventName: event.name,
-        })
-        .then((response) => {
-          res.json(
-            response(
-              "successfully commented on the event",
-              process.env.SUCCESS_CODE
-            )
-          );
-        });
-    } else {
-      res.json(response("unauthorized", process.env.FAILURE_CODE));
-    }
+    mailer
+      .sendMail(event.forumID.email, SACCommentedTemplate, {
+        eventName: event.name,
+      })
+      .then((r) => {
+        res.json(
+          response(
+            "successfully commented on the event",
+            process.env.SUCCESS_CODE
+          )
+        );
+      });
   } catch (err) {
     console.log(err);
     res.json(
@@ -339,26 +359,19 @@ const rejectEvent = async (req, res) => {
     ) {
       throw new Error("cannot reject event during current status");
     }
-    if (req.user.role.name == "SAC") {
-      event.eventStatus = "REJECTED";
-      event.SACComments = SACComments;
-      await event.save();
+    event.eventStatus = "REJECTED";
+    event.SACComments = SACComments;
+    await event.save();
 
-      mailer
-        .sendMail(event.forumID.email, SACRejectedTemplate, {
-          eventName: event.name,
-        })
-        .then((response) => {
-          res.json(
-            response(
-              "successfully rejected the event",
-              process.env.SUCCESS_CODE
-            )
-          );
-        });
-    } else {
-      res.json(response("unauthorized", process.env.FAILURE_CODE));
-    }
+    mailer
+      .sendMail(event.forumID.email, SACRejectedTemplate, {
+        eventName: event.name,
+      })
+      .then((r) => {
+        res.json(
+          response("successfully rejected the event", process.env.SUCCESS_CODE)
+        );
+      });
   } catch (err) {
     console.log(err);
     res.json(response("failed to reject the event", process.env.FAILURE_CODE));

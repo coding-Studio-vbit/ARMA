@@ -1,6 +1,7 @@
 {
   "B.Tech": {
     "code": "A",
+    "totalYears":"4",
     "branches": {
       "CIV": { "code": "01", "sections": 4 },
       "EEE": { "code": "02", "sections": 4 },
@@ -8,10 +9,10 @@
       "ECE": { "code": "04", "sections": 4 },
       "CSE": { "code": "05", "sections": 4 },
       "IT": { "code": "12", "sections": 4 },
-      "CSM": { "code": "66", "sections": 4 },
-      "CSD": { "code": "67", "sections": 4 },
+      "CSB": { "code": "32", "sections": 4 },
       "CSC": { "code": "62", "sections": 4 },
-      "CSB": { "code": "32", "sections": 4 }
+      "CSM": { "code": "66", "sections": 4 },
+      "CSD": { "code": "67", "sections": 4 }
     }
   }
 }

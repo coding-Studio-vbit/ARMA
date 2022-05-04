@@ -14,6 +14,7 @@ export const Students_View = () => {
     email: string;
     year: number;
     section: string;
+    rollNumber: string;
     branch: string;
     phone: number;
     coreTeamMember: any[];
@@ -44,6 +45,10 @@ export const Students_View = () => {
             <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr] items-center">
               <span className="text-arma-gray text-xl">Name:</span>
               <span className="text-xl ml-4">{info?.name}</span>
+            </div>
+            <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr]  items-center">
+              <span className="text-arma-gray text-xl">Roll Number:</span>
+              <span className="text-xl ml-4">{info?.rollNumber ?? " "}</span>
             </div>
             <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr]  items-center">
               <span className="text-arma-gray text-xl">Email:</span>
@@ -92,10 +97,10 @@ export const Students_View = () => {
             info?.forumMemberships?.map((i: any) => {
               return (
                 <div
-                  key={i.forumID}
+                  key={i.forumId}
                   className="shadow-xl border-2 flex flex-col p-4 w-max rounded-[16px]"
                 >
-                  <span>Forum Name:{i.name}</span>
+                  <span>{i.designation}, {i.forumId.name}</span>
                 </div>
               );
             })
@@ -171,7 +176,20 @@ export const Students_View = () => {
         </div>
 
         <div className="ml-auto mt-8">
+          <a onClick={async () => {
+                  const result = await axiosInstance({responseType: 'blob', method: 'POST', url:`${process.env.REACT_APP_SERVER_URL}students/newReport`,data:{studentId: id}})
+                  const url = window.URL.createObjectURL(
+                    new Blob([result.data])
+                  );
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.setAttribute("download", info.rollNumber + ".pdf"); //or any other extension
+                  document.body.appendChild(link);
+                  link.click();
+                }}
+                download>
           <button className="btn mb-8 ml-auto mt-8">GENERATE</button>
+          </a>
         </div>
       </div>
     </div>

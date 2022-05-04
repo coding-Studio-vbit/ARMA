@@ -85,13 +85,13 @@ export default function ForumProfile() {
     item["displayName"] = displayName;
     let dataPath = (
       <div key={i} className="flex items-center   justify-around gap-2">
-        <input
+        {/* <input
           className="w-5 h-5  rounded-none accent-[#0B5B8A] cursor-pointer"
           type="checkbox"
           
           name={item.name}
           onChange={(e) => null}
-        ></input>
+        ></input> */}
         <Delete className="text-black/50" onClick={async()=>{
           setDialogMsg({
             title:"Are you sure want to delete the member?",
@@ -331,9 +331,9 @@ export default function ForumProfile() {
           >
             ADD
           </button>
-          <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1">
+          {/* <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1">
             GENERATE CERTIFICATE
-          </button>
+          </button> */}
         </div>
         <div className="l">
           <Table
@@ -358,9 +358,9 @@ export default function ForumProfile() {
           >
             ADD
           </button>
-          <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1">
+          {/* <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1">
             GENERATE CERTIFICATE
-          </button>
+          </button> */}
         </div>
         <div className="">
           <Table

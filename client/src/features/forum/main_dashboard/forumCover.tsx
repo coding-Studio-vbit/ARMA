@@ -96,7 +96,7 @@ function ForumCover() {
               });
           }}
         />
-        <div className="font-medium absolute text-white z-40 bottom-10 right-20 bg-arma-blue px-5 py-2 rounded-full ">
+        <div className="font-medium absolute text-white z-40 bottom-5 right-10 bg-arma-blue px-5 py-2 rounded-full ">
           {/* <Add fontSize="small" /> */}
           <Add fontSize="small"/>
           {" "}

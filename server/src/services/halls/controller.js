@@ -61,7 +61,7 @@ const addHall = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -94,7 +94,7 @@ const viewHall = async (req, res) => {
     res.json(response(hall, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -105,7 +105,7 @@ const deleteHall = async (req, res) => {
     res.json(response(hall, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -113,9 +113,10 @@ const getSlots = async (req, res) => {
   try {
     let { date } = req.body;
     let result = await reservations
-      .find({ status: "NOT COMPLETED", dates: date }).populate("hallId");
+      .find({ status: "NOT COMPLETED", dates: date })
+      .populate("hallId");
     const slotsObject = {};
-    console.log("reservations are:",result);
+    console.log("reservations are:", result);
     result.forEach((item) => {
       if (!slotsObject.hasOwnProperty(item.hallId.name)) {
         slotsObject[item.hallId.name] = [];
@@ -123,11 +124,11 @@ const getSlots = async (req, res) => {
       const dateIndex = item.dates.indexOf(date);
       for (let i = 0; i < item.timeSlots[dateIndex].length; i++)
         slotsObject[item.hallId.name].push(item.timeSlots[dateIndex][i]);
-      });
-      res.json(response(slotsObject, process.env.SUCCESS_CODE));
+    });
+    res.json(response(slotsObject, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(err, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 

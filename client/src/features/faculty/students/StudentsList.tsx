@@ -73,7 +73,7 @@ export default function StudentsList() {
             { displayName: "Section", dataPath: "section", sortable: false },
           ]}
         />
-      <button className="btn mb-4 ml-auto  mt-8">GENERATE</button>
+      {/* <button className="btn mb-4 ml-auto  mt-8">GENERATE</button> */}
     </div>
   );
 }

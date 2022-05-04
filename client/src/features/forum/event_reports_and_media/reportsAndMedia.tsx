@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  AssignmentTwoTone,
+  Assignment,
   Close,
   CloudUploadTwoTone,
-  ImageTwoTone,
+  Image,
 } from "@material-ui/icons";
 import { FC, useState } from "react";
 import { uploadReportAndMedia } from "../../../services/events/event";
@@ -11,8 +11,8 @@ import { Spinner } from "../../../components/Spinner/Spinner";
 import { Dialog } from "../../../components/Dialog/Dialog";
 ///Only UI
 export const ReportAndMedia = () => {
-  const location = useLocation();
-  const eventID :any = location.state ?? '61da9c41ee32a8e65373fcc4'
+  const location:any = useLocation();
+  const eventID :any = location.state.eventId ?? '61da9c41ee32a8e65373fcc4'
   const [error,setError] = useState("")
   const [loading,setLoading] = useState(false)
   const [show,setShow] = useState(false)
@@ -54,7 +54,7 @@ export const ReportAndMedia = () => {
       </div>
       <Dialog show={show} setShow={setShow} title={error}  >
         <button className="btn" onClick={()=>{
-          navigate('/forum/eventDashboard',{replace:true})
+          navigate(-1)
         }} >Okay</button>
         </Dialog>
       <span className={`mt-8 text-center mb-2 h-6 text-red-600  `} > {error }</span>
@@ -92,7 +92,7 @@ const EventReport: FC<{
     <div className="flex flex-col items-center gap-4">
       <div className="flex align-middle gap-1 items-center">
         <span className="text-2xl">Event Report </span>
-        <AssignmentTwoTone />
+        <Assignment className="text-black"/>
       </div>
       <span>Upload new document</span>
       <label className="rounded-[8px] hover:bg-slate-500/10 !cursor-pointer px-20 py-6 outline-dashed outline-arma-dark-blue ">
@@ -130,7 +130,7 @@ const EventImages: FC<{
     <div className="flex flex-col items-center gap-4">
       <div className="flex align-middle gap-1 items-center">
         <span className="text-2xl">Event Images </span>
-        <ImageTwoTone />
+        <Image />
       </div>
       <span>Upload new Image</span>
       <label className="rounded-[8px] hover:bg-slate-500/10 !cursor-pointer px-20 py-6 outline-dashed outline-arma-dark-blue ">
