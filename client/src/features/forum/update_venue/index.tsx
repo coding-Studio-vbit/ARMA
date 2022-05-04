@@ -21,6 +21,7 @@ const EventVenue = () => {
   const eventDetails = useSelector((state: RootState) => state.eventDetails);
 
   useEffect(() => {
+    if (Object.keys(eventDates).length === 0) navigate(-1);
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}halls`)
       .then((response) => {
