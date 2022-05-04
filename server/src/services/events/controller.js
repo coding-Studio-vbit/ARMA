@@ -16,6 +16,7 @@ const equipments = require("../../models/equipment");
 const halls = require("../../models/hall");
 const mongoose = require("mongoose");
 const facultyModel = require("../../models/faculty");
+const attendances = require("../../models/attendance");
 
 const getEvents = async (req, res) => {
   //For pagination
@@ -225,7 +226,7 @@ const createEvent = async (req, res) => {
       const FO = await faculty.findOne({ role: FORoleID._id });
       res = await mailer.sendMail(FO.email, newEventCreatedFO, {
         forumName: req.user.name,
-        eventName:eventDetails.name,
+        eventName: eventDetails.name,
         FOName: FO.name,
       });
     } else {
@@ -233,7 +234,7 @@ const createEvent = async (req, res) => {
       const SAC = await faculty.findOne({ role: SACRoleID._id });
       res = await mailer.sendMail(SAC.email, newEventCreatedSAC, {
         forumName: req.user.name,
-        eventName:eventDetails.name,
+        eventName: eventDetails.name,
         SACName: SAC.name,
       });
     }
@@ -345,11 +346,11 @@ const eventAttendance = async (req, res) => {
   console.log(req.query.eventID);
   try {
     const result = await attendance
-      .findOne({eventID: req.query.eventID})
-      .populate({ path: "presence.studentId", model: "students" })
-    if(result == null)
+      .findOne({ eventID: req.query.eventID })
+      .populate({ path: "presence.studentId", model: "students" });
+    if (result == null)
       throw new Error("Could not find the attendance document");
-    const total = await attendance.count({eventID: req.query.eventID});
+    const total = await attendance.count({ eventID: req.query.eventID });
     res.json(
       response(
         { data: result.presence, total: total },
@@ -358,9 +359,7 @@ const eventAttendance = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(
-      response(error.message, process.env.FAILURE_CODE)
-    );
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -713,10 +712,32 @@ const completeEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
     const event = await events.findById(eventId);
+
     if (event.eventStatus !== "APPROVED")
       throw new Error(
         "Cannot mark event as complete during its current status"
       );
+    //update student reports
+    const attendanceDoc = await attendances.findOne({ eventID: eventId });
+    const totalDays = event.eventDates.length;
+    const qualifiedStudents = [];
+    for(let i=0;i<attendanceDoc.presence.length;i++)
+    {
+      const attendancePercentage = attendanceDoc.presence[i].dates.length * 100 / totalDays;
+      if(attendancePercentage >= process.env.MIN_EVENT_PERCENTAGE){
+        qualifiedStudents.push(attendanceDoc.presence[i].studentId);
+      }
+    }
+    //add this event as participated in for each of the qualified students.
+    for(let i=0;i<qualifiedStudents.length;i++)
+    {
+      const stu = await students.findById(qualifiedStudents[i]);
+      if(stu){
+        stu.eventsParticipated.push(eventId);
+        stu.save();
+      }
+    }
+    //update event status
     event.eventCompleted = true;
     await event.save();
     res.json("successfully marked event as complete", process.env.SUCCESS_CODE);

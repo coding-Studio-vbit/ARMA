@@ -134,8 +134,8 @@ const studentViewCard = async (req, res) => {
     let { id } = req.body;
     let student = await students
       .findOne({ _id: id })
-      .populate("coreTeamMember.forumID")
-      .populate({ path: "attendedEvents", populate: { path: "forumID" } });
+      .populate("forumMemberships.forumId")
+      .populate({ path: "eventsParticipated", populate: { path: "forumID" } });
     let { attendedEvents, ...stu } = student.toObject();
     for (let i = 0; i < attendedEvents.length; i++) {
       let set = new Set();

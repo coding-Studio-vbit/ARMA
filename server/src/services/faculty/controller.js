@@ -16,6 +16,8 @@ const {
   SACRejectedTemplate,
 } = require("../../email_templates/templates");
 const mongoose = require("mongoose");
+const forums = require("../../models/forum");
+const students = require("../../models/student");
 
 //get Faculty list
 
@@ -282,9 +284,20 @@ const approveEvent = async (req, res) => {
       throw new Error("cannot approve event during current status");
     }
 
+    //ADD THIS EVENT AS ORGANISED TO ALL THE FORUM STUDENTS.
+    const forum = await forums.findById(event.forumID);
+    const {forumCoreTeamMembers} = forum;
+    for(let i=0;i<forumCoreTeamMembers;i++)
+    {
+      const stu = await students.findById(forumCoreTeamMembers[i]);
+      stu.eventsOrganized.push(eventId);
+      stu.save();
+    }
+    //update event status
     event.eventStatus = "APPROVED";
     await event.save();
 
+    //send mails to the forum
     mailer
       .sendMail(event.forumID.email, SACApprovedTemplate, {
         eventName: event.name,
