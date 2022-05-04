@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  AssignmentTwoTone,
+  Assignment,
   Close,
   CloudUploadTwoTone,
-  ImageTwoTone,
+  Image,
 } from "@material-ui/icons";
 import { FC, useState } from "react";
 import { uploadReportAndMedia } from "../../../services/events/event";
@@ -92,7 +92,7 @@ const EventReport: FC<{
     <div className="flex flex-col items-center gap-4">
       <div className="flex align-middle gap-1 items-center">
         <span className="text-2xl">Event Report </span>
-        <AssignmentTwoTone />
+        <Assignment className="text-black"/>
       </div>
       <span>Upload new document</span>
       <label className="rounded-[8px] hover:bg-slate-500/10 !cursor-pointer px-20 py-6 outline-dashed outline-arma-dark-blue ">
@@ -130,7 +130,7 @@ const EventImages: FC<{
     <div className="flex flex-col items-center gap-4">
       <div className="flex align-middle gap-1 items-center">
         <span className="text-2xl">Event Images </span>
-        <ImageTwoTone />
+        <Image />
       </div>
       <span>Upload new Image</span>
       <label className="rounded-[8px] hover:bg-slate-500/10 !cursor-pointer px-20 py-6 outline-dashed outline-arma-dark-blue ">
