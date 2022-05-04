@@ -8,7 +8,6 @@ function Profile({ url, setUrl, isEdit,profileObj,setprofileObj }) {
     const res = await axios.get(
       `${process.env.REACT_APP_SERVER_URL}forum/profilePicture`
     );
-    console.log(res.data.response)
     setUrl(res.data.response);
   }
   useEffect(() => {

@@ -12,8 +12,7 @@ import axiosInstance from "../../../utils/axios";
 import Profile from "./profile";
 import Select from "react-select";
 
-
-let headers:any[] = [
+let headers: any[] = [
   {
     displayName: "Roll Number",
     dataPath: "studentID.rollNumber",
@@ -24,10 +23,8 @@ let headers:any[] = [
   { displayName: "Year", dataPath: "studentID.year", sortable: true },
   { displayName: "Section", dataPath: "studentID.section", sortable: false },
   { displayName: "Designation", dataPath: "designation", sortable: false },
-  
-
 ];
-let memHeaders:any[] =[
+let memHeaders: any[] = [
   {
     displayName: "Roll Number",
     dataPath: "rollNumber",
@@ -39,14 +36,12 @@ let memHeaders:any[] =[
   { displayName: "Section", dataPath: "section", sortable: false },
 ];
 
-
-
 export default function ForumProfile() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { forum, setForum } = useUser();
   const [isEdit, setIsEdit] = useState(false);
-  const [message, setMessage] = useState("")
-  const [show, setShow] = useState(false)
+  const [message, setMessage] = useState("");
+  const [show, setShow] = useState(false);
   //const [link, setLink] = useState("")
   const [description, setDescription] = useState<string>(
     forum?.description ?? " "
@@ -56,30 +51,34 @@ export default function ForumProfile() {
   );
   // const [allCheckedCore,setAllCheckedCore] = useState(false)
   // const [allCheckedMem,setAllCheckedMem] = useState(false)
-  const [loading,setLoading] = useState(false)
-  const [show1,setShow1]= useState(false)
-  const [myfac, setMyFac] = useState<{}[]>()
-  const [dialogMsg,setDialogMsg] = useState<{title:string,proceed:()=>Promise<void>}>({title:"",proceed:async()=>{}})
+  const [loading, setLoading] = useState(false);
+  const [show1, setShow1] = useState(false);
+  const [myfac, setMyFac] = useState<{}[]>();
+  const [dialogMsg, setDialogMsg] = useState<{
+    title: string;
+    proceed: () => Promise<void>;
+  }>({ title: "", proceed: async () => {} });
   // console.log("Rebuild Profile");
   const [profileObj, setprofileObj] = useState(null);
 
   const [url, setUrl] = useState("");
-  let [name, setName] = useState<string>(" ")
-  
-  const [forumEmail, setForumEmail] = useState<string>(forum?.email ?? " ");
-  
-  const handelCheckbox = (item: any, i: number, core:boolean,setUpdate:React.Dispatch<React.SetStateAction<boolean>>) => {
-  console.log(name);
-  
+  let [name, setName] = useState<string>(" ");
 
+  const [forumEmail, setForumEmail] = useState<string>(forum?.email ?? " ");
+
+  const handelCheckbox = (
+    item: any,
+    i: number,
+    core: boolean,
+    setUpdate: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
     let displayName = (
       <input
         key={i}
         className="w-5 h-5 rounded-none accent-[#0B5B8A] cursor-pointer"
         type="checkbox"
-        name={item?.studentID ? "core":"noncore"}
-        onChange={(e) => console.log(e.target.name)
-        }
+        name={item?.studentID ? "core" : "noncore"}
+        onChange={(e) => console.log(e.target.name)}
       ></input>
     );
     item["displayName"] = displayName;
@@ -92,122 +91,142 @@ export default function ForumProfile() {
           name={item.name}
           onChange={(e) => null}
         ></input> */}
-        <Delete className="text-black/50" onClick={async()=>{
-          setDialogMsg({
-            title:"Are you sure want to delete the member?",
-            proceed: async()=>{
-               const res = await ForumService.deleteForumMemeber(forum?.name??"",core?item.studentID._id:item._id,core?"core":"nonCore")
-               setShow1(false)
-               setDialogMsg({title:"",proceed:async()=>{}})
-               setLoading(false)
-               setMessage(res)
-               setShow(true)
-          setUpdate((v)=>!v)
-            }
-          })
-          setShow1(true)
-          }} />
+        <Delete
+          className="text-black/50"
+          onClick={async () => {
+            setDialogMsg({
+              title: "Are you sure want to delete the member?",
+              proceed: async () => {
+                const res = await ForumService.deleteForumMemeber(
+                  forum?.name ?? "",
+                  core ? item.studentID._id : item._id,
+                  core ? "core" : "nonCore"
+                );
+                setShow1(false);
+                setDialogMsg({ title: "", proceed: async () => {} });
+                setLoading(false);
+                setMessage(res);
+                setShow(true);
+                setUpdate((v) => !v);
+              },
+            });
+            setShow1(true);
+          }}
+        />
       </div>
     );
     item["dataPath"] = dataPath;
-    if(memHeaders.length === 5){
-      if(!core){
+    if (memHeaders.length === 5) {
+      if (!core) {
         memHeaders.push({
           displayName: "Actions",
           dataPath: "dataPath",
           sortable: false,
         });
       }
-
     }
-    if (headers.length ===6) {
-      console.log(i);
-
-      if (core)
-        {
-          headers.push({
+    if (headers.length === 6) {
+      if (core) {
+        headers.push({
           displayName: "Actions",
           dataPath: "dataPath",
           sortable: false,
         });
-   
-        }
-      
+      }
     }
 
     return { ...item };
   };
-  const save = async() =>{
-    const res = await axiosInstance.put(process.env.REACT_APP_SERVER_URL + "forum/updateProfile", {email:forumEmail, description:description, facultyCoordinator: facultycoordinator})
-    const data = res.data
-    if(data.status === 1)
-    {
-      setForum(data.response)
-      setMessage("Details Updated")
-    }else
-    {
-      setMessage(data.response)
-      setForumEmail(forum?.email ?? "")
-      setFacultycoordinator(forum?.facultyCoordinatorID.name ?? "")
-      setDescription(forum?.description??"")
-      setIsEdit(false)
+  const save = async () => {
+    const res = await axiosInstance.put(
+      process.env.REACT_APP_SERVER_URL + "forum/updateProfile",
+      {
+        email: forumEmail,
+        description: description,
+        facultyCoordinator: facultycoordinator,
+      }
+    );
+    const data = res.data;
+    if (data.status === 1) {
+      setForum(data.response);
+      setMessage("Details Updated");
+    } else {
+      setMessage(data.response);
+      setForumEmail(forum?.email ?? "");
+      setFacultycoordinator(forum?.facultyCoordinatorID.name ?? "");
+      setDescription(forum?.description ?? "");
+      setIsEdit(false);
     }
-    setShow(true)
-    setIsEdit(false)
-  }
+    setShow(true);
+    setIsEdit(false);
+  };
 
   useEffect(() => {
     const faculty = async () => {
-      const res = await axiosInstance.post(process.env.REACT_APP_SERVER_URL +"faculty/fetchFaculty", {name: name});
-      console.log(res.data);
+      const res = await axiosInstance.post(
+        process.env.REACT_APP_SERVER_URL + "faculty/fetchFaculty",
+        { name: name }
+      );
       const data = res.data.response;
-      let arr = []
-      for(let i = 0; i < data.length; i++){
-          arr.push({value:data[i].name, label:data[i].name})
+      let arr = [];
+      for (let i = 0; i < data.length; i++) {
+        arr.push({ value: data[i].name, label: data[i].name });
       }
 
-      setMyFac(arr)
-    }
-    if(name.length !== 0)
-    {
+      setMyFac(arr);
+    };
+    if (name.length !== 0) {
       faculty();
-    }else{
-      setMyFac([])
+    } else {
+      setMyFac([]);
     }
-    
-  },[name])
-  const handleInputChange = characterEntered => {
-    setName(characterEntered)
-    
+  }, [name]);
+  const handleInputChange = (characterEntered) => {
+    setName(characterEntered);
+
     console.log(name);
   };
   return (
     <div className="mt-8 overflow-x-auto">
-      <Dialog show={show1} setShow={setShow1} title={dialogMsg.title}  loading={loading}  >
-        <button className="outlineBtn" onClick={()=>setShow1(false)} >Cancel</button>
-        <button className="btn" onClick={async ()=>{
-          setLoading(true)
-          setDialogMsg({title:"Deleting...",proceed:async()=>{}})
+      <Dialog
+        show={show1}
+        setShow={setShow1}
+        title={dialogMsg.title}
+        loading={loading}
+      >
+        <button className="outlineBtn" onClick={() => setShow1(false)}>
+          Cancel
+        </button>
+        <button
+          className="btn"
+          onClick={async () => {
+            setLoading(true);
+            setDialogMsg({ title: "Deleting...", proceed: async () => {} });
 
-          await dialogMsg.proceed()
-          
-        }} >Proceed</button>
-
+            await dialogMsg.proceed();
+          }}
+        >
+          Proceed
+        </button>
       </Dialog>
 
       <div className="flex flex-col items-center m-auto sm:w-[80%] md:w-max w-[90%] ">
-
-        <Profile url={url} setUrl={setUrl} 
-        isEdit={isEdit} profileObj={profileObj} setprofileObj={setprofileObj}/>
+        <Profile
+          url={url}
+          setUrl={setUrl}
+          isEdit={isEdit}
+          profileObj={profileObj}
+          setprofileObj={setprofileObj}
+        />
         <span className="text-center  item-center text-2xl font-semibold text-arma-blue">
           {forum?.name}
           <AnimatePresence initial={false} exitBeforeEnter>
             {!isEdit && (
               <motion.span
                 className="inline-block"
-                initial={{  opacity: 0 }}
-                animate={{  opacity: 1 }}
-                exit={{  opacity: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 transition={{ ease: "easeOut", duration: 0.25 }}
               >
                 <Edit
@@ -233,48 +252,49 @@ export default function ForumProfile() {
           />
         </div>
         <div className="flex flex-col w-full md:flex-row gap-y-8 sm:gap-x-8">
-          {isEdit ? <Select
-            name="Faculty Coordinator"
-            options={myfac}
-            placeholder={facultycoordinator}
-            onInputChange={handleInputChange}
-            noOptionsMessage={() => null}
-            onChange={(e:any) => {
-            setFacultycoordinator(e?.value)
-          }  
-        }
-            styles={{
+          {isEdit ? (
+            <Select
+              name="Faculty Coordinator"
+              options={myfac}
+              placeholder={facultycoordinator}
+              onInputChange={handleInputChange}
+              noOptionsMessage={() => null}
+              onChange={(e: any) => {
+                setFacultycoordinator(e?.value);
+              }}
+              styles={{
                 control: (base) => ({
-                ...base,
-                minHeight: 52,
-                minWidth: 270,
-                borderRadius: "0.5rem",
-                border: "2px solid rgb(200, 200, 200)",
+                  ...base,
+                  minHeight: 52,
+                  minWidth: 270,
+                  borderRadius: "0.5rem",
+                  border: "2px solid rgb(200, 200, 200)",
                 }),
 
                 placeholder: (base) => ({
                   ...base,
                   color: "black",
                 }),
-                
+
                 valueContainer: (base) => ({
                   ...base,
-                  paddingLeft: '16px',
-              })  
-            }}
-            
-            className="basic-multi-select "
-           
-          /> : <InputField
-          className="mb-5"
-          name="Faculty Coordinator"
-          disabled={!isEdit}
-          value={facultycoordinator}
-          onChange={(e) => {
-            setFacultycoordinator(e.target.value);
-          }}
-        />}
-      
+                  paddingLeft: "16px",
+                }),
+              }}
+              className="basic-multi-select "
+            />
+          ) : (
+            <InputField
+              className="mb-5"
+              name="Faculty Coordinator"
+              disabled={!isEdit}
+              value={facultycoordinator}
+              onChange={(e) => {
+                setFacultycoordinator(e.target.value);
+              }}
+            />
+          )}
+
           <InputField
             className="mb-5"
             name="Forum Email"
@@ -289,7 +309,6 @@ export default function ForumProfile() {
           <AnimatePresence initial={false} exitBeforeEnter>
             {isEdit && (
               <motion.div
-                
                 initial={{ y: "-1vh", opacity: 0 }}
                 animate={{ y: "0", opacity: 1 }}
                 exit={{ y: "-0.5vh", opacity: 0 }}
@@ -297,14 +316,14 @@ export default function ForumProfile() {
               >
                 <button
                   className="btn mr-8  bg-arma-title rounded-[8px] px-6 py-2"
-                  onClick={()=>
-                    {
-                      setForumEmail(forum?.email ?? "")
-                      setFacultycoordinator(forum?.facultyCoordinatorID.name ?? "")
-                      setDescription(forum?.description??"")
-                      setIsEdit(false)
-                    }
-                  }
+                  onClick={() => {
+                    setForumEmail(forum?.email ?? "");
+                    setFacultycoordinator(
+                      forum?.facultyCoordinatorID.name ?? ""
+                    );
+                    setDescription(forum?.description ?? "");
+                    setIsEdit(false);
+                  }}
                 >
                   CANCEL
                 </button>
@@ -317,8 +336,7 @@ export default function ForumProfile() {
               </motion.div>
             )}
           </AnimatePresence>
-          <Dialog show={show} setShow={setShow} title = {message}
-      /> 
+          <Dialog show={show} setShow={setShow} title={message} />
         </div>
       </div>
       <div className="md:mx-[5rem] lg:mx-[8rem] xl:mx-[12rem] sm:mx-[2rem] mx-4  mt-4">
@@ -326,8 +344,9 @@ export default function ForumProfile() {
           <span className="text-arma-gray font-semibold text-lg">
             Forum Core Team
           </span>
-          <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
-          onClick={()=>navigate('/forum/addNewCoreTeamMember/')}
+          <button
+            className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
+            onClick={() => navigate("/forum/addNewCoreTeamMember/")}
           >
             ADD
           </button>
@@ -342,8 +361,8 @@ export default function ForumProfile() {
             }`}
             rowsPerPage={5}
             buttonsCount={5}
-            transformer={(item, i,setUpdate) => {
-              return handelCheckbox(item, i,true,setUpdate);
+            transformer={(item, i, setUpdate) => {
+              return handelCheckbox(item, i, true, setUpdate);
             }}
             filter={{ name: forum?.name }}
             headers={headers}
@@ -353,8 +372,9 @@ export default function ForumProfile() {
           <span className="text-arma-gray font-semibold text-lg">
             Forum Members
           </span>
-          <button className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
-          onClick={()=>navigate('/forum/addNewForumMember')}
+          <button
+            className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
+            onClick={() => navigate("/forum/addNewForumMember")}
           >
             ADD
           </button>
@@ -369,8 +389,8 @@ export default function ForumProfile() {
             }`}
             rowsPerPage={2}
             buttonsCount={1}
-            transformer={(item, i,setUpdate) => {
-              return handelCheckbox(item, i, false,setUpdate);
+            transformer={(item, i, setUpdate) => {
+              return handelCheckbox(item, i, false, setUpdate);
             }}
             filter={{ name: forum?.name }}
             headers={memHeaders}
@@ -380,4 +400,3 @@ export default function ForumProfile() {
     </div>
   );
 }
-

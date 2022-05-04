@@ -54,16 +54,12 @@ function ForumEventDashboard() {
   }
 
   const getEventDates = () => {
-    console.log(state);
-
     axios
       .get(
         `${process.env.REACT_APP_SERVER_URL}events/getEventReservations/${state._id}`
       )
       .then((response) => {
         var res = response.data.response;
-        console.log(res);
-
         var obj = {};
         Object.keys(response.data.response).map((d) => {
           var x = d.split("-");
