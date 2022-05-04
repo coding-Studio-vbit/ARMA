@@ -342,15 +342,14 @@ const uploadRegistrantsList = async (req, res) => {
 };
 
 const eventAttendance = async (req, res) => {
-  let where = {};
-  if (req.query.eventID) where.eventID = req.query.eventID;
   console.log(req.query.eventID);
   try {
-    result = await attendance
-      .findOne(where)
-      .populate({ path: "presence._id", model: "students" })
-      .exec();
-    const total = await attendance.count(where);
+    const result = await attendance
+      .findOne({eventID: req.query.eventID})
+      .populate({ path: "presence.studentId", model: "students" })
+    if(result == null)
+      throw new Error("Could not find the attendance document");
+    const total = await attendance.count({eventID: req.query.eventID});
     res.json(
       response(
         { data: result.presence, total: total },
@@ -360,7 +359,7 @@ const eventAttendance = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.json(
-      response({ message: "event data fetch error" }, process.env.FAILURE_CODE)
+      response(error.message, process.env.FAILURE_CODE)
     );
   }
 };

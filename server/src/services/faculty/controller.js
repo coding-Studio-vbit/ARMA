@@ -296,7 +296,7 @@ const approveEvent = async (req, res) => {
       });
   } catch (err) {
     console.log(err);
-    res.json(response("failed to approve event", process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 

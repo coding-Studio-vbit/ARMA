@@ -94,7 +94,7 @@ const UpdateEventDetails = () => {
       />
       {/* Header */}
       <h1 className="font-sans text-arma-dark-blue font-semibold text-xl md:text-4xl inline-block  mt-2">
-        {forumName} SoC - Event Details
+        {eventName} - Event Details
         {!isEdit && (
           <Edit
             className="ml-3 text-black !text-xl md:!text-3xl cursor-pointer"

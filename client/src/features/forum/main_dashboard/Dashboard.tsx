@@ -13,7 +13,6 @@ const Dashboard = () => {
   useEffect(()=>{
     axios.get(`${process.env.REACT_APP_SERVER_URL}forum/dashboard`)
     .then(response=>{
-      console.log(response.data.response)
       setEventList(response?.data.response.events)
       response.data.response.activeEvents = new Set(response.data.response.activeEvents);
       response.data.response.activeEvents = [...response.data.response.activeEvents];
@@ -69,9 +68,9 @@ const Dashboard = () => {
           id="eventCardsSection"
           className="sm:relative -top-16 mb-4 w-full sm:w-3/5 md:w-2/3 lg:w-5/6 flex flex-wrap justify-center lg:justify-start lg:ml-4"
         >
-          {eventList.map((item) => {
+          {eventList.map((item, index) => {
             return (
-              <div className="mx-2 my-4 sm:m-4">
+              <div className="mx-2 my-4 sm:m-4" key={index}>
                 <EventCard event={item} onClick={()=>{
                   navigate('eventDashboard', {state:item})
                 }}/>

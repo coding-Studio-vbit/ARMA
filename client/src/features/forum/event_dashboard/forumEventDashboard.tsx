@@ -76,6 +76,7 @@ function ForumEventDashboard() {
                 .map((eventInfo, index) => {
                   return (
                     <div
+                    key={index}
                       className="w-full sm:w-3/4 md:w-1/3 px-6 py-6 lg:py-8 lg:p-10 m-0 
                                             arma-card-gradient text-white  text-lg sm:text-xl lg:text-2xl
                                             shadow-2xl rounded-2xl min-h-max h-40 lg:h-60"
@@ -110,6 +111,7 @@ function ForumEventDashboard() {
                 .map((eventInfo, index) => {
                   return (
                     <div
+                    key={index}
                       className="w-full sm:w-3/4 md:w-1/3 p-6 lg:py-8 lg:p-10 m-0 
                                         arma-card-gradient text-white text-lg sm:text-xl lg:text-2xl
                                         shadow-2xl rounded-2xl min-h-max h-40 lg:h-60"
