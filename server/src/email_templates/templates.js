@@ -69,9 +69,14 @@ const SACCommentedTemplate = {
 };
 
 const SACRejectedTemplate = {
-  template: "",
+  template: "Hey ${forumName}, Unfortunately The SAC has rejected your event ${eventName}. Please check the ARMA app to know more.",
   subject: "Event Rejected by SAC",
 };
+
+const MOReportAndMedia = {
+  template: "Hey there ${MOName}, ${forumName} has sent the following attachments as media from the event ${eventName}. Take a look!",
+  subject: "New Event Media",
+}
 
 module.exports = {
   welcomeTemplate,
@@ -87,5 +92,6 @@ module.exports = {
   SACRejectedTemplate,
   newEventCreatedFO,
   newEventCreatedSAC,
-  newEventCreatedForum
+  newEventCreatedForum,
+  MOReportAndMedia
 };

@@ -5,11 +5,13 @@ const response = require("../util/response");
 const attendance = require("../../models/attendance");
 const roles = require("../../models/role");
 const mailer = require("../util/mailer");
+const fs = require("fs");
 const {
   budgetDocUpdateTemplate,
   newEventCreatedForum,
   newEventCreatedFO,
   newEventCreatedSAC,
+  MOReportAndMedia,
 } = require("../../email_templates/templates");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
@@ -281,14 +283,29 @@ const updateBudgetDoc = async (req, res) => {
 const reportAndMedia = async (req, res) => {
   try {
     console.log(req.body.eventID + "is the event id");
-    let event = await events.findById(req.body.eventID);
+    let event = await events.findById(req.body.eventID).populate('forumID');
+    const MORole = await roles.findOne({name: "MO"});
+    if(MORole == null)
+      throw new Error("MO Role not found!");
+    const MO = await faculty.findOne({role: MORole._id});
+    if(MO == null)
+      throw new Error("MO not found!");
+    
+
     event.reportDocPath = req.files.eventReport[0].path;
+
     let temp = [];
     for (let p = 0; p < req.files.eventImages.length; p++) {
       temp.push(req.files.eventImages[p].path);
     }
     event.mediaFilePaths = temp;
+
     await event.save();
+    temp.push(event.reportDocPath);
+    await mailer.sendMail(MO.email, MOReportAndMedia,{forumName:event.forumID.name, MOName: MO.name, eventName:event.name}, temp.map((fp)=>{return {
+      fileName: fp,
+      path:fp
+    }}))
     res.json(
       response("updated Event Report and Media files", process.env.SUCCESS_CODE)
     );
@@ -296,7 +313,7 @@ const reportAndMedia = async (req, res) => {
     console.log(error);
     res.json(
       response(
-        "updated Event Report and Media failed",
+        error.message,
         process.env.FAILURE_CODE
       )
     );

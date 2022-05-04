@@ -17,8 +17,9 @@ let mailTransporter = nodemailer.createTransport({
   },
 });
 
-const sendMail = (toAddress, emailTemplate, emailData) => {
+const sendMail = (toAddress, emailTemplate, emailData, attachments) => {
   return new Promise((resolve, reject) => {
+    
     const mailDetails = {
       from: process.env.NODEMAILER_EMAIL_ID,
       to: toAddress,
@@ -35,7 +36,9 @@ const sendMail = (toAddress, emailTemplate, emailData) => {
       subject: emailTemplate.subject,
       html: fillTemplateWithData(emailTemplate.template, emailData),
     };
-
+    if(attachments){
+      mailDetails.attachments = attachments;
+    }
     mailTransporter.sendMail(mailDetails, (err, data) => {
       if (err) {
         console.log(err);
