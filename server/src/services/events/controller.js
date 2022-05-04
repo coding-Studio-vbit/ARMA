@@ -524,7 +524,7 @@ const updateReservations = async (req, res) => {
   try {
     const { eventHalls, id } = req.body;
     const event = await events.findById(id);
-    if (event.forumID == req.user._id && event.eventStatus !== "COMPLETED") {
+    if (event.forumID == req.user._id && (event.eventStatus !== "APPROVED" && event.eventStatus !== "COMPLETED")) {
       //delete all reservations of this event.
       const deletionResult = await reservations.deleteMany({ eventId: id });
       let reservationsObject = {};
