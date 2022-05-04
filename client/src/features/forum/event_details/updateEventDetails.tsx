@@ -46,7 +46,7 @@ const UpdateEventDetails = () => {
       console.log(error);
       setIsEdit(false);      
     }
-    //setLoading(false);
+    setLoading(false);
   }
 
   useEffect(() => {
