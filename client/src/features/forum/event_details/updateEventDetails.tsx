@@ -53,7 +53,7 @@ const UpdateEventDetails = () => {
     setForumName(JSON.parse(localStorage.getItem("forum")).name);
     getEventInfo();
   }, [])
- 
+  
   async function updateEventDetails() {
     let formData = new FormData();
     formData.append("eventDocument", pdf1);
@@ -79,7 +79,9 @@ const UpdateEventDetails = () => {
 
   return (
     loading?
-    <div className="flex justify-center items-center h-full"><Spinner/></div>:
+    <div className="flex justify-center items-center">
+      <Spinner/>
+    </div>:
     
       error == null?
 
@@ -249,7 +251,7 @@ const UpdateEventDetails = () => {
       </div>
 
     </div>:
-    <div className="flex justify-center items-center h-full">
+    <div className="flex justify-center items-center">
       {error}
     </div>   
   );

@@ -1,23 +1,42 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { CloudDownload } from "@material-ui/icons";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Calendar } from "react-modern-calendar-datepicker";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { Event } from "../../../interfaces/event";
 import { Forum } from "../../../interfaces/user";
 import { fetchEventById } from "../../../services/events/event";
+import { Dialog } from "../../../components/Dialog/Dialog";
+import { useUser } from "../../../providers/user/UserProvider";
+import axiosInstance from "../../../utils/axios";
 
 export default function RequestsView() {
+  const actions = {
+    "REQUEST_CHANGES":"REQUEST_CHANGES",
+    "APPROVE_BUDGET":"APPROVE_BUDGET",
+    "APPROVE_REQUEST":"APPROVE_REQUEST",
+    "REJECT_REQUEST":"REJECT_REQUEST",
+    "COMPLETED":"COMPLETED",
+    "NONE":"NONE"
+  }
+
   const {id} = useParams()
   const {status,data:event,error} = useQuery<Event,Error>(['eventByID',id],()=>fetchEventById(id),{retry:false})
   
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
+  const [action, setAction] = useState<string>(actions.NONE);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const { faculty } = useUser();
+
   if(status === 'loading'){
     return <p>loading</p>
   }
   if(status === 'error'){
     return <p>{error.message}</p>
   }
-
   
   const preselectedDays = [
     {
@@ -36,9 +55,156 @@ export default function RequestsView() {
       day: 30,
     },
   ];
+
   const facilities = ['speakers', 'mic', 'projector', 'chairs', 'router']
+
+  async function approveBudget(){
+    console.log(message);
+    console.log(action);
+    try {
+      console.log("Approving Budget");
+      console.log("Approved Budget");
+      setLoading(true);
+      setAction(actions.COMPLETED);
+      setLoading(false)
+      setMessage("Budget Approved Successfully")
+      setTimeout(() => {
+        setShowDialog(false);
+        setMessage("")
+        setAction(actions.NONE);
+      }, 2000);
+    } catch (error) {
+      
+    }
+        
+  }
+
+  async function approveEvent(){
+    console.log(message);
+    console.log(action);
+    try {
+      console.log("Approving Event");
+      console.log("Approved Event");
+      setLoading(true);
+      setAction(actions.COMPLETED);
+      setLoading(false)
+      setMessage("Event Approved Successfully")
+      setTimeout(() => {
+        setShowDialog(false);
+        setMessage("")
+        setAction(actions.NONE);
+      }, 2000);
+    } catch (error) {
+      
+    }
+    
+  }
+
+  async function rejectEvent() {
+    console.log(message);
+    console.log(action);
+    try {
+      console.log("Rejecting Event");
+      console.log("Rejected Event");
+      setLoading(true);
+      setAction(actions.COMPLETED);
+      setLoading(false)
+      setMessage("Event has been Rejected")
+      setTimeout(() => {
+        setShowDialog(false);
+        setMessage("")
+        setAction(actions.NONE);
+      }, 2000);
+    } catch (error) {
+      
+    }
+    
+  }
+
+  async function requestChanges() {
+    console.log(message);
+    console.log(action);
+    try {
+      console.log("Requesting Changes");
+      console.log("Requested Changes");
+      setLoading(true);
+      setAction(actions.COMPLETED);
+      setLoading(false)
+      setMessage("Requested Changes Successfully")
+      setTimeout(() => {
+        setShowDialog(false);
+        setMessage("")
+        setAction(actions.NONE);
+      }, 2000);
+    } catch (error) {
+      
+    }
+    
+    
+        
+  }
+
+  function actionNo(){
+    setShowDialog(false);
+    setMessage("");        
+  }
+
+  function actionYes(){
+    switch (action) {
+      case actions.REQUEST_CHANGES:
+        requestChanges()
+        break;
+      case actions.APPROVE_BUDGET:
+        approveBudget()
+        break;
+      case actions.APPROVE_REQUEST:
+        approveEvent()        
+        break;
+      case actions.REJECT_REQUEST:
+        rejectEvent()
+        break;
+      default:
+        break;
+    }    
+  }
+
+  function makeRequest(action) {
+    setAction(action)
+    switch (action) {
+      case actions.REQUEST_CHANGES:
+        setMessage("ARE YOU SURE YOU WANT TO REQUEST CHANGES?")        
+        break;
+      case actions.APPROVE_BUDGET:
+        setMessage("ARE YOU SURE YOU WANT TO APPROVE BUDGET?")        
+        break;
+      case actions.APPROVE_REQUEST:
+        setMessage("ARE YOU SURE YOU WANT TO APPROVE REQUEST?")        
+        break;
+      case actions.REJECT_REQUEST:
+        setMessage("ARE YOU SURE YOU WANT TO REJECT REQUEST?")
+        break;
+      default:
+        break;
+    }
+    setShowDialog(true);    
+  }
+
   return (
     <div className="lg:mx-[5rem] xl:mx-[10rem]  mx-8 mt-8 mb-8 flex flex-col gap-y-4">
+      <Dialog show = {showDialog} setShow = {setShowDialog} title = {""}
+        loading = {loading}
+          children = {
+            <div className="h-40 flex justify-evenly items-center flex-col gap-6 px-4">
+              <p className="text-center">{message}</p>
+              {
+                (action !== actions.COMPLETED) &&
+                <div className="flex justify-evenly gap-12">
+                  <button onClick={()=>actionNo()} className="btn bg-arma-light-gray text-teal-700 border-2 hover:text-white ">NO</button>
+                  <button onClick={()=>actionYes()} className="btn" >YES</button>
+                </div>              
+              }
+            </div>
+          } />
       <div className="flex flex-col w-max ">
         <div className="break-words">
         <span className="text-arma-title sm:text-2xl text-lg font-semibold w-max">
@@ -66,19 +232,64 @@ export default function RequestsView() {
       </div>
 
       <span className="text-arma-gray font-medium text-2xl ">Attachments</span>
-      <div className="flex items-center gap-x-4">
-        <div className="bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] max-w-[500px] break-words">
-          <span>{event.eventProposalDocPath}</span>
-          <span>{event.budgetDocPath}</span>
 
+      <div className="flex items-start flex-col gap-x-4">
+        <div className="flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
+            <span>Event Proposal Document</span>
+            {/* {event.eventProposalDocPath} */}
+            <a className="!cursor-pointer" 
+            onClick={async function(){
+              let result;
+              try {
+                result = await axiosInstance({
+                  responseType: 'blob', 
+                  method: 'GET', 
+                  url:`${process.env.REACT_APP_SERVER_URL}events/getEventDocument/${id}`
+                })
+              } catch (error) {
+                console.log("Failed")                        
+              }
+              console.log(result)
+                const url = window.URL.createObjectURL(
+                  new Blob([result.data])
+                );
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", "eventProposalDoc.pdf"); //or any other extension
+                document.body.appendChild(link);
+                link.click();  
+            }}                      
+            download
+          >
+              <CloudDownload className="cursor-pointer" />
+          </a>
         </div>
-        <CloudDownload className="cursor-pointer" />
+        <div className="mt-6 flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
+            <span>Budget Document</span>
+            {/* {event.budgetDocPath} */}
+            <a className="!cursor-pointer" 
+            onClick={async () => {
+              const result = await axiosInstance({responseType: 'blob', method: 'GET', url:`${process.env.REACT_APP_SERVER_URL}events/getBudgetDocument/${id}`})
+              const url = window.URL.createObjectURL(
+                new Blob([result.data])
+              );
+              const link = document.createElement("a");
+              link.href = url;
+              link.setAttribute("download", "budget.pdf"); //or any other extension
+              document.body.appendChild(link);
+              link.click();
+            }}                    
+            download>
+              <CloudDownload className="cursor-pointer" />
+            </a>
+        </div>        
       </div>
+
       </div>
-            <div className="flex flex-col gap-8" >
-            <span className="text-arma-gray font-medium text-2xl ">Event Dates</span>
-      <Calendar value={preselectedDays} colorPrimary="#0047FF" shouldHighlightWeekends />
-            </div>
+        <div className="flex flex-col gap-8" >
+        <span className="text-arma-gray font-medium text-2xl ">Event Dates</span>
+        <Calendar value={preselectedDays} colorPrimary="#0047FF" shouldHighlightWeekends />
+        </div>
       </div>
      
 
@@ -98,13 +309,30 @@ export default function RequestsView() {
       <hr className=" bg-black/10 h-[1.55px]" />
       <div className ='flex gap-4 items-center'>
       <span className="text-arma-gray font-medium text-2xl ">Comments</span>
-      <button className="btn">Request Changes</button>
+      {
+        (faculty?.role.ADMIN || faculty?.role.SAC || faculty?.role.FO ) &&
+        <button onClick={()=>makeRequest(actions.REQUEST_CHANGES)} className="btn">Request Changes</button>
+      }
       </div>
-      <textarea name="comments" placeholder="Please write your comments here" className="outline-none sm:w-[100%] w-full border-[1px] border-[#E5E5EA] p-4 md:w-[60%] rounded-[8px] "></textarea>
+      <textarea 
+      disabled = {!(faculty?.role.ADMIN || faculty?.role.SAC || faculty?.role.FO )}
+      name="comments" placeholder="Please write your comments here" 
+      className="outline-none sm:w-[100%] w-full border-[1px] 
+      border-[#E5E5EA] p-4 md:w-[60%] rounded-[8px]">
+      </textarea>
       <div className="flex flex-wrap gap-4 xsm:justify-center mt-4 ">
-          <button className="btn bg-arma-title basis-full xsm:basis-auto ">Approve Budget</button>
-          <button className="btn-green ml-auto xsm:ml-0">Approve</button>
-          <button className="btn-red mr-auto xsm:mr-0">Reject</button> 
+        {
+          (faculty?.role.FO || faculty?.role.ADMIN) &&
+          <button onClick={()=>makeRequest(actions.APPROVE_BUDGET)} className="btn bg-arma-title basis-full xsm:basis-auto ">Approve Budget</button>
+        }
+        {
+          (faculty?.role.SAC  || faculty?.role.ADMIN) &&          
+          <button onClick={()=>makeRequest(actions.APPROVE_REQUEST)} className="btn-green ml-auto xsm:ml-0">Approve</button>
+        }
+        {
+          (faculty?.role.SAC  || faculty?.role.ADMIN) &&          
+          <button onClick={()=>makeRequest(actions.REJECT_REQUEST)} className="btn-red mr-auto xsm:mr-0">Reject</button> 
+        }
       </div>  
     </div>
     
