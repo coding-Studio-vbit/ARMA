@@ -237,9 +237,7 @@ export default function RequestsView() {
         <div className="flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
             <span>Event Proposal Document</span>
             {/* {event.eventProposalDocPath} */}
-            <a className="flex flex-col 
-            rounded-[8px] hover:bg-slate-500/10 
-            !cursor-pointer px-20 py-4 outline-dashed outline-gray-500" 
+            <a className="!cursor-pointer" 
             onClick={async function(){
               let result;
               try {
@@ -269,11 +267,9 @@ export default function RequestsView() {
         <div className="mt-6 flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
             <span>Budget Document</span>
             {/* {event.budgetDocPath} */}
-            <a className="flex flex-col 
-            rounded-[8px] hover:bg-slate-500/10 
-            !cursor-pointer px-20 py-4 outline-dashed outline-gray-500" 
+            <a className="!cursor-pointer" 
             onClick={async () => {
-              const result = await axiosInstance({responseType: 'blob', method: 'GET', url:`${process.env.REACT_APP_SERVER_URL}events/getBudgetDocument/${location.state.eventId}`})
+              const result = await axiosInstance({responseType: 'blob', method: 'GET', url:`${process.env.REACT_APP_SERVER_URL}events/getBudgetDocument/${id}`})
               const url = window.URL.createObjectURL(
                 new Blob([result.data])
               );
