@@ -10,7 +10,11 @@ import axios from "../../../utils/axios";
 //redux imports
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/reducers";
-import { createDatesState, selectDate } from "../../../redux/actions";
+import {
+  createDatesState,
+  selectDate,
+  createReservations,
+} from "../../../redux/actions";
 
 const EventVenue = () => {
   const navigate = useNavigate();
@@ -61,6 +65,16 @@ const EventVenue = () => {
         });
     });
   }, [selectedDays]);
+  const setReservations = (date) => {
+    axios
+      .post(`${process.env.REACT_APP_SERVER_URL}halls/getSlots`, {
+        date: date,
+      })
+      .then(async (response) => {
+        dispatch(createReservations(response.data.response));
+        console.log({ date, response: response.data.response });
+      });
+  };
   const months = [
     "January",
     "February",
@@ -96,17 +110,25 @@ const EventVenue = () => {
   const [selectedDayRange, setSelectedDayRange] = useState(defaultValue);
   const [eventHalls, setEventHalls] = useState(eventDates);
   const [showHallSelection, setShowHallSelection] = useState(false);
-  const HallsList = (halls: string[], event: string) => {
+  interface date {
+    day: number;
+    month: number;
+    year: number;
+  }
+  const HallsList = (halls: string[], event: string, date: date) => {
+    console.log(date);
+
     var temp = halls.map((hall) => hall.split(".")[1]);
     var filteredHalls = temp.filter(function (elem, index, self) {
       return index === self.indexOf(elem);
     });
-
+    console.log(filteredHalls);
     return filteredHalls.map((hall: string) => {
       return (
         <button
           onClick={async () => {
             await dispatch(selectDate(event));
+            await setReservations(`${date.day}-${date.month}-${date.year}`);
             await setShowHallSelection(true);
           }}
           className="flex text-gray-500 flex-row justify-around px-8 mr-4 mb-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
@@ -119,6 +141,8 @@ const EventVenue = () => {
 
   const DatesList = () =>
     Object.keys(eventDates).map((event) => {
+      console.log(eventDates[event].dateObject);
+
       const dateString = new Date(
         eventDates[event].dateObject.year,
         eventDates[event].dateObject.month - 1,
@@ -144,6 +168,9 @@ const EventVenue = () => {
                   className="flex items-center text-[#88b3cc]"
                   onClick={async () => {
                     await dispatch(selectDate(event));
+                    await setReservations(
+                      `${eventDates[event].dateObject.day}-${eventDates[event].dateObject.month}-${eventDates[event].dateObject.year}`
+                    );
                     await setShowHallSelection(true);
                   }}
                 >
@@ -155,7 +182,11 @@ const EventVenue = () => {
                   />
                 </button>
               ) : (
-                HallsList(eventDates[event].halls, event)
+                HallsList(
+                  eventDates[event].halls,
+                  event,
+                  eventDates[event].dateObject
+                )
               )}
             </div>
           </div>
@@ -164,14 +195,15 @@ const EventVenue = () => {
     });
   const setDays = (date) => {
     setSelectedDays(date);
-    var obj = {};
+    var obj = eventDates;
     date.map((d) => {
       const dateString = new Date(d.year, d.month - 1, d.day);
-      obj[dateString.toDateString()] = {
-        dateObject: d,
-        eventDate: dateString,
-        halls: [],
-      };
+      if (!obj[dateString.toDateString()])
+        obj[dateString.toDateString()] = {
+          dateObject: d,
+          eventDate: dateString,
+          halls: [],
+        };
     });
     dispatch(createDatesState(obj));
     dispatch(selectDate(""));

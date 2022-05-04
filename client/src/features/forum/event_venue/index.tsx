@@ -172,14 +172,15 @@ const EventVenue = () => {
     });
   const setDays = (date) => {
     setSelectedDays(date);
-    var obj = {};
+    var obj = eventDates;
     date.map((d) => {
       const dateString = new Date(d.year, d.month - 1, d.day);
-      obj[dateString.toDateString()] = {
-        dateObject: d,
-        eventDate: dateString,
-        halls: [],
-      };
+      if (!obj[dateString.toDateString()])
+        obj[dateString.toDateString()] = {
+          dateObject: d,
+          eventDate: dateString,
+          halls: [],
+        };
     });
     dispatch(createDatesState(obj));
     dispatch(selectDate(""));

@@ -1,5 +1,4 @@
 import { InfoOutlined } from "@material-ui/icons";
-import { log } from "console";
 import { useEffect, useState } from "react";
 import axios from "../../../utils/axios";
 
@@ -7,6 +6,7 @@ import axios from "../../../utils/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { UpdateDatesState } from "../../../redux/actions";
 import { RootState } from "../../../redux/reducers";
+import { log } from "console";
 
 interface SelectedHallsProps {
   show: boolean;
@@ -21,9 +21,21 @@ const SelectHalls = (props: SelectedHallsProps) => {
 
   const halls = props.hallsData;
   const key = useSelector((state: RootState) => state.selectedDate);
+  const reservedDate = useSelector((state: RootState) => state.reservations);
+  const reservations =
+    useSelector((state: RootState) => state.reservations) || {};
   const eventHalls =
     Object.keys(eventDates).length === 0 ? [] : eventDates[key].halls;
-  console.log(props.hallsData);
+  console.log(reservations);
+  useEffect(() => {
+    axios
+      .post(`${process.env.REACT_APP_SERVER_URL}halls/getSlots`, {
+        date: reservedDate,
+      })
+      .then(async (response) => {
+        console.log(response);
+      });
+  }, [reservedDate]);
 
   const addHalls = (hall) => {
     var arr = eventHalls;
@@ -38,6 +50,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
       dispatch(UpdateDatesState(key, [...arr]));
     }
   };
+
   const HallsList = (halls: string[]) =>
     halls.map((hall: string) => {
       return (
@@ -49,21 +62,43 @@ const SelectHalls = (props: SelectedHallsProps) => {
           <div className="flex">
             <button
               className={
-                eventHalls.includes("morning." + hall)
+                reservations[hall.toUpperCase()] &&
+                reservations[hall.toUpperCase()].includes("morning") &&
+                !eventDates[key].halls.includes("morning." + hall)
+                  ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
+                  : eventHalls.includes("morning." + hall)
                   ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
-                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
+                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] cursor-pointer"
               }
-              onClick={() => addHalls("morning." + hall)}
+              onClick={() => {
+                if (
+                  reservations[hall.toUpperCase()] &&
+                  reservations[hall.toUpperCase()].includes("morning")
+                )
+                  console.log("already exists");
+                else addHalls("morning." + hall);
+              }}
             >
               <div className="">Morning</div>
             </button>
             <button
               className={
-                eventHalls.includes("afternoon." + hall)
-                  ? "flex px-8 mb-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
-                  : "flex text-gray-500 px-8 mb-2 rounded border border-[#139beb] hover:bg-[#139beb] hover:text-white cursor-pointer"
+                reservations[hall.toUpperCase()] &&
+                reservations[hall.toUpperCase()].includes("afternoon") &&
+                !eventDates[key].halls.includes("afternoon." + hall)
+                  ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
+                  : eventHalls.includes("afternoon." + hall)
+                  ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
+                  : "flex text-gray-500 px-8 mb-2 mx-2 rounded border border-[#139beb] cursor-pointer"
               }
-              onClick={() => addHalls("afternoon." + hall)}
+              onClick={() => {
+                if (
+                  reservations[hall.toUpperCase()] &&
+                  reservations[hall.toUpperCase()].includes("afternoon")
+                )
+                  console.log("already exists");
+                else addHalls("afternoon." + hall);
+              }}
             >
               <div className="">Afternoon</div>
             </button>
@@ -99,6 +134,9 @@ const SelectHalls = (props: SelectedHallsProps) => {
           >
             Done
           </button>
+          <div className="text-gray-400 text-xs">
+            *The grayed out slots are the ones already reserved by a forum.
+          </div>
         </div>
       </div>
     );
