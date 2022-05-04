@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Table from "../../../components/CustomTable";
 import DataTable from "../../../components/Table";
-import axiosInstance from "../../../utils/axios";
+import axios from "../../../utils/axios";
 
 export const Students_View = () => {
   const { id } = useParams();
@@ -23,7 +23,7 @@ export const Students_View = () => {
   }>();
   useEffect(() => {
     const student = async () => {
-      const res = await axiosInstance.post(
+      const res = await axios.post(
         process.env.REACT_APP_SERVER_URL + "students/studentViewCard",
         { id: id }
       );
@@ -100,7 +100,9 @@ export const Students_View = () => {
                   key={i.forumId}
                   className="shadow-xl border-2 flex flex-col p-4 w-max rounded-[16px]"
                 >
-                  <span>{i.designation}, {i.forumId.name}</span>
+                  <span>
+                    {i.designation}, {i.forumId.name}
+                  </span>
                 </div>
               );
             })
@@ -176,19 +178,24 @@ export const Students_View = () => {
         </div>
 
         <div className="ml-auto mt-8">
-          <a onClick={async () => {
-                  const result = await axiosInstance({responseType: 'blob', method: 'POST', url:`${process.env.REACT_APP_SERVER_URL}students/newReport`,data:{studentId: id}})
-                  const url = window.URL.createObjectURL(
-                    new Blob([result.data])
-                  );
-                  const link = document.createElement("a");
-                  link.href = url;
-                  link.setAttribute("download", info.rollNumber + ".pdf"); //or any other extension
-                  document.body.appendChild(link);
-                  link.click();
-                }}
-                download>
-          <button className="btn mb-8 ml-auto mt-8">GENERATE</button>
+          <a
+            onClick={async () => {
+              const result = await axios({
+                responseType: "blob",
+                method: "POST",
+                url: `${process.env.REACT_APP_SERVER_URL}students/newReport`,
+                data: { studentId: id },
+              });
+              const url = window.URL.createObjectURL(new Blob([result.data]));
+              const link = document.createElement("a");
+              link.href = url;
+              link.setAttribute("download", info.rollNumber + ".pdf"); //or any other extension
+              document.body.appendChild(link);
+              link.click();
+            }}
+            download
+          >
+            <button className="btn mb-8 ml-auto mt-8">GENERATE</button>
           </a>
         </div>
       </div>

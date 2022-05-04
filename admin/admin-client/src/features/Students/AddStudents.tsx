@@ -4,7 +4,7 @@ import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
 import { Close } from "@material-ui/icons";
-import axiosInstance from "../../utils/axios";
+import axios from "../../utils/axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { UploadStudentList } from "./UploadStudentList";
 
@@ -19,7 +19,7 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
   useEffect(() => {
     console.log("3");
     const student = async () => {
-      const res = await axiosInstance.post(
+      const res = await axios.post(
         process.env.REACT_APP_SERVER_URL + "students/studentViewCard",
         { id: id }
       );
@@ -29,6 +29,7 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
       setuniqueid(data?.rollNumber);
       setSelectYear(data?.year);
       setSelectDepartment(data?.branch);
+      setSelectCourse(data?.course);
       setSelectSection(data?.section);
       setEmail(data?.email);
       setPhone(data?.phone);
@@ -51,8 +52,8 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
   const [response, setResponse] = useState("");
   const [selectYear, setSelectYear] = useState("");
   const [selectDepartment, setSelectDepartment] = useState("");
-  const [selectCourse, setSelectCourse] = useState(null);
   const [selectSection, setSelectSection] = useState("");
+  const [selectCourse, setSelectCourse] = useState(null);
 
   const [courses, setCourses] = useState<any>(null);
   const [departments, setDepartments] = useState<any>(null);
@@ -60,7 +61,7 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
   const [sections, setSections] = useState<any>(null);
 
   useEffect(() => {
-    axiosInstance
+    axios
       .get(`${process.env.REACT_APP_SERVER_URL}students/getCourses`)
       .then((courseList: any) => {
         setCourses(
@@ -72,7 +73,7 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
   }, []);
 
   useEffect(() => {
-    axiosInstance
+    axios
       .get(
         `${process.env.REACT_APP_SERVER_URL}students/getBranches/${selectCourse}`
       )
@@ -83,7 +84,7 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
             return { value: c, label: c };
           })
         );
-        return axiosInstance.get(
+        return axios.get(
           `${process.env.REACT_APP_SERVER_URL}students/getTotalYears/${selectCourse}`
         );
       })
@@ -97,18 +98,16 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
   }, [selectCourse]);
 
   useEffect(() => {
-    console.log(selectDepartment);
-    axiosInstance
+    axios
       .get(
         `${process.env.REACT_APP_SERVER_URL}students/getTotalSections/${selectCourse}/${selectDepartment}`
       )
       .then((response) => {
-        console.log(response);
         const totalSections = Number(response.data.response);
         let y = [];
-        let abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()"
-        for (let i = 0; i < totalSections; i++) y.push({ value: abc[i], label: abc[i] });
-        console.log(sections);
+        let abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()";
+        for (let i = 0; i < totalSections; i++)
+          y.push({ value: abc[i], label: abc[i] });
         setSections(y);
       });
   }, [selectDepartment]);
@@ -174,7 +173,7 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
 
   const deleteItem = async () => {
     setShowError("");
-    const res = await axiosInstance.post(
+    const res = await axios.post(
       process.env.REACT_APP_SERVER_URL + "students/deleteStudent",
       { id: id }
     );
@@ -206,7 +205,7 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
     } else {
       if (!isEdit) {
         setShowError("");
-        const res = await axiosInstance.post(
+        const res = await axios.post(
           process.env.REACT_APP_SERVER_URL + "admin/addStudent",
           {
             name: name,
@@ -228,7 +227,7 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
         }
       } else {
         setShowError("");
-        const res = await axiosInstance.put(
+        const res = await axios.put(
           process.env.REACT_APP_SERVER_URL + "students/editStudent",
           {
             id: id,

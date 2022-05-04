@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Spinner } from "../../../components/Spinner/Spinner";
 import { useNavigate, useLocation } from "react-router-dom";
-import axiosInstance from "../../../utils/axios";
+import axios from "../../../utils/axios";
 import axios from "../../../utils/axios";
 import { log } from "console";
 
@@ -40,7 +40,7 @@ function ForumEventDashboard() {
       setEvent(state.name);
       setStatus(state.eventStatus);
       try {
-        const res = await axiosInstance.post(
+        const res = await axios.post(
           process.env.REACT_APP_SERVER_URL + "faculty/fetchFaculty"
         );
         //get forum Name

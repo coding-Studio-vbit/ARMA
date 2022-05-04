@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Table from "../../Components/CustomTable";
 import Select from "react-select";
@@ -23,41 +23,69 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
   const [nameError, setNameError] = useState<string>();
   const [selectYear, setSelectYear] = useState(location.state?.year ?? null);
   const [selectDepartment, setSelectDepartment] = useState(
-    location.state?.branch ?? ""
+    location.state?.branch ?? null
   );
   const [selectSection, setSelectSection] = useState(
-    location.state?.section ?? ""
+    location.state?.section ?? null
   );
+  const [selectCourse, setSelectCourse] = useState(null);
+
+  const [courses, setCourses] = useState<any>([{value:null, label:"Any"}]);
+  const [departments, setDepartments] = useState<any>([{value:null, label:"Any"}]);
+  const [yearList, setYearList] = useState<any>([{value:null, label:"Any"}]);
+  const [sections, setSections] = useState<any>([{value:null, label:"Any"}]);
   let { id } = useParams();
 
-  const department = [
-    { value: null, label: "Any" },
-    { value: "CSE", label: "CSE" },
-    { value: "CSM", label: "CSM" },
-    { value: "CSC", label: "CSC" },
-    { value: "CSB", label: "CSB" },
-    { value: "ECE", label: "ECE" },
-    { value: "EEE", label: "EEE" },
-    { value: "IT", label: "IT" },
-    { value: "ME", label: "ME" },
-    { value: "CE", label: "CE" },
-  ];
-
-  const year = [
-    { value: null, label: "Any"},
-    { value: "1", label: "1" },
-    { value: "2", label: "2" }, 
-    { value: "3", label: "3" },
-    { value: "4", label: "4" },
-  ];
-
-  const sections = [
-    { value: null, label: "Any"},
-    { value: "A", label: "A" },
-    { value: "B", label: "B" },
-    { value: "C", label: "C" },
-    { value: "D", label: "D" },
-  ];
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_SERVER_URL}students/getCourses`)
+      .then((resp: any) => {
+        setCourses([...courses,
+          resp.data.response.map((c: any) => {
+            return { value: c, label: c };
+          })].flat()
+        );
+      });
+  }, []);
+  useEffect(() => {
+    axios
+      .get(
+        `${process.env.REACT_APP_SERVER_URL}students/getBranches/${selectCourse}`
+      )
+      .then((resp: any) => {
+        console.log(resp);
+        setDepartments(
+          [...departments,
+            resp.data.response.map((c: any) => {
+              return { value: c, label: c };
+            })].flat()
+        );
+        return axios.get(
+          `${process.env.REACT_APP_SERVER_URL}students/getTotalYears/${selectCourse}`
+        );
+      })
+      .then((yrs: any) => {
+        console.log(yrs);
+        const y = [];
+        for (let i = 1; i <= yrs.data.response; i++)
+          y.push({ value: i, label: i });
+        setYearList([{value:null, label:"Any"},...y]);
+      });
+  }, [selectCourse]);
+  useEffect(() => {
+    axios
+      .get(
+        `${process.env.REACT_APP_SERVER_URL}students/getTotalSections/${selectCourse}/${selectDepartment}`
+      )
+      .then((response) => {
+        const totalSections = Number(response.data.response);
+        let y = [];
+        let abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()";
+        for (let i = 0; i < totalSections; i++)
+          y.push({ value: abc[i], label: abc[i] });
+        setSections([{value:null,label:"Any"},...y]);
+      });
+  }, [selectDepartment]);
 
   const validateUniqueid = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uniqueid = e.target.value;
@@ -130,10 +158,39 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               }}
             />
 
+            
             <Select
+              name="Course"
+              placeholder="Course"
+              options={courses}
+              onChange={(e: any) => {
+                setSelectCourse(e?.value);
+              }}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  minHeight: 52,
+                  minWidth: 150,
+                  borderRadius: "0.5rem",
+                  border: "2px solid rgb(200, 200, 200)",
+                }),
+                placeholder: (base) => ({
+                  ...base,
+                  paddingLeft: "16px",
+                }),
+                singleValue: (base) => ({
+                  ...base,
+                  paddingLeft: "16px",
+                  color: "black",
+                }),
+              }}
+              className="basic-multi-select"
+            />
+            <Select
+            isDisabled={selectCourse == null}
               name="Year"
               placeholder="Year"
-              options={year}
+              options={yearList}
               onChange={(e: any) => {
                 setSelectYear(e?.value);
               }}
@@ -157,11 +214,12 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               }}
               className="basic-multi-select"
             />
-
             <Select
+                        isDisabled={selectCourse == null}
+
               name="Branch"
               placeholder="Branch"
-              options={department}
+              options={departments}
               onChange={(e: any) => {
                 setSelectDepartment(e?.value);
               }}
@@ -185,8 +243,9 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               }}
               className="basic-multi-select"
             />
-
+{console.log("selectDepart is now ", selectDepartment)}
             <Select
+              isDisabled={selectCourse == null || selectDepartment == null}
               name="Section"
               placeholder="Section"
               options={sections}
@@ -223,8 +282,9 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               rollNumber: roll,
               name: name,
               branch: selectDepartment,
+              course: selectCourse,
               year: selectYear,
-              section: selectSection
+              section: selectSection,
             }}
             onTableRowClick={(id) => navigate(`/Students/EditStudents/${id}`)}
             headers={[
@@ -235,6 +295,7 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               },
               { displayName: "NAME", dataPath: "name", sortable: true },
               { displayName: "YEAR", dataPath: "year", sortable: true },
+              { displayName: "COURSE", dataPath: "course", sortable: false },
               { displayName: "BRANCH", dataPath: "branch", sortable: false },
               { displayName: "SECTION", dataPath: "section", sortable: false },
             ]}

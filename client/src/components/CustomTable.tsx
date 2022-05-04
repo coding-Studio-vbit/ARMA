@@ -5,7 +5,7 @@ import {
   ArrowForwardIos,
   ArrowUpward,
 } from "@material-ui/icons";
-import axiosInstance from "../utils/axios";
+import axios from "../utils/axios";
 import deepEqual from "../utils/DeepEqual";
 
 interface header {
@@ -97,7 +97,7 @@ const Table = React.memo(
       //Adding the filter
       params = { ...params, ...filter };
 
-      axiosInstance
+      axios
         .get(api, {
           params: params,
         })

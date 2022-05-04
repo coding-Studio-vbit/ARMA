@@ -3,7 +3,7 @@ import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { Close } from "@material-ui/icons";
-import axiosInstance from "../../utils/axios";
+import axios from "../../utils/axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 interface AddStudentsProps {
@@ -16,7 +16,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
   let { id } = useParams();
   useEffect(() => {
     const student = async () => {
-      const res = await axiosInstance.post(
+      const res = await axios.post(
         process.env.REACT_APP_SERVER_URL + "faculty/viewFaculty",
         { id: id }
       );
@@ -25,7 +25,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
       setuniqueid(data?.rollNumber);
       setDesignation(data?.designation);
       setSelectRolesL(data?.role);
-      setSelectRoles(data.role.map((i:any)=>i._id))
+      setSelectRoles(data.role.map((i: any) => i._id));
       setEmail(data?.email);
       setPassword(data?.password);
       setPhone(data?.phone);
@@ -58,7 +58,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
 
   useEffect(() => {
     const role = async () => {
-      const res = await axiosInstance.get(
+      const res = await axios.get(
         process.env.REACT_APP_SERVER_URL + "roles/fetchRoles"
       );
       const data = res.data.response;
@@ -148,7 +148,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
 
   const deleteItem = async () => {
     setShowError("");
-    const res = await axiosInstance.post(
+    const res = await axios.post(
       process.env.REACT_APP_SERVER_URL + "faculty/deleteFaculty",
       { id: id }
     );
@@ -164,9 +164,6 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
   };
 
   const loginValidate = async () => {
-
-
-
     if (
       uniqueid.length === 0 ||
       name.length === 0 ||
@@ -186,7 +183,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
     } else {
       if (!isEdit) {
         setShowError("");
-        const res = await axiosInstance.post(
+        const res = await axios.post(
           process.env.REACT_APP_SERVER_URL + "admin/addFaculty",
           {
             name: name,
@@ -210,7 +207,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
       } else {
         console.log("selectRoles is ", selectRoles);
         setShowError("");
-        const res = await axiosInstance.put(
+        const res = await axios.put(
           process.env.REACT_APP_SERVER_URL + "admin/editFaculty",
           {
             id: id,
@@ -302,18 +299,16 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
               validateDesignation(e);
             }}
           />
-          {
-            console.log("SelectRoles is ", selectRoles)
-          }
+          {console.log("SelectRoles is ", selectRoles)}
           <Select
             name="Roles"
             placeholder="Roles"
             options={myrole}
             onChange={(e: any) => {
               for (let i = 0; i < selectRoles.length; i++) {
-                if (e?.value   === selectRoles[i]) return;
+                if (e?.value === selectRoles[i]) return;
               }
-        
+
               setSelectRoles([...selectRoles, e?.value]);
               setSelectRolesL([...selectRolesL, e?.label]);
 

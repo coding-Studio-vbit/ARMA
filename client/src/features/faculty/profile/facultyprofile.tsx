@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { InputField } from "../../../components/InputField/InputField";
 import { useUser } from "../../../providers/user/UserProvider";
 import { AnimatePresence, motion } from "framer-motion";
-import axiosInstance from "../../../utils/axios";
+import axios from "../../../utils/axios";
 import { Dialog } from "../../../components/Dialog/Dialog";
 
 function FacultyProfile() {
@@ -20,14 +20,14 @@ function FacultyProfile() {
   const [message, setMessage] = useState("");
   const [show, setShow] = useState(false);
   const save = async () => {
-    const res = await axiosInstance.put(
+    const res = await axios.put(
       process.env.REACT_APP_SERVER_URL + "faculty/editProfile",
       { email: email, designation: designation, phone: phone }
     );
     const data = res.data;
     if (data.status === 1) {
       console.log(data.response);
-      
+
       let role = data.response.role;
       data.response.role = {
         ADMIN: false,
@@ -37,7 +37,7 @@ function FacultyProfile() {
         FACULTY: false,
       };
       console.log(role);
-      
+
       role.forEach((element: any) => {
         data.response.role[element.name] = true;
       });

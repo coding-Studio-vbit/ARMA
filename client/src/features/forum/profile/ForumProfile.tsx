@@ -8,7 +8,7 @@ import { InputField } from "../../../components/InputField/InputField";
 import { TextArea } from "../../../components/InputField/TextArea";
 import { useUser } from "../../../providers/user/UserProvider";
 import ForumService from "../../../services/forum/ForumService";
-import axiosInstance from "../../../utils/axios";
+import axios from "../../../utils/axios";
 import Profile from "./profile";
 import Select from "react-select";
 
@@ -138,7 +138,7 @@ export default function ForumProfile() {
     return { ...item };
   };
   const save = async () => {
-    const res = await axiosInstance.put(
+    const res = await axios.put(
       process.env.REACT_APP_SERVER_URL + "forum/updateProfile",
       {
         email: forumEmail,
@@ -163,7 +163,7 @@ export default function ForumProfile() {
 
   useEffect(() => {
     const faculty = async () => {
-      const res = await axiosInstance.post(
+      const res = await axios.post(
         process.env.REACT_APP_SERVER_URL + "faculty/fetchFaculty",
         { name: name }
       );

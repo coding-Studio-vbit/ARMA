@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Table from "../../../components/CustomTable";
-import axiosInstance from "../../../utils/axios";
+import axios from "../../../utils/axios";
 import DataTable from "../../../components/Table";
 import { Spinner } from "../../../components/Spinner/Spinner";
 
@@ -19,7 +19,7 @@ export const Forum_View = () => {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const forum = async () => {
-      const res = await axiosInstance.post(
+      const res = await axios.post(
         process.env.REACT_APP_SERVER_URL + "forum/forumViewCard",
         { id: id }
       );

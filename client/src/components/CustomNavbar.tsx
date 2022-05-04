@@ -4,7 +4,7 @@ import { useUser } from "../providers/user/UserProvider";
 import { Sidebar } from "./Sidebar";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
-import axiosInstance from "../utils/axios";
+import axios from "../utils/axios";
 
 export interface NavItem {
   label: string;
@@ -24,7 +24,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
   const [showLogout, setShowLogout] = useState(false);
   const [url, setUrl] = useState("");
   useEffect(() => {
-    axiosInstance
+    axios
       .get(process.env.REACT_APP_SERVER_URL + "forum/profilePicture")
       .then((resp) => {
         setUrl(resp.data.response);

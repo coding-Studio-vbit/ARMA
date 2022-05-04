@@ -6,7 +6,7 @@ import Select from "react-select";
 import { useNavigate, useLocation } from "react-router-dom";
 import { InputField } from "../../../components/InputField/InputField";
 import { useUser } from "../../../providers/user/UserProvider";
-import axiosInstance from "../../../utils/axios";
+import axios from "../../../utils/axios";
 import { RootState } from "../../../redux/reducers";
 import axios from "../../../utils/axios";
 
@@ -24,7 +24,7 @@ export default function EventEquip() {
 
   useEffect(() => {
     const getequip = async () => {
-      const res = await axiosInstance.get(
+      const res = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}events/getEventEquipment/${location.state.eventId}`
       );
       const data = res.data.response;
@@ -36,7 +36,7 @@ export default function EventEquip() {
           };
         })
       );
-      const res1 = await axiosInstance.get(
+      const res1 = await axios.get(
         process.env.REACT_APP_SERVER_URL + "forum/getEquipments"
       );
       const data1 = res1.data.response;
@@ -184,9 +184,9 @@ export default function EventEquip() {
 //   ar.push({value:i.name, label:i.name})
 //   options={ar}
 
-//   const res = await axiosInstance.get(env+'forum/getEquipments')
+//   const res = await axios.get(env+'forum/getEquipments')
 //   user
-//   const res = await axiosInstance.post(env+'forum/profile',{
+//   const res = await axios.post(env+'forum/profile',{
 //     name: user.name
 //   })
 
