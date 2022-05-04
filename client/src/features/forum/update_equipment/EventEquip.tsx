@@ -8,7 +8,6 @@ import { InputField } from "../../../components/InputField/InputField";
 import { useUser } from "../../../providers/user/UserProvider";
 import axios from "../../../utils/axios";
 import { RootState } from "../../../redux/reducers";
-import axios from "../../../utils/axios";
 
 export default function EventEquip() {
   const navigate = useNavigate();

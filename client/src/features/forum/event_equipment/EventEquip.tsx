@@ -7,7 +7,6 @@ import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import { InputField } from "../../../components/InputField/InputField";
 import { useUser } from "../../../providers/user/UserProvider";
-import axios from "../../../utils/axios";
 import { RootState } from "../../../redux/reducers";
 import axios from "../../../utils/axios";
 

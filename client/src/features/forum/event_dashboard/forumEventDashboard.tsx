@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import { Spinner } from "../../../components/Spinner/Spinner";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "../../../utils/axios";
-import axios from "../../../utils/axios";
-import { log } from "console";
-
 import { useDispatch } from "react-redux";
 import { createDatesState } from "../../../redux/actions";
 
