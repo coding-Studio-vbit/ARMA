@@ -5,23 +5,34 @@ import EventCard from "./EventCard";
 import axios from "../../../utils/axios";
 import ForumCover from "./forumCover";
 
+//redux
+import { useDispatch } from "react-redux";
+import { createDatesState } from "../../../redux/actions";
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [eventList, setEventList] = useState([]);
-  const [todaysEventList, setTodaysEventList] = useState([])
+  const [todaysEventList, setTodaysEventList] = useState([]);
+  const dispatch = useDispatch();
 
-  useEffect(()=>{
-    axios.get(`${process.env.REACT_APP_SERVER_URL}forum/dashboard`)
-    .then(response=>{
-      setEventList(response?.data.response.events)
-      response.data.response.activeEvents = new Set(response.data.response.activeEvents);
-      response.data.response.activeEvents = [...response.data.response.activeEvents];
-      setTodaysEventList(response?.data.response.activeEvents)
-    })
-    .catch(err=>{
-      console.log(err);
-    })
-  },[])
+  useEffect(() => {
+    dispatch(createDatesState({}));
+    axios
+      .get(`${process.env.REACT_APP_SERVER_URL}forum/dashboard`)
+      .then((response) => {
+        setEventList(response?.data.response.events);
+        response.data.response.activeEvents = new Set(
+          response.data.response.activeEvents
+        );
+        response.data.response.activeEvents = [
+          ...response.data.response.activeEvents,
+        ];
+        setTodaysEventList(response?.data.response.activeEvents);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <div>
@@ -30,7 +41,7 @@ const Dashboard = () => {
         id="forumCoverSection"
         className="relative hidden sm:block h-[300px] -mt-5 mx-0 px-0"
       >
-        <ForumCover/>
+        <ForumCover />
       </div>
 
       <div
@@ -57,9 +68,13 @@ const Dashboard = () => {
           <div className="mt-3 sm:mt-4 h-44 w-48 mx-auto bg-gray-200 rounded-md p-3 drop-shadow-xl border-2">
             <h2 className="text-arma-blue mx-auto">Today's Events</h2>
             <ul className="pl-8 list-disc list-outside">
-              {todaysEventList.length !== 0 ? todaysEventList.map((item) => {
-                return <li>{item}</li>;
-              }) : <li>No events today</li>}
+              {todaysEventList.length !== 0 ? (
+                todaysEventList.map((item) => {
+                  return <li>{item}</li>;
+                })
+              ) : (
+                <li>No events today</li>
+              )}
             </ul>
           </div>
         </div>
@@ -71,9 +86,12 @@ const Dashboard = () => {
           {eventList.map((item, index) => {
             return (
               <div className="mx-2 my-4 sm:m-4" key={index}>
-                <EventCard event={item} onClick={()=>{
-                  navigate('eventDashboard', {state:item})
-                }}/>
+                <EventCard
+                  event={item}
+                  onClick={() => {
+                    navigate("eventDashboard", { state: item });
+                  }}
+                />
               </div>
             );
           })}
