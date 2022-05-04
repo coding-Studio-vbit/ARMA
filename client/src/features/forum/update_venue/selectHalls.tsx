@@ -17,6 +17,7 @@ interface SelectedHallsProps {
 const SelectHalls = (props: SelectedHallsProps) => {
   //redux
   const eventDates = useSelector((state: RootState) => state.eventDates);
+  const oldEventDates = JSON.parse(JSON.stringify(eventDates));
   const dispatch = useDispatch();
 
   const halls = props.hallsData;
@@ -26,16 +27,6 @@ const SelectHalls = (props: SelectedHallsProps) => {
     useSelector((state: RootState) => state.reservations) || {};
   const eventHalls =
     Object.keys(eventDates).length === 0 ? [] : eventDates[key].halls;
-  console.log(reservations);
-  useEffect(() => {
-    axios
-      .post(`${process.env.REACT_APP_SERVER_URL}halls/getSlots`, {
-        date: reservedDate,
-      })
-      .then(async (response) => {
-        console.log(response);
-      });
-  }, [reservedDate]);
 
   const addHalls = (hall) => {
     var arr = eventHalls;
@@ -43,14 +34,13 @@ const SelectHalls = (props: SelectedHallsProps) => {
       var index = arr.indexOf(hall);
       arr.splice(index, 1);
     } else arr.push(hall);
-    console.log(arr);
     if (arr.length === 0) {
       dispatch(UpdateDatesState(key, []));
     } else {
       dispatch(UpdateDatesState(key, [...arr]));
     }
   };
-
+  console.log(oldEventDates);
   const HallsList = (halls: string[]) =>
     halls.map((hall: string) => {
       return (
@@ -64,7 +54,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
               className={
                 reservations[hall.toUpperCase()] &&
                 reservations[hall.toUpperCase()].includes("morning") &&
-                !eventDates[key].halls.includes("morning." + hall)
+                !oldEventDates[key].halls.includes("morning." + hall)
                   ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
                   : eventHalls.includes("morning." + hall)
                   ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
@@ -73,7 +63,8 @@ const SelectHalls = (props: SelectedHallsProps) => {
               onClick={() => {
                 if (
                   reservations[hall.toUpperCase()] &&
-                  reservations[hall.toUpperCase()].includes("morning")
+                  reservations[hall.toUpperCase()].includes("morning") &&
+                  !oldEventDates[key].halls.includes("morning." + hall)
                 )
                   console.log("already exists");
                 else addHalls("morning." + hall);
@@ -85,7 +76,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
               className={
                 reservations[hall.toUpperCase()] &&
                 reservations[hall.toUpperCase()].includes("afternoon") &&
-                !eventDates[key].halls.includes("afternoon." + hall)
+                !oldEventDates[key].halls.includes("afternoon." + hall)
                   ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
                   : eventHalls.includes("afternoon." + hall)
                   ? "flex px-8 mb-2 mx-2 rounded border border-[#139beb] bg-[#139beb] text-white cursor-pointer"
@@ -94,7 +85,8 @@ const SelectHalls = (props: SelectedHallsProps) => {
               onClick={() => {
                 if (
                   reservations[hall.toUpperCase()] &&
-                  reservations[hall.toUpperCase()].includes("afternoon")
+                  reservations[hall.toUpperCase()].includes("afternoon") &&
+                  !oldEventDates[key].halls.includes("afternoon." + hall)
                 )
                   console.log("already exists");
                 else addHalls("afternoon." + hall);
