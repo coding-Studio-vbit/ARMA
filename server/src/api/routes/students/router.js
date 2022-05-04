@@ -24,7 +24,7 @@ router.post(
   },
   controller.deleteStudent
 );
-router.post("/generatePDF", controller.generatePDF);
+router.post("/newReport", controller.generatePDF);
 router.get("/getBranches/:course",controller.getBranches)
 router.get("/getTotalYears/:course",controller.getTotalYears)
 router.get("/getTotalSections/:course/:branch", controller.getTotalSections);

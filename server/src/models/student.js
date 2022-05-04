@@ -32,7 +32,7 @@ const student = new mongoose.Schema({
     min: [1, "year can only go as low as 1"],
     max: [4, "year can only go as high as 4"],
   },
-  course:{type:String,required:true},
+  course: { type: String, required: true },
   branch: {
     type: String,
     required: true,
@@ -61,15 +61,15 @@ const student = new mongoose.Schema({
       message: `{VALUE} is not a valid Indian contact number.`,
     },
   },
-  attendedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "events" }],
-  coreTeamMember: [
+  eventsParticipated: [{ type: mongoose.Schema.Types.ObjectId, ref: "events" }],
+  forumMemberships: [
     {
-      designation: String,
-      forumID: { type: mongoose.Schema.Types.ObjectId, ref: "forums" },
+      forumId: { type: mongoose.Schema.Types.ObjectId, ref: "forums" },
+      designation: { type: String },
     },
   ],
-  forumMemberships: [{ type: mongoose.Schema.Types.ObjectId, ref: "forums" }],
-  reportFilePath: {type:String}
+  eventsOrganized: [{ type: mongoose.Schema.Types.ObjectId, ref: "events" }],
+  reportFilePath: { type: String },
 });
 
 const students = mongoose.model("students", student);
