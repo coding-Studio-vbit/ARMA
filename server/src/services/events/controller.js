@@ -737,10 +737,10 @@ const getEventReservations = async (req, res) => {
         const thisHall = currentReservation.hallId;
         dateList.forEach((currentDate, dateIndex)=>{
           if(result[currentDate]){
-            result[currentDate].halls = result[currentDate].halls.concat(currentReservation.timeSlots[dateIndex].map(t=>{return thisHall.name + '.' + t}))
+            result[currentDate].halls = result[currentDate].halls.concat(currentReservation.timeSlots[dateIndex].map(t=>{return t + '.' + thisHall.name}))
           }else
           {
-            result[currentDate] = {halls:currentReservation.timeSlots[dateIndex].map(t=>{return thisHall.name + '.' + t})};
+            result[currentDate] = {halls:currentReservation.timeSlots[dateIndex].map(t=>{return t + '.' + thisHall.name})};
           }
         })
       })
