@@ -706,26 +706,44 @@ const getEventReservations = async (req, res) => {
     if (event == null) throw new Error("event not found");
     if (event.forumID._id == req.user._id) {
       const result = {};
-
-      r.forEach((reservation) => {
-        const dateList = reservation.dates;
-        dateList.forEach((date) => {
-          if (result[date]) {
-            result[date].halls = [
-              ...result[date].halls,
-              reservation.timeSlots.map(
-                (slot) => slot + "." + reservation.hallId.name
-              ),
-            ].flat();
-          } else {
-            result[date] = {
-              halls: reservation.timeSlots.map(
-                (slot) => slot + "." + reservation.hallId.name
-              ),
-            };
+      /**
+       * Need to convert the reservation info into a different format
+       * INPUT FORMAT
+       {
+         hallID: "hall1",
+         dates: ["1-2-2022", "2-2-2022"],
+         timeSlots: [["MORNING"], ["MORNING", "AFTERNOON"]]
+       }
+       {
+         hallID: "hall2",
+         dates: ["1-2-2022", "3-2-2022"],
+         timeSlots: [["AFTERNOON"], ["MORNING", "AFTERNOON"]]
+       }
+       NEEDED OUTPUT FORMAT
+       {
+         "1-2-2022":{
+           halls:["hall1.MORNING", "hall2.AFTERNOON"]
+         },
+         "2-2-2022":{
+           halls:["hall1.MORNING", "hall1.AFTERNOON"]
+         },
+         "3-2-2022":{
+           halls:["hall2.MORNING","hall2.AFTERNOON"]
+         }
+       }
+       */
+      r.forEach((currentReservation)=>{
+        const dateList = currentReservation.dates;
+        const thisHall = currentReservation.hallId;
+        dateList.forEach((currentDate, dateIndex)=>{
+          if(result[currentDate]){
+            result[currentDate].halls = result[currentDate].halls.concat(currentReservation.timeSlots[dateIndex].map(t=>{return thisHall.name + '.' + t}))
+          }else
+          {
+            result[currentDate] = {halls:currentReservation.timeSlots[dateIndex].map(t=>{return thisHall.name + '.' + t})};
           }
-        });
-      });
+        })
+      })
 
       res.json(response(result, process.env.SUCCESS_CODE));
     }

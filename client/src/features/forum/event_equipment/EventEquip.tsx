@@ -104,7 +104,7 @@ export default function EventEquip() {
           ADD
         </button>
         <button
-          className="btn pr-2 text-xl ml-auto my-8"
+          className="btn bg-arma-title rounded-[8px] px-6 py-2 my-auto"
           onClick={() => {
             console.log({ eventDates, eventDetails, list });
             const newData = new FormData();
