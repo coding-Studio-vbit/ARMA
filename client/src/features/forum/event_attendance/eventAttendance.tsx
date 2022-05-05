@@ -3,27 +3,17 @@ import { useEffect, useState } from "react";
 import readXlsxFile from "read-excel-file";
 import json2ExcelBin from "js2excel";
 import { Dialog } from "../../../components/Dialog/Dialog";
-import axios from "../../../utils/axios";
+import axiosInstance from "../../../utils/axios";
 import { Info } from "@material-ui/icons";
 import { useLocation } from "react-router-dom";
 
 const EventAttendance = () => {
-  enum branch {
-    CSE = "CSE",
-    CSM = "CSM",
-    CSC = "CSC",
-    CSB = "CSB",
-    ME = "ME",
-    CE = "CE",
-    EEE = "EEE",
-    ECE = "ECE",
-    IT = "IT",
-  }
 
   interface Student {
     name: string;
     rollNumber: string;
     year: Number;
+    course:Function | String;
     branch: Function | String;
     section: String;
     email: String | Function;
@@ -36,6 +26,8 @@ const EventAttendance = () => {
   const location: any = useLocation();
   const eventID = location.state.eventId;
   const [event, setEvent] = useState(null);
+  const [courses, setCourses] = useState(null);
+  const [branches, setBranches]= useState(null);
   const [eventName, setEventName] = useState("");
   const [tableData, setTableData] = useState([]);
   const [reportData, setReportData] = useState([]);
@@ -48,9 +40,9 @@ const EventAttendance = () => {
     "9-1-2021",
   ]);
   const [eventDates, setEventDates] = useState([
-    "1-11-2020",
-    "2-11-2020",
-    "3-11-2020",
+    "7-1-2021",
+    "8-1-2021",
+    "9-1-2021",
   ]);
   const [show, setShow] = useState<boolean>(false);
   const [message, setMessage] = useState("");
@@ -60,24 +52,58 @@ const EventAttendance = () => {
 
   const getEventInfo = async () => {
     try {
-      const res = await axios.get(
+      const res = await axiosInstance.get(
         process.env.REACT_APP_SERVER_URL + "events/getEvent/" + eventID
       );
-      if (res.data.response.status == -1) {
+      if(res.data.status == -1){
         console.log(res.data.response.message);
-      } else {
+      }else
+      {
         setEvent(res.data.response);
         setEventName(res.data.response.name + " - Attendance");
       }
-    } catch (error) {
+    } catch (error) {console.log(error)}
+  };
+
+  const getCourseInfo = async() =>{
+    try{
+      const res = await axiosInstance.get(`${process.env.REACT_APP_SERVER_URL}students/getCourses`
+      );
+      if(res.data.status==-1){
+        console.log("Failed to fetch courses",res.data.response.message);
+      }
+      else{
+        setCourses(res.data.response);
+      }
+    }
+    catch(error){
       console.log(error);
     }
   };
+  const getBranchInfo = async() =>{
+    try{
+      const res = await axiosInstance.get(`${process.env.REACT_APP_SERVER_URL}students/getBranches/B.Tech`
+      )
+      if(res.data.status==-1){
+        console.log("Failed to fetch courses",res.data.response.message);
+      }
+      else{
+        setBranches(res.data.response);
+      }
+      console.log(branches)
+    }
+    catch(error){
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getEventInfo();
+    getCourseInfo();
+    getBranchInfo();
   }, []);
   useEffect(() => {
-    axios
+    axiosInstance
       .get(
         process.env.REACT_APP_SERVER_URL +
           "events/eventAttendance?eventID=" +
@@ -85,7 +111,7 @@ const EventAttendance = () => {
       )
       .then((resp) => {
         if (resp.data.response.status == -1) {
-          console.log(resp);
+          console.log(resp)
           throw new Error("Error occured");
         }
         resp.data.response.data.forEach((data: any) => {
@@ -97,14 +123,18 @@ const EventAttendance = () => {
         if (resp.data.response.data.length > 0) {
           setDataUploaded(true);
           setTableData(resp.data.response.data);
+          console.log(tableData);
+          console.log(event)
         }
       });
   }, [dataUploaded]);
 
+
   function checkBranch(val: any) {
-    if (Object.values(branch).includes(val.toUpperCase())) {
+    if ((branches).includes(val.toUpperCase())) {
       return String(val);
     } else {
+      console.log("branch")
       throw Error;
     }
   }
@@ -117,6 +147,16 @@ const EventAttendance = () => {
       throw Error;
     }
   }
+
+  function validateCourse(course:any){
+    if ((courses).includes(course)) {
+      return String(course);
+    } else {
+      console.log("coru")
+      throw Error;
+    }
+  }
+
   const handleFileToJson = (e: { target: { files: any } }) => {
     data = e.target.files;
     if (data != null) {
@@ -126,15 +166,16 @@ const EventAttendance = () => {
         .then((row: any) => {
           row.slice(1).map((item: any) => {
             indx = row.indexOf(item) + 1;
-            if (item[6]) {
+            if (item[7]) {
               let newObj: Student = {
                 name: String(item[0]),
                 rollNumber: String(item[1]),
                 year: Number(item[2]),
-                branch: checkBranch(item[3]),
-                section: String(item[4]),
-                email: validateEmail(item[5]),
-                phone: Number(item[6]),
+                course : validateCourse(item[3]),
+                branch: checkBranch(item[4]),
+                section: String(item[5]),
+                email: validateEmail(item[6]),
+                phone: Number(item[7]),
                 attendedEvents: [eventID],
               };
               list.push(newObj);
@@ -143,9 +184,10 @@ const EventAttendance = () => {
                 name: String(item[0]),
                 rollNumber: String(item[1]),
                 year: Number(item[2]),
-                branch: checkBranch(item[3]),
-                section: String(item[4]),
-                email: validateEmail(item[5]),
+                course : validateCourse(item[3]),
+                branch: checkBranch(item[4]),
+                section: String(item[5]),
+                email: validateEmail(item[6]),
                 attendedEvents: [eventID],
               };
               list.push(newObj);
@@ -153,7 +195,7 @@ const EventAttendance = () => {
           });
         })
         .then(async () => {
-          await axios.post(
+          await axiosInstance.post(
             process.env.REACT_APP_SERVER_URL +
               "events/uploadRegistrants?attendedEvents=" +
               eventID,
@@ -171,7 +213,7 @@ const EventAttendance = () => {
   };
 
   const handleSave = async () => {
-    const res = await axios.put(
+    const res = await axiosInstance.put(
       process.env.REACT_APP_SERVER_URL + "events/postAttendance",
       { studentPresence: studentPresence, eventID: eventID }
     );
@@ -185,7 +227,7 @@ const EventAttendance = () => {
   };
 
   const handleReport = async () => {
-    axios
+    axiosInstance
       .get(
         process.env.REACT_APP_SERVER_URL +
           "events/eventAttendance?eventID=" +
