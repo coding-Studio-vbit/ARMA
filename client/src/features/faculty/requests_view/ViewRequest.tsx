@@ -34,7 +34,9 @@ export default function RequestsView() {
   const [message, setMessage] = useState<string>("");
   const [action, setAction] = useState<string>(actions.NONE);
   const [loading, setLoading] = useState<boolean>(false);
-  const [comments, setComments] = useState<any>(event?.SACComments);
+  const [comments, setComments] = useState<any>(
+    FO.role.SAC ? event?.SACComments : event.FOComments
+  );
 
   const { faculty } = useUser();
 
@@ -42,9 +44,9 @@ export default function RequestsView() {
     getEventInfo();
   }, []);
 
-  useEffect(()=>{
-    setComments(event?.SACComments)
-  }, [event])
+  useEffect(() => {
+    setComments(FO.role.SAC ? event?.SACComments : event.FOComments);
+  }, [event]);
 
   const [eventDays, setEventDays] = useState(null);
 
@@ -130,9 +132,17 @@ export default function RequestsView() {
   async function requestChanges() {
     console.log(message);
     try {
-      if(faculty.role.SAC){
-        const res = await axios.post("faculty/commentEvent",{SACComments:comments, eventId:id});
+      if (faculty.role.SAC) {
+        const res = await axios.post("faculty/commentEvent", {
+          SACComments: comments,
+          eventId: id,
+        });
         console.log(res);
+      } else if (faculty.role.FO) {
+        const res = await axios.post("faculty/commentBudget", {
+          FOComments: comments,
+          eventId: id,
+        });
       }
       setLoading(true);
       setAction(actions.COMPLETED);
@@ -236,7 +246,8 @@ export default function RequestsView() {
             Forum: {(event.forumID as Forum).name}
           </div>
           <div className="text-arma-gray text-md">
-            Faculty Coordinator: {(event.forumID as Forum).facultyCoordinatorID.name}
+            Faculty Coordinator:{" "}
+            {(event.forumID as Forum).facultyCoordinatorID.name}
           </div>
         </div>
       </div>
@@ -378,7 +389,9 @@ export default function RequestsView() {
         name="comments"
         value={comments}
         placeholder="Please write your comments here"
-        onChange={(e)=>{setComments(e.target.value)}}
+        onChange={(e) => {
+          setComments(e.target.value);
+        }}
         className="outline-none sm:w-[100%] w-full border-[1px] 
       border-[#E5E5EA] p-4 md:w-[60%] rounded-[8px]"
       ></textarea>
