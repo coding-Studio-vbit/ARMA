@@ -56,6 +56,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
               className={
                 reservations[hall.toUpperCase()] &&
                 reservations[hall.toUpperCase()].includes("morning") &&
+                oldEventDates[key].halls &&
                 !oldEventDates[key].halls.includes("morning." + hall)
                   ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
                   : eventHalls.includes("morning." + hall)
@@ -66,6 +67,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
                 if (
                   reservations[hall.toUpperCase()] &&
                   reservations[hall.toUpperCase()].includes("morning") &&
+                  oldEventDates[key].halls &&
                   !oldEventDates[key].halls.includes("morning." + hall)
                 )
                   console.log("already exists");
@@ -78,6 +80,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
               className={
                 reservations[hall.toUpperCase()] &&
                 reservations[hall.toUpperCase()].includes("afternoon") &&
+                oldEventDates[key].halls &&
                 !oldEventDates[key].halls.includes("afternoon." + hall)
                   ? "flex text-gray-100 px-8 mb-2 mx-2 rounded border border-gray cursor-default"
                   : eventHalls.includes("afternoon." + hall)
@@ -88,6 +91,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
                 if (
                   reservations[hall.toUpperCase()] &&
                   reservations[hall.toUpperCase()].includes("afternoon") &&
+                  oldEventDates[key].halls &&
                   !oldEventDates[key].halls.includes("afternoon." + hall)
                 )
                   console.log("already exists");

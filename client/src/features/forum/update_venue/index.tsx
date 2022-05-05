@@ -219,10 +219,12 @@ const EventVenue = () => {
     });
   const setDays = (date) => {
     setSelectedDays(date);
-    var obj = eventDates;
+    var obj = {};
     date.map((d) => {
       const dateString = new Date(d.year, d.month - 1, d.day);
-      if (!obj[dateString.toDateString()])
+      if (eventDates[dateString.toDateString()]) {
+        obj[dateString.toDateString()] = eventDates[dateString.toDateString()];
+      } else if (!obj[dateString.toDateString()])
         obj[dateString.toDateString()] = {
           dateObject: d,
           eventDate: dateString,

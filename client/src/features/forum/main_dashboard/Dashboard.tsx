@@ -7,7 +7,7 @@ import ForumCover from "./forumCover";
 
 //redux
 import { useDispatch } from "react-redux";
-import { createDatesState } from "../../../redux/actions";
+import { createDatesState, selectDate } from "../../../redux/actions";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -17,6 +17,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(createDatesState({}));
+    dispatch(selectDate(""));
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}forum/dashboard`)
       .then((response) => {
