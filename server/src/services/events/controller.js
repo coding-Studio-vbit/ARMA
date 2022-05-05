@@ -613,7 +613,7 @@ const updateReservations = async (req, res) => {
         record.hallId = obj.HallID;
         record.forumId = req.user._id;
         record.status = "NOT COMPLETED";
-        record.eventId = newEvent._id;
+        record.eventId = event._id;
         record.dates = obj.dates;
         record.timeSlots = obj.timeSlots;
         await record.save();

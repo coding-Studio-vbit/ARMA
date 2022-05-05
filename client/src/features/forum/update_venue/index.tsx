@@ -28,6 +28,12 @@ const EventVenue = () => {
   const [oldEventDates, setOldEventDates] = useState({});
   const { state }: { state: any } = useLocation();
 
+  const updateReservations = async (newReservations) => {
+    let result = await axios.post("events/updateEventReservations", {eventHalls:newReservations, id:state.eventId});
+    navigate(-1);
+    console.log(result);
+  }
+
   useEffect(() => {
     if (Object.keys(eventDates).length === 0) navigate(-1);
     axios
@@ -409,9 +415,9 @@ const EventVenue = () => {
         <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
           <button
             className="btn px-8 py-3   text-xl tracking-wide  ml-auto my-8"
-            onClick={() => {console.log(eventDates)}}
+            onClick={async() => {updateReservations(eventDates)}}
           >
-            UPDATE
+            Update
           </button>
         </div>
       ) : null}
