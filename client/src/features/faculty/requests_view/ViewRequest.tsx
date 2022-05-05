@@ -46,19 +46,13 @@ export default function RequestsView() {
   
   const [eventDays, setEventDays] = useState(null);
   
-  if (status === "loading") {
-    return <p>loading</p>;
-  }
-  if (status === "error") {
-    return <p>{error.message}</p>;
-  }
-
+  
   async function getEventInfo() {
     try {
       const res = await axios.get(
         process.env.REACT_APP_SERVER_URL + "events/getEvent/" + id
-      );
-      if (res.data.status === 1) {
+        );
+        if (res.data.status === 1) {
         // console.log(res.data.response);
         let dates = res.data.response.eventDates;
         for (let i = 0; i < dates.length; i++) {
@@ -71,7 +65,7 @@ export default function RequestsView() {
         }
         setEventDays(dates);
       } else {
-
+        
       }
       // setError("efjhrfuruihrf")
     } catch (error) {
@@ -79,11 +73,11 @@ export default function RequestsView() {
     }
     setLoading(false);
   }
- 
   
-
+  
+  
   const facilities = ["speakers", "mic", "projector", "chairs", "router"];
-
+  
   async function approveBudget() {
     console.log(message);
     console.log(action);
@@ -101,7 +95,7 @@ export default function RequestsView() {
       }, 2000);
     } catch (error) {}
   }
-
+  
   async function approveEvent() {
     console.log(message);
     console.log(action);
@@ -119,7 +113,7 @@ export default function RequestsView() {
       }, 2000);
     } catch (error) {}
   }
-
+  
   
   
   async function rejectEvent() {
@@ -139,7 +133,7 @@ export default function RequestsView() {
       }, 2000);
     } catch (error) {}
   }
-
+  
   async function requestChanges() {
     console.log(message);
     console.log(action);
@@ -157,7 +151,7 @@ export default function RequestsView() {
       }, 2000);
     } catch (error) {}
   }
-
+  
   function actionNo() {
     setShowDialog(false);
     setMessage("");
@@ -168,34 +162,34 @@ export default function RequestsView() {
       case actions.REQUEST_CHANGES:
         requestChanges();
         break;
-      case actions.APPROVE_BUDGET:
-        approveBudget();
-        break;
-      case actions.APPROVE_REQUEST:
-        approveEvent();
-        break;
-      case actions.REJECT_REQUEST:
-        rejectEvent();
-        break;
-      default:
-        break;
-    }
-  }
-
-  function makeRequest(action) {
-    setAction(action);
-    switch (action) {
-      case actions.REQUEST_CHANGES:
-        setMessage("ARE YOU SURE YOU WANT TO REQUEST CHANGES?");
-        break;
+        case actions.APPROVE_BUDGET:
+          approveBudget();
+          break;
+          case actions.APPROVE_REQUEST:
+            approveEvent();
+            break;
+            case actions.REJECT_REQUEST:
+              rejectEvent();
+              break;
+              default:
+                break;
+              }
+            }
+            
+            function makeRequest(action) {
+              setAction(action);
+              switch (action) {
+                case actions.REQUEST_CHANGES:
+                  setMessage("ARE YOU SURE YOU WANT TO REQUEST CHANGES?");
+                  break;
       case actions.APPROVE_BUDGET:
         setMessage("ARE YOU SURE YOU WANT TO APPROVE BUDGET?");
         break;
       case actions.APPROVE_REQUEST:
         setMessage("ARE YOU SURE YOU WANT TO APPROVE REQUEST?");
         break;
-      case actions.REJECT_REQUEST:
-        setMessage("ARE YOU SURE YOU WANT TO REJECT REQUEST?");
+        case actions.REJECT_REQUEST:
+          setMessage("ARE YOU SURE YOU WANT TO REJECT REQUEST?");
         break;
       default:
         break;
@@ -203,6 +197,14 @@ export default function RequestsView() {
     setShowDialog(true);
   }
 
+  if (status === "loading") {
+    return <p>loading</p>;
+  }
+  
+  if (status === "error") {
+    return <p>{error.message}</p>;
+  }
+  
   return (
     <div className="lg:mx-[5rem] xl:mx-[10rem]  mx-8 mt-8 mb-8 flex flex-col gap-y-4">
       <Dialog
