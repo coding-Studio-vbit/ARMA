@@ -37,6 +37,15 @@ export default function RequestsView() {
 
   const { faculty } = useUser();
 
+  useEffect(() => {
+    getEventInfo()
+    
+  
+    
+  }, [])
+  
+  const [eventDays, setEventDays] = useState(null);
+  
   if (status === "loading") {
     return <p>loading</p>;
   }
@@ -44,23 +53,34 @@ export default function RequestsView() {
     return <p>{error.message}</p>;
   }
 
-  const preselectedDays = [
-    {
-      year: 2019,
-      month: 10,
-      day: 2,
-    },
-    {
-      year: 2019,
-      month: 10,
-      day: 15,
-    },
-    {
-      year: 2019,
-      month: 10,
-      day: 30,
-    },
-  ];
+  async function getEventInfo() {
+    try {
+      const res = await axios.get(
+        process.env.REACT_APP_SERVER_URL + "events/getEvent/" + id
+      );
+      if (res.data.status === 1) {
+        // console.log(res.data.response);
+        let dates = res.data.response.eventDates;
+        for (let i = 0; i < dates.length; i++) {
+          let d = new Date(dates[i]);
+          dates[i] = {
+            day: d.getDate(),
+            month: d.getMonth() + 1,
+            year: d.getFullYear(),
+          };
+        }
+        setEventDays(dates);
+      } else {
+
+      }
+      // setError("efjhrfuruihrf")
+    } catch (error) {
+      console.log(error);      
+    }
+    setLoading(false);
+  }
+ 
+  
 
   const facilities = ["speakers", "mic", "projector", "chairs", "router"];
 
@@ -248,58 +268,64 @@ export default function RequestsView() {
             <div className="flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
               <span>Event Proposal Document</span>
               {/* {event.eventProposalDocPath} */}
-              <a
-                className="!cursor-pointer"
-                onClick={async function () {
-                  let result;
-                  try {
-                    result = await axios({
-                      responseType: "blob",
-                      method: "GET",
-                      url: `${process.env.REACT_APP_SERVER_URL}events/getEventDocument/${id}`,
-                    });
-                  } catch (error) {
-                    console.log("Failed");
-                  }
-                  console.log(result);
-                  const url = window.URL.createObjectURL(
-                    new Blob([result.data])
-                  );
-                  const link = document.createElement("a");
-                  link.href = url;
-                  link.setAttribute("download", "eventProposalDoc.pdf"); //or any other extension
-                  document.body.appendChild(link);
-                  link.click();
-                }}
-                download
-              >
-                <CloudDownload className="cursor-pointer" />
-              </a>
+              {
+                (faculty?.role.ADMIN || faculty?.role.SAC) &&
+                <a
+                  className="!cursor-pointer"
+                  onClick={async function () {
+                    let result;
+                    try {
+                      result = await axios({
+                        responseType: "blob",
+                        method: "GET",
+                        url: `${process.env.REACT_APP_SERVER_URL}events/getEventDocument/${id}`,
+                      });
+                    } catch (error) {
+                      console.log("Failed");
+                    }
+                    console.log(result);
+                    const url = window.URL.createObjectURL(
+                      new Blob([result.data])
+                    );
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.setAttribute("download", "eventProposalDoc.pdf"); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+                  }}
+                  download
+                >
+                  <CloudDownload className="cursor-pointer" />
+                </a>
+              }
             </div>
             <div className="mt-6 flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
               <span>Budget Document</span>
               {/* {event.budgetDocPath} */}
-              <a
-                className="!cursor-pointer"
-                onClick={async () => {
-                  const result = await axios({
-                    responseType: "blob",
-                    method: "GET",
-                    url: `${process.env.REACT_APP_SERVER_URL}events/getBudgetDocument/${id}`,
-                  });
-                  const url = window.URL.createObjectURL(
-                    new Blob([result.data])
-                  );
-                  const link = document.createElement("a");
-                  link.href = url;
-                  link.setAttribute("download", "budget.pdf"); //or any other extension
-                  document.body.appendChild(link);
-                  link.click();
-                }}
-                download
-              >
-                <CloudDownload className="cursor-pointer" />
-              </a>
+              {
+                (faculty?.role.ADMIN || faculty?.role.FO) &&
+                <a
+                  className="!cursor-pointer"
+                  onClick={async () => {
+                    const result = await axios({
+                      responseType: "blob",
+                      method: "GET",
+                      url: `${process.env.REACT_APP_SERVER_URL}events/getBudgetDocument/${id}`,
+                    });
+                    const url = window.URL.createObjectURL(
+                      new Blob([result.data])
+                    );
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.setAttribute("download", "budget.pdf"); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+                  }}
+                  download
+                >
+                  <CloudDownload className="cursor-pointer" />
+                </a>
+              }
             </div>
           </div>
         </div>
@@ -307,11 +333,14 @@ export default function RequestsView() {
           <span className="text-arma-gray font-medium text-2xl ">
             Event Dates
           </span>
-          <Calendar
-            value={preselectedDays}
-            colorPrimary="#0047FF"
-            shouldHighlightWeekends
-          />
+          {
+            eventDays && 
+            <Calendar
+              value={eventDays}
+              colorPrimary="#0047FF"
+              shouldHighlightWeekends
+            />
+          }
         </div>
       </div>
 
