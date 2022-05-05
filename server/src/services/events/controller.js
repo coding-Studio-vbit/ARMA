@@ -1,5 +1,6 @@
 const events = require("../../models/event");
 const faculty = require("../../models/faculty");
+const forums = require("../../models/forum");
 const reservations = require("../../models/reservations");
 const response = require("../util/response");
 const attendance = require("../../models/attendance");
@@ -122,7 +123,12 @@ const createEvent = async (req, res) => {
       });
     }
 
+    const thisForum = await forums.findById(req.user._id).populate("forumCoreTeamMembers.studentID");
+
+    console.log(thisForum);
+
     newAttendanceDoc.eventID = String(newEvent._id);
+    newAttendanceDoc.registrantsList = thisForum.forumCoreTeamMembers.map((e)=>e.studentID._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
 
     // // Create reservations.
