@@ -15,6 +15,7 @@ import {
   selectDate,
   createReservations,
 } from "../../../redux/actions";
+import { ChevronRightRounded } from "@material-ui/icons";
 
 const EventVenue = () => {
   const navigate = useNavigate();
@@ -344,12 +345,13 @@ const EventVenue = () => {
       {selectedDays.length > 0 ? (
         <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
           <button
-            className="btn px-8 py-3   text-xl tracking-wide  ml-auto my-8"
-            onClick={() => {
+          className="btn pr-2 text-xl ml-auto my-8"
+          onClick={() => {
               navigate("/forum/createEvent/equipment");
             }}
           >
-            Equipment
+            NEXT
+            <ChevronRightRounded fontSize="large"/>
           </button>
         </div>
       ) : null}

@@ -40,14 +40,14 @@ export default function EventEquip() {
 
   return (
     <div className="flex flex-col sm:mx-24 mt-8 md:items-start items-center mb-8 ">
-      <span className="text-arma-title sm:text-4xl  text-2xl mb-8 font-semibold">
-        Choose Equipment
+      <span className="text-arma-title sm:text-4xl flex text-2xl mb-8 font-semibold">
+        Choose Equipment 
+        <BusinessCenter fontSize="large" className="text-arma-title" />
       </span>
       <div className="flex gap-2">
         <span className="text-arma-gray text-lg mb-8 font-semibold">
-          Choose Equipment
+          Choose a list of equipment you need.
         </span>
-        <BusinessCenter className="text-arma-title" />
       </div>
       <div className="flex flex-col md:flex-row gap-y-6 items-center sm:gap-x-6 ">
         <div className=" flex flex-col gap-y-6  md:flex-row sm:gap-x-8">
@@ -104,7 +104,7 @@ export default function EventEquip() {
           ADD
         </button>
         <button
-          className="btn  bg-arma-title rounded-[8px] px-6 py-2 my-auto"
+          className="btn pr-2 text-xl ml-auto my-8"
           onClick={() => {
             console.log({ eventDates, eventDetails, list });
             const newData = new FormData();

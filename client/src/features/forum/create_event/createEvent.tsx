@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CloudUploadTwoTone } from "@material-ui/icons";
+import { ChevronRightRounded, CloudUploadTwoTone } from "@material-ui/icons";
 import ToggleSwitch from "../../../components/CustomToggleSwitch";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog } from "../../../components/Dialog/Dialog";
@@ -160,9 +160,9 @@ const CreateEvent = () => {
         </div>
       </div>
       <Dialog show={show} setShow={setShow} title={msg} />
-      <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
+      <div className="sm:w-4/4 flex sm:items-end mx-auto sm:mx-0">
         <button
-          className="btn px-8 py-3   text-xl tracking-wide  ml-auto my-8"
+          className="btn pr-2 text-xl ml-auto my-8"
           onClick={() => {
             if (name.length < 3) {
               unstable_batchedUpdates(() => {
@@ -191,6 +191,7 @@ const CreateEvent = () => {
           }}
         >
           NEXT
+          <ChevronRightRounded fontSize="large"/>
         </button>
       </div>
     </div>
