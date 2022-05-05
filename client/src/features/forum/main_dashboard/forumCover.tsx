@@ -7,6 +7,7 @@ import { Dialog } from "../../../components/Dialog/Dialog";
 function ForumCover() {
   const [url, setUrl] = useState("");
   const [profileObj, setprofileObj] = useState<any>();
+  const [file, setFile] = useState<File>(null);
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [dialogMessage, setDialogMessage] = useState<string>("");
@@ -23,14 +24,20 @@ function ForumCover() {
 
   async function updateForumCover() {
     try {
-      console.log(`${process.env.REACT_APP_SERVER_URL}forum/dashboardCover`);
-
-      const res = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}forum/dashboardCover`,
-        profileObj
-      );
-      console.log(res.data.response);
-      setUrl(res.data.response);
+      let myFormData = new FormData();
+            myFormData.append("dashboardCover",file);
+            axios
+              .post(
+                `${process.env.REACT_APP_SERVER_URL}forum/dashboardCover`,
+                myFormData
+              )
+              .then((response) => {
+                console.log(response);
+                //window.location.reload();
+              })
+              .catch((err) => {
+                console.log(err);
+              });
       setShowDialog(true);
       setDialogMessage("Forum Cover Updated Successfully");
     } catch (error) {
@@ -78,22 +85,9 @@ function ForumCover() {
           type="file"
           name="file"
           onChange={(e) => {
+            setFile(e.target.files[0]);
             setprofileObj(URL.createObjectURL(e.target.files[0]));
-
-            let myFormData = new FormData();
-            myFormData.append("dashboardCover", e.target.files[0]);
-            axios
-              .post(
-                `${process.env.REACT_APP_SERVER_URL}forum/dashboardCover`,
-                myFormData
-              )
-              .then((response) => {
-                console.log(response);
-                //window.location.reload();
-              })
-              .catch((err) => {
-                console.log(err);
-              });
+            
           }}
         />
         <div className="font-medium absolute text-white z-40 bottom-5 right-10 bg-arma-blue px-5 py-2 rounded-full ">

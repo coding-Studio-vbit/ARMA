@@ -22,7 +22,7 @@ const getEquipment = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort);
-    const total = await equipment.count(where);
+    const total = await equipment.countDocuments(where);
 
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)

@@ -324,6 +324,7 @@ const uploadRegistrantsList = async (req, res) => {
   try {
     for (let i = 0; i < req.body.length; i++) {
       let data = req.body[i];
+      console.log(data);
       let value = await students.findOne({ rollNumber: data.rollNumber });
       if (!value) {
         console.log(data);
@@ -332,14 +333,23 @@ const uploadRegistrantsList = async (req, res) => {
       } else {
         await students.findOneAndUpdate(
           { rollNumber: data.rollNumber },
-          { $addToSet: { attendedEvents: [data.attendedEvents] } }
+          { $addToSet: { eventsParticipated: [data.attendedEvents] } }
         );
       }
     }
     let attendanceDoc = await attendance.findOne({ eventID: attendedEvents });
-    let studentData = await students.find({ attendedEvents: attendedEvents });
-    attendanceDoc.registrantsList = studentData;
-    attendanceDoc.presence = studentData;
+    let studentData = await students.find({
+      eventsParticipated: [attendedEvents],
+    });
+    console.log(studentData);
+    console.log("341", attendanceDoc);
+    attendanceDoc.registrantsList = [...attendanceDoc.registrantsList, studentData].flat();
+    // attendanceDoc.presence = studentData;
+    await attendance.findOneAndUpdate(
+      { eventID: attendedEvents },
+      { $addToSet: { pressence: [attendanceDoc.registrantsList] } }
+    );
+    console.log("343", attendanceDoc);
     await attendanceDoc.save();
     res.json(
       response(
@@ -363,7 +373,8 @@ const eventAttendance = async (req, res) => {
   try {
     const result = await attendance
       .findOne({ eventID: req.query.eventID })
-      .populate({ path: "presence.studentId", model: "students" });
+      .populate({ path: "presence._id", model: "students" });
+    console.log(result);
     if (result == null)
       throw new Error("Could not find the attendance document");
     const total = await attendance.count({ eventID: req.query.eventID });
@@ -740,7 +751,12 @@ const completeEvent = async (req, res) => {
     for (let i = 0; i < attendanceDoc.presence.length; i++) {
       const attendancePercentage =
         (attendanceDoc.presence[i].dates.length * 100) / totalDays;
-      if (attendancePercentage >= (process.env.MIN_EVENT_PERCENTAGE ? process.env.MIN_EVENT_PERCENTAGE : 50)) {
+      if (
+        attendancePercentage >=
+        (process.env.MIN_EVENT_PERCENTAGE
+          ? process.env.MIN_EVENT_PERCENTAGE
+          : 50)
+      ) {
         qualifiedStudents.push(attendanceDoc.presence[i].studentId);
       }
     }

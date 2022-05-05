@@ -33,7 +33,7 @@ const getStudentsList = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort);
-    const total = await students.count(where);
+    const total = await students.countDocuments(where);
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );
@@ -159,11 +159,11 @@ const generatePDF = async (req, res) => {
     const { studentId } = req.body;
     const student = await students
       .findById(studentId)
-      .populate({path:"eventsOrganized",populate:{path:'forumID'}})
+      .populate({ path: "eventsOrganized", populate: { path: "forumID" } })
       .populate("forumMemberships.forumId")
       .populate("eventsParticipated");
     const result = await studentReports.generateNewReport(student);
-    
+
     pdf.create(result.data).toFile(result.filePath, async (err, data) => {
       if (err) throw err;
       else {

@@ -24,6 +24,7 @@ const EventVenue = () => {
   const [isLong, setIsLong] = useState(false);
   const [hallList, setHallList] = useState([]);
   const eventDetails = useSelector((state: RootState) => state.eventDetails);
+  const eventDates = useSelector((state: RootState) => state.eventDates);
   const [oldEventDates, setOldEventDates] = useState({});
   const { state }: { state: any } = useLocation();
 
@@ -69,7 +70,6 @@ const EventVenue = () => {
   }, []);
 
   //redux
-  const eventDates = useSelector((state: RootState) => state.eventDates);
   const [blockedSlots, setBlockedSlots] = useState({});
   const key = useSelector((state: RootState) => state.selectedDate);
   const dispatch = useDispatch();
@@ -409,7 +409,7 @@ const EventVenue = () => {
         <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
           <button
             className="btn px-8 py-3   text-xl tracking-wide  ml-auto my-8"
-            onClick={() => {}}
+            onClick={() => {console.log(eventDates)}}
           >
             UPDATE
           </button>
