@@ -462,7 +462,7 @@ const getEventById = async (req, res) => {
         path: "facultyCoordinatorID",
         select: "name",
       },
-    });
+    }).populate("equipment.equipmentType");
 
     if (event) {
       res.json(response(event, process.env.SUCCESS_CODE));
@@ -520,7 +520,7 @@ const getEventDocument = async (req, res) => {
     const forumId = req.user._id;
     const { id } = req.params;
     const event = await events.findById(id);
-    if (event.forumID == forumId) {
+    if (event.forumID == forumId || req.user.userType.find(type=>(type.name=="SAC"||type.name=="FACULTY"||type.name=="ADMIN"))) {
       res.sendFile(event.eventProposalDocPath);
     } else {
       res.json(response("unauthorized", process.env.FAILURE_CODE));

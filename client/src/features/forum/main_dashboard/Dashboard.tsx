@@ -12,7 +12,7 @@ import { createDatesState, selectDate } from "../../../redux/actions";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const messageList = ["Oh no, your event wall is empty! Go on, Add a new event!", "Go on, Add a new event!","HELLOO?? This place is empty, Add a new event!"]
+  const messageList = ["Your event wall is empty. Go on, add a new event!", "Let's add a new event!","Aw shucks, there's no events here, lets create one now!"]
   const [eventList, setEventList] = useState([]);
   const [todaysEventList, setTodaysEventList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -89,7 +89,7 @@ const Dashboard = () => {
           id="eventCardsSection"
           className="sm:relative -top-16 mb-4 w-full sm:w-3/5 md:w-2/3 lg:w-5/6 flex flex-wrap justify-center lg:justify-start lg:ml-4"
         >
-          {loading ? <Spinner className="top-32"/> : eventList.length == 0 ? <span className="sm:relative top-32 text-2xl font-bold text-arma-dark-blue">{"{  "+messageList[Math.round(Math.random()*(messageList.length-1))]+"  }"}</span>:(eventList.map((item, index) => {
+          {loading ? <Spinner className="top-32"/> : eventList.length == 0 ? <span className="sm:relative top-32 text-2xl px-10 font-bold text-arma-dark-blue">{messageList[Math.round(Math.random()*(messageList.length-1))]}</span>:(eventList.map((item, index) => {
             return (
               <div className="mx-2 my-4 sm:m-4" key={index}>
                 <EventCard

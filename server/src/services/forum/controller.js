@@ -1,4 +1,3 @@
-const { welcomeTemplate } = require("../../email_templates/templates");
 const events = require("../../models/event");
 const forums = require("../../models/forum");
 const reservations = require("../../models/reservations");
@@ -8,7 +7,7 @@ const fs = require("fs");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
 const facultyModel = require("../../models/faculty");
-const { populate } = require("../../models/forum");
+const path = require("path");
 const mongoose = require("mongoose");
 const dashboard = async (req, res) => {
   try {
@@ -416,8 +415,24 @@ const getProfilePicture = async (req, res) => {
   //console.log(req);
   try {
     const myForum = await forums.findOne({ email: req.user.email });
+    if (
+      req.user.userType.find(
+        (v) => v.name == "SAC" || v.name == "FACULTY" || v.name == "FO"
+      )
+    )
+      return res.json(
+        response(
+          base64.encode(path.join(__dirname, "cs.png")),
+          process.env.SUCCESS_CODE
+        )
+      );
     if (myForum.profilePictureFilePath == undefined)
-      res.sendFile("cs.png", { root: __dirname });
+      res.json(
+        response(
+          base64.encode(path.join(__dirname, "cs.png")),
+          process.env.SUCCESS_CODE
+        )
+      );
     else {
       res.json(
         response(

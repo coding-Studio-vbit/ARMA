@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { CloudDownload } from "@material-ui/icons";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Calendar } from "react-modern-calendar-datepicker";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
@@ -38,21 +38,17 @@ export default function RequestsView() {
   const { faculty } = useUser();
 
   useEffect(() => {
-    getEventInfo()
-    
-  
-    
-  }, [])
-  
+    getEventInfo();
+  }, []);
+
   const [eventDays, setEventDays] = useState(null);
-  
-  
+
   async function getEventInfo() {
     try {
       const res = await axios.get(
         process.env.REACT_APP_SERVER_URL + "events/getEvent/" + id
-        );
-        if (res.data.status === 1) {
+      );
+      if (res.data.status === 1) {
         // console.log(res.data.response);
         let dates = res.data.response.eventDates;
         for (let i = 0; i < dates.length; i++) {
@@ -65,19 +61,16 @@ export default function RequestsView() {
         }
         setEventDays(dates);
       } else {
-        
       }
       // setError("efjhrfuruihrf")
     } catch (error) {
-      console.log(error);      
+      console.log(error);
     }
     setLoading(false);
   }
-  
-  
-  
+
   const facilities = ["speakers", "mic", "projector", "chairs", "router"];
-  
+
   async function approveBudget() {
     console.log(message);
     console.log(action);
@@ -95,7 +88,7 @@ export default function RequestsView() {
       }, 2000);
     } catch (error) {}
   }
-  
+
   async function approveEvent() {
     console.log(message);
     console.log(action);
@@ -113,9 +106,7 @@ export default function RequestsView() {
       }, 2000);
     } catch (error) {}
   }
-  
-  
-  
+
   async function rejectEvent() {
     console.log(message);
     console.log(action);
@@ -133,7 +124,7 @@ export default function RequestsView() {
       }, 2000);
     } catch (error) {}
   }
-  
+
   async function requestChanges() {
     console.log(message);
     console.log(action);
@@ -151,7 +142,7 @@ export default function RequestsView() {
       }, 2000);
     } catch (error) {}
   }
-  
+
   function actionNo() {
     setShowDialog(false);
     setMessage("");
@@ -162,34 +153,34 @@ export default function RequestsView() {
       case actions.REQUEST_CHANGES:
         requestChanges();
         break;
-        case actions.APPROVE_BUDGET:
-          approveBudget();
-          break;
-          case actions.APPROVE_REQUEST:
-            approveEvent();
-            break;
-            case actions.REJECT_REQUEST:
-              rejectEvent();
-              break;
-              default:
-                break;
-              }
-            }
-            
-            function makeRequest(action) {
-              setAction(action);
-              switch (action) {
-                case actions.REQUEST_CHANGES:
-                  setMessage("ARE YOU SURE YOU WANT TO REQUEST CHANGES?");
-                  break;
+      case actions.APPROVE_BUDGET:
+        approveBudget();
+        break;
+      case actions.APPROVE_REQUEST:
+        approveEvent();
+        break;
+      case actions.REJECT_REQUEST:
+        rejectEvent();
+        break;
+      default:
+        break;
+    }
+  }
+
+  function makeRequest(action) {
+    setAction(action);
+    switch (action) {
+      case actions.REQUEST_CHANGES:
+        setMessage("ARE YOU SURE YOU WANT TO REQUEST CHANGES?");
+        break;
       case actions.APPROVE_BUDGET:
         setMessage("ARE YOU SURE YOU WANT TO APPROVE BUDGET?");
         break;
       case actions.APPROVE_REQUEST:
         setMessage("ARE YOU SURE YOU WANT TO APPROVE REQUEST?");
         break;
-        case actions.REJECT_REQUEST:
-          setMessage("ARE YOU SURE YOU WANT TO REJECT REQUEST?");
+      case actions.REJECT_REQUEST:
+        setMessage("ARE YOU SURE YOU WANT TO REJECT REQUEST?");
         break;
       default:
         break;
@@ -200,11 +191,11 @@ export default function RequestsView() {
   if (status === "loading") {
     return <p>loading</p>;
   }
-  
+
   if (status === "error") {
     return <p>{error.message}</p>;
   }
-  
+
   return (
     <div className="lg:mx-[5rem] xl:mx-[10rem]  mx-8 mt-8 mb-8 flex flex-col gap-y-4">
       <Dialog
@@ -270,42 +261,39 @@ export default function RequestsView() {
             <div className="flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
               <span>Event Proposal Document</span>
               {/* {event.eventProposalDocPath} */}
-              {
-                (faculty?.role.ADMIN || faculty?.role.SAC) &&
+              {(faculty?.role.ADMIN || faculty?.role.SAC) && (
                 <a
                   className="!cursor-pointer"
                   onClick={async function () {
-                    let result;
+                    console.log(id);
                     try {
-                      result = await axios({
+                      const result = await axios({
                         responseType: "blob",
                         method: "GET",
                         url: `${process.env.REACT_APP_SERVER_URL}events/getEventDocument/${id}`,
                       });
+                      const url = window.URL.createObjectURL(
+                        new Blob([result.data])
+                      );
+                      const link = document.createElement("a");
+                      link.href = url;
+                      link.setAttribute("download", "eventProposalDoc.pdf"); //or any other extension
+                      document.body.appendChild(link);
+                      link.click();
                     } catch (error) {
                       console.log("Failed");
                     }
-                    console.log(result);
-                    const url = window.URL.createObjectURL(
-                      new Blob([result.data])
-                    );
-                    const link = document.createElement("a");
-                    link.href = url;
-                    link.setAttribute("download", "eventProposalDoc.pdf"); //or any other extension
-                    document.body.appendChild(link);
-                    link.click();
                   }}
                   download
                 >
                   <CloudDownload className="cursor-pointer" />
                 </a>
-              }
+              )}
             </div>
             <div className="mt-6 flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
               <span>Budget Document</span>
               {/* {event.budgetDocPath} */}
-              {
-                (faculty?.role.ADMIN || faculty?.role.FO) &&
+              {(faculty?.role.ADMIN || faculty?.role.FO) && (
                 <a
                   className="!cursor-pointer"
                   onClick={async () => {
@@ -327,7 +315,7 @@ export default function RequestsView() {
                 >
                   <CloudDownload className="cursor-pointer" />
                 </a>
-              }
+              )}
             </div>
           </div>
         </div>
@@ -335,27 +323,26 @@ export default function RequestsView() {
           <span className="text-arma-gray font-medium text-2xl ">
             Event Dates
           </span>
-          {
-            eventDays && 
+          {eventDays && (
             <Calendar
               value={eventDays}
               colorPrimary="#0047FF"
               shouldHighlightWeekends
             />
-          }
+          )}
         </div>
       </div>
-
-      <span className="text-arma-gray font-medium text-2xl ">Facilities</span>
+{console.log(event)}
+      <span className="text-arma-gray font-medium text-2xl ">Equipment Required</span>
       <div className="flex flex-wrap  w-[90%] sm:w-[70%]">
-        {facilities.map((f) => {
+        {event.equipment.map((f:any) => {
           return (
             <div
               key={f}
               className="basis-[40%] shrink mb-2 text-md font-medium flex items-center"
             >
               <div className="mr-2 bg-arma-title w-[10px] h-[10px] rounded-full"></div>
-              <span key={f}>{f}</span>
+              <span className={(f.quantity > f.equipmentType.totalCount ? "text-red-500" : "")} key={f.equipmentType.name}>{f.equipmentType.name} - {f.quantity} pcs, Total Available - {f.equipmentType.totalCount}</span>
             </div>
           );
         })}
