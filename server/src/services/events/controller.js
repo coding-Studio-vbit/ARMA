@@ -1,6 +1,5 @@
 const events = require("../../models/event");
 const faculty = require("../../models/faculty");
-const forums = require("../../models/forum");
 const reservations = require("../../models/reservations");
 const response = require("../util/response");
 const attendance = require("../../models/attendance");
@@ -68,7 +67,7 @@ const getEvents = async (req, res) => {
         }
       });
     }
-    const total = await events.countDocuments(where);
+    const total = await events.count(where);
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );
@@ -123,12 +122,7 @@ const createEvent = async (req, res) => {
       });
     }
 
-    const thisForum = await forums.findById(req.user._id).populate("forumCoreTeamMembers.studentID");
-
-    console.log(thisForum);
-
     newAttendanceDoc.eventID = String(newEvent._id);
-    newAttendanceDoc.registrantsList = thisForum.forumCoreTeamMembers.map((e)=>e.studentID._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
 
     // // Create reservations.
@@ -330,6 +324,7 @@ const uploadRegistrantsList = async (req, res) => {
   try {
     for (let i = 0; i < req.body.length; i++) {
       let data = req.body[i];
+      console.log(data)
       let value = await students.findOne({ rollNumber: data.rollNumber });
       if (!value) {
         console.log(data);
@@ -338,14 +333,16 @@ const uploadRegistrantsList = async (req, res) => {
       } else {
         await students.findOneAndUpdate(
           { rollNumber: data.rollNumber },
-          { $addToSet: { attendedEvents: [data.attendedEvents] } }
+          { $addToSet: { eventsParticipated: [data.attendedEvents] } }
         );
       }
     }
     let attendanceDoc = await attendance.findOne({ eventID: attendedEvents });
-    let studentData = await students.find({ attendedEvents: attendedEvents });
+    let studentData = await students.find({ eventsParticipated: [attendedEvents] });
+    console.log("341",attendanceDoc);
     attendanceDoc.registrantsList = studentData;
     attendanceDoc.presence = studentData;
+    console.log("343",attendanceDoc);
     await attendanceDoc.save();
     res.json(
       response(
@@ -369,12 +366,11 @@ const eventAttendance = async (req, res) => {
   try {
     const result = await attendance
       .findOne({ eventID: req.query.eventID })
-      .populate({ path: "presence.studentId", model: "students" });
+      .populate({ path: "presence._id", model: "students" });
+    console.log(result)
     if (result == null)
       throw new Error("Could not find the attendance document");
-    const total = await attendance.countDocuments({
-      eventID: req.query.eventID,
-    });
+    const total = await attendance.count({ eventID: req.query.eventID });
     res.json(
       response(
         { data: result.presence, total: total },
@@ -532,11 +528,7 @@ const updateReservations = async (req, res) => {
   try {
     const { eventHalls, id } = req.body;
     const event = await events.findById(id);
-    if (
-      event.forumID == req.user._id &&
-      event.eventStatus !== "APPROVED" &&
-      event.eventStatus !== "COMPLETED"
-    ) {
+    if (event.forumID == req.user._id && event.eventStatus !== "COMPLETED") {
       //delete all reservations of this event.
       const deletionResult = await reservations.deleteMany({ eventId: id });
       let reservationsObject = {};
@@ -752,12 +744,7 @@ const completeEvent = async (req, res) => {
     for (let i = 0; i < attendanceDoc.presence.length; i++) {
       const attendancePercentage =
         (attendanceDoc.presence[i].dates.length * 100) / totalDays;
-      if (
-        attendancePercentage >=
-        (process.env.MIN_EVENT_PERCENTAGE
-          ? process.env.MIN_EVENT_PERCENTAGE
-          : 50)
-      ) {
+      if (attendancePercentage >= (process.env.MIN_EVENT_PERCENTAGE ? process.env.MIN_EVENT_PERCENTAGE : 50)) {
         qualifiedStudents.push(attendanceDoc.presence[i].studentId);
       }
     }
