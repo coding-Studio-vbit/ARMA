@@ -75,7 +75,7 @@ const getForumsList = async (req, res) => {
       .sort(sort)
       .populate("facultyCoordinatorID")
       .select("-password");
-    const total = await forums.count(where);
+    const total = await forums.countDocuments(where);
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );
@@ -137,7 +137,7 @@ const addNewCoreForumMember = async (req, res) => {
           v.forumId.toString() === forum._id && v.designation === designation
         );
       });
-      if(membershipExists) throw "Membership exists";
+      if (membershipExists) throw "Membership exists";
       stu.forumMemberships.push({
         forumId: forum._id,
         designation: designation,
@@ -293,7 +293,7 @@ const forumEventNumber = async (req, res) => {
         forumID: forumID,
         eventStatus: { $in: ["APPROVED"] },
       })
-      .count();
+      .countDocuments();
     res.json(response(result, process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
@@ -466,13 +466,19 @@ const getDashboardCover = async (req, res) => {
     const myForum = await forums.findOne({ email: req.user.email });
     if (myForum.dashboardCoverFilePath == undefined)
       res.sendFile("sky.jpg", { root: __dirname });
-    else
-      res.json(
-        response(
-          base64.encode(myForum.dashboardCoverFilePath),
-          process.env.SUCCESS_CODE
-        )
-      );
+    else {
+      try {
+        const thisFile = fs.readFileSync(myForum.dashboardCoverFilePath);
+        res.json(
+          response(
+            base64.encode(myForum.dashboardCoverFilePath),
+            process.env.SUCCESS_CODE
+          )
+        );
+      } catch (error) {
+        res.sendFile("sky.jpg", { root: __dirname });
+      }
+    }
   } catch (err) {
     console.log(err);
     res.json(response(err.message, process.env.FAILURE_CODE));

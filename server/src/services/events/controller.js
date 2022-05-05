@@ -67,7 +67,7 @@ const getEvents = async (req, res) => {
         }
       });
     }
-    const total = await events.count(where);
+    const total = await events.countDocuments(where);
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );
@@ -366,7 +366,9 @@ const eventAttendance = async (req, res) => {
       .populate({ path: "presence.studentId", model: "students" });
     if (result == null)
       throw new Error("Could not find the attendance document");
-    const total = await attendance.count({ eventID: req.query.eventID });
+    const total = await attendance.countDocuments({
+      eventID: req.query.eventID,
+    });
     res.json(
       response(
         { data: result.presence, total: total },
@@ -524,7 +526,11 @@ const updateReservations = async (req, res) => {
   try {
     const { eventHalls, id } = req.body;
     const event = await events.findById(id);
-    if (event.forumID == req.user._id && (event.eventStatus !== "APPROVED" && event.eventStatus !== "COMPLETED")) {
+    if (
+      event.forumID == req.user._id &&
+      event.eventStatus !== "APPROVED" &&
+      event.eventStatus !== "COMPLETED"
+    ) {
       //delete all reservations of this event.
       const deletionResult = await reservations.deleteMany({ eventId: id });
       let reservationsObject = {};
@@ -740,7 +746,12 @@ const completeEvent = async (req, res) => {
     for (let i = 0; i < attendanceDoc.presence.length; i++) {
       const attendancePercentage =
         (attendanceDoc.presence[i].dates.length * 100) / totalDays;
-      if (attendancePercentage >= (process.env.MIN_EVENT_PERCENTAGE ? process.env.MIN_EVENT_PERCENTAGE : 50)) {
+      if (
+        attendancePercentage >=
+        (process.env.MIN_EVENT_PERCENTAGE
+          ? process.env.MIN_EVENT_PERCENTAGE
+          : 50)
+      ) {
         qualifiedStudents.push(attendanceDoc.presence[i].studentId);
       }
     }

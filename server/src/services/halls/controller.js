@@ -21,7 +21,7 @@ const getHalls = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort);
-    const total = await halls.count(where);
+    const total = await halls.countDocuments(where);
 
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)

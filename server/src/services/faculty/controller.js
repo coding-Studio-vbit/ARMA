@@ -42,7 +42,7 @@ const getFacultyList = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort);
-    const total = await faculty.count(where);
+    const total = await faculty.countDocuments(where);
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );
@@ -80,28 +80,31 @@ const editFaculty = async (req, res) => {
     const { id, name, designation, role } = req.body;
 
     //Always ensure that there is only one SAC, one MO and one FO only.
-    const SACRole = await roles.findOne({name: "SAC"});
-    const FORole = await roles.findOne({name: "FO"});
-    const MORole = await roles.findOne({name: "MO"});
+    const SACRole = await roles.findOne({ name: "SAC" });
+    const FORole = await roles.findOne({ name: "FO" });
+    const MORole = await roles.findOne({ name: "MO" });
 
-    const currentSAC = await faculty.findOne({role: SACRole._id});
-    const currentFO = await faculty.findOne({role:FORole._id});
-    const currentMO = await faculty.findOne({role:MORole._id});
-    console.log(role, String(SACRole._id))
-    if(role.indexOf(String(SACRole._id)) !== -1)
-    {
-      currentSAC.role = currentSAC.role.filter((r)=>String(r._id) !== String(SACRole._id));
-      console.log(currentSAC.role)
+    const currentSAC = await faculty.findOne({ role: SACRole._id });
+    const currentFO = await faculty.findOne({ role: FORole._id });
+    const currentMO = await faculty.findOne({ role: MORole._id });
+    console.log(role, String(SACRole._id));
+    if (role.indexOf(String(SACRole._id)) !== -1) {
+      currentSAC.role = currentSAC.role.filter(
+        (r) => String(r._id) !== String(SACRole._id)
+      );
+      console.log(currentSAC.role);
       await currentSAC.save();
     }
-    if(role.indexOf(String(FORole._id)) !== -1)
-    {
-      currentFO.role = currentFO.role.filter((r)=>String(r._id) !== String(FORole._id));
+    if (role.indexOf(String(FORole._id)) !== -1) {
+      currentFO.role = currentFO.role.filter(
+        (r) => String(r._id) !== String(FORole._id)
+      );
       await currentFO.save();
     }
-    if(role.indexOf(String(MORole._id)) !== -1)
-    {
-      currentMO.role = currentMO.role.filter((r)=>String(r._id) !== String(MORole._id));
+    if (role.indexOf(String(MORole._id)) !== -1) {
+      currentMO.role = currentMO.role.filter(
+        (r) => String(r._id) !== String(MORole._id)
+      );
       await currentMO.save();
     }
 
@@ -286,9 +289,8 @@ const approveEvent = async (req, res) => {
 
     //ADD THIS EVENT AS ORGANISED TO ALL THE FORUM STUDENTS.
     const forum = await forums.findById(event.forumID);
-    const {forumCoreTeamMembers} = forum;
-    for(let i=0;i<forumCoreTeamMembers.length;i++)
-    {
+    const { forumCoreTeamMembers } = forum;
+    for (let i = 0; i < forumCoreTeamMembers.length; i++) {
       console.log(forumCoreTeamMembers);
       const stu = await students.findById(forumCoreTeamMembers[i].studentID);
       stu.eventsOrganized.push(eventId);

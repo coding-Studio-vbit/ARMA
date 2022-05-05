@@ -45,7 +45,7 @@ const getRoles = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort);
-    const total = await role.count(where);
+    const total = await role.countDocuments(where);
     return res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );

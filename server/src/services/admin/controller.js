@@ -195,7 +195,7 @@ const getAdmins = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort);
-    const total = await admins.count(where);
+    const total = await admins.countDocuments(where);
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );
@@ -236,8 +236,7 @@ const editCourse = async (req, res) => {
         JSON.stringify(dataObject)
       );
       res.json(response("edited course", process.env.SUCCESS_CODE));
-    }else
-    {
+    } else {
       res.json(response("no such course", process.env.FAILURE_CODE));
     }
   } catch (error) {
@@ -255,5 +254,5 @@ module.exports = {
   getAdmins,
   register,
   addCourse,
-  editCourse
+  editCourse,
 };
