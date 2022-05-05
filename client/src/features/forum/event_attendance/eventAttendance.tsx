@@ -8,12 +8,11 @@ import { Info } from "@material-ui/icons";
 import { useLocation } from "react-router-dom";
 
 const EventAttendance = () => {
-
   interface Student {
     name: string;
     rollNumber: string;
     year: Number;
-    course:Function | String;
+    course: Function | String;
     branch: Function | String;
     section: String;
     email: String | Function;
@@ -27,7 +26,7 @@ const EventAttendance = () => {
   const eventID = location.state.eventId;
   const [event, setEvent] = useState(null);
   const [courses, setCourses] = useState(null);
-  const [branches, setBranches]= useState(null);
+  const [branches, setBranches] = useState(null);
   const [eventName, setEventName] = useState("");
   const [tableData, setTableData] = useState([]);
   const [reportData, setReportData] = useState([]);
@@ -55,44 +54,43 @@ const EventAttendance = () => {
       const res = await axiosInstance.get(
         process.env.REACT_APP_SERVER_URL + "events/getEvent/" + eventID
       );
-      if(res.data.status == -1){
+      if (res.data.status == -1) {
         console.log(res.data.response.message);
-      }else
-      {
+      } else {
         setEvent(res.data.response);
         setEventName(res.data.response.name + " - Attendance");
       }
-    } catch (error) {console.log(error)}
-  };
-
-  const getCourseInfo = async() =>{
-    try{
-      const res = await axiosInstance.get(`${process.env.REACT_APP_SERVER_URL}students/getCourses`
-      );
-      if(res.data.status==-1){
-        console.log("Failed to fetch courses",res.data.response.message);
-      }
-      else{
-        setCourses(res.data.response);
-      }
-    }
-    catch(error){
+    } catch (error) {
       console.log(error);
     }
   };
-  const getBranchInfo = async() =>{
-    try{
-      const res = await axiosInstance.get(`${process.env.REACT_APP_SERVER_URL}students/getBranches/B.Tech`
-      )
-      if(res.data.status==-1){
-        console.log("Failed to fetch courses",res.data.response.message);
+
+  const getCourseInfo = async () => {
+    try {
+      const res = await axiosInstance.get(
+        `${process.env.REACT_APP_SERVER_URL}students/getCourses`
+      );
+      if (res.data.status == -1) {
+        console.log("Failed to fetch courses", res.data.response.message);
+      } else {
+        setCourses(res.data.response);
       }
-      else{
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getBranchInfo = async () => {
+    try {
+      const res = await axiosInstance.get(
+        `${process.env.REACT_APP_SERVER_URL}students/getBranches/B.Tech`
+      );
+      if (res.data.status == -1) {
+        console.log("Failed to fetch courses", res.data.response.message);
+      } else {
         setBranches(res.data.response);
       }
-      console.log(branches)
-    }
-    catch(error){
+      console.log(branches);
+    } catch (error) {
       console.log(error);
     }
   };
@@ -111,7 +109,7 @@ const EventAttendance = () => {
       )
       .then((resp) => {
         if (resp.data.response.status == -1) {
-          console.log(resp)
+          console.log(resp);
           throw new Error("Error occured");
         }
         resp.data.response.data.forEach((data: any) => {
@@ -123,18 +121,15 @@ const EventAttendance = () => {
         if (resp.data.response.data.length > 0) {
           setDataUploaded(true);
           setTableData(resp.data.response.data);
-          console.log(tableData);
-          console.log(event)
         }
       });
   }, [dataUploaded]);
 
-
   function checkBranch(val: any) {
-    if ((branches).includes(val.toUpperCase())) {
+    if (branches.includes(val.toUpperCase())) {
       return String(val);
     } else {
-      console.log("branch")
+      console.log("branch");
       throw Error;
     }
   }
@@ -148,11 +143,11 @@ const EventAttendance = () => {
     }
   }
 
-  function validateCourse(course:any){
-    if ((courses).includes(course)) {
+  function validateCourse(course: any) {
+    if (courses.includes(course)) {
       return String(course);
     } else {
-      console.log("coru")
+      console.log("coru");
       throw Error;
     }
   }
@@ -171,7 +166,7 @@ const EventAttendance = () => {
                 name: String(item[0]),
                 rollNumber: String(item[1]),
                 year: Number(item[2]),
-                course : validateCourse(item[3]),
+                course: validateCourse(item[3]),
                 branch: checkBranch(item[4]),
                 section: String(item[5]),
                 email: validateEmail(item[6]),
@@ -184,7 +179,7 @@ const EventAttendance = () => {
                 name: String(item[0]),
                 rollNumber: String(item[1]),
                 year: Number(item[2]),
-                course : validateCourse(item[3]),
+                course: validateCourse(item[3]),
                 branch: checkBranch(item[4]),
                 section: String(item[5]),
                 email: validateEmail(item[6]),
@@ -195,13 +190,16 @@ const EventAttendance = () => {
           });
         })
         .then(async () => {
-          await axiosInstance.post(
+          const res = await axiosInstance.post(
             process.env.REACT_APP_SERVER_URL +
               "events/uploadRegistrants?attendedEvents=" +
               eventID,
             list
           );
+          setMessage(res.data.response.message);
+          setShow(true);
         })
+
         .catch((error: any) => {
           data = null;
           list = [];
