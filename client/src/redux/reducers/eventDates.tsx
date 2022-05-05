@@ -8,7 +8,7 @@ const eventDatesReducer = (state = initialState, action) => {
       state[key] = { ...state[key], halls: [...action.payload] };
       return { ...state };
     default:
-      return state;
+      return { ...state };
   }
 };
 
