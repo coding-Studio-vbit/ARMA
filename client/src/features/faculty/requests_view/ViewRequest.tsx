@@ -34,12 +34,17 @@ export default function RequestsView() {
   const [message, setMessage] = useState<string>("");
   const [action, setAction] = useState<string>(actions.NONE);
   const [loading, setLoading] = useState<boolean>(false);
+  const [comments, setComments] = useState<any>(event?.SACComments);
 
   const { faculty } = useUser();
 
   useEffect(() => {
     getEventInfo();
   }, []);
+
+  useEffect(()=>{
+    setComments(event?.SACComments)
+  }, [event])
 
   const [eventDays, setEventDays] = useState(null);
 
@@ -73,7 +78,6 @@ export default function RequestsView() {
 
   async function approveBudget() {
     console.log(message);
-    console.log(action);
     try {
       console.log("Approving Budget");
       console.log("Approved Budget");
@@ -91,7 +95,6 @@ export default function RequestsView() {
 
   async function approveEvent() {
     console.log(message);
-    console.log(action);
     try {
       console.log("Approving Event");
       console.log("Approved Event");
@@ -109,7 +112,6 @@ export default function RequestsView() {
 
   async function rejectEvent() {
     console.log(message);
-    console.log(action);
     try {
       console.log("Rejecting Event");
       console.log("Rejected Event");
@@ -127,10 +129,11 @@ export default function RequestsView() {
 
   async function requestChanges() {
     console.log(message);
-    console.log(action);
     try {
-      console.log("Requesting Changes");
-      console.log("Requested Changes");
+      if(faculty.role.SAC){
+        const res = await axios.post("faculty/commentEvent",{SACComments:comments, eventId:id});
+        console.log(res);
+      }
       setLoading(true);
       setAction(actions.COMPLETED);
       setLoading(false);
@@ -224,17 +227,17 @@ export default function RequestsView() {
       />
       <div className="flex flex-col w-max ">
         <div className="break-words">
-          <span className="text-arma-title sm:text-2xl text-lg font-semibold w-max">
-            REQUEST TO CONDUCT : {event.name}
+          <span className="text-arma-dark-blue sm:text-4xl text-lg font-semibold w-max">
+            New Event Request : {event.name}
           </span>
         </div>
-        <div className="flex justify-between">
-          <span className="text-arma-gray text-md">
-            {(event.forumID as Forum).name}
-          </span>
-          <span className="text-arma-gray text-md">
-            {(event.forumID as Forum).facultyCoordinatorID.name}
-          </span>
+        <div className="justify-around">
+          <div className="text-arma-gray text-md">
+            Forum: {(event.forumID as Forum).name}
+          </div>
+          <div className="text-arma-gray text-md">
+            Faculty Coordinator: {(event.forumID as Forum).facultyCoordinatorID.name}
+          </div>
         </div>
       </div>
       <hr className=" bg-black/10 h-[1.55px]" />
@@ -258,14 +261,13 @@ export default function RequestsView() {
           </span>
 
           <div className="flex items-start flex-col gap-x-4">
-            <div className="flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
-              <span>Event Proposal Document</span>
-              {/* {event.eventProposalDocPath} */}
-              {(faculty?.role.ADMIN || faculty?.role.SAC) && (
+            {/* {event.eventProposalDocPath} */}
+            {(faculty?.role.ADMIN || faculty?.role.SAC) && (
+              <div className="flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
+                <span>Event Proposal Document</span>
                 <a
                   className="!cursor-pointer"
                   onClick={async function () {
-                    console.log(id);
                     try {
                       const result = await axios({
                         responseType: "blob",
@@ -288,12 +290,12 @@ export default function RequestsView() {
                 >
                   <CloudDownload className="cursor-pointer" />
                 </a>
-              )}
-            </div>
-            <div className="mt-6 flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
-              <span>Budget Document</span>
-              {/* {event.budgetDocPath} */}
-              {(faculty?.role.ADMIN || faculty?.role.FO) && (
+              </div>
+            )}
+
+            {/* {event.budgetDocPath} */}
+            {(faculty?.role.ADMIN || faculty?.role.FO) && (
+              <div className="mt-6 flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
                 <a
                   className="!cursor-pointer"
                   onClick={async () => {
@@ -313,10 +315,11 @@ export default function RequestsView() {
                   }}
                   download
                 >
+                  <span>Budget Document</span>
                   <CloudDownload className="cursor-pointer" />
                 </a>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-8">
@@ -332,17 +335,26 @@ export default function RequestsView() {
           )}
         </div>
       </div>
-{console.log(event)}
-      <span className="text-arma-gray font-medium text-2xl ">Equipment Required</span>
+      <span className="text-arma-gray font-medium text-2xl ">
+        Equipment Required
+      </span>
       <div className="flex flex-wrap  w-[90%] sm:w-[70%]">
-        {event.equipment.map((f:any) => {
+        {event.equipment.map((f: any) => {
           return (
             <div
               key={f}
               className="basis-[40%] shrink mb-2 text-md font-medium flex items-center"
             >
               <div className="mr-2 bg-arma-title w-[10px] h-[10px] rounded-full"></div>
-              <span className={(f.quantity > f.equipmentType.totalCount ? "text-red-500" : "")} key={f.equipmentType.name}>{f.equipmentType.name} - {f.quantity} pcs, Total Available - {f.equipmentType.totalCount}</span>
+              <span
+                className={
+                  f.quantity > f.equipmentType.totalCount ? "text-red-500" : ""
+                }
+                key={f.equipmentType.name}
+              >
+                {f.equipmentType.name} - {f.quantity} pcs, Total Available -{" "}
+                {f.equipmentType.totalCount}
+              </span>
             </div>
           );
         })}
@@ -364,7 +376,9 @@ export default function RequestsView() {
           !(faculty?.role.ADMIN || faculty?.role.SAC || faculty?.role.FO)
         }
         name="comments"
+        value={comments}
         placeholder="Please write your comments here"
+        onChange={(e)=>{setComments(e.target.value)}}
         className="outline-none sm:w-[100%] w-full border-[1px] 
       border-[#E5E5EA] p-4 md:w-[60%] rounded-[8px]"
       ></textarea>

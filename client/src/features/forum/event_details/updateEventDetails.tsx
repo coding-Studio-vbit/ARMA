@@ -18,6 +18,7 @@ const UpdateEventDetails = () => {
   const [error, setError] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
+  const [showSpinner, setShowSpinner] = useState(false);
 
   const [pdf1, setPdf1] = useState<File>();
   const [forumName, setForumName] = useState("");
@@ -72,6 +73,7 @@ const UpdateEventDetails = () => {
         formData
       );
       setDialogMessage(res.data.response);
+      setShowSpinner(false)
       setShowDialog(true);
       if (res.data.status === 1) {
         setTimeout(() => {
@@ -232,14 +234,20 @@ const UpdateEventDetails = () => {
 
       {/* Edit Button */}
       <div className="flex mt-10">
-        {isEdit && (
-          <button
-            className="btn text-lg border-lg  bg-arma-title rounded-[8px] px-6 py-2 m-auto"
-            onClick={() => updateEventDetails()}
-          >
-            UPDATE
-          </button>
-        )}
+        {isEdit &&
+          (showSpinner ? (
+            <Spinner className="m-auto" />
+          ) : (
+            <button
+              className="btn text-lg border-lg  bg-arma-title rounded-[8px] px-6 py-2 m-auto"
+              onClick={() => {
+                setShowSpinner(true);
+                updateEventDetails();
+              }}
+            >
+              UPDATE
+            </button>
+          ))}
       </div>
     </div>
   ) : (

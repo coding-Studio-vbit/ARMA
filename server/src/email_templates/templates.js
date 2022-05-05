@@ -22,6 +22,12 @@ const newEventCreatedSAC = {
   subject: "New Event Created",
 };
 
+const eventUpdatedSAC = {
+  template:
+    "Hey there ${SACName}, details of the event '${eventName}' have been updated by ${forumName}. pls check on ARMA",
+  subject: "Event details updated",
+};
+
 const budgetDocUpdateTemplate = {
   template:
     "Dear ${FOName}, ${forumName} has updated the budget document for event ${eventName}",
@@ -93,5 +99,6 @@ module.exports = {
   newEventCreatedFO,
   newEventCreatedSAC,
   newEventCreatedForum,
-  MOReportAndMedia
+  MOReportAndMedia,
+  eventUpdatedSAC,
 };

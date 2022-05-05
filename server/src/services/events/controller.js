@@ -12,6 +12,7 @@ const {
   newEventCreatedFO,
   newEventCreatedSAC,
   MOReportAndMedia,
+  eventUpdatedSAC,
 } = require("../../email_templates/templates");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
@@ -343,7 +344,10 @@ const uploadRegistrantsList = async (req, res) => {
     });
     console.log(studentData);
     console.log("341", attendanceDoc);
-    attendanceDoc.registrantsList = [...attendanceDoc.registrantsList, studentData].flat();
+    attendanceDoc.registrantsList = [
+      ...attendanceDoc.registrantsList,
+      studentData,
+    ].flat();
     // attendanceDoc.presence = studentData;
     await attendance.findOneAndUpdate(
       { eventID: attendedEvents },
@@ -455,14 +459,17 @@ const getCalendarEvents = async (req, res) => {
 const getEventById = async (req, res) => {
   try {
     const { id } = req.params;
-    const event = await events.findById(id).populate({
-      path: "forumID",
-      select: "name facultyCoordinatorID",
-      populate: {
-        path: "facultyCoordinatorID",
-        select: "name",
-      },
-    }).populate("equipment.equipmentType");
+    const event = await events
+      .findById(id)
+      .populate({
+        path: "forumID",
+        select: "name facultyCoordinatorID",
+        populate: {
+          path: "facultyCoordinatorID",
+          select: "name",
+        },
+      })
+      .populate("equipment.equipmentType");
 
     if (event) {
       res.json(response(event, process.env.SUCCESS_CODE));
@@ -520,7 +527,13 @@ const getEventDocument = async (req, res) => {
     const forumId = req.user._id;
     const { id } = req.params;
     const event = await events.findById(id);
-    if (event.forumID == forumId || req.user.userType.find(type=>(type.name=="SAC"||type.name=="FACULTY"||type.name=="ADMIN"))) {
+    if (
+      event.forumID == forumId ||
+      req.user.userType.find(
+        (type) =>
+          type.name == "SAC" || type.name == "FACULTY" || type.name == "ADMIN"
+      )
+    ) {
       res.sendFile(event.eventProposalDocPath);
     } else {
       res.json(response("unauthorized", process.env.FAILURE_CODE));
@@ -665,13 +678,16 @@ const updateEventDetails = async (req, res) => {
     if (name == "" || description == "") {
       throw new error("Invalid details");
     }
-    const event = await events.findById(eventId);
+    const event = await events.findById(eventId).populate("forumID");
     event.name = name;
     event.description = description;
     if (req.files.eventDocument && req.files?.eventDocument[0]) {
       event.eventProposalDocPath = req.files.eventDocument[0].path;
     }
     await event.save();
+    const SACRoleID = await roles.findOne().where("name").in(["SAC"]);
+    const SAC = await faculty.findOne({ role: SACRoleID._id });
+    await mailer.sendMail(SAC.email, eventUpdatedSAC, {eventName:event.name, SACName:SAC.name,forumName:event.forumID.name});
     res.json(response("updated event details", process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
@@ -732,18 +748,25 @@ const getEventReservations = async (req, res) => {
          }
        }
        */
-      r.forEach((currentReservation)=>{
+      r.forEach((currentReservation) => {
         const dateList = currentReservation.dates;
         const thisHall = currentReservation.hallId;
-        dateList.forEach((currentDate, dateIndex)=>{
-          if(result[currentDate]){
-            result[currentDate].halls = result[currentDate].halls.concat(currentReservation.timeSlots[dateIndex].map(t=>{return t + '.' + thisHall.name}))
-          }else
-          {
-            result[currentDate] = {halls:currentReservation.timeSlots[dateIndex].map(t=>{return t + '.' + thisHall.name})};
+        dateList.forEach((currentDate, dateIndex) => {
+          if (result[currentDate]) {
+            result[currentDate].halls = result[currentDate].halls.concat(
+              currentReservation.timeSlots[dateIndex].map((t) => {
+                return t + "." + thisHall.name;
+              })
+            );
+          } else {
+            result[currentDate] = {
+              halls: currentReservation.timeSlots[dateIndex].map((t) => {
+                return t + "." + thisHall.name;
+              }),
+            };
           }
-        })
-      })
+        });
+      });
 
       res.json(response(result, process.env.SUCCESS_CODE));
     }
