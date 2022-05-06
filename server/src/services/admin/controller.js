@@ -1,12 +1,14 @@
 const bcrypt = require("bcrypt");
 const students = require("../../models/student");
 const role = require("../../models/role");
+const forums = require("../../models/forum")
 const response = require("../util/response");
 const admins = require("../../models/admin");
 const ejs = require("ejs");
 const pdf = require("html-pdf");
 const path = require("path");
 const roles = require("../../models/role");
+const mongoose = require("mongoose")
 const { readFileSync, writeFileSync } = require("fs");
 
 const updateStudentReport = async () => {};
@@ -133,9 +135,9 @@ const register = async (user, userType) => {
     } else if (userType === "FORUM") {
       const myRole = await roles.findOne({ name: "FORUM" });
       let { facultyCoordinatorID, forumHeads, ...newuser } = user;
-      facultyCoordinatorID = facultyCoordinatorID.map((f) => {
-        return mongoose.Types.ObjectId(f._id);
-      });
+      // facultyCoordinatorID = facultyCoordinatorID.map((f) => {
+      //   return mongoose.Types.ObjectId(f._id);
+      // });
       forumHeads = forumHeads.map((f) => {
         return mongoose.Types.ObjectId(f._id);
       });

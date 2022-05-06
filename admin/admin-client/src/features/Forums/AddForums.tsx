@@ -95,7 +95,7 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
       setPasswordError("Minimum Password Length should be 6");
     } else if (!p.test(password)) {
       setPasswordError(
-        "Password should have atleast one capital letter, one digit and one symbol"
+        "Password should have atleast one uppercase letter,one lowercase letter, one digit and one symbol"
       );
     } else {
       setPasswordError("");
@@ -230,7 +230,6 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
         process.env.REACT_APP_SERVER_URL + "faculty/fetchFaculty",
         { name: name }
       );
-      console.log(res.data);
       const data = res.data.response;
       let arr = [];
       for (let i = 0; i < data.length; i++) {
@@ -246,10 +245,13 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
     }
   }, [name]);
   const handleInputChange = (characterEntered: SetStateAction<string>) => {
+    if(characterEntered !== "")
     setName(characterEntered);
-
-    console.log(name);
   };
+
+  useEffect(()=>{
+    console.log(selectCoord, "is selectCoord");
+  }, [selectCoord])
 
   return (
     <div className="flex flex-col grow items-center">
@@ -351,10 +353,11 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
             value={
               isEdit
                 ? { value: selectCoord, label: actualName }
-                : "faculty coordinator"
+                : { value: selectCoord, label: actualName }
             }
             noOptionsMessage={() => null}
             onChange={(e: any) => {
+              console.log(e);
               setSelectCoord(e.value);
               setActualName(e.label);
             }}
