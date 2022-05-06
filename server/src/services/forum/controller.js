@@ -415,7 +415,8 @@ const getProfilePicture = async (req, res) => {
   //console.log(req);
   try {
     const myForum = await forums.findOne({ email: req.user.email });
-    if (
+    console.log(typeof(req.user.userType))
+    if (typeof(req.user.userType)=="object"&&
       req.user.userType.find(
         (v) => v.name == "SAC" || v.name == "FACULTY" || v.name == "FO"
       )

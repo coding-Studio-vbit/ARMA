@@ -123,7 +123,7 @@ function ForumEventDashboard() {
                         <span>{eventInfo.name}</span>
                         {((eventInfo.name == "Budget" &&
                           state.hasBudget &&
-                          (state.eventStatus == "REQUESTED BUDGET CHANGES" ||
+                          (state.eventStatus == "BUDGET CHANGES PENDING" ||
                             state.eventStatus == "BUDGET REJECTED")) ||
                           (eventInfo.name == "Event Details" &&
                             state.eventStatus ==

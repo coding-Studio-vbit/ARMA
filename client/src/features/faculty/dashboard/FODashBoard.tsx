@@ -51,8 +51,8 @@ function FODashBoard() {
               { value: "", label: "ALL" },
               { value: "AWAITING FO APPROVAL", label: "AWAITING FO APPROVAL" },
               {
-                value: "REQUESTED BUDGET CHANGES",
-                label: "REQUESTED BUDGET CHANGES",
+                value: "BUDGET CHANGES PENDING",
+                label: "BUDGET CHANGES PENDING",
               },
               {
                 value: "REQUESTED BUDGET UPDATED",
@@ -71,6 +71,9 @@ function FODashBoard() {
           hasBudget: true,
           forumName: forumName,
           name: eventName,
+        }}
+        onTableRowClick={(id) => {
+          navigate(`/faculty/requests/${id}`);
         }}
         headers={headers}
         rowsPerPage={10}

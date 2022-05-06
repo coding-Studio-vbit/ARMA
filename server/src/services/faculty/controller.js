@@ -162,13 +162,14 @@ const acceptBudget = async (req, res) => {
   try {
     let { eventId } = req.body;
     let event = await events.findById(eventId).populate("forumID");
-    const SACRoleId = await roles.findOne().where("name").in(["SAC"]);
-    const SAC = await faculty.findOne({ role: [SACRoleId._id] });
+    const SACRoleId = await roles.findOne({ name: "SAC" });
+    if (SACRoleId == null) throw new Error("SAC Role not found");
+    const SAC = await faculty.findOne({ role: SACRoleId._id });
     if (SAC == null) throw new Error("SAC not found");
     if (
       event.eventStatus !== "AWAITING FO APPROVAL" &&
       event.eventStatus !== "BUDGET UPDATED" &&
-      event.eventStatus !== "REQUESTED BUDGET CHANGES"
+      event.eventStatus !== "BUDGET CHANGES PENDING"
     ) {
       throw new Error(
         "cannot accept budget of event during the current status:" +
@@ -206,7 +207,7 @@ const commentBudget = async (req, res) => {
     const event = await events.findById(eventId).populate("forumID");
     if (
       event.eventStatus !== "AWAITING FO APPROVAL" &&
-      event.eventStatus !== "REQUESTED BUDGET CHANGES" &&
+      event.eventStatus !== "BUDGET CHANGES PENDING" &&
       event.eventStatus !== "BUDGET UPDATED"
     ) {
       throw new Error(
@@ -214,7 +215,7 @@ const commentBudget = async (req, res) => {
       );
     }
     event.FOComments = FOComments;
-    event.eventStatus = "REQUESTED BUDGET CHANGES";
+    event.eventStatus = "BUDGET CHANGES PENDING";
     await event.save();
     //send the mail to the forum about the comments.
     mailer
@@ -239,13 +240,14 @@ const rejectBudget = async (req, res) => {
   try {
     let { eventId, FOComments } = req.body;
     let event = await events.findById(eventId).populate("forumID");
-    const SACRoleId = await roles.findOne().where("name").in(["SAC"]);
-    const SAC = await faculty.findOne({ role: [SACRoleId._id] });
+    const SACRoleId = await roles.findOne({ name: "SAC" });
+    if (SACRoleId == null) throw new Error("SAC Role not found");
+    const SAC = await faculty.findOne({ role: SACRoleId._id });
     if (SAC == null) throw new Error("SAC not found");
     if (
       event.eventStatus !== "AWAITING FO APPROVAL" &&
       event.eventStatus !== "BUDGET UPDATED" &&
-      event.eventStatus !== "REQUESTED BUDGET CHANGES"
+      event.eventStatus !== "BUDGET CHANGES PENDING"
     ) {
       throw new Error("not AWAITING FO APPROVAL");
     }
@@ -346,9 +348,7 @@ const commentEvent = async (req, res) => {
       });
   } catch (err) {
     console.log(err);
-    res.json(
-      response("failed to comment on the event", process.env.FAILURE_CODE)
-    );
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -378,7 +378,7 @@ const rejectEvent = async (req, res) => {
       });
   } catch (err) {
     console.log(err);
-    res.json(response("failed to reject the event", process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 

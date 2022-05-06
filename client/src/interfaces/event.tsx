@@ -3,7 +3,7 @@ import { Faculty, Forum } from "./user";
 
 type Status =
   | "AWAITING FO APPROVAL"
-  | "REQUESTED BUDGET CHANGES"
+  | "BUDGET CHANGES PENDING"
   | "BUDGET UPDATED"
   | "BUDGET REJECTED"
   | "AWAITING SAC APPROVAL"

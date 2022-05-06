@@ -33,7 +33,7 @@ const getEvents = async (req, res) => {
     where.hasBudget = req.query.hasBudget;
     where.eventStatus = [
       "AWAITING FO APPROVAL",
-      "REQUESTED BUDGET CHANGES",
+      "BUDGET CHANGES PENDING",
       "BUDGET UPDATED",
       "BUDGET REJECTED",
     ];
@@ -257,7 +257,7 @@ const updateBudgetDoc = async (req, res) => {
     if (
       event.eventStatus !== "AWAITING FO APPROVAL" &&
       event.eventStatus !== "BUDGET UPDATED" &&
-      event.eventStatus !== "REQUESTED BUDGET CHANGES"
+      event.eventStatus !== "BUDGET CHANGES PENDING"
     )
       throw new Error("Cannot update budget during current status of event");
     event.budgetDocPath = req.files.budgetDocument[0].path;
@@ -420,12 +420,11 @@ const getRequests = async (req, res) => {
   try {
     let result;
     if (req.query.isFO === "true") {
-      console.log("htfkuyf,lig");
       result = await events
         .find({
           eventStatus: [
             "AWAITING FO APPROVAL",
-            "REQUESTED BUDGET CHANGES",
+            "BUDGET CHANGES PENDING",
             "BUDGET UPDATED",
           ],
         })
@@ -509,7 +508,13 @@ const getBudgetDocument = async (req, res) => {
     const forumId = req.user._id;
     const { id } = req.params;
     const event = await events.findById(id);
-    if (event.forumID == forumId) {
+    if (
+      event.forumID == forumId ||
+      req.user.userType.find(
+        (type) =>
+          type.name == "FO" || type.name == "ADMIN"
+      )
+    ) {
       res.sendFile(event.budgetDocPath);
     } else {
       res.json(response("unauthorized", process.env.FAILURE_CODE));
@@ -531,7 +536,7 @@ const getEventDocument = async (req, res) => {
       event.forumID == forumId ||
       req.user.userType.find(
         (type) =>
-          type.name == "SAC" || type.name == "FACULTY" || type.name == "ADMIN"
+          type.name == "SAC" || type.name == "ADMIN"
       )
     ) {
       res.sendFile(event.eventProposalDocPath);
@@ -687,7 +692,11 @@ const updateEventDetails = async (req, res) => {
     await event.save();
     const SACRoleID = await roles.findOne().where("name").in(["SAC"]);
     const SAC = await faculty.findOne({ role: SACRoleID._id });
-    await mailer.sendMail(SAC.email, eventUpdatedSAC, {eventName:event.name, SACName:SAC.name,forumName:event.forumID.name});
+    await mailer.sendMail(SAC.email, eventUpdatedSAC, {
+      eventName: event.name,
+      SACName: SAC.name,
+      forumName: event.forumID.name,
+    });
     res.json(response("updated event details", process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);

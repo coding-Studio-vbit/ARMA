@@ -23,7 +23,7 @@ const EventCard = ({ event, onClick }: EventCardProps) => {
       break;
     case "AWAITING SAC APPROVAL":
     case "AWAITING FO APPROVAL":
-    case "REQUESTED BUDGET CHANGES":
+    case "BUDGET CHANGES PENDING":
     case "BUDGET REJECTED":
     case "REQUESTED CHANGES BY SAC":
       eventStatusColor = "text-yellow-600";

@@ -10,10 +10,12 @@ import { fetchEventById } from "../../../services/events/event";
 import { Dialog } from "../../../components/Dialog/Dialog";
 import { useUser } from "../../../providers/user/UserProvider";
 import axios from "../../../utils/axios";
+import { Spinner } from "../../../components/Spinner/Spinner";
 
 export default function RequestsView() {
   const actions = {
     REQUEST_CHANGES: "REQUEST_CHANGES",
+    REJECT_BUDGET: "REJECT_BUDGET",
     APPROVE_BUDGET: "APPROVE_BUDGET",
     APPROVE_REQUEST: "APPROVE_REQUEST",
     REJECT_REQUEST: "REJECT_REQUEST",
@@ -30,22 +32,24 @@ export default function RequestsView() {
     retry: false,
   });
 
+  const [eventData, setEventData] = useState<any>(null);
+
   const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [showSpinner, setShowSpinner] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [action, setAction] = useState<string>(actions.NONE);
+  const { faculty } = useUser();
   const [loading, setLoading] = useState<boolean>(false);
   const [comments, setComments] = useState<any>(
-    FO.role.SAC ? event?.SACComments : event.FOComments
+    faculty.role.SAC ? event?.SACComments : event?.FOComments
   );
-
-  const { faculty } = useUser();
 
   useEffect(() => {
     getEventInfo();
   }, []);
 
   useEffect(() => {
-    setComments(FO.role.SAC ? event?.SACComments : event.FOComments);
+    setComments(faculty.role.SAC ? event?.SACComments : event?.FOComments);
   }, [event]);
 
   const [eventDays, setEventDays] = useState(null);
@@ -57,6 +61,8 @@ export default function RequestsView() {
       );
       if (res.data.status === 1) {
         // console.log(res.data.response);
+        setEventData(res.data.response);
+        console.log(res.data.response);
         let dates = res.data.response.eventDates;
         for (let i = 0; i < dates.length; i++) {
           let d = new Date(dates[i]);
@@ -81,12 +87,14 @@ export default function RequestsView() {
   async function approveBudget() {
     console.log(message);
     try {
+      let res = await axios.post("faculty/acceptBudget", {eventId:eventData._id});
       console.log("Approving Budget");
       console.log("Approved Budget");
       setLoading(true);
       setAction(actions.COMPLETED);
       setLoading(false);
-      setMessage("Budget Approved Successfully");
+      setMessage(res.data.response);
+      setShowSpinner(false);
       setTimeout(() => {
         setShowDialog(false);
         setMessage("");
@@ -94,16 +102,34 @@ export default function RequestsView() {
       }, 2000);
     } catch (error) {}
   }
-
+  async function rejectBudget() {
+    console.log(message);
+    try {
+      let res = await axios.post("faculty/rejectBudget", {eventId:eventData._id});
+      console.log("Reject Budget");
+      setLoading(true);
+      setAction(actions.COMPLETED);
+      setLoading(false);
+      setMessage(res.data.response);
+      setShowSpinner(false);
+      setTimeout(() => {
+        setShowDialog(false);
+        setMessage("");
+        setAction(actions.NONE);
+      }, 2000);
+    } catch (error) {}
+  }
   async function approveEvent() {
     console.log(message);
     try {
+      let res = await axios.post("faculty/acceptEvent",{eventId:eventData?._id});
       console.log("Approving Event");
       console.log("Approved Event");
       setLoading(true);
       setAction(actions.COMPLETED);
       setLoading(false);
-      setMessage("Event Approved Successfully");
+      setMessage(res.data.response);
+      setShowSpinner(false);
       setTimeout(() => {
         setShowDialog(false);
         setMessage("");
@@ -115,12 +141,15 @@ export default function RequestsView() {
   async function rejectEvent() {
     console.log(message);
     try {
+      let res = await axios.post("faculty/rejectEvent",{eventId:eventData?._id});
+
       console.log("Rejecting Event");
       console.log("Rejected Event");
       setLoading(true);
       setAction(actions.COMPLETED);
       setLoading(false);
-      setMessage("Event has been Rejected");
+      setMessage(res.data.response);
+      setShowSpinner(false);
       setTimeout(() => {
         setShowDialog(false);
         setMessage("");
@@ -137,23 +166,29 @@ export default function RequestsView() {
           SACComments: comments,
           eventId: id,
         });
+        setMessage(res.data.response);
+        setShowSpinner(false);
         console.log(res);
       } else if (faculty.role.FO) {
         const res = await axios.post("faculty/commentBudget", {
           FOComments: comments,
           eventId: id,
         });
+        setMessage(res.data.response);
+        setShowSpinner(false);
       }
       setLoading(true);
       setAction(actions.COMPLETED);
       setLoading(false);
-      setMessage("Requested Changes Successfully");
       setTimeout(() => {
         setShowDialog(false);
         setMessage("");
         setAction(actions.NONE);
       }, 2000);
-    } catch (error) {}
+    } catch (error) {
+      setMessage("An error occured!");
+      console.log(error);
+    }
   }
 
   function actionNo() {
@@ -168,6 +203,9 @@ export default function RequestsView() {
         break;
       case actions.APPROVE_BUDGET:
         approveBudget();
+        break;
+      case actions.REJECT_BUDGET:
+        rejectBudget();
         break;
       case actions.APPROVE_REQUEST:
         approveEvent();
@@ -188,6 +226,9 @@ export default function RequestsView() {
         break;
       case actions.APPROVE_BUDGET:
         setMessage("ARE YOU SURE YOU WANT TO APPROVE BUDGET?");
+        break;
+      case actions.REJECT_BUDGET:
+        setMessage("ARE YOU SURE YOU WANT TO REJECT BUDGET?");
         break;
       case actions.APPROVE_REQUEST:
         setMessage("ARE YOU SURE YOU WANT TO APPROVE REQUEST?");
@@ -219,19 +260,28 @@ export default function RequestsView() {
         children={
           <div className="h-40 flex justify-evenly items-center flex-col gap-6 px-4">
             <p className="text-center">{message}</p>
-            {action !== actions.COMPLETED && (
-              <div className="flex justify-evenly gap-12">
-                <button
-                  onClick={() => actionNo()}
-                  className="btn bg-arma-light-gray text-teal-700 border-2 hover:text-white "
-                >
-                  NO
-                </button>
-                <button onClick={() => actionYes()} className="btn">
-                  YES
-                </button>
-              </div>
-            )}
+            {action !== actions.COMPLETED &&
+              (showSpinner ? (
+                <Spinner />
+              ) : (
+                <div className="flex justify-evenly gap-12">
+                  <button
+                    onClick={() => actionNo()}
+                    className="btn bg-arma-light-gray text-teal-700 border-2 hover:text-white "
+                  >
+                    NO
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowSpinner(true);
+                      actionYes();
+                    }}
+                    className="btn"
+                  >
+                    YES
+                  </button>
+                </div>
+              ))}
           </div>
         }
       />
@@ -241,13 +291,28 @@ export default function RequestsView() {
             New Event Request : {event.name}
           </span>
         </div>
-        <div className="justify-around">
+
+        <div className="flex justify-between gap-x-3">
           <div className="text-arma-gray text-md">
-            Forum: {(event.forumID as Forum).name}
+            <span className="text-black">Forum -</span>{" "}
+            {(event.forumID as Forum).name}
           </div>
           <div className="text-arma-gray text-md">
-            Faculty Coordinator:{" "}
+            <span className="text-black">Faculty Coordinator -</span>{" "}
             {(event.forumID as Forum).facultyCoordinatorID.name}
+          </div>
+          <div className="text-arma-gray text-md">
+            <span
+              className={`text-white font-bold p-1 rounded ${
+                eventData?.eventStatus == "APPROVED"
+                  ? "bg-green-500"
+                  : eventData?.eventStatus.includes("CHANGES")
+                  ? "bg-yellow-500"
+                  : "bg-gray-500"
+              }`}
+            >
+              {event.eventStatus}
+            </span>
           </div>
         </div>
       </div>
@@ -402,6 +467,14 @@ export default function RequestsView() {
             className="btn bg-arma-title basis-full xsm:basis-auto "
           >
             Approve Budget
+          </button>
+        )}
+        {(faculty?.role.FO || faculty?.role.ADMIN) && (
+          <button
+            onClick={() => makeRequest(actions.REJECT_BUDGET)}
+            className="btn -red bg-arma-title basis-full xsm:basis-auto "
+          >
+            Reject Budget
           </button>
         )}
         {(faculty?.role.SAC || faculty?.role.ADMIN) && (

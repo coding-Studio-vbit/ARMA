@@ -10,7 +10,6 @@ const tokenAuth = (req, res, next) => {
         return res.json({ status: process.env.FAILURE_CODE, response: "Token verification Failed." })
       }
       req.user = data;
-      console.log(req.user);
       next()
     })
   }

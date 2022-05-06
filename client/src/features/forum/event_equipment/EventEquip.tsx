@@ -104,36 +104,7 @@ export default function EventEquip() {
         >
           ADD
         </button>
-        {showSpinner ? ( <Spinner/>):(<button
-          className="btn bg-arma-title rounded-[8px] px-6 py-2 my-auto"
-          onClick={() => {
-            setShowSpinner(true);
-            console.log({ eventDates, eventDetails, list });
-            const newData = new FormData();
-            newData.append("eventDocument", eventDetails.pdf1);
-            newData.append(
-              "budgetDocument",
-              eventDetails.pdf2 ? eventDetails.pdf2 : null
-            );
-            newData.append("equipmentList", JSON.stringify(list));
-            newData.append("eventHalls", JSON.stringify(eventDates));
-            newData.append("eventDetails", JSON.stringify(eventDetails));
-            axios
-              .post(`${process.env.REACT_APP_SERVER_URL}events/`, newData)
-              .then((response) => {
-                console.log(response);
-                navigate("/forum");
-                setShowSpinner(false);
-              })
-              .catch((error) => {
-                setShowSpinner(false);
-                console.log(error);
-              });
-          }}
-        >
-          submit
-        </button>)}
-       
+        
         
       </div>
       <span className="text-red-500 ml-2 mt-4 mb-4 h-6 ">{addError}</span>
@@ -175,6 +146,36 @@ export default function EventEquip() {
              }
 
          </div> */}
+         {showSpinner ? ( <Spinner/>):(<button
+          className="btn bg-arma-title rounded-[8px] px-6 py-2 my-auto"
+          onClick={() => {
+            setShowSpinner(true);
+            console.log({ eventDates, eventDetails, list });
+            const newData = new FormData();
+            newData.append("eventDocument", eventDetails.pdf1);
+            newData.append(
+              "budgetDocument",
+              eventDetails.pdf2 ? eventDetails.pdf2 : null
+            );
+            newData.append("equipmentList", JSON.stringify(list));
+            newData.append("eventHalls", JSON.stringify(eventDates));
+            newData.append("eventDetails", JSON.stringify(eventDetails));
+            axios
+              .post(`${process.env.REACT_APP_SERVER_URL}events/`, newData)
+              .then((response) => {
+                console.log(response);
+                navigate("/forum");
+                setShowSpinner(false);
+              })
+              .catch((error) => {
+                setShowSpinner(false);
+                console.log(error);
+              });
+          }}
+        >
+          submit
+        </button>)}
+       
     </div>
   );
 }

@@ -39,7 +39,7 @@ const event = new mongoose.Schema({
     type: String,
     enum: [
       "AWAITING FO APPROVAL",
-      "REQUESTED BUDGET CHANGES",
+      "BUDGET CHANGES PENDING",
       "BUDGET UPDATED",
       "BUDGET",
       "AWAITING SAC APPROVAL",
