@@ -322,38 +322,26 @@ const reportAndMedia = async (req, res) => {
 
 const uploadRegistrantsList = async (req, res) => {
   let attendedEvents = req.query.attendedEvents;
+  let idList = [];
   try {
     for (let i = 0; i < req.body.length; i++) {
       let data = req.body[i];
-      console.log(data);
       let value = await students.findOne({ rollNumber: data.rollNumber });
       if (!value) {
-        console.log(data);
         let newStudent = students(data);
-        await newStudent.save();
+        let stuData = await newStudent.save();
+        idList.push(stuData._id);
       } else {
-        await students.findOneAndUpdate(
-          { rollNumber: data.rollNumber },
-          { $addToSet: { eventsParticipated: [data.attendedEvents] } }
-        );
+        let stuData = await students.findOne({ rollNumber: data.rollNumber });
+        idList.push(stuData._id);
       }
     }
     let attendanceDoc = await attendance.findOne({ eventID: attendedEvents });
-    let studentData = await students.find({
-      eventsParticipated: [attendedEvents],
-    });
-    console.log(studentData);
-    console.log("341", attendanceDoc);
-    attendanceDoc.registrantsList = [
-      ...attendanceDoc.registrantsList,
-      studentData,
-    ].flat();
-    // attendanceDoc.presence = studentData;
-    await attendance.findOneAndUpdate(
-      { eventID: attendedEvents },
-      { $addToSet: { pressence: [attendanceDoc.registrantsList] } }
-    );
-    console.log("343", attendanceDoc);
+    idList.map((value)=>{
+      if(!attendanceDoc.registrantsList.includes(value)){
+        attendanceDoc.registrantsList.push(value)
+        attendanceDoc.presence.push({dates:[],_id:value});
+      }  })
     await attendanceDoc.save();
     res.json(
       response(
@@ -378,7 +366,6 @@ const eventAttendance = async (req, res) => {
     const result = await attendance
       .findOne({ eventID: req.query.eventID })
       .populate({ path: "presence._id", model: "students" });
-    console.log(result);
     if (result == null)
       throw new Error("Could not find the attendance document");
     const total = await attendance.count({ eventID: req.query.eventID });
