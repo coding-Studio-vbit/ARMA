@@ -216,6 +216,7 @@ export default function RequestsView() {
       default:
         break;
     }
+    window.location.reload();
   }
 
   function makeRequest(action) {
@@ -391,8 +392,8 @@ export default function RequestsView() {
                   }}
                   download
                 >
-                  <span>Budget Document</span>
-                  <CloudDownload className="cursor-pointer" />
+                  <span>Budget Document</span>{" "}
+                  <CloudDownload className="cursor-pointer -mt-1" />
                 </a>
               </div>
             )}

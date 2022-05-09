@@ -147,7 +147,7 @@ export default function EventEquip() {
 
          </div> */}
          {showSpinner ? ( <Spinner/>):(<button
-          className="btn bg-arma-title rounded-[8px] px-6 py-2 my-auto"
+          className="btn bg-arma-title mt-4 rounded-[8px] px-6 py-2 my-auto"
           onClick={() => {
             setShowSpinner(true);
             console.log({ eventDates, eventDetails, list });

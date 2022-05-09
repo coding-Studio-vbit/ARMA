@@ -11,6 +11,8 @@ const RequestsList = () => {
   });
 
   const headers = [
+    { displayName: "", dataPath: "logo", sortable: false },
+
     { displayName: "Forum Name", dataPath: "forumID.name", sortable: true },
     {
       displayName: "Faculty Coordinator",
@@ -61,6 +63,10 @@ const RequestsList = () => {
         filter={{ eventStatus: requestStatus.value }}
         headers={headers}
         rowsPerPage={10}
+        transformer={(obj) => {
+          obj.logo = <img className="w-10 h-10" src={`data:image/png;base64, ${obj.logo}`} />;
+          return obj;
+        }}
         buttonsCount={4}
         onTableRowClick={(id) => {
           navigate(`/faculty/requests/${id}`);

@@ -5,6 +5,7 @@ const response = require("../util/response");
 const attendance = require("../../models/attendance");
 const roles = require("../../models/role");
 const mailer = require("../util/mailer");
+const base64 = require("../util/base64");
 const fs = require("fs");
 const {
   budgetDocUpdateTemplate,
@@ -30,15 +31,10 @@ const getEvents = async (req, res) => {
   let where = {};
   if (req.query.forumID) where.forumID = req.query.forumID;
   if (req.query.hasBudget) {
-    where.hasBudget = req.query.hasBudget;
-    where.eventStatus = [
-      "AWAITING FO APPROVAL",
-      "BUDGET CHANGES PENDING",
-      "BUDGET UPDATED",
-      "BUDGET REJECTED",
-    ];
+    where.hasBudget = (req.query.hasBudget == 'true');
   }
   if (req.query.eventStatus) where.eventStatus = req.query.eventStatus;
+  console.log(where)
   //For sorting
   let sort = {};
   if (req.query.orderBy && req.query.order)
@@ -46,7 +42,7 @@ const getEvents = async (req, res) => {
   else sort = { name: "asc" };
 
   try {
-    result = await events
+    let result = await events
       .find(where)
       .skip((page - 1) * limit)
       .limit(limit)
@@ -55,11 +51,13 @@ const getEvents = async (req, res) => {
         path: "forumID",
         select: "name facultyCoordinatorID",
         model: "forums",
-        populate: {
+        populate: [{
           path: "facultyCoordinatorID",
           select: "name",
           model: "faculty",
-        },
+        },{
+          path: "profilePictureFilePath",
+        }],
       });
     if (req.query.forumName) {
       result = result.filter((e) => {
@@ -69,6 +67,15 @@ const getEvents = async (req, res) => {
       });
     }
     const total = await events.count(where);
+    result = result.map(e=>{
+      const temp = JSON.parse(JSON.stringify(e));
+      if(e.forumID.profilePictureFilePath){
+        temp.logo = base64.encode(e.forumID.profilePictureFilePath);
+      }else{
+        temp.logo = null;
+      }
+      return temp;
+    })
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );
@@ -403,7 +410,6 @@ const postAttendance = async (req, res) => {
 };
 
 const getRequests = async (req, res) => {
-  console.log(req.query.isFO);
   try {
     let result;
     if (req.query.isFO === "true") {
