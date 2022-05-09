@@ -35,15 +35,8 @@ const EventAttendance = () => {
     "Name",
     "Roll Number",
     "Branch",
-    "7-1-2021",
-    "8-1-2021",
-    "9-1-2021",
   ]);
-  const [eventDates, setEventDates] = useState([
-    "7-1-2021",
-    "8-1-2021",
-    "9-1-2021",
-  ]);
+  const [eventDates, setEventDates] = useState([]);
   const [show, setShow] = useState<boolean>(false);
   const [message, setMessage] = useState("");
   const [showBtns, setShowBtns] = useState(false);
@@ -59,8 +52,13 @@ const EventAttendance = () => {
       if (res.data.status == -1) {
         console.log(res.data.response.message);
       } else {
+        console.log(res.data.response);
         setEvent(res.data.response);
         setEventName(res.data.response.name + " - Attendance");
+        let eventD = res.data.response.eventDates;
+        setEventDates((eventDates)=>[...eventD]);
+        setTableHeader((tableHeader)=>[...tableHeader,...eventD]);
+        
       }
     } catch (error) {
       console.log(error);
