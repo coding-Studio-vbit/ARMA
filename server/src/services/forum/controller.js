@@ -423,7 +423,7 @@ const getProfilePicture = async (req, res) => {
     )
       return res.json(
         response(
-          base64.encode(path.join(__dirname, "cs.png")),
+          undefined,
           process.env.SUCCESS_CODE
         )
       );

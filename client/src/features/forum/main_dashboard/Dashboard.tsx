@@ -9,6 +9,7 @@ import { Spinner } from "../../../components/Spinner/Spinner";
 //redux
 import { useDispatch } from "react-redux";
 import { createDatesState, selectDate } from "../../../redux/actions";
+import { Dialog } from "../../../components/Dialog/Dialog";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ const Dashboard = () => {
   const [eventList, setEventList] = useState([]);
   const [todaysEventList, setTodaysEventList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -24,6 +27,8 @@ const Dashboard = () => {
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}forum/dashboard`)
       .then((response) => {
+        if(response.data.status == -1)
+        throw new Error(response.data.response);
         setEventList(response?.data.response.events);
         response.data.response.activeEvents = new Set(
           response.data.response.activeEvents
@@ -36,12 +41,15 @@ const Dashboard = () => {
       })
       .catch((err) => {
         console.log(err);
+        setShowDialog(true); 
+        setDialogMessage(err.message);
         setLoading(false);
       });
   }, []);
 
   return (
     <div>
+      <Dialog show={showDialog} setShow={setShowDialog} title={dialogMessage}/>
       {/* Forum Cover */}
       <div
         id="forumCoverSection"
