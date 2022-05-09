@@ -11,8 +11,6 @@ const RequestsList = () => {
   });
 
   const headers = [
-    { displayName: "", dataPath: "logo", sortable: false },
-
     { displayName: "Forum Name", dataPath: "forumID.name", sortable: true },
     {
       displayName: "Faculty Coordinator",
@@ -64,7 +62,15 @@ const RequestsList = () => {
         headers={headers}
         rowsPerPage={10}
         transformer={(obj) => {
-          obj.logo = <img className="w-10 h-10" src={`data:image/png;base64, ${obj.logo}`} />;
+          obj.forumID.name = (
+            <div className="flex">
+              <img
+                className="w-10 h-10 -mt-1 mr-2"
+                src={`data:image/png;base64, ${obj.logo}`}
+              />
+              {obj.forumID.name}
+            </div>
+          );
           return obj;
         }}
         buttonsCount={4}
