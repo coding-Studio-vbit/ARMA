@@ -75,11 +75,15 @@ function EventCalendar() {
 
   const [error, setError] = useState<string | null>(null);
   async function fetchData() {
+    console.log('ff');
+    
     axios
       .get(process.env.REACT_APP_SERVER_URL + "faculty/dashboardInfo", {
         params: { isFO: false },
       })
       .then((response) => {
+        console.log(response);
+        
         // console.log("Success");
         if (response.data.status === 1) {
           console.log("got Events");
@@ -137,11 +141,11 @@ function EventCalendar() {
           }
           //data :set
         } else {
-          // console.log("Failure");
+          console.log("Failure");
           setError(response.data.response);
         }
         setLoading(false);
-        // console.log("End Then");
+        console.log("End Then");
       })
       .catch((error) => {
         console.log("Fetch Failed");

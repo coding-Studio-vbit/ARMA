@@ -42,7 +42,7 @@ function FacultyDashBoard() {
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [pendingRequests, setPendingRequests] = useState<number>();
+  // const [pendingRequests, setPendingRequests] = useState<number>();
   // const [newRequests, setNewRequests] = useState<number>();
   const [currentRequests, setCurrentRequests] = useState<EventInfo[]>();
   const [todaysEvents, setTodaysEvents] = useState<EventInfo[]>();
@@ -142,15 +142,19 @@ function FacultyDashBoard() {
               //     },
               //  ]
               let eD = eventDays;
-              eD = eD.concat(eventList[i].eventDates);
+              eD.push.apply(eD,dates);
               data.push(event);
-              setEventDays(eD);
+              setEventDays(Array.from(new Set(eD)));
+              console.log(eD);
+              console.log(eventDays);
+              
+              
             }
             // console.log(data);
 
             setCurrentRequests(data);
             setTodaysEvents(data);
-            setPendingRequests(eventList.length);
+            // setPendingRequests(eventList.length);
           } else {
             console.log("No Events");
             setError("No Event Requests Found");
@@ -180,7 +184,7 @@ function FacultyDashBoard() {
 
   return !loading ? (
     <div>
-      <p>{JSON.stringify(currentRequests)}</p>
+      {/* <p>{JSON.stringify(eventDays)}</p> */}
       {error == null ? (
         <div className="mx-auto w-full px-4  md:px-8 lg:px-0 lg:w-10/12 flex flex-col justify-center items-center mt-6 gap-10 py-8 pb-14">
           {/* First Row */}
@@ -244,6 +248,10 @@ function FacultyDashBoard() {
                 onChange={(e) => handleSelectedDate(e)}
                 colorPrimary="#0B5B8A"
                 calendarClassName="responsiveCalendar"
+                calendarSelectedDayClassName="eventDays"
+                calendarRangeStartClassName="eventDays"
+                calendarRangeBetweenClassName="eventDays"
+                calendarRangeEndClassName="eventDays"
                 shouldHighlightWeekends
               />
             </div>
