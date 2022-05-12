@@ -180,6 +180,7 @@ function FacultyDashBoard() {
 
   return !loading ? (
     <div>
+      <p>{JSON.stringify(currentRequests)}</p>
       {error == null ? (
         <div className="mx-auto w-full px-4  md:px-8 lg:px-0 lg:w-10/12 flex flex-col justify-center items-center mt-6 gap-10 py-8 pb-14">
           {/* First Row */}

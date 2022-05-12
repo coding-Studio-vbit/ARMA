@@ -424,7 +424,9 @@ const getRequests = async (req, res) => {
         .populate("forumID");
     } else {
       result = await events
-        .find({ eventStatus: { $nin: ["COMPLETED", "REJECTED"] } })
+        .find({ 
+          eventStatus: 
+          { $nin: ["REJECTED","CANCELLED"] } })
         .populate("forumID");
     }
     res.json(response(result, process.env.SUCCESS_CODE));
