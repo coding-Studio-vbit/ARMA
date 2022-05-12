@@ -10,6 +10,7 @@ const adminRouter = require("./routes/admin/router");
 const rolesRouter = require("./routes/roles/router");
 const hallsRouter = require("./routes/halls/router");
 const equipmentRouter = require("./routes/equipment/router");
+const publicRouter = require('./routes/public/router');
 
 const api = () => {
   const router = express.Router();
@@ -23,6 +24,7 @@ const api = () => {
   router.use("/roles", rolesRouter);
   router.use("/halls", hallsRouter);
   router.use("/equipment", equipmentRouter);
+  router.use('/public',publicRouter);
   return router;
 };
 
