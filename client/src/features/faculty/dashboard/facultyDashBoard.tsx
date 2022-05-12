@@ -202,15 +202,21 @@ function FacultyDashBoard() {
                 <p className="text-2xl text-arma-dark-blue font-bold">
                   Current Requests
                 </p>
-                <ul className="list-disc list-inside text-xl ">
-                  {currentRequests?.map((element) => {
-                    return (
-                      <li key={element._id}>
-                        {element.forum + " - " + element.event}
-                      </li>
-                    );
-                  })}
-                </ul>
+                {
+                  currentRequests.filter(
+                    (e)=>e.eventStatus!=="COMPLETED" && e.eventStatus!=="APPROVED").length>0?                
+                    <ul className="list-disc list-inside text-xl ">
+                      {currentRequests?.map((element) => {
+                        return (
+                          (element.eventStatus !=="COMPLETED" && element.eventStatus !=="APPROVED") &&
+                          <li key={element._id}>
+                            {element.forum + " - " + element.event}
+                          </li>
+                        );
+                      })}
+                    </ul>:
+                    <p className="text-lg mt-3">No New Requests</p>
+                }
               </div>
 
               <div className="w-full sm:w-2/3 lg:w-1/2 mx-4 flex justify-center gap-4 lg:gap6 xl:gap-10 items-center h-72">
@@ -221,7 +227,8 @@ function FacultyDashBoard() {
                 >
                   <p className="text-xl">Pending Requests</p>
                   <div className="pr-3 arma-text-gradient text-transparent bg-clip-text text-9xl md:text-7xl lg:text-8xl">
-                    {pendingRequests}
+                    {currentRequests.filter(
+                    (e)=>e.eventStatus!=="COMPLETED" && e.eventStatus!=="APPROVED").length}
                   </div>
                 </div>
               </div>
