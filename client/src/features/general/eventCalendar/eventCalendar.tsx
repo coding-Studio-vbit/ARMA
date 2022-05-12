@@ -78,12 +78,9 @@ function EventCalendar() {
     console.log('ff');
     
     axios
-      .get(process.env.REACT_APP_SERVER_URL + "faculty/dashboardInfo", {
-        params: { isFO: false },
-      })
+      .get(process.env.REACT_APP_SERVER_URL + "public/eventCalendar")
       .then((response) => {
         console.log(response);
-        
         // console.log("Success");
         if (response.data.status === 1) {
           console.log("got Events");
@@ -128,7 +125,8 @@ function EventCalendar() {
               //     },
               //  ]
               let eD = eventDays;
-              eD = eD.concat(eventList[i].eventDates);
+              eD.push.apply(eD,dates)
+              // eD = eD.concat(eventList[i].eventDates);
               data.push(event);
               setEventDays(eD);
             }
@@ -178,7 +176,7 @@ function EventCalendar() {
             <div
               className="bg-arma-blue 
                         flex flex-col lg:flex-row rounded-3xl
-                        lg:h-3/4 w-5/6 lg:w-5/6 xl:w-2/3 text-white mt-12"
+                        lg:h-3/4 w-5/6 lg:w-5/6 xl:w-2/3 text-white mt-0"
             >
               <div
                 className="h-auto px-8 py-8 md:py-10 justify-between 
