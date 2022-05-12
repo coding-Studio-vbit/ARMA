@@ -18,6 +18,7 @@ const {
 const mongoose = require("mongoose");
 const forums = require("../../models/forum");
 const students = require("../../models/student");
+const reservations = require("../../models/reservations");
 
 //get Faculty list
 
@@ -363,6 +364,8 @@ const rejectEvent = async (req, res) => {
     ) {
       throw new Error("cannot reject event during current status");
     }
+    //delete this event's reservations
+    await reservations.deleteMany({ eventId: eventId });
     event.eventStatus = "REJECTED";
     event.SACComments = SACComments;
     await event.save();

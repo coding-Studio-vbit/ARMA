@@ -31,10 +31,10 @@ const getEvents = async (req, res) => {
   let where = {};
   if (req.query.forumID) where.forumID = req.query.forumID;
   if (req.query.hasBudget) {
-    where.hasBudget = (req.query.hasBudget == 'true');
+    where.hasBudget = req.query.hasBudget == "true";
   }
   if (req.query.eventStatus) where.eventStatus = req.query.eventStatus;
-  console.log(where)
+  console.log(where);
   //For sorting
   let sort = {};
   if (req.query.orderBy && req.query.order)
@@ -51,13 +51,16 @@ const getEvents = async (req, res) => {
         path: "forumID",
         select: "name facultyCoordinatorID",
         model: "forums",
-        populate: [{
-          path: "facultyCoordinatorID",
-          select: "name",
-          model: "faculty",
-        },{
-          path: "profilePictureFilePath",
-        }],
+        populate: [
+          {
+            path: "facultyCoordinatorID",
+            select: "name",
+            model: "faculty",
+          },
+          {
+            path: "profilePictureFilePath",
+          },
+        ],
       });
     if (req.query.forumName) {
       result = result.filter((e) => {
@@ -67,15 +70,15 @@ const getEvents = async (req, res) => {
       });
     }
     const total = await events.count(where);
-    result = result.map(e=>{
+    result = result.map((e) => {
       const temp = JSON.parse(JSON.stringify(e));
-      if(e.forumID.profilePictureFilePath){
+      if (e.forumID.profilePictureFilePath) {
         temp.logo = base64.encode(e.forumID.profilePictureFilePath);
-      }else{
+      } else {
         temp.logo = null;
       }
       return temp;
-    })
+    });
     res.json(
       response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );
@@ -261,6 +264,11 @@ const updateBudgetDoc = async (req, res) => {
   //update the budget here.
   try {
     let event = await events.findById(req.body.eventID).populate("forumID");
+    if (!["COMPLETED", "APPROVED", "REJECTED"].includes(event.eventStatus)) {
+      throw new Error(
+        "Cannot update budget during current status of the event"
+      );
+    }
     if (
       event.eventStatus !== "AWAITING FO APPROVAL" &&
       event.eventStatus !== "BUDGET UPDATED" &&
@@ -282,9 +290,7 @@ const updateBudgetDoc = async (req, res) => {
     res.json(response("updated budget document", process.env.SUCCESS_CODE));
   } catch (e) {
     console.log(e);
-    res.json(
-      response("updated budget document failed", process.env.FAILURE_CODE)
-    );
+    res.json(response(e.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -344,11 +350,12 @@ const uploadRegistrantsList = async (req, res) => {
       }
     }
     let attendanceDoc = await attendance.findOne({ eventID: attendedEvents });
-    idList.map((value)=>{
-      if(!attendanceDoc.registrantsList.includes(value)){
-        attendanceDoc.registrantsList.push(value)
-        attendanceDoc.presence.push({dates:[],_id:value});
-      }  })
+    idList.map((value) => {
+      if (!attendanceDoc.registrantsList.includes(value)) {
+        attendanceDoc.registrantsList.push(value);
+        attendanceDoc.presence.push({ dates: [], _id: value });
+      }
+    });
     await attendanceDoc.save();
     res.json(
       response(
@@ -390,6 +397,12 @@ const eventAttendance = async (req, res) => {
 
 const postAttendance = async (req, res) => {
   try {
+    let event = await events.findOne({ _id: req.body.eventID });
+    if (!["COMPLETED", "REJECTED"].includes(event.eventStatus)) {
+      throw new Error(
+        "Cannot post attendance during current status of the event."
+      );
+    }
     let attendanceDoc = await attendance.findOne({ eventID: req.body.eventID });
     attendanceDoc.presence.forEach((element) => {
       element.dates = req.body.studentPresence[element._id];
@@ -400,12 +413,7 @@ const postAttendance = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(
-      response(
-        { message: "Update Attendance Failed" },
-        process.env.FAILURE_CODE
-      )
-    );
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -424,7 +432,7 @@ const getRequests = async (req, res) => {
         .populate("forumID");
     } else {
       result = await events
-        .find({ eventStatus: { $nin: ["REJECTED","CANCELLED"] } })
+        .find({ eventStatus: { $nin: ["REJECTED", "CANCELLED"] } })
         .populate("forumID");
     }
     res.json(response(result, process.env.SUCCESS_CODE));
@@ -504,8 +512,7 @@ const getBudgetDocument = async (req, res) => {
     if (
       event.forumID == forumId ||
       req.user.userType.find(
-        (type) =>
-          type.name == "FO" || type.name == "ADMIN"
+        (type) => type.name == "FO" || type.name == "ADMIN"
       )
     ) {
       res.sendFile(event.budgetDocPath);
@@ -528,8 +535,7 @@ const getEventDocument = async (req, res) => {
     if (
       event.forumID == forumId ||
       req.user.userType.find(
-        (type) =>
-          type.name == "SAC" || type.name == "ADMIN"
+        (type) => type.name == "SAC" || type.name == "ADMIN"
       )
     ) {
       res.sendFile(event.eventProposalDocPath);
@@ -546,7 +552,10 @@ const updateReservations = async (req, res) => {
   try {
     const { eventHalls, id } = req.body;
     const event = await events.findById(id);
-    if (event.forumID == req.user._id && event.eventStatus !== "COMPLETED") {
+    if (
+      event.forumID == req.user._id &&
+      !["COMPLETED", "APPROVED", "REJECTED"].includes(event.eventStatus)
+    ) {
       //delete all reservations of this event.
       const deletionResult = await reservations.deleteMany({ eventId: id });
       let reservationsObject = {};
@@ -633,7 +642,12 @@ const updateReservations = async (req, res) => {
         response("Successfully updated reservations", process.env.SUCCESS_CODE)
       );
     } else {
-      res.json(response("unauthorized", process.env.FAILURE_CODE));
+      res.json(
+        response(
+          "Cannot change event reservations now.",
+          process.env.FAILURE_CODE
+        )
+      );
     }
   } catch (error) {
     console.log(error);
@@ -646,6 +660,9 @@ const updateReservations = async (req, res) => {
 const updateEquipment = async (req, res) => {
   try {
     const { id, equipmentList } = req.body;
+    const event = await events.findById(id);
+    if (["COMPLETED", "APPROVED", "REJECTED"].includes(event.eventStatus))
+      throw new Error("Cannot update equipment during current status");
     let eqs = [];
     for (let i = 0; i < equipmentList.length; i++) {
       let { equipment, quantity } = equipmentList[i];
@@ -655,28 +672,28 @@ const updateEquipment = async (req, res) => {
       });
       eqs.push({ equipmentType: eq._id, quantity: quantity });
     }
-    const event = await events.findById(id);
+
     event.equipment = eqs;
     await event.save();
     res.json(response("Updated event equipment", process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
-    res.json(
-      response("Failed to update event equipment", process.env.FAILURE_CODE)
-    );
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
 const updateEventDetails = async (req, res) => {
   try {
     let { name, description, eventId } = req.body;
+    const event = await events.findById(eventId).populate("forumID");
+    if (["COMPLETED", "APPROVED", "REJECTED"].includes(event.eventStatus))
+      throw new Error("Cannot update equipment during current status");
 
     name = name.trim();
     description = description.trim();
     if (name == "" || description == "") {
       throw new error("Invalid details");
     }
-    const event = await events.findById(eventId).populate("forumID");
     event.name = name;
     event.description = description;
     if (req.files.eventDocument && req.files?.eventDocument[0]) {
@@ -693,9 +710,7 @@ const updateEventDetails = async (req, res) => {
     res.json(response("updated event details", process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
-    res.json(
-      response("Failed to update event details", process.env.FAILURE_CODE)
-    );
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -829,11 +844,15 @@ const cancelEvent = async (req, res) => {
     const event = await events.findById(eventId);
     if (event.eventStatus == "CANCELLED")
       throw new Error("already cancelled event");
-    event.eventStatus = "CANCELLED";
+    //delete reservations made by this event.
+    await reservations.deleteMany({ eventId: eventId });
+  event.eventStatus = "CANCELLED";
     await event.save();
     res.json(
-      "successfully marked event as cancelled",
-      process.env.SUCCESS_CODE
+      response(
+        "The event has been cancelled succesfully.",
+        process.env.SUCCESS_CODE
+      )
     );
   } catch (err) {
     console.log(err);
@@ -844,19 +863,19 @@ const cancelEvent = async (req, res) => {
 module.exports = {
   getEventReservations,
   getEventEquipment,
-  updateEventDetails,
-  updateReservations,
-  updateEquipment,
   getEventById,
   getBudgetDocument,
   getEventDocument,
   getEvents,
-  createEvent,
-  updateBudgetDoc,
-  reportAndMedia,
   getRequests,
   getCalendarEvents,
   getActiveEvents,
+  updateEventDetails,
+  updateReservations,
+  updateEquipment,
+  updateBudgetDoc,
+  createEvent,
+  reportAndMedia,
   uploadRegistrantsList,
   eventAttendance,
   postAttendance,

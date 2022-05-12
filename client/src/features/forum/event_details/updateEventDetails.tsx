@@ -26,7 +26,7 @@ const UpdateEventDetails = () => {
   const [desc, setDesc] = useState("");
   const [sacComments, setSacComments] = useState("");
   const [fileName, setfileName] = useState("");
-
+  const [eventStatus, setEventStatus] = useState("");
   const [eventName, seteventName] = useState("");
 
   // const [eventProposalDocPath, seteventProposalDocPath] = useState("");
@@ -43,6 +43,7 @@ const UpdateEventDetails = () => {
         setError(null);
         setDesc(res.data.response.description);
         setSacComments(res.data.response.SACComments);
+        setEventStatus(res.data.response.eventStatus);
       } else {
         setError("Unable to load event details");
       }
@@ -104,7 +105,7 @@ const UpdateEventDetails = () => {
       {/* Header */}
       <h1 className="font-sans text-arma-dark-blue font-semibold text-xl md:text-4xl inline-block  mt-2">
         {eventName} - Event Details
-        {!isEdit && (
+        {!isEdit && !(["COMPLETED", "REJECTED", "CANCELLED", "APPROVED"].includes(eventStatus)) && (
           <Edit
             className="ml-3 text-black !text-xl md:!text-3xl cursor-pointer"
             onClick={() => {

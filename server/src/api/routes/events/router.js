@@ -104,14 +104,14 @@ router.post("/updateEventEquipment", controller.updateEquipment);
 router.get("/getEventEquipment/:id", controller.getEventEquipment);
 router.get("/getEventReservations/:id", controller.getEventReservations);
 router.get(
-  "completeEvent/:eventId",
+  "/completeEvent/:eventId",
   (req, res, next) => {
     checkRole(req, res, next, ["FORUM"]);
   },
   controller.completeEvent
 );
 router.get(
-  "cancelEvent/:eventId",
+  "/cancelEvent/:eventId",
   (req, res, next) => {
     checkRole(req, res, next, ["FORUM"]);
   },

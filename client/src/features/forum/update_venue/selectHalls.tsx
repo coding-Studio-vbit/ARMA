@@ -14,10 +14,12 @@ interface SelectedHallsProps {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   hallsData: string[];
   oldEventDates: {};
+  eventStatus:string;
 }
 
 const SelectHalls = (props: SelectedHallsProps) => {
   //redux
+  console.log(props)
   const eventDates = useSelector((state: RootState) => state.eventDates);
   const [oldEventDates, setOldEventDates] = useState(props.oldEventDates);
   const dispatch = useDispatch();
@@ -53,6 +55,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
           </div>
           <div className="flex">
             <button
+            disabled={["COMPLETED","REJECTED", "APPROVED", "CANCELLED"].includes(props.eventStatus)}
               className={
                 reservations[hall.toUpperCase()] &&
                 reservations[hall.toUpperCase()].includes("morning") &&
@@ -77,6 +80,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
               <div className="">Morning</div>
             </button>
             <button
+            disabled={["COMPLETED","REJECTED", "APPROVED", "CANCELLED"].includes(props.eventStatus)}
               className={
                 reservations[hall.toUpperCase()] &&
                 reservations[hall.toUpperCase()].includes("afternoon") &&
