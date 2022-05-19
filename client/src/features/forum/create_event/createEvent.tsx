@@ -22,7 +22,7 @@ const CreateEvent = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col mx-6 sm:mx-8 md:mx-32 lg:mx-48 ">
+    <div className="flex flex-col mx-6 sm:mx-8 md:mx-32 lg:mx-48 mb-20 ">
       <div className="mt-8 mb-4 flex items-center">
         <h1 className=" font-poppins text-arma-dark-blue  text-2xl md:text-4xl">
           Create Event
@@ -162,7 +162,7 @@ const CreateEvent = () => {
       <Dialog show={show} setShow={setShow} title={msg} />
       <div className="sm:w-4/4 flex sm:items-end mx-auto sm:mx-0">
         <button
-          className="btn pr-2 text-xl ml-auto my-8"
+          className="btn flex items-center pl-5 pr-3 text-lg ml-auto mt-12"
           onClick={() => {
             if (name.length < 3) {
               unstable_batchedUpdates(() => {
@@ -190,8 +190,8 @@ const CreateEvent = () => {
             }
           }}
         >
-          NEXT
-          <ChevronRightRounded fontSize="large"/>
+          <span>NEXT</span>
+          <ChevronRightRounded fontSize="medium" className="mx-0"/>
         </button>
       </div>
     </div>
