@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 import { createEventDetails } from "../../../redux/actions";
 import { useDispatch } from "react-redux";
-import { createEvent } from "@testing-library/react";
 
 const CreateEvent = () => {
   const dispatch = useDispatch();
