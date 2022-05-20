@@ -62,10 +62,15 @@ const student = new mongoose.Schema({
     },
   },
   eventsParticipated: [{ type: mongoose.Schema.Types.ObjectId, ref: "events" }],
-  forumMemberships: [
+  forumCoreTeamMemberships: [
     {
       forumId: { type: mongoose.Schema.Types.ObjectId, ref: "forums" },
       designation: { type: String },
+    },
+  ],
+  forumNonCoreTeamMemberships: [
+    {
+      forumId: { type: mongoose.Schema.Types.ObjectId, ref: "forums" },
     },
   ],
   eventsOrganized: [{ type: mongoose.Schema.Types.ObjectId, ref: "events" }],

@@ -14,6 +14,9 @@ const {
   newEventCreatedSAC,
   MOReportAndMedia,
   eventUpdatedSAC,
+  RegistrarEquipmentUpdate,
+  CFINewEvent,
+  RegistrarNewEvent,
 } = require("../../email_templates/templates");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
@@ -115,7 +118,7 @@ const createEvent = async (req, res) => {
         description: eventDetails.desc,
         name: eventDetails.name,
         eventProposalDocPath: req.files.eventDocument[0].path,
-        eventStatus: "AWAITING FO APPROVAL",
+        eventStatus: "AWAITING SAC APPROVAL",
         budgetDocPath: req.files.budgetDocument[0].path,
         hasBudget: true,
         equipment: eqs,
@@ -230,14 +233,34 @@ const createEvent = async (req, res) => {
     await newAttendanceDoc.save();
     await newEvent.save();
 
-    let res = await mailer.sendMail(req.user.email, newEventCreatedForum, {
+    mailer.sendMail(req.user.email, newEventCreatedForum, {
       forumName: req.user.name,
       eventName: eventDetails.name,
     });
+    let CFIRole = await roles.findOne({ name: "CFI" });
+    let CFI = await faculty.findOne({ role: CFIRole._id });
+    if (!CFI) throw new Error("No Faculty with CFI role found!");
+    let RegistrarRole = await roles.findOne({ name: "REGISTRAR" });
+    let Registrar = await faculty.findOne({ role: RegistrarRole._id });
+    if (!Registrar) throw new Error("No Faculty with REGISTRAR role found!");
+
+    mailer.sendMail(CFI.email, CFINewEvent, {
+      CFIName: CFI.name,
+      forumName: newEvent.forumID.name,
+      eventName: newEvent.name,
+      equipmentList: JSON.stringify(newEvent.equipment),
+    });
+    mailer.sendMail(Registrar.email, RegistrarNewEvent, {
+      RegistrarName: Registrar.name,
+      forumName: newEvent.forumID.name,
+      eventName: newEvent.name,
+      equipmentList: JSON.stringify(newEvent.equipment),
+    });
+
     if (newEvent.hasBudget) {
       const FORoleID = await roles.findOne().where("name").in(["FO"]);
       const FO = await faculty.findOne({ role: FORoleID._id });
-      res = await mailer.sendMail(FO.email, newEventCreatedFO, {
+      mailer.sendMail(FO.email, newEventCreatedFO, {
         forumName: req.user.name,
         eventName: eventDetails.name,
         FOName: FO.name,
@@ -245,7 +268,7 @@ const createEvent = async (req, res) => {
     } else {
       const SACRoleID = await roles.findOne().where("name").in(["SAC"]);
       const SAC = await faculty.findOne({ role: SACRoleID._id });
-      res = await mailer.sendMail(SAC.email, newEventCreatedSAC, {
+      mailer.sendMail(SAC.email, newEventCreatedSAC, {
         forumName: req.user.name,
         eventName: eventDetails.name,
         SACName: SAC.name,
@@ -264,25 +287,24 @@ const updateBudgetDoc = async (req, res) => {
   //update the budget here.
   try {
     let event = await events.findById(req.body.eventID).populate("forumID");
-    if (!["COMPLETED", "APPROVED", "REJECTED"].includes(event.eventStatus)) {
+    if (
+      !["CHANGES REQUESTED BY SAC", "CHANGES REQUESTED BY FO"].includes(
+        event.eventStatus
+      )
+    ) {
       throw new Error(
         "Cannot update budget during current status of the event"
       );
     }
-    if (
-      event.eventStatus !== "AWAITING FO APPROVAL" &&
-      event.eventStatus !== "BUDGET UPDATED" &&
-      event.eventStatus !== "BUDGET CHANGES PENDING"
-    )
+    if (event.eventStatus !== "CHANGES REQUESTED BY FO")
       throw new Error("Cannot update budget during current status of event");
     event.budgetDocPath = req.files.budgetDocument[0].path;
-    event.eventStatus = "BUDGET UPDATED";
     await event.save();
     //send notif to FO.
     const FORoleID = await roles.findOne().where("name").in(["FO"]);
     const FO = await faculty.findOne({ role: FORoleID._id });
     if (FO == null) throw new error("FO not found");
-    await mailer.sendMail(FO.email, budgetDocUpdateTemplate, {
+    mailer.sendMail(FO.email, budgetDocUpdateTemplate, {
       FOName: FO.name,
       forumName: event.forumID.name,
       eventName: event.name,
@@ -298,6 +320,11 @@ const reportAndMedia = async (req, res) => {
   try {
     console.log(req.body.eventID + "is the event id");
     let event = await events.findById(req.body.eventID).populate("forumID");
+    if (!["COMPLETED"].find(event.eventStatus))
+      throw new Error(
+        "Cannot submit report and media during current event status: " +
+          event.eventStatus
+      );
     const MORole = await roles.findOne({ name: "MO" });
     if (MORole == null) throw new Error("MO Role not found!");
     const MO = await faculty.findOne({ role: MORole._id });
@@ -313,7 +340,7 @@ const reportAndMedia = async (req, res) => {
 
     await event.save();
     temp.push(event.reportDocPath);
-    await mailer.sendMail(
+    mailer.sendMail(
       MO.email,
       MOReportAndMedia,
       { forumName: event.forumID.name, MOName: MO.name, eventName: event.name },
@@ -398,7 +425,7 @@ const eventAttendance = async (req, res) => {
 const postAttendance = async (req, res) => {
   try {
     let event = await events.findOne({ _id: req.body.eventID });
-    if (!["COMPLETED", "REJECTED"].includes(event.eventStatus)) {
+    if (!["APPROVED"].includes(event.eventStatus)) {
       throw new Error(
         "Cannot post attendance during current status of the event."
       );
@@ -423,16 +450,16 @@ const getRequests = async (req, res) => {
     if (req.query.isFO === "true") {
       result = await events
         .find({
-          eventStatus: [
-            "AWAITING FO APPROVAL",
-            "BUDGET CHANGES PENDING",
-            "BUDGET UPDATED",
-          ],
+          eventStatus: ["AWAITING FO APPROVAL", "CHANGES REQUESTED BY FO"],
         })
         .populate("forumID");
     } else {
       result = await events
-        .find({ eventStatus: { $nin: ["REJECTED", "CANCELLED"] } })
+        .find({
+          eventStatus: {
+            $nin: ["REJECTED BY SAC", "REJECTED BY FO", "CANCELLED"],
+          },
+        })
         .populate("forumID");
     }
     res.json(response(result, process.env.SUCCESS_CODE));
@@ -552,9 +579,12 @@ const updateReservations = async (req, res) => {
   try {
     const { eventHalls, id } = req.body;
     const event = await events.findById(id);
+    //if the event is in any one of the following states, its reservations cannot be updated.
     if (
       event.forumID == req.user._id &&
-      !["COMPLETED", "APPROVED", "REJECTED"].includes(event.eventStatus)
+      ["CHANGES REQUESTED BY SAC", "AWAITING SAC APPROVAL"].includes(
+        event.eventStatus
+      )
     ) {
       //delete all reservations of this event.
       const deletionResult = await reservations.deleteMany({ eventId: id });
@@ -660,8 +690,12 @@ const updateReservations = async (req, res) => {
 const updateEquipment = async (req, res) => {
   try {
     const { id, equipmentList } = req.body;
-    const event = await events.findById(id);
-    if (["COMPLETED", "APPROVED", "REJECTED"].includes(event.eventStatus))
+    const event = await events.findById(id).populate("forumID");
+    if (
+      !["AWAITING SAC APPROVAL", "CHANGES REQUESTED BY SAC"].includes(
+        event.eventStatus
+      )
+    )
       throw new Error("Cannot update equipment during current status");
     let eqs = [];
     for (let i = 0; i < equipmentList.length; i++) {
@@ -675,6 +709,26 @@ const updateEquipment = async (req, res) => {
 
     event.equipment = eqs;
     await event.save();
+    let CFIRole = await roles.findOne({ name: "CFI" });
+    let CFI = await faculty.findOne({ role: CFIRole._id });
+    if (!CFI) throw new Error("No Faculty with CFI role found!");
+    let RegistrarRole = await roles.findOne({ name: "REGISTRAR" });
+    let Registrar = await faculty.findOne({ role: RegistrarRole._id });
+    if (!Registrar) throw new Error("No Faculty with REGISTRAR role found!");
+
+    mailer.sendMail(CFI.email, CFIEquipmentUpdate, {
+      CFIName: CFI.name,
+      forumName: event.forumID.name,
+      eventName: event.name,
+      equipmentList: JSON.stringify(event.equipment),
+    });
+    mailer.sendMail(Registrar.email, RegistrarEquipmentUpdate, {
+      RegistrarName: Registrar.name,
+      forumName: event.forumID.name,
+      eventName: event.name,
+      equipmentList: JSON.stringify(event.equipment),
+    });
+
     res.json(response("Updated event equipment", process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
@@ -686,7 +740,11 @@ const updateEventDetails = async (req, res) => {
   try {
     let { name, description, eventId } = req.body;
     const event = await events.findById(eventId).populate("forumID");
-    if (["COMPLETED", "APPROVED", "REJECTED"].includes(event.eventStatus))
+    if (
+      !["AWAITING SAC APPROVAL", "CHANGES REQUESTED BY SAC"].includes(
+        event.eventStatus
+      )
+    )
       throw new Error("Cannot update equipment during current status");
 
     name = name.trim();
@@ -702,7 +760,7 @@ const updateEventDetails = async (req, res) => {
     await event.save();
     const SACRoleID = await roles.findOne().where("name").in(["SAC"]);
     const SAC = await faculty.findOne({ role: SACRoleID._id });
-    await mailer.sendMail(SAC.email, eventUpdatedSAC, {
+    mailer.sendMail(SAC.email, eventUpdatedSAC, {
       eventName: event.name,
       SACName: SAC.name,
       forumName: event.forumID.name,
@@ -826,8 +884,14 @@ const completeEvent = async (req, res) => {
         stu.save();
       }
     }
+    //update the reservations of this event.
+    await reservations.updateMany(
+      { eventId: event._id },
+      { status: "COMPLETED" }
+    );
     //update event status
     event.eventCompleted = true;
+    event.eventStatus = "COMPLETED";
     await event.save();
     res.json("successfully marked event as complete", process.env.SUCCESS_CODE);
   } catch (err) {
@@ -842,11 +906,13 @@ const cancelEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
     const event = await events.findById(eventId);
-    if (event.eventStatus == "CANCELLED")
-      throw new Error("already cancelled event");
+    if (event.eventStatus == "CANCELLED" && event.eventStatus !== "COMPLETED")
+      throw new Error(
+        "Cannot cancel this event!, event status is " + event.eventStatus
+      );
     //delete reservations made by this event.
     await reservations.deleteMany({ eventId: eventId });
-  event.eventStatus = "CANCELLED";
+    event.eventStatus = "CANCELLED";
     await event.save();
     res.json(
       response(

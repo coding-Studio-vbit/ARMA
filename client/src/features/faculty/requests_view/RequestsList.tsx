@@ -32,15 +32,16 @@ const RequestsList = () => {
               value: "AWAITING FO APPROVAL",
               label: "AWAITING FO APPROVAL",
             },
+
             {
-              value: "BUDGET CHANGES PENDING",
-              label: "BUDGET CHANGES PENDING",
+              value: "BUDGET REJECTED BY SAC",
+              label: "BUDGET REJECTED BY SAC",
             },
-            { value: "BUDGET REJECTED", label: "BUDGET REJECTED" },
+            { value: "BUDGET REJECTED BY FO", label: "BUDGET REJECTED BY FO" },
             { value: "AWAITING SAC APPROVAL", label: "AWAITING SAC APPROVAL" },
             {
-              value: "REQUESTED CHANGES BY SAC",
-              label: "REQUESTED CHANGES BY SAC",
+              value: "CHANGES REQUESTED BY SAC",
+              label: "CHANGES REQUESTED BY SAC",
             },
             { value: "APPROVED", label: "APPROVED" },
             { value: "REJECTED", label: "REJECTED" },

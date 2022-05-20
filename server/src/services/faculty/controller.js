@@ -167,18 +167,14 @@ const acceptBudget = async (req, res) => {
     if (SACRoleId == null) throw new Error("SAC Role not found");
     const SAC = await faculty.findOne({ role: SACRoleId._id });
     if (SAC == null) throw new Error("SAC not found");
-    if (
-      event.eventStatus !== "AWAITING FO APPROVAL" &&
-      event.eventStatus !== "BUDGET UPDATED" &&
-      event.eventStatus !== "BUDGET CHANGES PENDING"
-    ) {
+    if (event.eventStatus !== "AWAITING FO APPROVAL") {
       throw new Error(
         "cannot accept budget of event during the current status:" +
           event.eventStatus
       );
     }
     console.log(req.user.role);
-    event.eventStatus = "AWAITING SAC APPROVAL";
+    event.eventStatus = "APPROVED";
     //now send update email to both the forum and the SAC.
     await event.save();
     mailer
@@ -208,15 +204,14 @@ const commentBudget = async (req, res) => {
     const event = await events.findById(eventId).populate("forumID");
     if (
       event.eventStatus !== "AWAITING FO APPROVAL" &&
-      event.eventStatus !== "BUDGET CHANGES PENDING" &&
-      event.eventStatus !== "BUDGET UPDATED"
+      event.eventStatus !== "CHANGES REQUESTED BY FO"
     ) {
       throw new Error(
         "cannot comment for current status of event:" + event.eventStatus
       );
     }
     event.FOComments = FOComments;
-    event.eventStatus = "BUDGET CHANGES PENDING";
+    event.eventStatus = "CHANGES REQUESTED BY FO";
     await event.save();
     //send the mail to the forum about the comments.
     mailer
@@ -245,15 +240,11 @@ const rejectBudget = async (req, res) => {
     if (SACRoleId == null) throw new Error("SAC Role not found");
     const SAC = await faculty.findOne({ role: SACRoleId._id });
     if (SAC == null) throw new Error("SAC not found");
-    if (
-      event.eventStatus !== "AWAITING FO APPROVAL" &&
-      event.eventStatus !== "BUDGET UPDATED" &&
-      event.eventStatus !== "BUDGET CHANGES PENDING"
-    ) {
+    if (event.eventStatus !== "AWAITING FO APPROVAL") {
       throw new Error("not AWAITING FO APPROVAL");
     }
 
-    event.eventStatus = "BUDGET REJECTED";
+    event.eventStatus = "REJECTED BY FO";
     event.FOComments = FOComments;
     //now send update email to both the forum and the SAC.
     await event.save();
@@ -282,11 +273,7 @@ const approveEvent = async (req, res) => {
   try {
     const { eventId } = req.body;
     const event = await events.findById(eventId).populate("forumID");
-    if (
-      event.eventStatus !== "AWAITING SAC APPROVAL" &&
-      event.eventStatus !== "REQUESTED CHANGES BY SAC" &&
-      event.eventStatus !== "SAC CHANGES UPDATED"
-    ) {
+    if (event.eventStatus !== "AWAITING FO APPROVAL") {
       throw new Error("cannot approve event during current status");
     }
 
@@ -324,14 +311,10 @@ const commentEvent = async (req, res) => {
   try {
     const { eventId, SACComments } = req.body;
     const event = await events.findById(eventId).populate("forumID");
-    if (
-      event.eventStatus !== "AWAITING SAC APPROVAL" &&
-      event.eventStatus !== "REQUESTED CHANGES BY SAC" &&
-      event.eventStatus !== "SAC CHANGES UPDATED"
-    ) {
+    if (event.eventStatus !== "AWAITING SAC APPROVAL") {
       throw new Error("cannot comment on event during current status");
     }
-    event.eventStatus = "REQUESTED CHANGES BY SAC";
+    event.eventStatus = "CHANGES REQUESTED BY SAC";
     event.SACComments = SACComments;
     await event.save();
 
@@ -357,16 +340,12 @@ const rejectEvent = async (req, res) => {
   try {
     const { eventId, SACComments } = req.body;
     const event = await events.findById(eventId).populate("forumID");
-    if (
-      event.eventStatus !== "AWAITING SAC APPROVAL" &&
-      event.eventStatus !== "REQUESTED CHANGES BY SAC" &&
-      event.eventStatus !== "SAC CHANGES UPDATED"
-    ) {
+    if (event.eventStatus !== "AWAITING SAC APPROVAL") {
       throw new Error("cannot reject event during current status");
     }
     //delete this event's reservations
     await reservations.deleteMany({ eventId: eventId });
-    event.eventStatus = "REJECTED";
+    event.eventStatus = "REJECTED BY SAC";
     event.SACComments = SACComments;
     await event.save();
 

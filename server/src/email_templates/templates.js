@@ -93,6 +93,26 @@ const MOReportAndMedia = {
     "Hey there ${MOName}, ${forumName} has sent the following attachments as media from the event ${eventName}. Upload them to the official VBIT website, Take a look!",
   subject: "New Event Media Received",
 };
+const RegistrarNewEvent = {
+  template:
+    "Hey there ${RegistrarName}, ${forumName} has created a new event ${eventName} with the following equipment list: ${equipmentList}",
+  subject: "New Event Equipment Requirement",
+};
+const RegistrarEquipmentUpdate = {
+  template:
+    "Hey there ${RegistrarName}, ${forumName} has updated the equipment requirement for the event ${eventName}, the new equipment list is: ${equipmentList}",
+  subject: "Event Equipment Update",
+};
+const CFINewEvent = {
+  template:
+    "Hey there ${CFIName}, ${forumName} has created a new event ${eventName} with the following equipment list: ${equipmentList}",
+  subject: "NEw Event Equipment Requirement",
+};
+const CFIEquipmentUpdate = {
+  template:
+    "Hey there ${CFIName}, ${forumName} has updated the equipment requirement for the event ${eventName}, the new equipment list is: ${equipmentList}",
+  subject: "Event Equipment Update",
+};
 
 module.exports = {
   welcomeTemplate,
@@ -111,4 +131,8 @@ module.exports = {
   newEventCreatedForum,
   MOReportAndMedia,
   eventUpdatedSAC,
+  RegistrarNewEvent,
+  RegistrarEquipmentUpdate,
+  CFINewEvent,
+  CFIEquipmentUpdate,
 };

@@ -119,7 +119,7 @@ function ForumEventDashboard() {
       setShowDialog(false);
     }, 3000);
     setLoadCancel(false);
-    window.location.reload()
+    window.location.reload();
   };
 
   return !loading ? (
@@ -167,12 +167,12 @@ function ForumEventDashboard() {
                         <span>{eventInfo.name}</span>
                         {((eventInfo.name == "Budget" &&
                           eventObject.hasBudget &&
-                          (eventObject.eventStatus ==
-                            "BUDGET CHANGES PENDING" ||
-                            eventObject.eventStatus == "BUDGET REJECTED")) ||
+                          (eventObject.eventStatus == "AWAITING FO APPROVAL" ||
+                            eventObject.eventStatus ==
+                              "BUDGET REJECTED BY FO")) ||
                           (eventInfo.name == "Event Details" &&
                             state.eventStatus ==
-                              "REQUESTED CHANGES BY SAC")) && (
+                              "CHANGES REQUESTED BY SAC")) && (
                           <span className="material-icons text-right text-yellow-400   lg:scale-125">
                             info
                           </span>
@@ -215,19 +215,33 @@ function ForumEventDashboard() {
           </div>
         </div>
         <div className="flex">
-        {loadCancel ? (
-          <Spinner className="mx-auto"/>
-        ) : (["COMPLETED", "CANCELLED", "REJECTED"].includes(eventObject?.eventStatus))? null : (
-          <button className="btn-red mx-auto" onClick={cancelEvent}>
-            cancel event
-          </button>
-        )}{loadComplete ? (
-          <Spinner className="mx-auto"/>
-        ) : (["COMPLETED", "CANCELLED", "REJECTED"].includes(eventObject?.eventStatus)) ? null : (
-          <button className="btn bg-[#666666] mx-auto" onClick={completeEvent}>
-            complete event
-          </button>
-        )}
+          {loadCancel ? (
+            <Spinner className="mx-auto" />
+          ) : [
+              "COMPLETED",
+              "CANCELLED",
+              "REJECTED BY FO",
+              "REJECTED BY SAC",
+            ].includes(eventObject?.eventStatus) ? null : (
+            <button className="btn-red mx-auto" onClick={cancelEvent}>
+              cancel event
+            </button>
+          )}
+          {loadComplete ? (
+            <Spinner className="mx-auto" />
+          ) : [
+              "COMPLETED",
+              "CANCELLED",
+              "REJECTED BY FO",
+              "REJECTED BY SAC",
+            ].includes(eventObject?.eventStatus) ? null : (
+            <button
+              className="btn bg-[#666666] mx-auto"
+              onClick={completeEvent}
+            >
+              complete event
+            </button>
+          )}
         </div>
       </div>
     ) : (

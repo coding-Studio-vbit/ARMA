@@ -51,15 +51,13 @@ function FODashBoard() {
               { value: "", label: "ALL" },
               { value: "AWAITING FO APPROVAL", label: "AWAITING FO APPROVAL" },
               {
-                value: "BUDGET CHANGES PENDING",
-                label: "BUDGET CHANGES PENDING",
+                value: "CHANGES REQUESTED BY FO",
+                label: "CHANGES REQUESTED BY FO",
               },
               {
-                value: "REQUESTED BUDGET UPDATED",
-                label: "REQUESTED BUDGET UPDATED",
+                value: "BUDGET REJECTED BY FO",
+                label: "BUDGET REJECTED BY FO",
               },
-              { value: "BUDGET REJECTED", label: "BUDGET REJECTED" },
-              { value: "COMPLETED", label: "COMPLETED" },
             ]}
           />
         </div>

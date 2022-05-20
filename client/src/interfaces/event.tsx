@@ -2,15 +2,14 @@ import { Attendance } from "./attendance";
 import { Faculty, Forum } from "./user";
 
 type Status =
-  | "AWAITING FO APPROVAL"
-  | "BUDGET CHANGES PENDING"
-  | "BUDGET UPDATED"
-  | "BUDGET REJECTED"
   | "AWAITING SAC APPROVAL"
-  | "REQUESTED CHANGES BY SAC"
+  | "CHANGES REQUESTED BY SAC"
+  | "AWAITING FO APPROVAL"
+  | "CHANGES REQUESTED BY FO"
   | "SAC CHANGES UPDATED"
   | "APPROVED"
-  | "REJECTED"
+  | "REJECTED BY SAC"
+  | "REJECTED BY FO"
   | "CANCELLED"
   | "COMPLETED";
 
