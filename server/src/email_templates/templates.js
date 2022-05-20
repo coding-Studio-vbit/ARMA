@@ -10,17 +10,16 @@ const newEventCreatedForum = {
   subject: "New Event Created",
 };
 
-const newEventCreatedFO = {
-  template:
-    "Hey there ${FOName}, New event '${eventName}' has been created by ${forumName}. Please check the event details on A.R.M.A.",
-  subject: "New Event Created",
-};
 
 const newEventCreatedSAC = {
   template:
     "Hey there ${SACName}, New event '${eventName}' has been created by ${forumName}. Please check the event details on A.R.M.A.",
   subject: "New Event Created",
 };
+
+const newEventFO = {
+  template: "Hey there ${FOName}, New event ${eventName} by ${forumName} has been approved by the SAC. Please review the budget document of the event on A.R.M.A"
+}
 
 const eventUpdatedSAC = {
   template:
@@ -42,7 +41,7 @@ const forgotPasswordTemplate = {
 
 const budgetAcceptedForumUpdateTemplate = {
   template:
-    "Hey there, your budget for the event ${eventName} has been accepted.",
+    "Hey there, Congratulations! Your budget for the event ${eventName} has been accepted.",
   subject: "Budget Approved",
 };
 
@@ -106,7 +105,7 @@ const RegistrarEquipmentUpdate = {
 const CFINewEvent = {
   template:
     "Hey there ${CFIName}, ${forumName} has created a new event ${eventName} with the following equipment list: ${equipmentList}",
-  subject: "NEw Event Equipment Requirement",
+  subject: "New Event Equipment Requirement",
 };
 const CFIEquipmentUpdate = {
   template:
@@ -126,8 +125,8 @@ module.exports = {
   SACApprovedTemplate,
   SACCommentedTemplate,
   SACRejectedTemplate,
-  newEventCreatedFO,
   newEventCreatedSAC,
+  newEventFO,
   newEventCreatedForum,
   MOReportAndMedia,
   eventUpdatedSAC,

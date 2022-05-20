@@ -3,7 +3,6 @@ import Table from "../../../components/CustomTable";
 import Select from "react-select";
 import { InputField } from "../../../components/InputField/InputField";
 import { useState } from "react";
-import Navbar from "../../../components/CustomNavbar";
 function FODashBoard() {
   const navigate = useNavigate();
   const [status, setStatus] = useState("");

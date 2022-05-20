@@ -49,6 +49,10 @@ export default function RequestsView() {
   }, []);
 
   useEffect(() => {
+    getEventInfo();
+  }, [comments]);
+
+  useEffect(() => {
     setComments(faculty.role.SAC ? event?.SACComments : event?.FOComments);
   }, [event]);
 
@@ -87,7 +91,9 @@ export default function RequestsView() {
   async function approveBudget() {
     console.log(message);
     try {
-      let res = await axios.post("faculty/acceptBudget", {eventId:eventData._id});
+      let res = await axios.post("faculty/acceptBudget", {
+        eventId: eventData._id,
+      });
       console.log("Approving Budget");
       console.log("Approved Budget");
       setLoading(true);
@@ -105,7 +111,9 @@ export default function RequestsView() {
   async function rejectBudget() {
     console.log(message);
     try {
-      let res = await axios.post("faculty/rejectBudget", {eventId:eventData._id});
+      let res = await axios.post("faculty/rejectBudget", {
+        eventId: eventData._id,
+      });
       console.log("Reject Budget");
       setLoading(true);
       setAction(actions.COMPLETED);
@@ -122,7 +130,9 @@ export default function RequestsView() {
   async function approveEvent() {
     console.log(message);
     try {
-      let res = await axios.post("faculty/acceptEvent",{eventId:eventData?._id});
+      let res = await axios.post("faculty/acceptEvent", {
+        eventId: eventData?._id,
+      });
       console.log("Approving Event");
       console.log("Approved Event");
       setLoading(true);
@@ -141,7 +151,9 @@ export default function RequestsView() {
   async function rejectEvent() {
     console.log(message);
     try {
-      let res = await axios.post("faculty/rejectEvent",{eventId:eventData?._id});
+      let res = await axios.post("faculty/rejectEvent", {
+        eventId: eventData?._id,
+      });
 
       console.log("Rejecting Event");
       console.log("Rejected Event");
@@ -175,6 +187,7 @@ export default function RequestsView() {
           eventId: id,
         });
         setMessage(res.data.response);
+        setShowDialog(true)
         setShowSpinner(false);
       }
       setLoading(true);
@@ -216,7 +229,7 @@ export default function RequestsView() {
       default:
         break;
     }
-    window.location.reload();
+    //window.location.reload();
   }
 
   function makeRequest(action) {
@@ -339,7 +352,7 @@ export default function RequestsView() {
 
           <div className="flex items-start flex-col gap-x-4">
             {/* {event.eventProposalDocPath} */}
-            {(faculty?.role.ADMIN || faculty?.role.SAC) && (
+            {
               <div className="flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
                 <span>Event Proposal Document</span>
                 <a
@@ -368,11 +381,12 @@ export default function RequestsView() {
                   <CloudDownload className="cursor-pointer" />
                 </a>
               </div>
-            )}
+            }
 
             {/* {event.budgetDocPath} */}
-            {(faculty?.role.ADMIN || faculty?.role.FO) && (
+            {
               <div className="mt-6 flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
+                <span>Budget Document</span>{" "}
                 <a
                   className="!cursor-pointer"
                   onClick={async () => {
@@ -392,11 +406,10 @@ export default function RequestsView() {
                   }}
                   download
                 >
-                  <span>Budget Document</span>{" "}
                   <CloudDownload className="cursor-pointer -mt-1" />
                 </a>
               </div>
-            )}
+            }
           </div>
         </div>
         <div className="flex flex-col gap-8">

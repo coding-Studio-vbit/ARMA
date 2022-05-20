@@ -16,6 +16,7 @@ const {
   eventUpdatedSAC,
   RegistrarEquipmentUpdate,
   CFINewEvent,
+  CFIEquipmentUpdate,
   RegistrarNewEvent,
 } = require("../../email_templates/templates");
 const students = require("../../models/student");
@@ -97,6 +98,7 @@ const createEvent = async (req, res) => {
   try {
     // Create a new attendance document for this event.
     let { eventDetails, eventHalls, equipmentList } = req.body;
+    let equipmentString = ""; //This is for the email sent to the equipment incharge.
     equipmentList = JSON.parse(equipmentList);
     eventHalls = JSON.parse(eventHalls);
     eventDetails = JSON.parse(eventDetails);
@@ -109,6 +111,9 @@ const createEvent = async (req, res) => {
       let eq = await equipments.findOne({
         name: { $regex: `^${equipment}`, $options: "i" },
       });
+      equipmentString = equipmentString.concat(
+        `<br/>${equipment} - ${quantity}pcs`
+      );
       eqs.push({ equipmentType: eq._id, quantity: quantity });
     }
     let newEvent = {};
@@ -246,15 +251,15 @@ const createEvent = async (req, res) => {
 
     mailer.sendMail(CFI.email, CFINewEvent, {
       CFIName: CFI.name,
-      forumName: newEvent.forumID.name,
+      forumName: req.user.name,
       eventName: newEvent.name,
-      equipmentList: JSON.stringify(newEvent.equipment),
+      equipmentList: equipmentString,
     });
     mailer.sendMail(Registrar.email, RegistrarNewEvent, {
       RegistrarName: Registrar.name,
-      forumName: newEvent.forumID.name,
+      forumName: req.user.name,
       eventName: newEvent.name,
-      equipmentList: JSON.stringify(newEvent.equipment),
+      equipmentList: equipmentString,
     });
 
     if (newEvent.hasBudget) {
@@ -293,7 +298,8 @@ const updateBudgetDoc = async (req, res) => {
       )
     ) {
       throw new Error(
-        "Cannot update budget during current status of the event"
+        "Cannot update budget during current status of the event " +
+          event.eventStatus
       );
     }
     if (event.eventStatus !== "CHANGES REQUESTED BY FO")
@@ -446,22 +452,7 @@ const postAttendance = async (req, res) => {
 
 const getRequests = async (req, res) => {
   try {
-    let result;
-    if (req.query.isFO === "true") {
-      result = await events
-        .find({
-          eventStatus: ["AWAITING FO APPROVAL", "CHANGES REQUESTED BY FO"],
-        })
-        .populate("forumID");
-    } else {
-      result = await events
-        .find({
-          eventStatus: {
-            $nin: ["REJECTED BY SAC", "REJECTED BY FO", "CANCELLED"],
-          },
-        })
-        .populate("forumID");
-    }
+    let result = await events.find({}).populate("forumID");
     res.json(response(result, process.env.SUCCESS_CODE));
     //console.log("Get",result);
   } catch (error) {
@@ -539,7 +530,8 @@ const getBudgetDocument = async (req, res) => {
     if (
       event.forumID == forumId ||
       req.user.userType.find(
-        (type) => type.name == "FO" || type.name == "ADMIN"
+        (type) =>
+          type.name == "FO" || type.name == "ADMIN" || type.name == "SAC"
       )
     ) {
       res.sendFile(event.budgetDocPath);
@@ -562,7 +554,8 @@ const getEventDocument = async (req, res) => {
     if (
       event.forumID == forumId ||
       req.user.userType.find(
-        (type) => type.name == "SAC" || type.name == "ADMIN"
+        (type) =>
+          type.name == "SAC" || type.name == "ADMIN" || type.name == "FO"
       )
     ) {
       res.sendFile(event.eventProposalDocPath);
@@ -698,12 +691,16 @@ const updateEquipment = async (req, res) => {
     )
       throw new Error("Cannot update equipment during current status");
     let eqs = [];
+    let equipmentString = "";
     for (let i = 0; i < equipmentList.length; i++) {
       let { equipment, quantity } = equipmentList[i];
       quantity = Number(quantity);
       let eq = await equipments.findOne({
         name: { $regex: `^${equipment}`, $options: "i" },
       });
+      equipmentString = equipmentString.concat(
+        `<br/>${equipment} - ${quantity}pcs`
+      );
       eqs.push({ equipmentType: eq._id, quantity: quantity });
     }
 
@@ -720,13 +717,13 @@ const updateEquipment = async (req, res) => {
       CFIName: CFI.name,
       forumName: event.forumID.name,
       eventName: event.name,
-      equipmentList: JSON.stringify(event.equipment),
+      equipmentList: equipmentString,
     });
     mailer.sendMail(Registrar.email, RegistrarEquipmentUpdate, {
       RegistrarName: Registrar.name,
       forumName: event.forumID.name,
       eventName: event.name,
-      equipmentList: JSON.stringify(event.equipment),
+      equipmentList: equipmentString,
     });
 
     res.json(response("Updated event equipment", process.env.SUCCESS_CODE));
@@ -896,9 +893,7 @@ const completeEvent = async (req, res) => {
     res.json("successfully marked event as complete", process.env.SUCCESS_CODE);
   } catch (err) {
     console.log(err);
-    res.json(
-      response("failed to mark event as completed.", process.env.FAILURE_CODE)
-    );
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 

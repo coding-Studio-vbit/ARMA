@@ -106,9 +106,9 @@ function ForumEventDashboard() {
     setShowDialog(true);
     setTimeout(() => {
       setShowDialog(false);
-    }, 3000);
+      window.location.reload();
+    }, 2000);
     setLoadCancel(false);
-    window.location.reload();
   };
   const completeEvent = async () => {
     setLoadCancel(true);
@@ -117,9 +117,9 @@ function ForumEventDashboard() {
     setShowDialog(true);
     setTimeout(() => {
       setShowDialog(false);
-    }, 3000);
+      window.location.reload();
+    }, 2000);
     setLoadCancel(false);
-    window.location.reload();
   };
 
   return !loading ? (
@@ -214,7 +214,7 @@ function ForumEventDashboard() {
             </div>
           </div>
         </div>
-        <div className="flex">
+        <div className="flex m-2">
           {loadCancel ? (
             <Spinner className="mx-auto" />
           ) : [
@@ -239,7 +239,7 @@ function ForumEventDashboard() {
               className="btn bg-[#666666] mx-auto"
               onClick={completeEvent}
             >
-              complete event
+              finish event
             </button>
           )}
         </div>

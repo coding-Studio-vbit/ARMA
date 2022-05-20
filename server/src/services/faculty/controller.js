@@ -14,6 +14,7 @@ const {
   SACApprovedTemplate,
   SACCommentedTemplate,
   SACRejectedTemplate,
+  newEventFO,
 } = require("../../email_templates/templates");
 const mongoose = require("mongoose");
 const forums = require("../../models/forum");
@@ -167,25 +168,32 @@ const acceptBudget = async (req, res) => {
     if (SACRoleId == null) throw new Error("SAC Role not found");
     const SAC = await faculty.findOne({ role: SACRoleId._id });
     if (SAC == null) throw new Error("SAC not found");
-    if (event.eventStatus !== "AWAITING FO APPROVAL") {
+    if (
+      event.eventStatus !== "AWAITING FO APPROVAL" &&
+      event.eventStatus !== "CHANGES REQUESTED BY FO"
+    ) {
       throw new Error(
         "cannot accept budget of event during the current status:" +
           event.eventStatus
       );
     }
-    console.log(req.user.role);
+    //ADD THIS EVENT AS ORGANISED TO ALL THE FORUM STUDENTS.
+    const forum = await forums.findById(event.forumID);
+    const { forumCoreTeamMembers } = forum;
+    for (let i = 0; i < forumCoreTeamMembers.length; i++) {
+      console.log(forumCoreTeamMembers);
+      const stu = await students.findById(forumCoreTeamMembers[i].studentID);
+      stu.eventsOrganized.push(eventId);
+      console.log(stu);
+      await stu.save();
+    }
+
     event.eventStatus = "APPROVED";
-    //now send update email to both the forum and the SAC.
     await event.save();
+    //now send update email to both the forum and the SAC.
     mailer
       .sendMail(event.forumID.email, budgetAcceptedForumUpdateTemplate, {
         eventName: event.name,
-      })
-      .then((response) => {
-        return mailer.sendMail(SAC.email, budgetAcceptedSACUpdateTemplate, {
-          eventName: event.name,
-          forumName: event.forumID.name,
-        });
       })
       .then((r) => {
         res.json(
@@ -240,7 +248,10 @@ const rejectBudget = async (req, res) => {
     if (SACRoleId == null) throw new Error("SAC Role not found");
     const SAC = await faculty.findOne({ role: SACRoleId._id });
     if (SAC == null) throw new Error("SAC not found");
-    if (event.eventStatus !== "AWAITING FO APPROVAL") {
+    if (
+      event.eventStatus !== "AWAITING FO APPROVAL" &&
+      event.eventStatus !== "CHANGES REQUESTED BY FO"
+    ) {
       throw new Error("not AWAITING FO APPROVAL");
     }
 
@@ -273,25 +284,31 @@ const approveEvent = async (req, res) => {
   try {
     const { eventId } = req.body;
     const event = await events.findById(eventId).populate("forumID");
-    if (event.eventStatus !== "AWAITING FO APPROVAL") {
+    if (
+      event.eventStatus !== "AWAITING SAC APPROVAL" &&
+      event.eventStatus !== "CHANGES REQUESTED BY SAC"
+    ) {
       throw new Error("cannot approve event during current status");
     }
 
-    //ADD THIS EVENT AS ORGANISED TO ALL THE FORUM STUDENTS.
-    const forum = await forums.findById(event.forumID);
-    const { forumCoreTeamMembers } = forum;
-    for (let i = 0; i < forumCoreTeamMembers.length; i++) {
-      console.log(forumCoreTeamMembers);
-      const stu = await students.findById(forumCoreTeamMembers[i].studentID);
-      stu.eventsOrganized.push(eventId);
-      console.log(stu);
-      await stu.save();
-    }
-    //update event status
-    event.eventStatus = "APPROVED";
-    await event.save();
+    if (event.hasBudget) {
+      //send a mail to the FO.
+      event.eventStatus = "AWAITING FO APPROVAL";
+      const FORole = await roles.findOne({ name: "FO" });
+      if (!FORole) throw new Error("No FO role found!");
+      const FO = await faculty.findOne({ role: FORole._id });
+      if (!FO) throw new Error("No FO found!");
 
-    //send mails to the forum
+      mailer.sendMail(FO.email, newEventFO, {
+        FOName: FO.name,
+        eventName: event.name,
+        forumName: event.forumID.name,
+      });
+    } else {
+      event.eventStatus = "APPROVED";
+    }
+    await event.save();
+    //send mail to the forum.
     mailer
       .sendMail(event.forumID.email, SACApprovedTemplate, {
         eventName: event.name,
@@ -311,7 +328,10 @@ const commentEvent = async (req, res) => {
   try {
     const { eventId, SACComments } = req.body;
     const event = await events.findById(eventId).populate("forumID");
-    if (event.eventStatus !== "AWAITING SAC APPROVAL") {
+    if (
+      event.eventStatus !== "AWAITING SAC APPROVAL" &&
+      event.eventStatus !== "CHANGES REQUESTED BY SAC"
+    ) {
       throw new Error("cannot comment on event during current status");
     }
     event.eventStatus = "CHANGES REQUESTED BY SAC";
@@ -340,7 +360,10 @@ const rejectEvent = async (req, res) => {
   try {
     const { eventId, SACComments } = req.body;
     const event = await events.findById(eventId).populate("forumID");
-    if (event.eventStatus !== "AWAITING SAC APPROVAL") {
+    if (
+      event.eventStatus !== "AWAITING SAC APPROVAL" &&
+      event.eventStatus !== "CHANGES REQUESTED BY SAC"
+    ) {
       throw new Error("cannot reject event during current status");
     }
     //delete this event's reservations

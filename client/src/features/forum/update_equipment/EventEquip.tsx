@@ -9,6 +9,7 @@ import { useUser } from "../../../providers/user/UserProvider";
 import axios from "../../../utils/axios";
 import { RootState } from "../../../redux/reducers";
 import { Spinner } from "../../../components/Spinner/Spinner";
+import { Dialog } from "../../../components/Dialog/Dialog";
 
 export default function EventEquip() {
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ export default function EventEquip() {
   const [quantity, setQuantity] = useState("");
   const [addError, setAddError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
   const [list, setList] = useState<{}[]>([]);
   const { forum } = useUser();
   const [myequip, setMyequip] = useState<{}[]>();
@@ -53,6 +56,7 @@ export default function EventEquip() {
 
   return (
     <div className="flex flex-col sm:mx-24 mt-8 md:items-start items-center mb-8 ">
+      <Dialog show={showDialog} setShow={setShowDialog} title={dialogMessage} />
       <span className="text-arma-title sm:text-4xl  text-2xl mb-8 font-semibold">
         Update Equipment
       </span>
@@ -130,7 +134,12 @@ export default function EventEquip() {
                 )
                 .then((response) => {
                   console.log(response);
-                  navigate(-1);
+                  if (response.data.status == -1) {
+                    setDialogMessage(response.data.response);
+                    setShowDialog(true);
+                  } else {
+                    navigate(-1);
+                  }
                 })
                 .catch((error) => {
                   console.log(error);
