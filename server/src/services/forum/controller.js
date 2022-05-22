@@ -95,23 +95,24 @@ const addNewForumMembers = async (req, res) => {
     const forum = await forums.findOne({ name: forumName });
     let studentExists;
     if (stu) {
-      studentExists = forum.forumMembers.find(
-        (v) => v.toString() === stu._id.toString()
+      //check if student is already a member of the forum.
+      studentExists = student.forumNonCoreTeamMemberships.find(
+        (v) => v.toString() === forum._id.toString()
       );
     }
 
-    if (studentExists) throw "Student already exists";
+    if (studentExists) throw new Error("Student already exists");
     if (stu) {
-      await forums.findOneAndUpdate(
-        { name: forumName },
-        { $push: { forumMembers: stu } }
+      await students.findOneAndUpdate(
+        { rollNumber: stuser.rollNumber },
+        { $push: { forumNonCoreTeamMemberships: forum._id } }
       );
     } else {
       let student = new students(stuser);
       await student.save();
-      await forums.findOneAndUpdate(
-        { name: forumName },
-        { $push: { forumMembers: student } }
+      await students.findOneAndUpdate(
+        { rollNumber: stuser.rollNumber },
+        { $push: { forumNonCoreTeamMemberships: forum._id } }
       );
     }
     res.json(response("New Forum Member Added", process.env.SUCCESS_CODE));
@@ -128,43 +129,30 @@ const addNewCoreForumMember = async (req, res) => {
     const forum = await forums.findOne({ name: forumName });
 
     if (stu) {
-      const studentExists = forum.forumCoreTeamMembers.find((v) => {
-        return v.studentID.toString() === stu._id.toString();
-      });
-      const membershipExists = stu.forumMemberships.find((v) => {
+      //check if the student is already a core team member of this forum.
+      const membershipExists = stu.forumCoreTeamMemberships.find((v) => {
         return (
-          v.forumId.toString() === forum._id && v.designation === designation
+          v.forumId.toString() === forum._id.toString() &&
+          v.designation == designation
         );
       });
-      if (membershipExists) throw "Membership exists";
-      stu.forumMemberships.push({
+
+      if (membershipExists) throw new Error("Membership exists");
+      stu.forumCoreTeamMemberships.push({
         forumId: forum._id,
         designation: designation,
       });
       await stu.save();
       if (studentExists) throw "Student already exists";
-      await forums.findOneAndUpdate(
-        { name: forumName },
-        {
-          $addToSet: {
-            forumCoreTeamMembers: { designation: designation, studentID: stu },
-          },
-        }
-      );
     } else {
       let student = new students(stuser);
-      await student.save();
-      await forums.findOneAndUpdate(
-        { name: forumName },
+      student.forumCoreTeamMemberships = [
         {
-          $addToSet: {
-            forumCoreTeamMembers: {
-              designation: designation,
-              studentID: student,
-            },
-          },
-        }
-      );
+          forumId: forum._id,
+          designation: designation,
+        },
+      ];
+      await student.save();
     }
     res.json(response("New Core Forum Member Added", process.env.SUCCESS_CODE));
   } catch (err) {
@@ -188,25 +176,20 @@ const getCoreForumMembers = async (req, res) => {
     sort[req.query.orderBy] = req.query.order;
   else sort = { name: "asc" };
   try {
-    result = await forums
-      .findOne({ name: req.query.name })
-      .select("-password")
+    const forum = await forums.findOne({ name: req.query.name });
+    if (!forum) throw new Error(`Forum ${req.query.name} not found!`);
+    result = await students
+      .find({ forumCoreTeamMemberships: { forumId: forum._id } })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort(sort)
       .populate({
-        path: "forumCoreTeamMembers",
-        populate: { path: "studentID" },
+        path: "forumCoreTeamMemberships.forumId",
       });
-    // [0,1,2,3,4,5,6,7,8,9,10]
-    const mem = result.forumCoreTeamMembers.slice(
-      limit * (page - 1),
-      limit * page
-    );
     console.log(limit * (page - 1));
     console.log(result);
     res.json(
-      response(
-        { data: mem, total: result.forumCoreTeamMembers.length },
-        process.env.SUCCESS_CODE
-      )
+      response({ data: result, total: result.length }, process.env.SUCCESS_CODE)
     );
   } catch (error) {
     console.log(error);
@@ -235,16 +218,16 @@ const getForumMembers = async (req, res) => {
     sort[req.query.orderBy] = req.query.order;
   else sort = { name: "asc" };
   try {
-    result = await forums
-      .findOne({ name: req.query.name })
+    const forum = await forums.findOne({ name: req.query.name });
+    if (!forum) throw new Error(`Forum ${req.query.name} not found!`);
+    const result = await students
+      .find({ forumNonCoreTeamMemberships: forum._id })
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort)
-      .select("-password")
-      .populate({ path: "forumMembers" });
     res.json(
       response(
-        { data: result.forumMembers, total: result.forumMembers.length },
+        { data: result, total: result.length },
         process.env.SUCCESS_CODE
       )
     );
@@ -328,22 +311,24 @@ const deleteforumMember = async (req, res) => {
   try {
     const { forumName, studentID, userType } = req.body;
     if (userType === "core") {
-      await forums.updateOne(
-        { name: forumName },
+      const forum = await forums.findOne({name: forumName});
+      if(!forum) throw new Error(`Forum ${forumName} couldn't be found!`);
+      await students.updateOne(
+        { _id: studentID },
         {
           $pull: {
-            forumCoreTeamMembers: {
-              studentID: mongoose.Types.ObjectId(studentID),
+            forumCoreTeamMemberships: {
+              forumId: forum._id,
             },
           },
         }
       );
     } else {
-      await forums.updateOne(
-        { name: forumName },
+      await students.updateOne(
+        { _id: studentID },
         {
           $pull: {
-            forumMembers: mongoose.Types.ObjectId(studentID),
+            forumNonCoreTeamMemberships: forum._id,
           },
         }
       );
@@ -415,18 +400,14 @@ const getProfilePicture = async (req, res) => {
   //console.log(req);
   try {
     const myForum = await forums.findOne({ email: req.user.email });
-    console.log(typeof(req.user.userType))
-    if (typeof(req.user.userType)=="object"&&
+    console.log(typeof req.user.userType);
+    if (
+      typeof req.user.userType == "object" &&
       req.user.userType.find(
         (v) => v.name == "SAC" || v.name == "FACULTY" || v.name == "FO"
       )
     )
-      return res.json(
-        response(
-          undefined,
-          process.env.SUCCESS_CODE
-        )
-      );
+      return res.json(response(undefined, process.env.SUCCESS_CODE));
     if (myForum.profilePictureFilePath == undefined)
       res.json(
         response(
