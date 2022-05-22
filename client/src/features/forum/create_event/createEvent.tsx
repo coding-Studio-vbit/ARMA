@@ -112,15 +112,14 @@ const CreateEvent = () => {
                   id="file-upload"
                   accept="application/pdf"
                   onChange={(e: any) => {
-                    console.log(e.target.files[0].size);
-                    if (e.target.files[0].size > Math.pow(10, 6) * 10) {
+                    if (e.target.files[0].type !== "application/pdf") {
+                      setMsg("Please upload only pdf files");
+                      setShow(true);
+                    } else if (e.target.files[0].size > Math.pow(10, 6) * 10) {
                       setMsg(
                         "File size of event document cannot be greater than 10 MB"
                       );
                       setShow(true);
-                      setTimeout(() => {
-                        setShow(false);
-                      }, 2000);
                     } else setPdf1(e.target.files[0]);
                   }}
                   className="hidden"
@@ -149,14 +148,17 @@ const CreateEvent = () => {
                         id="file-upload"
                         accept="application/pdf"
                         onChange={(e: any) => {
-                          if (e.target.files[0].size > Math.pow(10, 6) * 10) {
+                          if (e.target.files[0].type !== "application/pdf") {
+                            setMsg("Please upload only pdf files");
+                            setShow(true);
+                          } else if (
+                            e.target.files[0].size >
+                            Math.pow(10, 6) * 10
+                          ) {
                             setMsg(
                               "File size of event document cannot be greater than 10 MB"
                             );
                             setShow(true);
-                            setTimeout(() => {
-                              setShow(false);
-                            }, 2000);
                           } else setPdf2(e.target.files[0]);
                         }}
                         className="hidden"
