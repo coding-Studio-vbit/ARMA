@@ -50,13 +50,13 @@
           </tr>
           <tr>
             <td><strong>Total Forum Memberships</strong></td>
-            <td><%= student.forumMemberships.length %></td>
+            <td><%= student.forumNonCoreTeamMemberships.length + student.forumCoreTeamMemberships.length %></td>
           </tr>
         </tbody>
       </table>
       <br />
       <hr style="width: 500px" />
-      <h3 style="text-decoration: underline">Memberships</h3>
+      <h3 style="text-decoration: underline">Core Team Memberships</h3>
       <table>
         <thead>
           <tr>
@@ -66,11 +66,28 @@
           </tr>
         </thead>
         <tbody>
-          <% student.forumMemberships.map((membership, index)=>{ %>
+          <% student.forumCoreTeamMemberships.map((membership, index)=>{ %>
           <tr>
             <td><%= index %></td>
             <td><%= membership.forumId.name %></td>
             <td><%= membership.designation %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <h3 style="text-decoration: underline">Non-Core Team Memberships</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Forum Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% student.forumNonCoreTeamMemberships.map((membership, index)=>{ %>
+          <tr>
+            <td><%= index %></td>
+            <td><%= membership.forumId.name %></td>
           </tr>
           <% }) %>
         </tbody>

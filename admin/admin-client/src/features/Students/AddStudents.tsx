@@ -212,6 +212,7 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
             rollNumber: uniqueid,
             year: selectYear,
             branch: selectDepartment,
+            course: selectCourse,
             section: selectSection,
             email: email,
             phone: phone,

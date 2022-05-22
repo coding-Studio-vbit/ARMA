@@ -69,9 +69,7 @@ const student = new mongoose.Schema({
     },
   ],
   forumNonCoreTeamMemberships: [
-    {
-      forumId: { type: mongoose.Schema.Types.ObjectId, ref: "forums" },
-    },
+    { type: mongoose.Schema.Types.ObjectId, ref: "forums" }
   ],
   eventsOrganized: [{ type: mongoose.Schema.Types.ObjectId, ref: "events" }],
   reportFilePath: { type: String },

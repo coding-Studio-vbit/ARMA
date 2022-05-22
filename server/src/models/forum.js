@@ -26,18 +26,6 @@ const forum = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "faculty",
   },
-  forumMembers: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "students",
-    },
-  ],
-  forumCoreTeamMembers: [
-    {
-      designation: String,
-      studentID: { type: mongoose.Schema.Types.ObjectId, ref: "students" },
-    },
-  ],
   password: { type: String, required: true },
   email: {
     type: String,

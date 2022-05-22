@@ -15,13 +15,13 @@ import Select from "react-select";
 let headers: any[] = [
   {
     displayName: "Roll Number",
-    dataPath: "studentID.rollNumber",
+    dataPath: "rollNumber",
     sortable: true,
   },
-  { displayName: "Name", dataPath: "studentID.name", sortable: false },
-  { displayName: "Department", dataPath: "studentID.branch", sortable: true },
-  { displayName: "Year", dataPath: "studentID.year", sortable: true },
-  { displayName: "Section", dataPath: "studentID.section", sortable: false },
+  { displayName: "Name", dataPath: "name", sortable: false },
+  { displayName: "Department", dataPath: "branch", sortable: true },
+  { displayName: "Year", dataPath: "year", sortable: true },
+  { displayName: "Section", dataPath: "section", sortable: false },
   { displayName: "Designation", dataPath: "designation", sortable: false },
 ];
 let memHeaders: any[] = [
@@ -134,7 +134,7 @@ export default function ForumProfile() {
         });
       }
     }
-
+    item.designation = item.forumCoreTeamMemberships.filter((v)=>{return v.forumId.name == forum.name})[0]?.designation
     return { ...item };
   };
   const save = async () => {
@@ -363,6 +363,7 @@ export default function ForumProfile() {
             buttonsCount={5}
             transformer={(item, i, setUpdate) => {
               return handelCheckbox(item, i, true, setUpdate);
+             
             }}
             filter={{ name: forum?.name }}
             headers={headers}

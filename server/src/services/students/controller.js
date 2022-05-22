@@ -160,7 +160,8 @@ const generatePDF = async (req, res) => {
     const student = await students
       .findById(studentId)
       .populate({ path: "eventsOrganized", populate: { path: "forumID" } })
-      .populate("forumMemberships.forumId")
+      .populate("forumNonCoreTeamMemberships")
+      .populate("forumCoreTeamMemberships.forumId")
       .populate("eventsParticipated");
     const result = await studentReports.generateNewReport(student);
 

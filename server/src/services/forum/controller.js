@@ -96,24 +96,19 @@ const addNewForumMembers = async (req, res) => {
     let studentExists;
     if (stu) {
       //check if student is already a member of the forum.
-      studentExists = student.forumNonCoreTeamMemberships.find(
+      studentExists = stu.forumNonCoreTeamMemberships.find(
         (v) => v.toString() === forum._id.toString()
       );
     }
 
     if (studentExists) throw new Error("Student already exists");
     if (stu) {
-      await students.findOneAndUpdate(
-        { rollNumber: stuser.rollNumber },
-        { $push: { forumNonCoreTeamMemberships: forum._id } }
-      );
+      stu.forumNonCoreTeamMemberships.push(forum._id);
+      await stu.save();
     } else {
       let student = new students(stuser);
+      student.forumNonCoreTeamMemberships = [forum._id];
       await student.save();
-      await students.findOneAndUpdate(
-        { rollNumber: stuser.rollNumber },
-        { $push: { forumNonCoreTeamMemberships: forum._id } }
-      );
     }
     res.json(response("New Forum Member Added", process.env.SUCCESS_CODE));
   } catch (err) {
@@ -143,7 +138,6 @@ const addNewCoreForumMember = async (req, res) => {
         designation: designation,
       });
       await stu.save();
-      if (studentExists) throw "Student already exists";
     } else {
       let student = new students(stuser);
       student.forumCoreTeamMemberships = [
@@ -178,16 +172,14 @@ const getCoreForumMembers = async (req, res) => {
   try {
     const forum = await forums.findOne({ name: req.query.name });
     if (!forum) throw new Error(`Forum ${req.query.name} not found!`);
-    result = await students
-      .find({ forumCoreTeamMemberships: { forumId: forum._id } })
+    const result = await students
+      .find({ "forumCoreTeamMemberships.forumId": forum._id })
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort)
       .populate({
         path: "forumCoreTeamMemberships.forumId",
       });
-    console.log(limit * (page - 1));
-    console.log(result);
     res.json(
       response({ data: result, total: result.length }, process.env.SUCCESS_CODE)
     );
@@ -224,12 +216,9 @@ const getForumMembers = async (req, res) => {
       .find({ forumNonCoreTeamMemberships: forum._id })
       .skip((page - 1) * limit)
       .limit(limit)
-      .sort(sort)
+      .sort(sort);
     res.json(
-      response(
-        { data: result, total: result.length },
-        process.env.SUCCESS_CODE
-      )
+      response({ data: result, total: result.length }, process.env.SUCCESS_CODE)
     );
   } catch (error) {
     console.log(error);
@@ -311,8 +300,8 @@ const deleteforumMember = async (req, res) => {
   try {
     const { forumName, studentID, userType } = req.body;
     if (userType === "core") {
-      const forum = await forums.findOne({name: forumName});
-      if(!forum) throw new Error(`Forum ${forumName} couldn't be found!`);
+      const forum = await forums.findOne({ name: forumName });
+      if (!forum) throw new Error(`Forum ${forumName} couldn't be found!`);
       await students.updateOne(
         { _id: studentID },
         {
