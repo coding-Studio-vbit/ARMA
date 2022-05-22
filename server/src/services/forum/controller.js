@@ -299,8 +299,8 @@ const updateProfile = async (req, res) => {
 const deleteforumMember = async (req, res) => {
   try {
     const { forumName, studentID, userType } = req.body;
+    const forum = await forums.findOne({ name: forumName });
     if (userType === "core") {
-      const forum = await forums.findOne({ name: forumName });
       if (!forum) throw new Error(`Forum ${forumName} couldn't be found!`);
       await students.updateOne(
         { _id: studentID },
