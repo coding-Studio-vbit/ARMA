@@ -37,12 +37,15 @@ export default function EventBudget() {
         <span className="sm:text-2xl shrink text-xl font-semibold  text-arma-dark-blue ">
           {event?.name} - Budget
         </span>
-        {!isEdit && (["CHANGES REQUESTED BY SAC","CHANGES REQUESTED BY FO"].includes(event?.eventStatus)) &&(
-          <Edit
-            onClick={() => setIsEdit(true)}
-            className="cursor-pointer text-arma-dark-blue"
-          />
-        )}
+        {!isEdit &&
+          ["CHANGES REQUESTED BY SAC", "CHANGES REQUESTED BY FO"].includes(
+            event?.eventStatus
+          ) && (
+            <Edit
+              onClick={() => setIsEdit(true)}
+              className="cursor-pointer text-arma-dark-blue"
+            />
+          )}
       </div>
       <div className="flex flex-col items-center  sm:mx-auto ">
         <div className="flex flex-col max-w-[80%] w-[600px]">
@@ -78,7 +81,13 @@ export default function EventBudget() {
                 accept="application/pdf"
                 disabled={!isEdit}
                 onChange={(e: any) => {
-                  setFile(e.target.files[0]);
+                  if (e.target.files[0].type !== "application/pdf") {
+                    setDialogMessage("Please upload only pdf files.");
+                    setShowDialog(true);
+                  } else if (e.target.files[0].size > Math.pow(10, 6) * 10) {
+                    setDialogMessage("File size cannot exceed 10 MB");
+                    setShowDialog(true);
+                  } else setFile(e.target.files[0]);
                 }}
                 className="hidden"
                 type="file"
