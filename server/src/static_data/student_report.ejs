@@ -49,8 +49,12 @@
             <td><%= student.eventsOrganized.length %></td>
           </tr>
           <tr>
-            <td><strong>Total Forum Memberships</strong></td>
-            <td><%= student.forumNonCoreTeamMemberships.length + student.forumCoreTeamMemberships.length %></td>
+            <td><strong>Total Forum Core Memberships</strong></td>
+            <td><%= student.forumCoreTeamMemberships.length %></td>
+          </tr>
+          <tr>
+            <td><strong>Total Forum Non-Core Memberships</strong></td>
+            <td><%= student.forumNonCoreTeamMemberships.length %></td>
           </tr>
         </tbody>
       </table>
