@@ -35,7 +35,7 @@ const EventCard = ({ event, onClick }: EventCardProps) => {
 
   return (
     <div
-      className="flex flex-col mx-0 h-44 w-52 rounded-xl bg-white drop-shadow-xl hover:bg-gray-50"
+      className="flex flex-col mx-0 h-44 w-52 rounded-xl bg-white drop-shadow-xl hover:bg-gray-50 cursor-pointer"
       onClick={onClick}
     >
       <div className="grow text-center px-3 align-text-middle font-bold text-lg mt-2 border border-slate-300 border-b-1 border-t-0 border-l-0 border-r-0">
