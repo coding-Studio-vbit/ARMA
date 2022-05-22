@@ -113,8 +113,15 @@ const CreateEvent = () => {
                   accept="application/pdf"
                   onChange={(e: any) => {
                     console.log(e.target.files[0].size);
-
-                    setPdf1(e.target.files[0]);
+                    if (e.target.files[0].size > Math.pow(10, 6) * 10) {
+                      setMsg(
+                        "File size of event document cannot be greater than 10 MB"
+                      );
+                      setShow(true);
+                      setTimeout(() => {
+                        setShow(false);
+                      }, 2000);
+                    } else setPdf1(e.target.files[0]);
                   }}
                   className="hidden"
                   type="file"
@@ -142,9 +149,15 @@ const CreateEvent = () => {
                         id="file-upload"
                         accept="application/pdf"
                         onChange={(e: any) => {
-                          console.log(e.target.files[0].size);
-
-                          setPdf2(e.target.files[0]);
+                          if (e.target.files[0].size > Math.pow(10, 6) * 10) {
+                            setMsg(
+                              "File size of event document cannot be greater than 10 MB"
+                            );
+                            setShow(true);
+                            setTimeout(() => {
+                              setShow(false);
+                            }, 2000);
+                          } else setPdf2(e.target.files[0]);
                         }}
                         className="hidden"
                         type="file"
@@ -190,7 +203,7 @@ const CreateEvent = () => {
           }}
         >
           <span>NEXT</span>
-          <ChevronRightRounded fontSize="medium" className="mx-0"/>
+          <ChevronRightRounded fontSize="medium" className="mx-0" />
         </button>
       </div>
     </div>
