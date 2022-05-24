@@ -27,9 +27,20 @@ const eventUpdatedSAC = {
   subject: "Event details updated",
 };
 
+const eventReservationsUpdateSAC = {
+  template:
+    "Hey there ${SACName}, event dates and hall reservations of the event '${eventName}' have been updated by ${forumName}. Please check the updates on A.R.M.A.",
+  subject: "Event Reservations (and/or) dates updated",
+};
+
 const budgetDocUpdateTemplate = {
   template:
     "Dear ${FOName}, ${forumName} has updated the budget document for event ${eventName}",
+  subject: "Budget Document Update",
+};
+const budgetDocUpdateSACTemplate = {
+  template:
+    "Dear ${SACName}, ${forumName} has updated the budget document for event ${eventName}",
   subject: "Budget Document Update",
 };
 
@@ -117,6 +128,7 @@ module.exports = {
   welcomeTemplate,
   forgotPasswordTemplate,
   budgetDocUpdateTemplate,
+  budgetDocUpdateSACTemplate,
   budgetAcceptedForumUpdateTemplate,
   budgetAcceptedSACUpdateTemplate,
   budgetUpdatedTemplate,
@@ -134,4 +146,5 @@ module.exports = {
   RegistrarEquipmentUpdate,
   CFINewEvent,
   CFIEquipmentUpdate,
+  eventReservationsUpdateSAC
 };

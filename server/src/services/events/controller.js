@@ -18,6 +18,8 @@ const {
   CFINewEvent,
   CFIEquipmentUpdate,
   RegistrarNewEvent,
+  eventReservationsUpdateSAC,
+  budgetDocUpdateSACTemplate,
 } = require("../../email_templates/templates");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
@@ -25,6 +27,7 @@ const halls = require("../../models/hall");
 const mongoose = require("mongoose");
 const facultyModel = require("../../models/faculty");
 const attendances = require("../../models/attendance");
+const { errorMonitor } = require("events");
 
 const getEvents = async (req, res) => {
   //For pagination
@@ -116,30 +119,18 @@ const createEvent = async (req, res) => {
       );
       eqs.push({ equipmentType: eq._id, quantity: quantity });
     }
-    let newEvent = {};
-    if (req.files.budgetDocument) {
-      newEvent = new events({
-        forumID: req.user._id,
-        description: eventDetails.desc,
-        name: eventDetails.name,
-        eventProposalDocPath: req.files.eventDocument[0].path,
-        eventStatus: "AWAITING SAC APPROVAL",
-        budgetDocPath: req.files.budgetDocument[0].path,
-        hasBudget: true,
-        equipment: eqs,
-      });
-    } else {
-      newEvent = new events({
-        forumID: req.user._id,
-        description: eventDetails.desc,
-        name: eventDetails.name,
-        eventProposalDocPath: req.files.eventDocument[0].path,
-        budgetDocPath: null,
-        eventStatus: "AWAITING SAC APPROVAL",
-        hasBudget: false,
-        equipment: eqs,
-      });
-    }
+    let newEvent = new events({
+      forumID: req.user._id,
+      description: eventDetails.desc,
+      name: eventDetails.name,
+      eventProposalDocPath: req.files.eventDocument[0].path,
+      eventStatus: "AWAITING SAC APPROVAL",
+      budgetDocPath: req.files.budgetDocument[0].path
+        ? req.files.budgetDocument[0].path
+        : null,
+      hasBudget: req.files.budgetDocument[0] !== null,
+      equipment: eqs,
+    });
 
     newAttendanceDoc.eventID = String(newEvent._id);
     newEvent.attendanceDocID = String(newAttendanceDoc._id);
@@ -180,7 +171,6 @@ const createEvent = async (req, res) => {
         HallsList.add(String(hall._id));
       }
     }
-    //console.log("reservationsObject is", reservationsObject);
     let reservationsList = [];
     HallsList = [...HallsList];
     for (let i = 0; i < HallsList.length; i++) {
@@ -302,16 +292,31 @@ const updateBudgetDoc = async (req, res) => {
           event.eventStatus
       );
     }
-    if (event.eventStatus !== "CHANGES REQUESTED BY FO")
-      throw new Error("Cannot update budget during current status of event");
+    if (event.eventStatus == "CHANGES REQUESTED BY SAC")
+      event.eventStatus = "AWAITING SAC APPROVAL";
+    else if (event.eventStatus == "CHANGES REQUESTED BY FO")
+      event.eventStatus = "AWAITING FO APPROVAL";
+    else throw new Error("Cannot update event status!");
+
     event.budgetDocPath = req.files.budgetDocument[0].path;
     await event.save();
     //send notif to FO.
-    const FORoleID = await roles.findOne().where("name").in(["FO"]);
-    const FO = await faculty.findOne({ role: FORoleID._id });
+    const FORole = await roles.findOne({ name: "FO" });
+    if (!FORole) throw new Error("FO role not found!");
+    const FO = await faculty.findOne({ role: FORole._id });
+    if (!FO) throw new Error("FO faculty not found!");
+    const SACRole = await roles.findOne({ name: "SAC" });
+    if (!SACRole) throw new Error("SAC Role not found!");
+    const SAC = await faculty.findOne({ role: SACRole._id });
+    if (!SAC) throw new Error("SAC Faculty not found!");
     if (FO == null) throw new error("FO not found");
     mailer.sendMail(FO.email, budgetDocUpdateTemplate, {
       FOName: FO.name,
+      forumName: event.forumID.name,
+      eventName: event.name,
+    });
+    mailer.sendMail(FO.email, budgetDocUpdateSACTemplate, {
+      SACName: SAC.name,
       forumName: event.forumID.name,
       eventName: event.name,
     });
@@ -659,6 +664,17 @@ const updateReservations = async (req, res) => {
         record.eventId = event._id;
         record.dates = obj.dates;
         record.timeSlots = obj.timeSlots;
+        event.eventStatus = "AWAITING SAC APPROVAL";
+        const SACRole = await roles.findOne({ name: "SAC" });
+        if (!SACRole) throw new Error("SAC Role not found!");
+        const SAC = await faculty.findOne({ role: SACRole._id });
+        if (!SAC) throw new Error("SAC faculty not found");
+        mailer.sendMail(SAC.email, eventReservationsUpdateSAC, {
+          SACName: SAC.name,
+          eventName: event.name,
+          forumName: req.user.name,
+        });
+        await event.save();
         await record.save();
       });
       res.json(
@@ -705,6 +721,7 @@ const updateEquipment = async (req, res) => {
     }
 
     event.equipment = eqs;
+    event.eventStatus = "AWAITING SAC APPROVAL";
     await event.save();
     let CFIRole = await roles.findOne({ name: "CFI" });
     let CFI = await faculty.findOne({ role: CFIRole._id });
@@ -751,6 +768,7 @@ const updateEventDetails = async (req, res) => {
     }
     event.name = name;
     event.description = description;
+    event.eventStatus = "AWAITING SAC APPROVAL";
     if (req.files.eventDocument && req.files?.eventDocument[0]) {
       event.eventProposalDocPath = req.files.eventDocument[0].path;
     }
@@ -901,7 +919,7 @@ const cancelEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
     const event = await events.findById(eventId);
-    if (event.eventStatus == "CANCELLED" && event.eventStatus !== "COMPLETED")
+    if (event.eventStatus == "CANCELLED" || event.eventStatus == "COMPLETED")
       throw new Error(
         "Cannot cancel this event!, event status is " + event.eventStatus
       );
