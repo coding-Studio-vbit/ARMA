@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const students = require("../../models/student");
 const role = require("../../models/role");
 const forums = require("../../models/forum");
+const facultyModel = require("../../models/forum");
 const response = require("../util/response");
 const admins = require("../../models/admin");
 const ejs = require("ejs");
@@ -75,11 +76,11 @@ const register = async (user, userType) => {
       let { rolesF, ...newuser } = user;
       console.log(rolesF);
       const arr = [];
-      for (let index = 0; index < rolesF.length; index++) {
-        const element = rolesF[index];
-        const rol = await roles.findById(element);
-        arr.push(rol);
-      }
+      //for (let index = 0; index < rolesF.length; index++) {
+      //  const element = rolesF[index];
+      //  const rol = await roles.findById(element);
+      //  arr.push(rol);
+      //}
 
       console.log(rolesF);
       let faculty = new facultyModel({
