@@ -212,6 +212,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
         );
 
         const data = res.data;
+        console.log(data);
         if (data.status === 1) {
           setResponse("New Faculty Added");
           setShow(true);
@@ -220,7 +221,6 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
           setShow(true);
         }
       } else {
-        console.log("selectRoles is ", selectRoles);
         setShowError("");
         const res = await axios.put(
           process.env.REACT_APP_SERVER_URL + "admin/editFaculty",
@@ -236,6 +236,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
           }
         );
         const data = res.data;
+        console.log(data)
         if (data.status === 1) {
           setResponse("Faculty Details Edited");
           setShow(true);
@@ -314,7 +315,6 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
               validateDesignation(e);
             }}
           />
-          {console.log("SelectRoles is ", selectRoles)}
           <Select
             name="Roles"
             placeholder="Roles"

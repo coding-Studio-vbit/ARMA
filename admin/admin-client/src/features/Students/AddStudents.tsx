@@ -223,7 +223,8 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
           setResponse("New Student Added");
           setShow(true);
         } else {
-          setResponse(data.response.message);
+          console.log(res.data);
+          setResponse(data.response);
           setShow(true);
         }
       } else {
@@ -246,7 +247,7 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
           setResponse("Student Details Edited");
           setShow(true);
         } else {
-          setResponse(data.response.message);
+          setResponse(data.response);
           setShow(true);
         }
       }
