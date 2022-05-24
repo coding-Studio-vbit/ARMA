@@ -55,7 +55,7 @@ export const ForumsList = () => {
             rowsPerPage={5}
             buttonsCount={3}
             filter={{ name: name }}
-            onTableRowClick={(id) => navigate(`/Forums/EditForum/${id}`)}
+            onTableRowClick={(id) => navigate(`/Forums/EditForums/${id}`)}
             headers={[
               { displayName: "FORUM NAME", dataPath: "name", sortable: true },
               {

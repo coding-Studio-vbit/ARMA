@@ -5,6 +5,8 @@ import Select from "react-select";
 import { Close } from "@material-ui/icons";
 import axios from "../../utils/axios";
 import { useNavigate, useParams } from "react-router-dom";
+import Table from "../../Components/CustomTable";
+import DataTable from "../../Components/Table";
 
 interface AddStudentsProps {
   isEdit: boolean;
@@ -30,25 +32,30 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
       setSelectHeadLabel(data.forumHeads.map((i: any) => i.name));
       setActualName(data?.facultyInchargeID.name);
       setSelectCoord(data?.facultyCoordinatorID.name);
+      setEvents(data?.events)
     };
     if (isEdit) {
       student();
     }
   }, []);
+  const navigate = useNavigate();
   const [forumID, setforumID] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const [confirmPass, setConfirmPass] = useState("");
   const [actualName, setActualName] = useState("");
   const [forumIDError, setforumIDError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
   const [phoneError, setPhoneError] = useState<string>("");
+  const [events, setEvents] = useState("");
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [showError, setShowError] = useState<String>("");
   const [showError1, setShowError1] = useState<String>("");
   const [selectHead, setSelectHead] = useState<(string | undefined)[]>([]);
+  const [passwordConfirmError, setConfirmPassError] = useState<string>("");
   const [selectCoord, setSelectCoord] = useState<string>("");
   const [selectHeadLabel, setSelectHeadLabel] = useState<
     (string | undefined)[]
@@ -102,6 +109,17 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
     }
   };
 
+  const validateConfirmPass = (e: ChangeEvent<HTMLInputElement>) => {
+    const pass = e.target.value;
+
+    setConfirmPass(pass);
+    if (pass !== password) {
+      setConfirmPassError("Does not match password");
+    } else {
+      setConfirmPassError("");
+    }
+  };
+
   const validatePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
     const phone = e.target.value;
     setPhone(phone);
@@ -138,12 +156,14 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
       password.length === 0 ||
       email.length === 0 ||
       phone.length === 0 ||
+      confirmPass.length === 0 ||
       selectHead.length === 0 ||
       selectCoord.length === 0 ||
       forumIDError?.length !== 0 ||
       phoneError?.length !== 0 ||
       passwordError?.length !== 0 ||
-      emailError?.length !== 0
+      emailError?.length !== 0 ||
+      passwordConfirmError?.length !== 0
     ) {
       setShowError("Fill details appropriately");
     } else {
@@ -254,6 +274,7 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
   }, [selectCoord])
 
   return (
+    <div>
     <div className="flex flex-col grow items-center">
       <div className="mt-12 w-max">
         <div className="flex flex-row justify-between">
@@ -447,7 +468,15 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
               validatePass(e);
             }}
           />
-        </div>
+        <InputField
+            name="Confirm Password"
+            type="password"
+            error={passwordConfirmError}
+            onChange={(e) => {
+              validateConfirmPass(e);
+            }}
+          />
+           </div>
 
         <Dialog show={show} setShow={setShow} title={response}>
           {" "}
@@ -468,5 +497,107 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
         )}
       </div>
     </div>
+    {isEdit &&
+    <><div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[60rem]">
+         <div className="flex gap-4 mb-2">
+          <span className="text-arma-gray font-semibold text-lg">
+            Forum Core Team
+          </span>
+          <button
+            className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
+            onClick={() => navigate("/Forums/addNewCoreTeamMember/")}
+          >
+            ADD
+          </button>
+          </div>
+          <Table
+            api={`${process.env.REACT_APP_SERVER_URL + "forum/getCoreForumMembers"}`}
+            rowsPerPage={5}
+            buttonsCount={3}
+            filter={{ name: forumID }}
+            headers={[
+              {
+                displayName: "NAME",
+                dataPath: "studentID.name",
+                sortable: false,
+              },
+              {
+                displayName: "ROLL NUMBER",
+                dataPath: "studentID.rollNumber",
+                sortable: false,
+              },
+              {
+                displayName: "DEPARTMENT",
+                dataPath: "studentID.branch",
+                sortable: false,
+              },
+              {
+                displayName: "YEAR",
+                dataPath: "studentID.year",
+                sortable: false,
+              },
+              {
+                displayName: "SECTION",
+                dataPath: "studentID.section",
+                sortable: false,
+              },
+              { displayName: "ROLE", dataPath: "designation", sortable: false },
+            ]} />
+        </div><div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[60rem]">
+        <div className="flex gap-4 mb-2">
+        <span className="text-arma-gray font-semibold text-lg">
+            Forum Members
+          </span>
+          <button
+            className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
+            onClick={() => navigate("/Forums/addNewForumMember")}
+          >
+            ADD
+          </button>
+          </div>
+            <Table
+              api={`${process.env.REACT_APP_SERVER_URL + "forum/getForumMembers"}`}
+              rowsPerPage={5}
+              buttonsCount={3}
+              filter={{ name: forumID }}
+              headers={[
+                { displayName: "NAME", dataPath: "name", sortable: false },
+                {
+                  displayName: "ROLL NUMBER",
+                  dataPath: "rollNumber",
+                  sortable: false,
+                },
+                {
+                  displayName: "DEPARTMENT",
+                  dataPath: "branch",
+                  sortable: false,
+                },
+                { displayName: "YEAR", dataPath: "year", sortable: false },
+                { displayName: "SECTION", dataPath: "section", sortable: false },
+              ]} />
+          </div><div className="flex flex-col mt-16 mb-16 w-[90%] mx-auto max-w-[60rem]">
+            <p className="text-arma-gray font-semibold text-lg mb-2">
+              Events Conducted
+            </p>{" "}
+            <DataTable
+              data={events}
+              headers={[
+                { displayName: "EVENT NAME", dataPath: "name", sortable: false },
+                {
+                  displayName: "NO. OF PARTICIPANTS",
+                  dataPath: "participants",
+                  sortable: false,
+                },
+                {
+                  displayName: "DURATION",
+                  dataPath: "duration",
+                  sortable: false,
+                },
+                // { displayName: "ATTENDANCE", dataPath: "attendance", sortable: false },
+              ]} />
+          </div></>
+}
+    </div>
+    
   );
 };
