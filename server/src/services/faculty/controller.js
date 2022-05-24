@@ -81,14 +81,14 @@ const editFaculty = async (req, res) => {
   try {
     const { id, name, designation, role } = req.body;
 
-    //Always ensure that there is only one SAC, one MO and one FO only.
+    //Always ensure that there is only one SAC, one MO, and one FO only.
     const SACRole = await roles.findOne({ name: "SAC" });
     const FORole = await roles.findOne({ name: "FO" });
     const MORole = await roles.findOne({ name: "MO" });
-
     const currentSAC = await faculty.findOne({ role: SACRole._id });
     const currentFO = await faculty.findOne({ role: FORole._id });
     const currentMO = await faculty.findOne({ role: MORole._id });
+
     console.log(role, String(SACRole._id));
     if (role.indexOf(String(SACRole._id)) !== -1) {
       currentSAC.role = currentSAC.role.filter(

@@ -2,6 +2,7 @@ const response = require("./response");
 
 const checkRole = (req, res, next, possibleRoles) => {
   let flag = false;
+  console.log("User is", req.user)
   for (let a = 0; a < req.user.role.length; a++) {
     if (possibleRoles.indexOf(req.user.role[a].name) !== -1) {
       flag = true;
