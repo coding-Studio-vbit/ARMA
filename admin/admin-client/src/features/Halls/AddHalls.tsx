@@ -118,7 +118,7 @@ export const AddHalls = ({ isEdit }: AddHallsProps) => {
       if (!isEdit) {
         setShowError("");
         const res = await axios.post(
-          process.env.REACT_APP_SERVER_URL + "halls/addHalls",
+          process.env.REACT_APP_SERVER_URL + "halls/addHall",
           { name: name, block: block, capacity: quantity, hallInfo: hallInfo }
         );
         const data = res.data;

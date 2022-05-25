@@ -7,11 +7,7 @@ const controller = require("../../../services/halls/controller");
 
 router.use(tokenAuth);
 
-// will have to add checkRolePermissions after listing out all the permissions
-
 router.get("/", controller.getHalls);
-
-// ADD HALLS
 
 router.post(
   "/addHall",
