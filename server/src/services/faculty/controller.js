@@ -84,7 +84,9 @@ const editFaculty = async (req, res) => {
     //Always ensure that there is only one SAC, one MO,one Registrar, One CFI and one FO only.
 
     const singletonRoles = ["SAC", "FO", "MO", "REGISTRAR", "CFI"];
-    singletonRoles.forEach((roleName)=>{
+    for(let i=0;i<singletonRoles.length;i++)
+    {
+      const roleName = singletonRoles[i];
       const currentRole = await roles.findOne({name: roleName});
       if(!currentRole) throw new Error(`Role ${roleName} cannot be found!`);
       const currentFacultyWithRole = await faculty.findOne({role: currentRole._id});
@@ -92,7 +94,7 @@ const editFaculty = async (req, res) => {
         currentFacultyWithRole.role = currentFacultyWithRole.role.filter(v=>String(currentRole._id) !== v);
         await currentFacultyWithRole.save();
       }
-    })
+    }
 
     await faculty.findOneAndUpdate(
       { _id: id },
