@@ -27,7 +27,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
       setSelectRolesL(data?.role);
       setSelectRoles(data.role.map((i: any) => i._id));
       setEmail(data?.email);
-      setPassword(data?.password);
+      //setPassword(data?.password);
       setPhone(data?.phone);
     };
     if (isEdit) {
@@ -180,20 +180,21 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
     if (
       uniqueid.length === 0 ||
       name.length === 0 ||
-      password.length === 0 ||
+      (!isEdit && password.length === 0) ||
+      (password.length !== 0 && confirmPass.length === 0) ||
       phone.length === 0 ||
       email.length === 0 ||
-      confirmPass.length === 0 ||
       designation.length === 0 ||
       selectRoles.length === 0 ||
       uniqueidError?.length !== 0 ||
       nameError?.length !== 0 ||
       phoneError?.length !== 0 ||
-      passwordError?.length !== 0 ||
       emailError?.length !== 0 ||
       designationError?.length !== 0 ||
+      passwordError?.length !== 0 ||
       passwordConfirmError?.length !== 0
     ) {
+      console.log(password);
       setShowError("Fill details appropriately");
     } else {
       if (!isEdit) {
@@ -236,7 +237,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
           }
         );
         const data = res.data;
-        console.log(data)
+        console.log(data);
         if (data.status === 1) {
           setResponse("Faculty Details Edited");
           setShow(true);
@@ -417,7 +418,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
           />
         </div>
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
-        <InputField
+          <InputField
             name="Confirm Password"
             type="password"
             error={passwordConfirmError}
