@@ -223,7 +223,7 @@ export const AddEquip = ({ isEdit }: AddEquipProps) => {
             value={
               isEdit
                 ? { value: name, label: actualName }
-                : "faculty coordinator"
+                : { value: name, label: actualName}
             }
             noOptionsMessage={() => null}
             onChange={(e: any) => {
