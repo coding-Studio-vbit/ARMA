@@ -11,7 +11,6 @@ const tokenAuth = (req, res, next) => {
       }
 
       req.user = data;
-	    console.log("user is hi:", req.user)
       next()
     })
   }

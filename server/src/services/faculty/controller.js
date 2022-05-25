@@ -96,7 +96,7 @@ const editFaculty = async (req, res) => {
         role.find((x) => String(x) == String(currentRole._id))
       ) {
         currentFacultyWithRole.role = currentFacultyWithRole.role.filter(
-          (v) => String(currentRole._id) !== v
+          (v) => String(currentRole._id) !== String(v)
         );
         await currentFacultyWithRole.save();
       }
