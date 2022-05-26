@@ -60,7 +60,7 @@ export default function ForumProfile() {
   }>({ title: "", proceed: async () => {} });
   // console.log("Rebuild Profile");
   const [profileObj, setprofileObj] = useState(null);
-
+  const [pictureChanged, setPictureChanged] = useState<boolean>(false);
   const [url, setUrl] = useState("");
   let [name, setName] = useState<string>(" ");
 
@@ -134,7 +134,9 @@ export default function ForumProfile() {
         });
       }
     }
-    item.designation = item.forumCoreTeamMemberships.filter((v)=>{return v.forumId.name == forum.name})[0]?.designation
+    item.designation = item.forumCoreTeamMemberships.filter((v) => {
+      return v.forumId.name == forum.name;
+    })[0]?.designation;
     return { ...item };
   };
   const save = async () => {
@@ -146,6 +148,22 @@ export default function ForumProfile() {
         facultyCoordinator: facultycoordinator,
       }
     );
+    if (pictureChanged) {
+      let myFormData = new FormData();
+      myFormData.append("profilePicture", profileObj);
+      axios
+        .post(
+          `${process.env.REACT_APP_SERVER_URL}forum/profilePicture`,
+          myFormData
+        )
+        .then((response) => {
+          console.log(response);
+          // window.location.reload();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
     const data = res.data;
     if (data.status === 1) {
       setForum(data.response);
@@ -217,6 +235,7 @@ export default function ForumProfile() {
           isEdit={isEdit}
           profileObj={profileObj}
           setprofileObj={setprofileObj}
+          setPictureChanged={setPictureChanged}
         />
         <span className="text-center  item-center text-2xl font-semibold text-arma-blue">
           {forum?.name}
@@ -363,7 +382,6 @@ export default function ForumProfile() {
             buttonsCount={5}
             transformer={(item, i, setUpdate) => {
               return handelCheckbox(item, i, true, setUpdate);
-             
             }}
             filter={{ name: forum?.name }}
             headers={headers}
