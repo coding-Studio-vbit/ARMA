@@ -150,6 +150,7 @@ export default function ForumProfile() {
     );
     if (pictureChanged) {
       let myFormData = new FormData();
+      console.log(profileObj);
       myFormData.append("profilePicture", profileObj);
       axios
         .post(

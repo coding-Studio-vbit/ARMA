@@ -229,7 +229,7 @@ export default function AddNewCoreTeamMember() {
           forumName: forum?.name,
           rollNumber: rollNumber,
           name: name,
-          course: course,
+          course: course.value,
           branch: department.value,
           year: year.value,
           section: section.value,
@@ -243,8 +243,8 @@ export default function AddNewCoreTeamMember() {
         setResponse("New Core Team Member Added");
         setShow(true);
       } else {
-        console.log(data.response.message);
-        setResponse(data.response.message);
+        console.log(data.response);
+        setResponse(data.response);
         setShow(true);
       }
     }

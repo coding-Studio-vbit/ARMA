@@ -7,7 +7,7 @@ import { useUser } from "../../../Provider/userProvider";
 import axios from "../../../utils/axios";
 
 export default function AddNewCoreTeamMember() {
-//   const { forum } = useUser();
+  //   const { forum } = useUser();
   const nav = useNavigate();
   const [course, setCourse] = useState<{
     value: string;
@@ -62,7 +62,6 @@ export default function AddNewCoreTeamMember() {
   }, []);
 
   useEffect(() => {
-    console.log(course ," is course")
     axios
       .get(
         `${process.env.REACT_APP_SERVER_URL}students/getBranches/${course.value}`
@@ -78,7 +77,6 @@ export default function AddNewCoreTeamMember() {
         );
       })
       .then((yrs: any) => {
-        console.log(yrs);
         let y = [];
         for (let i = 1; i <= yrs.data.response; i++)
           y.push({ value: i, label: i });
@@ -123,6 +121,7 @@ export default function AddNewCoreTeamMember() {
   };
 
   const validateCourse = (e: any) => {
+    console.log(e);
     setCourse(e);
     if (e.value.length === 0) {
       setCourseError("Course field is empty");
@@ -226,7 +225,7 @@ export default function AddNewCoreTeamMember() {
       const res = await axios.post(
         process.env.REACT_APP_SERVER_URL + "forum/addNewCoreForumMember",
         {
-        //   forumName: forum?.name,
+          //   forumName: forum?.name,
           rollNumber: rollNumber,
           name: name,
           course: course,
@@ -243,8 +242,9 @@ export default function AddNewCoreTeamMember() {
         setResponse("New Core Team Member Added");
         setShow(true);
       } else {
-        console.log(data.response.message);
-        setResponse(data.response.message);
+        console.log(data);
+        console.log(data.response, "hee hee");
+        setResponse(data.response);
         setShow(true);
       }
     }
@@ -306,7 +306,7 @@ export default function AddNewCoreTeamMember() {
             }}
           />
           <Select
-          isDisabled={course.value.length == 0}
+            isDisabled={course.value.length == 0}
             name="Department"
             placeholder="Department"
             className="basic-single"
@@ -337,8 +337,7 @@ export default function AddNewCoreTeamMember() {
             }}
           />
           <Select
-                    isDisabled={course.value.length == 0}
-
+            isDisabled={course.value.length == 0}
             name="Year"
             placeholder="Year"
             className="basic-single"
@@ -369,8 +368,11 @@ export default function AddNewCoreTeamMember() {
             }}
           />
           <Select
-                    isDisabled={course == null || department == null || department?.value.length == 0}
-
+            isDisabled={
+              course == null ||
+              department == null ||
+              department?.value.length == 0
+            }
             name="Section"
             placeholder="Section"
             className="basic-single"

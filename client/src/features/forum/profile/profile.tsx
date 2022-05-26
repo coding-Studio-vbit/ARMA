@@ -25,21 +25,6 @@ function Profile({ url, setUrl, isEdit, profileObj, setprofileObj, setPictureCha
               console.log(URL.createObjectURL(e.target.files[0]));
               setprofileObj(URL.createObjectURL(e.target.files[0]));
               setPictureChanged(true);
-
-              // let myFormData = new FormData();
-              // myFormData.append("profilePicture", e.target.files[0]);
-              // axios
-              //   .post(
-              //     `${process.env.REACT_APP_SERVER_URL}forum/profilePicture`,
-              //     myFormData
-              //   )
-              //   .then((response) => {
-              //     console.log(response);
-              //     window.location.reload();
-              //   })
-              //   .catch((err) => {
-              //     console.log(err);
-              //   });
             }}
           />
           {profileObj == null ? (

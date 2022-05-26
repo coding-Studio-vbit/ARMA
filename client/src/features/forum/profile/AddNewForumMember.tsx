@@ -213,7 +213,7 @@ export default function AddNewForumMember() {
         {
           forumName: forum?.name,
           rollNumber: rollNumber,
-          course: course,
+          course: course.value,
           name: name,
           branch: department.value,
           year: year.value,
@@ -227,7 +227,7 @@ export default function AddNewForumMember() {
         setResponse("New Forum Member Added");
         setShow(true);
       } else {
-        setResponse(data.response.message);
+        setResponse(data.response);
         setShow(true);
       }
     }
