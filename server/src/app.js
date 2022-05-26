@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path")
 const https = require("https");
 
-const port = 5000 || process.env.PORT;
+const port = process.env.PORT || 5000;
 
 const startServer = () => {
   const app = express();
@@ -15,7 +15,7 @@ const startServer = () => {
 
   const sslServer = https.createServer(
     {
-      key: fs.readFileSync(path.join(__dirname, '../cert',"key.pem")),
+      key: fs.readFileSync(path.join(__dirname, '../cert',"key.key")),
       cert: fs.readFileSync(path.join(__dirname, '../cert', "cert.pem"))
     },
     app
