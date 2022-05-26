@@ -275,6 +275,7 @@ export default function ForumProfile() {
           {isEdit ? (
             <Select
               name="Faculty Coordinator"
+              isDisabled={true}
               options={myfac}
               placeholder={facultycoordinator}
               onInputChange={handleInputChange}

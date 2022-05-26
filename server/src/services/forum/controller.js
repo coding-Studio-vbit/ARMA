@@ -274,15 +274,11 @@ const forumEventNumber = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { description, facultyCoordinator, email } = req.body;
-    const faculty = await facultyModel.findOne({ name: facultyCoordinator });
-    if (faculty == null) {
-      throw "Details could not be updated";
-    }
+    const { description, email } = req.body;
     const user = await forums
       .findOneAndUpdate(
         { email: email },
-        { $set: { description: description, facultyCoordinatorID: faculty } },
+        { $set: { description: description } },
         { new: true }
       )
       .populate("facultyCoordinatorID name")
