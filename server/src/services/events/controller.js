@@ -125,10 +125,10 @@ const createEvent = async (req, res) => {
       name: eventDetails.name,
       eventProposalDocPath: req.files.eventDocument[0].path,
       eventStatus: "AWAITING SAC APPROVAL",
-      budgetDocPath: req.files.budgetDocument[0].path
+      budgetDocPath: req.files.budgetDocument
         ? req.files.budgetDocument[0].path
         : null,
-      hasBudget: req.files.budgetDocument[0] !== null,
+      hasBudget: req.files.budgetDocument ? true : false,
       equipment: eqs,
     });
 
