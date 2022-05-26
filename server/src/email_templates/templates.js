@@ -6,20 +6,31 @@ const welcomeTemplate = {
 
 const newEventCreatedForum = {
   template:
-    "Hey there ${forumName}, New event '${eventName}' has been created. The authorities will be notified shortly :)",
+    "Hey there ${forumName}, New event '${eventName}' has been created. The SAC and other concerned authorities will be notified shortly.",
   subject: "New Event Created",
 };
 
-const newEventCreatedFO = {
-  template:
-    "Hey there ${FOName}, New event '${eventName}' has been created by ${forumName}. pls check on ARMA",
-  subject: "New Event Created",
-};
 
 const newEventCreatedSAC = {
   template:
-    "Hey there ${SACName}, New event '${eventName}' has been created by ${forumName}.pls check on ARMA",
+    "Hey there ${SACName}, New event '${eventName}' has been created by ${forumName}. Please check the event details on A.R.M.A.",
   subject: "New Event Created",
+};
+
+const newEventFO = {
+  template: "Hey there ${FOName}, New event ${eventName} by ${forumName} has been approved by the SAC. Please review the budget document of the event on A.R.M.A"
+}
+
+const eventUpdatedSAC = {
+  template:
+    "Hey there ${SACName}, details of the event '${eventName}' have been updated by ${forumName}. Please check the updates on A.R.M.A.",
+  subject: "Event details updated",
+};
+
+const eventReservationsUpdateSAC = {
+  template:
+    "Hey there ${SACName}, event dates and hall reservations of the event '${eventName}' have been updated by ${forumName}. Please check the updates on A.R.M.A.",
+  subject: "Event Reservations (and/or) dates updated",
 };
 
 const budgetDocUpdateTemplate = {
@@ -27,61 +38,97 @@ const budgetDocUpdateTemplate = {
     "Dear ${FOName}, ${forumName} has updated the budget document for event ${eventName}",
   subject: "Budget Document Update",
 };
+const budgetDocUpdateSACTemplate = {
+  template:
+    "Dear ${SACName}, ${forumName} has updated the budget document for event ${eventName}",
+  subject: "Budget Document Update",
+};
 
 const forgotPasswordTemplate = {
-  template: "Hey there, go to ${passwordLink}",
-  subject: "Forgot Password update",
+  template:
+    "Hey there, We have received a password reset request from you. Go to the following link to reset your password: ${passwordLink}",
+  subject: "Reset Password",
 };
 
 const budgetAcceptedForumUpdateTemplate = {
-  template: "Hey there, your budget for the event ${eventName} has been accepted",
+  template:
+    "Hey there, Congratulations! Your budget for the event ${eventName} has been accepted.",
   subject: "Budget Approved",
 };
 
 const budgetAcceptedSACUpdateTemplate = {
-  template: "Hey SAC, the budget for the event ${eventName} by ${forumName} has been accepted, please review the event and accept the event proposal in ARMA",
-  subject: "Event Budget Approved"
-}
+  template:
+    "Hey SAC, the budget for the event ${eventName} by ${forumName} has been accepted, please review the event and accept the event proposal in A.R.M.A",
+  subject: "Event Budget Approved",
+};
 
 const budgetUpdatedTemplate = {
-  template: "Hey there, the FO has commented upon your event ${eventName}, please check  the comments on ARMA",
+  template:
+    "Hey there, the FO has commented upon your event ${eventName}, please check  the comments on A.R.M.A",
   subject: "FO Commented on Budget",
 };
 
 const budgetRejectedForumTemplate = {
-  template: "Hey there, The FO has rejected the budget for the event ${eventName}, please approach the FO for further clarification.",
+  template:
+    "Hey there, The FO has rejected the budget for the event ${eventName}, please approach the FO for further clarification.",
   subject: "Budget Rejected",
 };
 
 const budgetRejectedSACTemplate = {
-  template: "Hey SAC, the FO has rejected the budget for the event ${eventName}. The forum has been informed about the issue.",
-  subject: "Budget Reject for event"
-}
+  template:
+    "Hey SAC, the FO has rejected the budget for the event ${eventName}. The forum has been informed about the issue.",
+  subject: "Budget Rejected",
+};
 
 const SACApprovedTemplate = {
-  template: "Hey there, Congratulations! The SAC has approved your event ${eventName}! Please log on to ARMA to check the status :)",
+  template:
+    "Hey there, Congratulations! The SAC has approved your event ${eventName}!",
   subject: "Event Approved by SAC",
 };
 
 const SACCommentedTemplate = {
-  template: "Hey there, The SAC has commented on your event ${eventName}. Please logon to ARMA to check the comments.",
+  template:
+    "Hey there, The SAC has commented on your event ${eventName}. Please logon to A.R.M.A to check the comments.",
   subject: "SAC commented on your event",
 };
 
 const SACRejectedTemplate = {
-  template: "Hey ${forumName}, Unfortunately The SAC has rejected your event ${eventName}. Please check the ARMA app to know more.",
+  template:
+    "Hey ${forumName}, Unfortunately The SAC has rejected your event ${eventName}. Please check the A.R.M.A app to know more.",
   subject: "Event Rejected by SAC",
 };
 
 const MOReportAndMedia = {
-  template: "Hey there ${MOName}, ${forumName} has sent the following attachments as media from the event ${eventName}. Take a look!",
-  subject: "New Event Media",
-}
+  template:
+    "Hey there ${MOName}, ${forumName} has sent the following attachments as media from the event ${eventName}. Upload them to the official VBIT website, Take a look!",
+  subject: "New Event Media Received",
+};
+const RegistrarNewEvent = {
+  template:
+    "Hey there ${RegistrarName}, ${forumName} has created a new event ${eventName} with the following equipment list: ${equipmentList}",
+  subject: "New Event Equipment Requirement",
+};
+const RegistrarEquipmentUpdate = {
+  template:
+    "Hey there ${RegistrarName}, ${forumName} has updated the equipment requirement for the event ${eventName}, the new equipment list is: ${equipmentList}",
+  subject: "Event Equipment Update",
+};
+const CFINewEvent = {
+  template:
+    "Hey there ${CFIName}, ${forumName} has created a new event ${eventName} with the following equipment list: ${equipmentList}",
+  subject: "New Event Equipment Requirement",
+};
+const CFIEquipmentUpdate = {
+  template:
+    "Hey there ${CFIName}, ${forumName} has updated the equipment requirement for the event ${eventName}, the new equipment list is: ${equipmentList}",
+  subject: "Event Equipment Update",
+};
 
 module.exports = {
   welcomeTemplate,
   forgotPasswordTemplate,
   budgetDocUpdateTemplate,
+  budgetDocUpdateSACTemplate,
   budgetAcceptedForumUpdateTemplate,
   budgetAcceptedSACUpdateTemplate,
   budgetUpdatedTemplate,
@@ -90,8 +137,14 @@ module.exports = {
   SACApprovedTemplate,
   SACCommentedTemplate,
   SACRejectedTemplate,
-  newEventCreatedFO,
   newEventCreatedSAC,
+  newEventFO,
   newEventCreatedForum,
-  MOReportAndMedia
+  MOReportAndMedia,
+  eventUpdatedSAC,
+  RegistrarNewEvent,
+  RegistrarEquipmentUpdate,
+  CFINewEvent,
+  CFIEquipmentUpdate,
+  eventReservationsUpdateSAC
 };

@@ -30,7 +30,7 @@ const CreateEvent = () => {
   }, []);
 
   return (
-    <div className="flex flex-col mx-6 sm:mx-8 md:mx-32 lg:mx-48 ">
+    <div className="flex flex-col mx-6 sm:mx-8 md:mx-32 lg:mx-48 mb-20 ">
       <div className="mt-8 mb-4 flex items-center">
         <h1 className=" font-poppins text-arma-dark-blue  text-2xl md:text-4xl">
           Create Event
@@ -121,9 +121,15 @@ const CreateEvent = () => {
                   id="file-upload"
                   accept="application/pdf"
                   onChange={(e: any) => {
-                    console.log(e.target.files[0].size);
-
-                    setPdf1(e.target.files[0]);
+                    if (e.target.files[0].type !== "application/pdf") {
+                      setMsg("Please upload only pdf files");
+                      setShow(true);
+                    } else if (e.target.files[0].size > Math.pow(10, 6) * 10) {
+                      setMsg(
+                        "File size of event document cannot be greater than 10 MB"
+                      );
+                      setShow(true);
+                    } else setPdf1(e.target.files[0]);
                   }}
                   className="hidden"
                   type="file"
@@ -151,9 +157,18 @@ const CreateEvent = () => {
                         id="file-upload"
                         accept="application/pdf"
                         onChange={(e: any) => {
-                          console.log(e.target.files[0].size);
-
-                          setPdf2(e.target.files[0]);
+                          if (e.target.files[0].type !== "application/pdf") {
+                            setMsg("Please upload only pdf files");
+                            setShow(true);
+                          } else if (
+                            e.target.files[0].size >
+                            Math.pow(10, 6) * 10
+                          ) {
+                            setMsg(
+                              "File size of event document cannot be greater than 10 MB"
+                            );
+                            setShow(true);
+                          } else setPdf2(e.target.files[0]);
                         }}
                         className="hidden"
                         type="file"
@@ -170,7 +185,7 @@ const CreateEvent = () => {
       <Dialog show={show} setShow={setShow} title={msg} />
       <div className="sm:w-4/4 flex sm:items-end mx-auto sm:mx-0">
         <button
-          className="btn pr-2 text-xl ml-auto my-8"
+          className="btn flex items-center pl-5 pr-3 text-lg ml-auto mt-12"
           onClick={() => {
             if (name.length < 3) {
               unstable_batchedUpdates(() => {
@@ -198,8 +213,8 @@ const CreateEvent = () => {
             }
           }}
         >
-          NEXT
-          <ChevronRightRounded fontSize="large" />
+          <span>NEXT</span>
+          <ChevronRightRounded fontSize="medium" className="mx-0" />
         </button>
       </div>
     </div>

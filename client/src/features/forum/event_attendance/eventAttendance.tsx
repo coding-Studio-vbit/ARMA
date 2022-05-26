@@ -17,11 +17,12 @@ const EventAttendance = () => {
     section: String;
     email: String | Function;
     phone?: Number;
-    attendedEvents: [string];
   }
 
   let data;
   let indx: Number;
+  const section = ["A", "B", "C", "D"];
+  const year = [1, 2, 3, 4];
   const location: any = useLocation();
   const eventID = location.state.eventId;
   const [event, setEvent] = useState(null);
@@ -34,18 +35,12 @@ const EventAttendance = () => {
     "Name",
     "Roll Number",
     "Branch",
-    "7-1-2021",
-    "8-1-2021",
-    "9-1-2021",
   ]);
-  const [eventDates, setEventDates] = useState([
-    "7-1-2021",
-    "8-1-2021",
-    "9-1-2021",
-  ]);
+  const [eventDates, setEventDates] = useState([]);
   const [show, setShow] = useState<boolean>(false);
   const [message, setMessage] = useState("");
   const [showBtns, setShowBtns] = useState(false);
+  const [loading,setLoading] = useState(true)
   const [dataUploaded, setDataUploaded] = useState(false);
   const [studentPresence, setStudentPresence] = useState<any>({});
 
@@ -57,8 +52,13 @@ const EventAttendance = () => {
       if (res.data.status == -1) {
         console.log(res.data.response.message);
       } else {
+        console.log(res.data.response);
         setEvent(res.data.response);
         setEventName(res.data.response.name + " - Attendance");
+        let eventD = res.data.response.eventDates;
+        setEventDates((eventDates)=>[...eventD]);
+        setTableHeader((tableHeader)=>[...tableHeader,...eventD]);
+        
       }
     } catch (error) {
       console.log(error);
@@ -89,7 +89,6 @@ const EventAttendance = () => {
       } else {
         setBranches(res.data.response);
       }
-      console.log(branches);
     } catch (error) {
       console.log(error);
     }
@@ -109,8 +108,12 @@ const EventAttendance = () => {
       )
       .then((resp) => {
         if (resp.data.response.status == -1) {
-          console.log(resp);
-          throw new Error("Error occured");
+          setDataUploaded(false);
+          setMessage("Student upload failed");
+          setShow(true)
+        }
+        else if (resp.data.response.data.length == 0){
+          setDataUploaded(false)
         }
         resp.data.response.data.forEach((data: any) => {
           setStudentPresence((prevStudentPresence: any) => ({
@@ -121,18 +124,87 @@ const EventAttendance = () => {
         if (resp.data.response.data.length > 0) {
           setDataUploaded(true);
           setTableData(resp.data.response.data);
+          setLoading(false);
         }
       });
   }, [dataUploaded]);
 
-  function checkBranch(val: any) {
+
+  //Excel sheet valdation functions here
+  const validateName = (val: any) => {
+    const name = val;
+    if (name.length === 0) {
+      setMessage("Name required in row " + indx);
+      setShow(true);
+      throw new Error("Name required in row " + indx);
+    } else {
+      return name;
+    }
+  };
+  const validateUniqueid = (val: any) => {
+    const uniqueid = val;
+    var rollNumber = uniqueid.toUpperCase();
+    let rollRegex = new RegExp(
+      /^(18|19|20|21)(p6|p5)(1|5)(a|A)(01|02|03|04|05|12|56|62|66|67|69|70)[(a-z)|(0-9)][0-9]$/i
+    );
+    if (rollNumber.length === 0) {
+      setMessage("Roll Number is required in row " + indx);
+      setShow(true);
+      throw Error;
+    } else if (rollNumber.length < 10 || rollNumber.length > 10) {
+      setMessage("Invalid Roll Number in row " + indx);
+      setShow(true);
+      throw Error;
+    } else if (!rollRegex.test(rollNumber)) {
+      setMessage("Invalid Roll Number in row " + indx);
+      setShow(true);
+      throw Error;
+    } else {
+      return uniqueid.toUpperCase();
+    }
+  };
+
+  const validateYear = (val: any) => {
+    if (year.includes(val)) {
+      return val;
+    } else {
+      setMessage("Invalid Year in row " + indx);
+      setShow(true);
+      throw new Error("Invalid Year in row " + indx);
+    }
+  };
+
+  const validateCourse= (course: any) => {
+    if (courses.includes(course)) {
+      return String(course);
+    } else {
+      throw Error;
+    }
+  };
+
+
+  function validateBranch(val: any) {
     if (branches.includes(val.toUpperCase())) {
       return String(val);
     } else {
-      console.log("branch");
       throw Error;
     }
-  }
+  };
+
+  const validateSection = (val: any) => {
+    if (typeof val == "number") {
+      setMessage("Number can't be a section! Error in row  " + indx);
+      setShow(true);
+      throw Error;
+    } else if (Object.values(section).includes(val.toUpperCase())) {
+      return val.toUpperCase();
+    } else {
+      setMessage("Invalid Section in row " + indx);
+      setShow(true);
+      throw Error;
+    }
+  };
+
   function validateEmail(email: any) {
     var validRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -143,14 +215,19 @@ const EventAttendance = () => {
     }
   }
 
-  function validateCourse(course: any) {
-    if (courses.includes(course)) {
-      return String(course);
+  const validatePhone = (val: any) => {
+    const phone = val;
+    var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    if (phone.length === 0) {
+      return phone;
+    } else if (!phone.match(phoneno)) {
+      setMessage("Invalid Phone number in row " + indx);
+      setShow(true);
+      throw new Error("Invalid Phone number in row " + indx);
     } else {
-      console.log("coru");
-      throw Error;
+      return phone;
     }
-  }
+  };
 
   const handleFileToJson = (e: { target: { files: any } }) => {
     data = e.target.files;
@@ -163,27 +240,25 @@ const EventAttendance = () => {
             indx = row.indexOf(item) + 1;
             if (item[7]) {
               let newObj: Student = {
-                name: String(item[0]),
-                rollNumber: String(item[1]),
-                year: Number(item[2]),
+                name: validateName(item[0]),
+                rollNumber: validateUniqueid(item[1]),
+                year: validateYear(item[2]),
                 course: validateCourse(item[3]),
-                branch: checkBranch(item[4]),
-                section: String(item[5]),
+                branch: validateBranch(item[4]),
+                section: validateSection(item[5]),
                 email: validateEmail(item[6]),
-                phone: Number(item[7]),
-                attendedEvents: [eventID],
+                phone: validatePhone(item[7]),
               };
               list.push(newObj);
             } else {
               let newObj: Student = {
-                name: String(item[0]),
-                rollNumber: String(item[1]),
-                year: Number(item[2]),
+                name: validateName(item[0]),
+                rollNumber: validateUniqueid(item[1]),
+                year: validateYear(item[2]),
                 course: validateCourse(item[3]),
-                branch: checkBranch(item[4]),
-                section: String(item[5]),
+                branch: validateBranch(item[4]),
+                section: validateSection(item[5]),
                 email: validateEmail(item[6]),
-                attendedEvents: [eventID],
               };
               list.push(newObj);
             }
@@ -198,14 +273,13 @@ const EventAttendance = () => {
           );
           setMessage(res.data.response.message);
           setShow(true);
+          location.reload();
         })
 
         .catch((error: any) => {
           data = null;
           list = [];
           setDataUploaded(false);
-          setShow(true);
-          setMessage("Theres an error in row " + indx);
         });
     }
   };
@@ -216,7 +290,7 @@ const EventAttendance = () => {
       { studentPresence: studentPresence, eventID: eventID }
     );
     const data = res.data;
-    if (data.status == 1) {
+    if (data.status === 1) {
       setMessage("Attendance successfully saved!");
     } else {
       setMessage("Attedance Update Failed");
@@ -268,6 +342,7 @@ const EventAttendance = () => {
         show={show}
         setShow={() => setShow(!show)}
         title={message}
+        loading = {loading}
         children={
           showBtns && (
             <div>
@@ -319,7 +394,7 @@ const EventAttendance = () => {
             className="text-arma-blue m-3 cursor-pointer"
             onClick={() => {
               setMessage(
-                "Make sure the header row order is as- Name/Rollnumber/Year/Branch\n/Section/Email/Phone"
+                "Make sure the header row order is as- Name/Rollnumber/Year/Course/Branch\n/Section/Email/Phone"
               );
               setShow(true);
             }}

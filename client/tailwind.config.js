@@ -21,7 +21,7 @@ module.exports = {
         "arma-page-background": "#f5f5f5",
         "arma-icon":"#808080",
         "arma-toggle":"#bababa",
-        "arma-gray":"#757575",
+        "arma-gray":"#6f6f6f",
       },
     },
   },

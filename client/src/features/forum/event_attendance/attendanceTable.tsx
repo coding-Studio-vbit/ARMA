@@ -20,7 +20,6 @@ const Attendance = (props) =>{
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-300 ">
                     {tableData.map((value, index)=>{
-                         console.log(value)
                         return (
                         <tr key = {index} className="odd:bg-white even:bg-arma-light-gray cursor-pointer hover:bg-black/[0.075] ">
                         <td className="px-6 py-4 text-center ">{value._id.name}</td>
@@ -46,7 +45,6 @@ const Attendance = (props) =>{
                                    newObj[e.target.name].splice(index,1)
                                    setStudentPresence({...studentPresence,...newObj})
                                }
-                               console.log(studentPresence)
                             }}/></td>
                             
                         ))}

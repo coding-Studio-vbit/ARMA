@@ -41,9 +41,6 @@ const ProtectedRoutes = () => {
         <Route path="/Roles/*" element={<RolesRoutes />} />
         <Route path="/Facilities/*" element={<FacilitiesRoutes />} />
         <Route path="/Forums/*" element={<ForumsRoutes />} />
-
-        
-
       </Routes>
       </div>
       

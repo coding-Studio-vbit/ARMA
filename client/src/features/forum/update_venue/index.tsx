@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import "react-modern-calendar-datepicker/lib/DatePicker.css";
 import { Calendar, Day } from "react-modern-calendar-datepicker";
-import Switch from "react-switch";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { SelectHalls } from "./selectHalls";
-import { log } from "console";
 import axios from "../../../utils/axios";
 
 //redux imports
@@ -27,7 +25,30 @@ const EventVenue = () => {
   const eventDates = useSelector((state: RootState) => state.eventDates);
   const [oldEventDates, setOldEventDates] = useState({});
   const { state }: { state: any } = useLocation();
+  const [eventObject, setEventObject] = useState<any>({});
 
+  const getEventObject = async () => {
+    const response = await axios.get(`events/getEvent/${state.eventId}`);
+    if (response.data.response.status == -1) {
+      console.log(response.data, "hi");
+    } else {
+      console.log(response)
+      setEventObject(response.data.response);
+    }
+  };
+
+
+  const updateReservations = async (newReservations) => {
+    let result = await axios.post("events/updateEventReservations", {
+      eventHalls: newReservations,
+      id: state.eventId,
+    });
+    navigate(-1);
+    console.log(result);
+  };
+  useEffect(() => {
+    getEventObject();
+  }, [state]);
   useEffect(() => {
     if (Object.keys(eventDates).length === 0) navigate(-1);
     axios
@@ -199,11 +220,14 @@ const EventVenue = () => {
                   }}
                 >
                   add halls
-                  <img
+                  {
+                    !(["COMPLETED", "REJECTED", "APPROVED", "CANCELLED"].includes(eventObject?.eventStatus)) ? <img
                     className="ml-3"
                     alt="add button"
                     src="https://img.icons8.com/material-outlined/24/88b3cc/add.png"
-                  />
+                  /> : null
+                  }
+                  
                 </button>
               ) : (
                 HallsList(
@@ -349,6 +373,7 @@ const EventVenue = () => {
           setShow={setShowHallSelection}
           hallsData={hallList}
           oldEventDates={oldEventDates}
+          eventStatus ={eventObject.eventStatus}
         />
       ) : (
         <></>
@@ -360,17 +385,18 @@ const EventVenue = () => {
         Update Event Venue
         {Object.keys(eventDates).length === 0 &&
         selectedDays.length === 0 ? null : (
-          <button
+          (!(["COMPLETED", "APPROVED", "REJECTED", "CANCELLED"].includes(eventObject.eventStatus)) ) ? (<button
             className="ml-3"
             onClick={() => {
               setShowCalender(true);
             }}
           >
+          
             <img
               alt="edit calender"
               src="https://img.icons8.com/ios-filled/30/88b3cc/edit-calendar.png"
             />
-          </button>
+          </button>) : null
         )}
       </div>
 
@@ -409,9 +435,11 @@ const EventVenue = () => {
         <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
           <button
             className="btn px-8 py-3   text-xl tracking-wide  ml-auto my-8"
-            onClick={() => {console.log(eventDates)}}
+            onClick={async () => {
+              updateReservations(eventDates);
+            }}
           >
-            UPDATE
+            Update
           </button>
         </div>
       ) : null}

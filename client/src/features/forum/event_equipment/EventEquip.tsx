@@ -9,6 +9,7 @@ import { InputField } from "../../../components/InputField/InputField";
 import { useUser } from "../../../providers/user/UserProvider";
 import { RootState } from "../../../redux/reducers";
 import axios from "../../../utils/axios";
+import { Spinner } from "../../../components/Spinner/Spinner";
 
 export default function EventEquip() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function EventEquip() {
   const [myequip, setMyequip] = useState<{}[]>();
   const eventDates = useSelector((state: RootState) => state.eventDates);
   const eventDetails = useSelector((state: RootState) => state.eventDetails);
-  const [showDialog, setShowDialog] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
 
   useEffect(() => {
     if (Object.keys(eventDates).length === 0) navigate(-1);
@@ -103,33 +104,8 @@ export default function EventEquip() {
         >
           ADD
         </button>
-        <button
-          className="btn bg-arma-title rounded-[8px] px-6 py-2 my-auto"
-          onClick={() => {
-            console.log({ eventDates, eventDetails, list });
-            const newData = new FormData();
-            newData.append("eventDocument", eventDetails.pdf1);
-            newData.append(
-              "budgetDocument",
-              eventDetails.pdf2 ? eventDetails.pdf2 : null
-            );
-            newData.append("equipmentList", JSON.stringify(list));
-            newData.append("eventHalls", JSON.stringify(eventDates));
-            newData.append("eventDetails", JSON.stringify(eventDetails));
-            axios
-              .post(`${process.env.REACT_APP_SERVER_URL}events/`, newData)
-              .then((response) => {
-                console.log(response);
-                navigate("/forum");
-                setShowDialog(true);
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          }}
-        >
-          submit
-        </button>
+        
+        
       </div>
       <span className="text-red-500 ml-2 mt-4 mb-4 h-6 ">{addError}</span>
 
@@ -170,6 +146,36 @@ export default function EventEquip() {
              }
 
          </div> */}
+         {showSpinner ? ( <Spinner/>):(<button
+          className="btn bg-arma-title mt-4 rounded-[8px] px-6 py-2 my-auto"
+          onClick={() => {
+            setShowSpinner(true);
+            console.log({ eventDates, eventDetails, list });
+            const newData = new FormData();
+            newData.append("eventDocument", eventDetails.pdf1);
+            newData.append(
+              "budgetDocument",
+              eventDetails.pdf2 ? eventDetails.pdf2 : null
+            );
+            newData.append("equipmentList", JSON.stringify(list));
+            newData.append("eventHalls", JSON.stringify(eventDates));
+            newData.append("eventDetails", JSON.stringify(eventDetails));
+            axios
+              .post(`${process.env.REACT_APP_SERVER_URL}events/`, newData)
+              .then((response) => {
+                console.log(response);
+                navigate("/forum");
+                setShowSpinner(false);
+              })
+              .catch((error) => {
+                setShowSpinner(false);
+                console.log(error);
+              });
+          }}
+        >
+          submit
+        </button>)}
+       
     </div>
   );
 }

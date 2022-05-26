@@ -1,3 +1,5 @@
+const response = require("./response");
+
 const checkRole = (req, res, next, possibleRoles) => {
   let flag = false;
   for (let a = 0; a < req.user.role.length; a++) {
@@ -9,7 +11,7 @@ const checkRole = (req, res, next, possibleRoles) => {
   if (flag) {
     next();
   } else {
-    throw new Error(`user doesn't have any of the required roles ${String(possibleRoles)}!`);
+    res.json(response(`user doesn't have any of the required roles ${String(possibleRoles)}!`, process.env.FAILURE_CODE));
   }
 };
 

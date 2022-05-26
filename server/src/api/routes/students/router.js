@@ -1,6 +1,9 @@
 const router = require("express").Router();
 const checkRole = require("../../../services/util/checkRole");
 const controller = require("../../../services/students/controller");
+const tokenAuth = require("../../middleware/tokenAuth");
+
+router.use(tokenAuth);
 
 // GET STUDENTS
 router.get("/", controller.getStudentsList);

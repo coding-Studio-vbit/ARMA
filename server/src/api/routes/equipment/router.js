@@ -1,11 +1,10 @@
 const router = require("express").Router();
-const checkRolePermissions = require("../../../services/util/checkRole");
 const controller = require("../../../services/equipment/controller");
 const checkRole = require("../../../services/util/checkRole");
-
+const tokenAuth = require("../../middleware/tokenAuth");
 // GET EQUIPMENT
 // will have to add checkRolePermissions after listing out all the permissions
-
+router.use(tokenAuth);
 router.get("/getEquipment", controller.getEquipment);
 
 // ADD EQUIPMENT

@@ -4,8 +4,10 @@ const controller = require("../../../services/forum/controller");
 const multerStorage = require("../../../services/util/multerStorage");
 const multer = require("multer");
 const checkRole = require("../../../services/util/checkRole");
-const upload = multer({ storage: multerStorage });
-
+const upload = multer({
+  storage: multerStorage,
+  limits: { fileSize: 10 * Math.pow(10, 6) },
+});
 
 router.use(tokenAuth);
 

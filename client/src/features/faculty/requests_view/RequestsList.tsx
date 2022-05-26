@@ -32,15 +32,16 @@ const RequestsList = () => {
               value: "AWAITING FO APPROVAL",
               label: "AWAITING FO APPROVAL",
             },
+
             {
-              value: "REQUESTED BUDGET CHANGES",
-              label: "REQUESTED BUDGET CHANGES",
+              value: "BUDGET REJECTED BY SAC",
+              label: "BUDGET REJECTED BY SAC",
             },
-            { value: "BUDGET REJECTED", label: "BUDGET REJECTED" },
+            { value: "BUDGET REJECTED BY FO", label: "BUDGET REJECTED BY FO" },
             { value: "AWAITING SAC APPROVAL", label: "AWAITING SAC APPROVAL" },
             {
-              value: "REQUESTED CHANGES BY SAC",
-              label: "REQUESTED CHANGES BY SAC",
+              value: "CHANGES REQUESTED BY SAC",
+              label: "CHANGES REQUESTED BY SAC",
             },
             { value: "APPROVED", label: "APPROVED" },
             { value: "REJECTED", label: "REJECTED" },
@@ -61,6 +62,18 @@ const RequestsList = () => {
         filter={{ eventStatus: requestStatus.value }}
         headers={headers}
         rowsPerPage={10}
+        transformer={(obj) => {
+          obj.forumID.name = (
+            <div className="flex">
+              <img
+                className="w-10 h-10 -mt-1 mr-2"
+                src={`data:image/png;base64, ${obj.logo}`}
+              />
+              {obj.forumID.name}
+            </div>
+          );
+          return obj;
+        }}
         buttonsCount={4}
         onTableRowClick={(id) => {
           navigate(`/faculty/requests/${id}`);

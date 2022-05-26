@@ -27,7 +27,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
       setSelectRolesL(data?.role);
       setSelectRoles(data.role.map((i: any) => i._id));
       setEmail(data?.email);
-      setPassword(data?.password);
+      //setPassword(data?.password);
       setPhone(data?.phone);
     };
     if (isEdit) {
@@ -41,11 +41,13 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
   const [span, setSpan] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPass, setConfirmPass] = useState("");
   const [uniqueidError, setUniqueidError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
   const [nameError, setNameError] = useState<string>("");
   const [designationError, setDesignationError] = useState<string>("");
+  const [passwordConfirmError, setConfirmPassError] = useState<string>("");
   const [phoneError, setPhoneError] = useState<string>("");
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
@@ -146,6 +148,17 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
     }
   };
 
+  const validateConfirmPass = (e: ChangeEvent<HTMLInputElement>) => {
+    const pass = e.target.value;
+
+    setConfirmPass(pass);
+    if (pass !== password) {
+      setConfirmPassError("Does not match password");
+    } else {
+      setConfirmPassError("");
+    }
+  };
+
   const deleteItem = async () => {
     setShowError("");
     const res = await axios.post(
@@ -167,7 +180,8 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
     if (
       uniqueid.length === 0 ||
       name.length === 0 ||
-      password.length === 0 ||
+      (!isEdit && password.length === 0) ||
+      (password.length !== 0 && confirmPass.length === 0) ||
       phone.length === 0 ||
       email.length === 0 ||
       designation.length === 0 ||
@@ -175,10 +189,12 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
       uniqueidError?.length !== 0 ||
       nameError?.length !== 0 ||
       phoneError?.length !== 0 ||
-      passwordError?.length !== 0 ||
       emailError?.length !== 0 ||
-      designationError?.length !== 0
+      designationError?.length !== 0 ||
+      passwordError?.length !== 0 ||
+      passwordConfirmError?.length !== 0
     ) {
+      console.log(password);
       setShowError("Fill details appropriately");
     } else {
       if (!isEdit) {
@@ -197,6 +213,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
         );
 
         const data = res.data;
+        console.log(data);
         if (data.status === 1) {
           setResponse("New Faculty Added");
           setShow(true);
@@ -205,7 +222,6 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
           setShow(true);
         }
       } else {
-        console.log("selectRoles is ", selectRoles);
         setShowError("");
         const res = await axios.put(
           process.env.REACT_APP_SERVER_URL + "admin/editFaculty",
@@ -221,6 +237,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
           }
         );
         const data = res.data;
+        console.log(data);
         if (data.status === 1) {
           setResponse("Faculty Details Edited");
           setShow(true);
@@ -299,7 +316,6 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
               validateDesignation(e);
             }}
           />
-          {console.log("SelectRoles is ", selectRoles)}
           <Select
             name="Roles"
             placeholder="Roles"
@@ -395,7 +411,6 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
           <InputField
             name="Password"
             type="password"
-            value={password}
             error={passwordError}
             onChange={(e) => {
               validatePass(e);
@@ -403,6 +418,14 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
           />
         </div>
         <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+          <InputField
+            name="Confirm Password"
+            type="password"
+            error={passwordConfirmError}
+            onChange={(e) => {
+              validateConfirmPass(e);
+            }}
+          />
           <InputField
             name="Phone Number"
             type="text"

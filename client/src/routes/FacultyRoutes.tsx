@@ -40,7 +40,6 @@ const FacultyRoutes = () => {
           
         <Route path="/" element={ <FacultyDashBoard/>} />
         <Route path="/foRequests" element={ <FODashBoard/>} />
-
           <Route path="/profile" element={<FacultyProfile />} />
           <Route path="/forums" element={<ForumsList />} />
           <Route path="/students" element={<StudentsList />} />
@@ -48,7 +47,6 @@ const FacultyRoutes = () => {
           <Route path="/forums/:id" element={<Forum_View/>} />
           <Route path="/requests" element={<RequestsList />} />
           <Route path="/requests/:id" element={<RequestsView/> } />
-
         </Routes>
       </div>
       <Footer />

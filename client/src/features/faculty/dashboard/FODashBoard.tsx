@@ -3,7 +3,6 @@ import Table from "../../../components/CustomTable";
 import Select from "react-select";
 import { InputField } from "../../../components/InputField/InputField";
 import { useState } from "react";
-import Navbar from "../../../components/CustomNavbar";
 function FODashBoard() {
   const navigate = useNavigate();
   const [status, setStatus] = useState("");
@@ -51,15 +50,13 @@ function FODashBoard() {
               { value: "", label: "ALL" },
               { value: "AWAITING FO APPROVAL", label: "AWAITING FO APPROVAL" },
               {
-                value: "REQUESTED BUDGET CHANGES",
-                label: "REQUESTED BUDGET CHANGES",
+                value: "CHANGES REQUESTED BY FO",
+                label: "CHANGES REQUESTED BY FO",
               },
               {
-                value: "REQUESTED BUDGET UPDATED",
-                label: "REQUESTED BUDGET UPDATED",
+                value: "BUDGET REJECTED BY FO",
+                label: "BUDGET REJECTED BY FO",
               },
-              { value: "BUDGET REJECTED", label: "BUDGET REJECTED" },
-              { value: "COMPLETED", label: "COMPLETED" },
             ]}
           />
         </div>
@@ -71,6 +68,9 @@ function FODashBoard() {
           hasBudget: true,
           forumName: forumName,
           name: eventName,
+        }}
+        onTableRowClick={(id) => {
+          navigate(`/faculty/requests/${id}`);
         }}
         headers={headers}
         rowsPerPage={10}

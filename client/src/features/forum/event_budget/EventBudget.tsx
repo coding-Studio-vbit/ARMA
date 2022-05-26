@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+
 import {
   CloudDownloadTwoTone,
   CloudUploadTwoTone,
@@ -7,13 +8,16 @@ import {
 } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { Dialog } from "../../../components/Dialog/Dialog";
 import axios from "../../../utils/axios";
 
 export default function EventBudget() {
   const location: any = useLocation();
   const [event, setEvent] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
-  const [newFile, setFile]  = useState(null);
+  const [newFile, setFile] = useState(null);
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
   useEffect(() => {
     axios
       .get(
@@ -28,13 +32,20 @@ export default function EventBudget() {
   }, [location.state.eventId]);
   return (
     <div className="flex flex-col sm:mt-12 ">
+      <Dialog show={showDialog} setShow={setShowDialog} title={dialogMessage} />
       <div className="flex justify-center items-center mb-16  gap-2">
         <span className="sm:text-2xl shrink text-xl font-semibold  text-arma-dark-blue ">
           {event?.name} - Budget
         </span>
-        {!isEdit && (
-          <Edit onClick={() => setIsEdit(true)} className="cursor-pointer text-arma-dark-blue" />
-        )}
+        {!isEdit &&
+          ["CHANGES REQUESTED BY SAC", "CHANGES REQUESTED BY FO"].includes(
+            event?.eventStatus
+          ) && (
+            <Edit
+              onClick={() => setIsEdit(true)}
+              className="cursor-pointer text-arma-dark-blue"
+            />
+          )}
       </div>
       <div className="flex flex-col items-center  sm:mx-auto ">
         <div className="flex flex-col max-w-[80%] w-[600px]">
@@ -70,8 +81,13 @@ export default function EventBudget() {
                 accept="application/pdf"
                 disabled={!isEdit}
                 onChange={(e: any) => {
-                  console.log(e.target.files[0].size);
-                  setFile(e.target.files[0]);
+                  if (e.target.files[0].type !== "application/pdf") {
+                    setDialogMessage("Please upload only pdf files.");
+                    setShowDialog(true);
+                  } else if (e.target.files[0].size > Math.pow(10, 6) * 10) {
+                    setDialogMessage("File size cannot exceed 10 MB");
+                    setShowDialog(true);
+                  } else setFile(e.target.files[0]);
                 }}
                 className="hidden"
                 type="file"
@@ -81,25 +97,26 @@ export default function EventBudget() {
           </div>
         ) : (
           <div className="flex flex-col mt-10 cursor-pointer">
-              <a className="flex flex-col   cursor-pointer"
-                onClick={async () => {
-                  const result = await axios({responseType: 'blob', method: 'GET', url:`${process.env.REACT_APP_SERVER_URL}events/getBudgetDocument/${location.state.eventId}`})
-                  const url = window.URL.createObjectURL(
-                    new Blob([result.data])
-                  );
-                  const link = document.createElement("a");
-                  link.href = url;
-                  link.setAttribute("download", "budget.pdf"); //or any other extension
-                  document.body.appendChild(link);
-                  link.click();
-                }}
-                download
-              >
-            <CloudDownloadTwoTone className="!w-20  !h-20 mx-auto  text-arma-blue hover:opacity-40 " />
-            <span>
-                Click here to download the budget document
-            </span>
-              </a>
+            <a
+              className="flex flex-col   cursor-pointer"
+              onClick={async () => {
+                const result = await axios({
+                  responseType: "blob",
+                  method: "GET",
+                  url: `${process.env.REACT_APP_SERVER_URL}events/getBudgetDocument/${location.state.eventId}`,
+                });
+                const url = window.URL.createObjectURL(new Blob([result.data]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", "budget.pdf"); //or any other extension
+                document.body.appendChild(link);
+                link.click();
+              }}
+              download
+            >
+              <CloudDownloadTwoTone className="!w-20  !h-20 mx-auto  text-arma-blue hover:opacity-40 " />
+              <span>Click here to download the budget document</span>
+            </a>
           </div>
         )}
       </div>
@@ -109,14 +126,26 @@ export default function EventBudget() {
             setIsEdit(false);
             let formData = new FormData();
             formData.append("budgetDocument", newFile);
-            formData.append("eventID", location.state.eventId)
-            axios.post(`${process.env.REACT_APP_SERVER_URL}events/updateBudget`, formData)
-            .then(response=>{
-              //hi, display the message as a popup here.
-            })
-            .catch(error=>{
-              console.log(error);
-            })
+            formData.append("eventID", location.state.eventId);
+            axios
+              .post(
+                `${process.env.REACT_APP_SERVER_URL}events/updateBudget`,
+                formData
+              )
+              .then((response) => {
+                //hi, display the message as a popup here.
+                if (response.data.status == -1)
+                  throw new Error(response.data.response);
+                else {
+                  setDialogMessage(response.data.response);
+                  setShowDialog(true);
+                }
+              })
+              .catch((error) => {
+                setDialogMessage(error.message);
+                setShowDialog(true);
+                console.log(error);
+              });
           }}
           className="btn mx-auto mt-10"
         >

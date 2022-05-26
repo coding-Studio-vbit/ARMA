@@ -18,6 +18,7 @@ const UpdateEventDetails = () => {
   const [error, setError] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
+  const [showSpinner, setShowSpinner] = useState(false);
 
   const [pdf1, setPdf1] = useState<File>();
   const [forumName, setForumName] = useState("");
@@ -25,7 +26,7 @@ const UpdateEventDetails = () => {
   const [desc, setDesc] = useState("");
   const [sacComments, setSacComments] = useState("");
   const [fileName, setfileName] = useState("");
-
+  const [eventStatus, setEventStatus] = useState("");
   const [eventName, seteventName] = useState("");
 
   // const [eventProposalDocPath, seteventProposalDocPath] = useState("");
@@ -42,6 +43,7 @@ const UpdateEventDetails = () => {
         setError(null);
         setDesc(res.data.response.description);
         setSacComments(res.data.response.SACComments);
+        setEventStatus(res.data.response.eventStatus);
       } else {
         setError("Unable to load event details");
       }
@@ -72,6 +74,7 @@ const UpdateEventDetails = () => {
         formData
       );
       setDialogMessage(res.data.response);
+      setShowSpinner(false)
       setShowDialog(true);
       if (res.data.status === 1) {
         setTimeout(() => {
@@ -102,7 +105,7 @@ const UpdateEventDetails = () => {
       {/* Header */}
       <h1 className="font-sans text-arma-dark-blue font-semibold text-xl md:text-4xl inline-block  mt-2">
         {eventName} - Event Details
-        {!isEdit && (
+        {!isEdit && !(["COMPLETED", "REJECTED", "CANCELLED", "APPROVED"].includes(eventStatus)) && (
           <Edit
             className="ml-3 text-black !text-xl md:!text-3xl cursor-pointer"
             onClick={() => {
@@ -232,14 +235,20 @@ const UpdateEventDetails = () => {
 
       {/* Edit Button */}
       <div className="flex mt-10">
-        {isEdit && (
-          <button
-            className="btn text-lg border-lg  bg-arma-title rounded-[8px] px-6 py-2 m-auto"
-            onClick={() => updateEventDetails()}
-          >
-            UPDATE
-          </button>
-        )}
+        {isEdit &&
+          (showSpinner ? (
+            <Spinner className="m-auto" />
+          ) : (
+            <button
+              className="btn text-lg border-lg  bg-arma-title rounded-[8px] px-6 py-2 m-auto"
+              onClick={() => {
+                setShowSpinner(true);
+                updateEventDetails();
+              }}
+            >
+              UPDATE
+            </button>
+          ))}
       </div>
     </div>
   ) : (

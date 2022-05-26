@@ -1,12 +1,15 @@
 const bcrypt = require("bcrypt");
 const students = require("../../models/student");
 const role = require("../../models/role");
+const forums = require("../../models/forum");
+const facultyModel = require("../../models/faculty");
 const response = require("../util/response");
 const admins = require("../../models/admin");
 const ejs = require("ejs");
 const pdf = require("html-pdf");
 const path = require("path");
 const roles = require("../../models/role");
+const mongoose = require("mongoose");
 const { readFileSync, writeFileSync } = require("fs");
 
 const updateStudentReport = async () => {};
@@ -14,52 +17,8 @@ const updateStudentReport = async () => {};
 const addStudent = async (data) => {
   try {
     let student = new students(data);
-    /**Generate new report file for the student
-     * keep updating that file everytime this student participates in an event.
-     */
-    ejs.renderFile(
-      path.join(__dirname, "../../static_data/student_report.ejs"),
-      {
-        details: data,
-        statistics: { totalEventsParticipated: 0 },
-      },
-      (err, data) => {
-        let options = {
-          height: "11.25in",
-          width: "8.5in",
-          header: {
-            height: "20mm",
-          },
-          footer: {
-            height: "20mm",
-          },
-        };
-        let temp = md5(data.name + Date.now());
-        let dirPath = path.join(
-          __dirname,
-          "../../../../data/static/",
-          temp.slice(0, 1),
-          temp.slice(0, 2)
-        );
-        let filename =
-          md5(data.name + data.year + data.section + String(Date.now())) +
-          "." +
-          "pdf";
-
-        const filePath = `${dirPath}/${filename}`;
-        student.reportFilePath = filePath;
-
-        pdf.create(data, options).toFile(filePath, async (err, data) => {
-          if (err) {
-            return console.log("error occured while generating pdf", err);
-          } else {
-            console.log("created new pdf");
-            await student.save();
-            return response("Success", process.env.SUCCESS_CODE);
-          }
-        });
-      }
-    );
+    await student.save();
+    return response("Success", process.env.SUCCESS_CODE);
   } catch (error) {
     console.log(error);
     return response("failure", process.env.FAILURE_CODE);
@@ -117,11 +76,11 @@ const register = async (user, userType) => {
       let { rolesF, ...newuser } = user;
       console.log(rolesF);
       const arr = [];
-      for (let index = 0; index < rolesF.length; index++) {
-        const element = rolesF[index];
-        const rol = await roles.findById(element);
-        arr.push(rol);
-      }
+      //for (let index = 0; index < rolesF.length; index++) {
+      //  const element = rolesF[index];
+      //  const rol = await roles.findById(element);
+      //  arr.push(rol);
+      //}
 
       console.log(rolesF);
       let faculty = new facultyModel({
@@ -133,9 +92,9 @@ const register = async (user, userType) => {
     } else if (userType === "FORUM") {
       const myRole = await roles.findOne({ name: "FORUM" });
       let { facultyCoordinatorID, forumHeads, ...newuser } = user;
-      facultyCoordinatorID = facultyCoordinatorID.map((f) => {
-        return mongoose.Types.ObjectId(f._id);
-      });
+      // facultyCoordinatorID = facultyCoordinatorID.map((f) => {
+      //   return mongoose.Types.ObjectId(f._id);
+      // });
       forumHeads = forumHeads.map((f) => {
         return mongoose.Types.ObjectId(f._id);
       });

@@ -8,14 +8,13 @@ import { useUser } from "../providers/user/UserProvider";
 import EventCalendar from "../features/general/eventCalendar/eventCalendar";
 import { Forum_View } from "../features/faculty/forum_view/Forum_View";
 import StudentReport from "../components/StudentReport";
-
-function AllRoutes() {
+  function AllRoutes() {
   const { faculty, forum } = useUser();
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/test" element={<StudentReport />} />
+        <Route path="/test" element={<EventCalendar />} />
         <Route path="/" element={<Login />} />
         <Route path="/eventCalendar" element={<EventCalendar/>} />
 

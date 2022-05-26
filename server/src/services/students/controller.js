@@ -160,7 +160,8 @@ const generatePDF = async (req, res) => {
     const student = await students
       .findById(studentId)
       .populate({ path: "eventsOrganized", populate: { path: "forumID" } })
-      .populate("forumMemberships.forumId")
+      .populate("forumNonCoreTeamMemberships")
+      .populate("forumCoreTeamMemberships.forumId")
       .populate("eventsParticipated");
     const result = await studentReports.generateNewReport(student);
 
@@ -182,7 +183,6 @@ const generatePDF = async (req, res) => {
 const getBranches = async (req, res) => {
   try {
     const { course } = req.params;
-    console.log(coursesInfo);
     res.json(
       response(
         Object.keys(coursesInfo[course]["branches"]),
@@ -208,7 +208,7 @@ const getTotalYears = async (req, res) => {
 const getTotalSections = async (req, res) => {
   try {
     const { course, branch } = req.params;
-    console.log(coursesInfo);
+    console.log("hi", course, branch, coursesInfo);
     res.json(
       response(
         coursesInfo[course].branches[branch].sections,
@@ -222,7 +222,6 @@ const getTotalSections = async (req, res) => {
 };
 const getCourses = async (req, res) => {
   try {
-    console.log(coursesInfo);
     res.json(response(Object.keys(coursesInfo), process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
