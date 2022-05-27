@@ -32,11 +32,10 @@ const EventVenue = () => {
     if (response.data.response.status == -1) {
       console.log(response.data, "hi");
     } else {
-      console.log(response)
+      console.log(response);
       setEventObject(response.data.response);
     }
   };
-
 
   const updateReservations = async (newReservations) => {
     let result = await axios.post("events/updateEventReservations", {
@@ -220,14 +219,15 @@ const EventVenue = () => {
                   }}
                 >
                   add halls
-                  {
-                    !(["COMPLETED", "REJECTED", "APPROVED", "CANCELLED"].includes(eventObject?.eventStatus)) ? <img
-                    className="ml-3"
-                    alt="add button"
-                    src="https://img.icons8.com/material-outlined/24/88b3cc/add.png"
-                  /> : null
-                  }
-                  
+                  {!["COMPLETED", "REJECTED", "APPROVED", "CANCELLED"].includes(
+                    eventObject?.eventStatus
+                  ) ? (
+                    <img
+                      className="ml-3"
+                      alt="add button"
+                      src="https://img.icons8.com/material-outlined/24/88b3cc/add.png"
+                    />
+                  ) : null}
                 </button>
               ) : (
                 HallsList(
@@ -364,7 +364,7 @@ const EventVenue = () => {
 
   return (
     <div
-      className="flex flex-col h-screen justify-start items-center"
+      className="flex flex-col min-h-screen justify-start items-center"
       style={{ backgroundColor: "#f5f5f5" }}
     >
       {key.length != 0 ? (
@@ -373,7 +373,7 @@ const EventVenue = () => {
           setShow={setShowHallSelection}
           hallsData={hallList}
           oldEventDates={oldEventDates}
-          eventStatus ={eventObject.eventStatus}
+          eventStatus={eventObject.eventStatus}
         />
       ) : (
         <></>
@@ -384,20 +384,24 @@ const EventVenue = () => {
       >
         Update Event Venue
         {Object.keys(eventDates).length === 0 &&
-        selectedDays.length === 0 ? null : (
-          (!(["COMPLETED", "APPROVED", "REJECTED", "CANCELLED"].includes(eventObject.eventStatus)) ) ? (<button
+        selectedDays.length === 0 ? null : ![
+            "COMPLETED",
+            "APPROVED",
+            "REJECTED",
+            "CANCELLED",
+          ].includes(eventObject.eventStatus) ? (
+          <button
             className="ml-3"
             onClick={() => {
               setShowCalender(true);
             }}
           >
-          
             <img
               alt="edit calender"
               src="https://img.icons8.com/ios-filled/30/88b3cc/edit-calendar.png"
             />
-          </button>) : null
-        )}
+          </button>
+        ) : null}
       </div>
 
       {showCalender ? CalenderPopUp() : null}
