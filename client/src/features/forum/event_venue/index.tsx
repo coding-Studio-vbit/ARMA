@@ -26,7 +26,7 @@ const EventVenue = () => {
   const eventDetails = useSelector((state: RootState) => state.eventDetails);
 
   useEffect(() => {
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
     if (Object.keys(eventDetails).length === 0) navigate(-1);
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}halls`)
@@ -280,7 +280,7 @@ const EventVenue = () => {
   };
   return (
     <div
-      className="flex flex-col h-screen justify-start items-center"
+      className="flex min-h-screen flex-col justify-start items-center"
       style={{ backgroundColor: "#f5f5f5" }}
     >
       {key.length != 0 ? (
@@ -347,13 +347,13 @@ const EventVenue = () => {
       {selectedDays.length > 0 ? (
         <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
           <button
-          className="btn pr-2 text-xl ml-auto my-8"
-          onClick={() => {
+            className="btn pr-2 text-xl ml-auto my-8"
+            onClick={() => {
               navigate("/forum/createEvent/equipment");
             }}
           >
             NEXT
-            <ChevronRightRounded fontSize="large"/>
+            <ChevronRightRounded fontSize="large" />
           </button>
         </div>
       ) : null}
