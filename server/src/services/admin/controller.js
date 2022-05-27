@@ -5,18 +5,15 @@ const forums = require("../../models/forum");
 const facultyModel = require("../../models/faculty");
 const response = require("../util/response");
 const admins = require("../../models/admin");
-const ejs = require("ejs");
 const pdf = require("html-pdf");
-const path = require("path");
 const roles = require("../../models/role");
 const mongoose = require("mongoose");
 const { readFileSync, writeFileSync } = require("fs");
 
-const updateStudentReport = async () => {};
-
 const addStudent = async (data) => {
   try {
     let student = new students(data);
+    student.rollNumber = student.rollNumber.toUpperCase();
     await student.save();
     return response("Success", process.env.SUCCESS_CODE);
   } catch (error) {

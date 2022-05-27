@@ -170,11 +170,10 @@ const acceptBudget = async (req, res) => {
       );
     }
     //ADD THIS EVENT AS ORGANISED TO ALL THE FORUM STUDENTS.
-    const forum = await forums.findById(event.forumID);
-    const { forumCoreTeamMembers } = forum;
+    const forumCoreTeamMembers = await students.find({forumCoreTeamMemberships: event.forumID._id});
     for (let i = 0; i < forumCoreTeamMembers.length; i++) {
       console.log(forumCoreTeamMembers);
-      const stu = await students.findById(forumCoreTeamMembers[i].studentID);
+      const stu = forumCoreTeamMembers[i];
       stu.eventsOrganized.push(eventId);
       console.log(stu);
       await stu.save();

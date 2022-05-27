@@ -31,7 +31,7 @@ const UserProvider = ({ children }: any) => {
   const logout = () => {
     localStorage.clear();
     // eslint-disable-next-line no-restricted-globals
-    location.reload();
+    location.replace(location.origin);
   };
   return (
     <UserContext.Provider

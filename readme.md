@@ -2,7 +2,8 @@
 
 ## A one-stop solution to all the event management needs of a college.
 
-### W.I.P
+Client is deployed. Client auto deploys on push to master. 
+Server is deployed. Server doesnt auto deploy on push. You have to ssh to the VPS and update the repo there.
 
 <h1> Utility Classes </h1>
 <h4> Use these as just like tailwindcss utility classes </h4>
