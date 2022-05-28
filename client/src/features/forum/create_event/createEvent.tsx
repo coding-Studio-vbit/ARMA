@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronRightRounded, CloudUploadTwoTone } from "@material-ui/icons";
 import ToggleSwitch from "../../../components/CustomToggleSwitch";
 import { motion, AnimatePresence } from "framer-motion";
@@ -6,7 +6,11 @@ import { Dialog } from "../../../components/Dialog/Dialog";
 import { unstable_batchedUpdates } from "react-dom";
 import { useNavigate } from "react-router-dom";
 
-import { createEventDetails } from "../../../redux/actions";
+import {
+  createEventDetails,
+  selectDate,
+  createDatesState,
+} from "../../../redux/actions";
 import { useDispatch } from "react-redux";
 
 const CreateEvent = () => {
@@ -19,6 +23,11 @@ const CreateEvent = () => {
   const [show, setShow] = useState(false);
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(selectDate(""));
+    dispatch(createDatesState({}));
+  }, []);
 
   return (
     <div className="flex flex-col mx-6 sm:mx-8 md:mx-32 lg:mx-48 mb-20 ">
