@@ -466,7 +466,7 @@ export default function RequestsView() {
       </div>
       <textarea
         disabled={
-          !(faculty?.role.ADMIN || faculty?.role.SAC || faculty?.role.FO) && (event.eventStatus == "APPROVED" || event.eventStatus == "CANCELLED" || event.eventStatus == "COMPLETED")
+          !(faculty?.role.ADMIN || faculty?.role.SAC || faculty?.role.FO) || (event.eventStatus == "APPROVED" || event.eventStatus == "CANCELLED" || event.eventStatus == "COMPLETED")
         }
         name="comments"
         value={comments}
