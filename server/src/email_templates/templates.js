@@ -20,6 +20,12 @@ const newEventCreatedSAC = {
 const newEventFO = {
   template: "Hey there ${FOName}, New event ${eventName} by ${forumName} has been approved by the SAC. Please review the budget document of the event on A.R.M.A"
 }
+const newEventCFI = {
+  template: "Hey there ${CFIName}, New event ${eventName} by ${forumName} has been approved by the SAC. Please review the budget document of the event on A.R.M.A"
+}
+const newEventRegistrar = {
+  template: "Hey there ${RegistrarName}, New event ${eventName} by ${forumName} has been approved by the SAC. Please review the budget document of the event on A.R.M.A"
+}
 
 const eventUpdatedSAC = {
   template:
@@ -139,6 +145,8 @@ module.exports = {
   SACRejectedTemplate,
   newEventCreatedSAC,
   newEventFO,
+  newEventCFI,
+  newEventRegistrar,
   newEventCreatedForum,
   MOReportAndMedia,
   eventUpdatedSAC,

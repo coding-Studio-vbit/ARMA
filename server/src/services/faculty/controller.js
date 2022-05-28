@@ -6,15 +6,15 @@ const response = require("../util/response");
 const mailer = require("../util/mailer");
 const {
   budgetAcceptedForumUpdateTemplate,
-  budgetAcceptedSACUpdateTemplate,
   budgetUpdatedTemplate,
-  budgetRejectedTemplate,
   budgetRejectedForumTemplate,
   budgetRejectedSACTemplate,
   SACApprovedTemplate,
   SACCommentedTemplate,
   SACRejectedTemplate,
   newEventFO,
+  newEventCFI,
+  newEventRegistrar,
 } = require("../../email_templates/templates");
 const mongoose = require("mongoose");
 const forums = require("../../models/forum");
@@ -170,7 +170,9 @@ const acceptBudget = async (req, res) => {
       );
     }
     //ADD THIS EVENT AS ORGANISED TO ALL THE FORUM STUDENTS.
-    const forumCoreTeamMembers = await students.find({forumCoreTeamMemberships: event.forumID._id});
+    const forumCoreTeamMembers = await students.find({
+      forumCoreTeamMemberships: event.forumID._id,
+    });
     for (let i = 0; i < forumCoreTeamMembers.length; i++) {
       console.log(forumCoreTeamMembers);
       const stu = forumCoreTeamMembers[i];
@@ -282,16 +284,38 @@ const approveEvent = async (req, res) => {
       throw new Error("cannot approve event during current status");
     }
 
+    if (event.equipment.length !== 0) {
+      const CFIRole = await roles.findOne({ name: "CFI" });
+      if (!CFIRole) throw new Error("No CFI role found!");
+      const RegistrarRole = await roles.findOne({ name: "REGISTRAR" });
+      if (!RegistrarRole) throw new Error("No Registrar role found!");
+      const CFI = await faculty.findOne({ role: CFIRole._id });
+      if (!CFI) throw new Error("No CFI found!");
+      const Registrar = await faculty.findOne({ role: RegistrarRole._id });
+      if (!Registrar) throw new Error("No Registrar found!");
+    }
+
     if (event.hasBudget) {
       //send a mail to the FO.
       event.eventStatus = "AWAITING FO APPROVAL";
       const FORole = await roles.findOne({ name: "FO" });
       if (!FORole) throw new Error("No FO role found!");
+
       const FO = await faculty.findOne({ role: FORole._id });
       if (!FO) throw new Error("No FO found!");
 
       mailer.sendMail(FO.email, newEventFO, {
         FOName: FO.name,
+        eventName: event.name,
+        forumName: event.forumID.name,
+      });
+      mailer.sendMail(Registrar.email, newEventRegistrar, {
+        FOName: Registrar.name,
+        eventName: event.name,
+        forumName: event.forumID.name,
+      });
+      mailer.sendMail(CFI.email, newEventCFI, {
+        FOName: CFI.name,
         eventName: event.name,
         forumName: event.forumID.name,
       });
