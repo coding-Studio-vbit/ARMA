@@ -187,7 +187,7 @@ export default function RequestsView() {
           eventId: id,
         });
         setMessage(res.data.response);
-        setShowDialog(true)
+        setShowDialog(true);
         setShowSpinner(false);
       }
       setLoading(true);
@@ -452,14 +452,17 @@ export default function RequestsView() {
       <hr className=" bg-black/10 h-[1.55px]" />
       <div className="flex gap-4 items-center">
         <span className="text-arma-gray font-medium text-2xl ">Comments</span>
-        {(faculty?.role.ADMIN || faculty?.role.SAC || faculty?.role.FO) && (
-          <button
-            onClick={() => makeRequest(actions.REQUEST_CHANGES)}
-            className="btn"
-          >
-            Request Changes
-          </button>
-        )}
+        {(faculty?.role.ADMIN || faculty?.role.SAC || faculty?.role.FO) &&
+          event.eventStatus !== "APPROVED" &&
+          event.eventStatus !== "CANCELLED" &&
+          event.eventStatus !== "COMPLETED" && (
+            <button
+              onClick={() => makeRequest(actions.REQUEST_CHANGES)}
+              className="btn"
+            >
+              Request Changes
+            </button>
+          )}
       </div>
       <textarea
         disabled={
@@ -475,38 +478,50 @@ export default function RequestsView() {
       border-[#E5E5EA] p-4 md:w-[60%] rounded-[8px]"
       ></textarea>
       <div className="flex flex-wrap gap-4 xsm:justify-center mt-4 ">
-        {(faculty?.role.FO || faculty?.role.ADMIN) && (
-          <button
-            onClick={() => makeRequest(actions.APPROVE_BUDGET)}
-            className="btn bg-arma-title basis-full xsm:basis-auto "
-          >
-            Approve Budget
-          </button>
-        )}
-        {(faculty?.role.FO || faculty?.role.ADMIN) && (
-          <button
-            onClick={() => makeRequest(actions.REJECT_BUDGET)}
-            className="btn -red bg-arma-title basis-full xsm:basis-auto "
-          >
-            Reject Budget
-          </button>
-        )}
-        {(faculty?.role.SAC || faculty?.role.ADMIN) && (
-          <button
-            onClick={() => makeRequest(actions.APPROVE_REQUEST)}
-            className="btn-green ml-auto xsm:ml-0"
-          >
-            Approve
-          </button>
-        )}
-        {(faculty?.role.SAC || faculty?.role.ADMIN) && (
-          <button
-            onClick={() => makeRequest(actions.REJECT_REQUEST)}
-            className="btn-red mr-auto xsm:mr-0"
-          >
-            Reject
-          </button>
-        )}
+        {(faculty?.role.FO || faculty?.role.ADMIN) &&
+          event.eventStatus !== "APPROVED" &&
+          event.eventStatus !== "CANCELLED" &&
+          event.eventStatus !== "COMPLETED" && (
+            <button
+              onClick={() => makeRequest(actions.APPROVE_BUDGET)}
+              className="btn bg-arma-title basis-full xsm:basis-auto "
+            >
+              Approve Budget
+            </button>
+          )}
+        {(faculty?.role.FO || faculty?.role.ADMIN) &&
+          event.eventStatus !== "APPROVED" &&
+          event.eventStatus !== "CANCELLED" &&
+          event.eventStatus !== "COMPLETED" && (
+            <button
+              onClick={() => makeRequest(actions.REJECT_BUDGET)}
+              className="btn -red bg-arma-title basis-full xsm:basis-auto "
+            >
+              Reject Budget
+            </button>
+          )}
+        {(faculty?.role.SAC || faculty?.role.ADMIN) &&
+          event.eventStatus !== "APPROVED" &&
+          event.eventStatus !== "CANCELLED" &&
+          event.eventStatus !== "COMPLETED" && (
+            <button
+              onClick={() => makeRequest(actions.APPROVE_REQUEST)}
+              className="btn-green ml-auto xsm:ml-0"
+            >
+              Approve
+            </button>
+          )}
+        {(faculty?.role.SAC || faculty?.role.ADMIN) &&
+          event.eventStatus !== "APPROVED" &&
+          event.eventStatus !== "CANCELLED" &&
+          event.eventStatus !== "COMPLETED" && (
+            <button
+              onClick={() => makeRequest(actions.REJECT_REQUEST)}
+              className="btn-red mr-auto xsm:mr-0"
+            >
+              Reject
+            </button>
+          )}
       </div>
     </div>
   );

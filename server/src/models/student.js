@@ -30,7 +30,7 @@ const student = new mongoose.Schema({
     type: Number,
     required: true,
     min: [1, "year can only go as low as 1"],
-    max: [4, "year can only go as high as 4"],
+    max: [5, "year can only go as high as 5(graduated)"],
   },
   course: { type: String, required: true },
   branch: {
