@@ -23,10 +23,7 @@ const {
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
 const halls = require("../../models/hall");
-const mongoose = require("mongoose");
-const facultyModel = require("../../models/faculty");
 const attendances = require("../../models/attendance");
-const { errorMonitor } = require("events");
 
 const getEvents = async (req, res) => {
   //For pagination
@@ -330,7 +327,7 @@ const reportAndMedia = async (req, res) => {
   try {
     console.log(req.body.eventID + "is the event id");
     let event = await events.findById(req.body.eventID).populate("forumID");
-    if (!["COMPLETED"].find(event.eventStatus))
+    if (!["COMPLETED"].find((v)=>v==event.eventStatus))
       throw new Error(
         "Cannot submit report and media during current event status: " +
           event.eventStatus
