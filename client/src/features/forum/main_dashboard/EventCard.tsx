@@ -13,20 +13,22 @@ const EventCard = ({ event, onClick }: EventCardProps) => {
   event.eventStatus = event.eventStatus.toUpperCase();
   switch (event.eventStatus) {
     case "COMPLETED":
+      eventStatusColor = "text-black";
+      break;
     case "APPROVED":
       eventStatusColor = "text-green-500";
       break;
     case "REJECTED BY SAC":
     case "REJECTED BY FO":
-    case "BUDGET REJECTED":
     case "CANCELLED":
       eventStatusColor = "text-red-600";
       break;
+    case "CHANGES REQUESTED BY SAC":
+    case "CHANGES REQUESTED BY FO":
+      eventStatusColor = "text-blue-600";
+      break;
     case "AWAITING SAC APPROVAL":
     case "AWAITING FO APPROVAL":
-    case "BUDGET CHANGES PENDING":
-    case "BUDGET REJECTED":
-    case "REQUESTED CHANGES BY SAC":
       eventStatusColor = "text-yellow-600";
       break;
     default:

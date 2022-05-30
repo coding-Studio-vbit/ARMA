@@ -327,7 +327,7 @@ const reportAndMedia = async (req, res) => {
   try {
     console.log(req.body.eventID + "is the event id");
     let event = await events.findById(req.body.eventID).populate("forumID");
-    if (!["COMPLETED"].find((v)=>v==event.eventStatus))
+    if (!["COMPLETED"].find((v) => v == event.eventStatus))
       throw new Error(
         "Cannot submit report and media during current event status: " +
           event.eventStatus
@@ -930,7 +930,7 @@ const cancelEvent = async (req, res) => {
     await event.save();
     res.json(
       response(
-        "The event has been cancelled succesfully.",
+        "The event hasn't been cancelled yet succesfully.",
         process.env.SUCCESS_CODE
       )
     );

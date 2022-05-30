@@ -219,9 +219,13 @@ const EventVenue = () => {
                   }}
                 >
                   add halls
-                  {!["COMPLETED", "REJECTED BY FO", "REJECTED BY SAC", "APPROVED", "CANCELLED"].includes(
-                    eventObject?.eventStatus
-                  ) ? (
+                  {![
+                    "COMPLETED",
+                    "REJECTED BY FO",
+                    "REJECTED BY SAC",
+                    "APPROVED",
+                    "CANCELLED",
+                  ].includes(eventObject?.eventStatus) ? (
                     <img
                       className="ml-3"
                       alt="add button"
@@ -387,7 +391,8 @@ const EventVenue = () => {
         selectedDays.length === 0 ? null : ![
             "COMPLETED",
             "APPROVED",
-            "REJECTED BY SAC", "REJECTED BY FO",
+            "REJECTED BY SAC",
+            "REJECTED BY FO",
             "CANCELLED",
           ].includes(eventObject.eventStatus) ? (
           <button
@@ -403,7 +408,9 @@ const EventVenue = () => {
           </button>
         ) : null}
       </div>
-
+      <div className="text-gray-400 text-xs">
+      *The event venue cannot be changed once the event has been approved, rejected, cancelled or completed.
+      </div>
       {showCalender ? CalenderPopUp() : null}
       {Object.keys(eventDates).length === 0 && selectedDays.length === 0 ? (
         <div className="flex flex-col items-center">
@@ -435,17 +442,25 @@ const EventVenue = () => {
         </div>
       ) : null}
       {DatesList()}
-      {selectedDays.length > 0 ? (!["COMPLETED", "REJECTED BY SAC", "REJECTED BY FO", "CANCELLED", "APPROVED"].find(v=>v==eventObject.eventStatus) ? (
-        <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
-          <button
-            className="btn px-8 py-3   text-xl tracking-wide  ml-auto my-8"
-            onClick={async () => {
-              updateReservations(eventDates);
-            }}
-          >
-            Update
-          </button>
-        </div>):null
+      {selectedDays.length > 0 ? (
+        ![
+          "COMPLETED",
+          "REJECTED BY SAC",
+          "REJECTED BY FO",
+          "CANCELLED",
+          "APPROVED",
+        ].find((v) => v == eventObject.eventStatus) ? (
+          <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
+            <button
+              className="btn px-8 py-3   text-xl tracking-wide  ml-auto my-8"
+              onClick={async () => {
+                updateReservations(eventDates);
+              }}
+            >
+              Update
+            </button>
+          </div>
+        ) : null
       ) : null}
     </div>
   );

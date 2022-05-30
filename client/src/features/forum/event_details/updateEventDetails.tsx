@@ -74,7 +74,7 @@ const UpdateEventDetails = () => {
         formData
       );
       setDialogMessage(res.data.response);
-      setShowSpinner(false)
+      setShowSpinner(false);
       setShowDialog(true);
       if (res.data.status === 1) {
         setTimeout(() => {
@@ -105,16 +105,25 @@ const UpdateEventDetails = () => {
       {/* Header */}
       <h1 className="font-sans text-arma-dark-blue font-semibold text-xl md:text-4xl inline-block  mt-2">
         {eventName} - Event Details
-        {!isEdit && !(["COMPLETED", "REJECTED BY SAC", "REJECTED BY FO", "CANCELLED", "APPROVED"].includes(eventStatus)) && (
-          <Edit
-            className="ml-3 text-black !text-xl md:!text-3xl cursor-pointer"
-            onClick={() => {
-              setIsEdit(true);
-            }}
-          />
-        )}
+        {!isEdit &&
+          ![
+            "COMPLETED",
+            "REJECTED BY SAC",
+            "REJECTED BY FO",
+            "CANCELLED",
+            "APPROVED",
+          ].includes(eventStatus) && (
+            <Edit
+              className="ml-3 text-black !text-xl md:!text-3xl cursor-pointer"
+              onClick={() => {
+                setIsEdit(true);
+              }}
+            />
+          )}
       </h1>
-
+      <div className="text-gray-400 text-xs mt-3">
+        *The event details cannot be changed once the event has been approved, rejected, cancelled or completed.
+      </div>
       <div className="mx-auto mt-12 flex flex-col ">
         {/* First Row */}
         <div className="mb-8">
