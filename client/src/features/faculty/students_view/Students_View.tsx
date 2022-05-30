@@ -189,11 +189,11 @@ export const Students_View = () => {
                     dataPath: "name",
                     sortable: false,
                   },
-                  {
-                    displayName: "DURATION",
-                    dataPath: "duration",
-                    sortable: false,
-                  },
+                  // {
+                  //   displayName: "DURATION",
+                  //   dataPath: "duration",
+                  //   sortable: false,
+                  // },
                 ]}
               />
             </div>

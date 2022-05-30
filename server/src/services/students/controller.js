@@ -58,13 +58,12 @@ const uploadStudentsList = async (req, res) => {
         console.log(data);
         let newStudent = students(data);
         await newStudent.save();
-      }
-      else{
+      } else {
         await students.findOneAndUpdate(
-          {rollNumber:data.rollNumber},
-          {$set:{year:data.year,
-                 email:data.email}},
-          { new: true });
+          { rollNumber: data.rollNumber },
+          { $set: { year: data.year, email: data.email } },
+          { new: true }
+        );
       }
     }
     res.json(
@@ -168,7 +167,7 @@ const generatePDF = async (req, res) => {
     const { studentId } = req.body;
     const student = await students
       .findById(studentId)
-      .populate({ path: "eventsOrganized", populate: { path: "forumID" } })
+      .populate("eventsOrganized")
       .populate("forumNonCoreTeamMemberships")
       .populate("forumCoreTeamMemberships.forumId")
       .populate("eventsParticipated");
