@@ -144,7 +144,7 @@ const studentViewCard = async (req, res) => {
       .populate("forumCoreTeamMemberships.forumId")
       .populate("forumNonCoreTeamMemberships")
       .populate({ path: "eventsParticipated" })
-      .populate({ path: "eventOrganized" });
+      .populate({ path: "eventsOrganized" });
     // let { attendedEvents, ...stu } = student.toObject();
     // for (let i = 0; i < attendedEvents.length; i++) {
     //   let set = new Set();
