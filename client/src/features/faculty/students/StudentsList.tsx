@@ -91,6 +91,15 @@ export default function StudentsList() {
       });
   }, [selectDepartment]);
 
+  useEffect(()=>{
+    if(selectCourse == null)
+    {
+      setSelectYear(null);
+      setSelectDepartment(null);
+      setSelectSection(null);
+    }
+  }, [selectCourse])
+
   return (
     <div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[75rem]">
       <p className="text-arma-title mb-16 text-2xl">STUDENTS</p>

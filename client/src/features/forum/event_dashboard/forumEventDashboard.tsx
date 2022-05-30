@@ -111,7 +111,7 @@ function ForumEventDashboard() {
     setLoadCancel(false);
   };
   const completeEvent = async () => {
-    setLoadCancel(true);
+    setLoadComplete(true);
     const response = await axios.get(`events/completeEvent/${state._id}`);
     setDialogMessage(response.data.response);
     setShowDialog(true);
@@ -119,7 +119,7 @@ function ForumEventDashboard() {
       setShowDialog(false);
       window.location.reload();
     }, 2000);
-    setLoadCancel(false);
+    setLoadComplete(false);
   };
 
   return !loading ? (

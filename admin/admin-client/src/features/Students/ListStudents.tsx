@@ -124,6 +124,15 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
     }
   };
 
+  useEffect(()=>{
+    if(selectCourse == null)
+    {
+      setSelectYear(null);
+      setSelectDepartment(null);
+      setSelectSection(null);
+    }
+  }, [selectCourse])
+
   return (
     <div>
       <div className="flex flex-col">

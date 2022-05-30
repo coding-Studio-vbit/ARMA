@@ -6,7 +6,6 @@ const attendance = require("../../models/attendance");
 const roles = require("../../models/role");
 const mailer = require("../util/mailer");
 const base64 = require("../util/base64");
-const fs = require("fs");
 const {
   budgetDocUpdateTemplate,
   newEventCreatedForum,
@@ -908,7 +907,12 @@ const completeEvent = async (req, res) => {
     event.eventCompleted = true;
     event.eventStatus = "COMPLETED";
     await event.save();
-    res.json("successfully marked event as complete", process.env.SUCCESS_CODE);
+    res.json(
+      response(
+        "successfully marked event as complete",
+        process.env.SUCCESS_CODE
+      )
+    );
   } catch (err) {
     console.log(err);
     res.json(response(err.message, process.env.FAILURE_CODE));
