@@ -452,21 +452,20 @@ const postAttendance = async (req, res) => {
 
 const getRequests = async (req, res) => {
   try {
-    let where = {}
-    if(req.user.role.find(v=>v.name=="SAC"))
-    {
-      where.eventStatus = {$in: ["AWAITING SAC APPROVAL", "CHANGES REQUESTED BY SAC"]};
-    }
-    else if(req.user.role.find(v=>v.name=="FO"))
-    {
-      where.eventStatus = {$in: ["AWAITING FO APPROVAL", "CHANGES REQUESTED BY FO"]};
-    }
-    else
-    {
+    let where = {};
+    if (req.user.role.find((v) => v.name == "SAC")) {
+      where.eventStatus = {
+        $in: ["AWAITING SAC APPROVAL", "CHANGES REQUESTED BY SAC"],
+      };
+    } else if (req.user.role.find((v) => v.name == "FO")) {
+      where.eventStatus = {
+        $in: ["AWAITING FO APPROVAL", "CHANGES REQUESTED BY FO"],
+      };
+    } else {
       where.eventStatus = {};
     }
 
-    let result = await events.find(where).populate("forumID").limit(10);
+    let result = await events.find(where).populate("forumID");
     res.json(response(result, process.env.SUCCESS_CODE));
     //console.log("Get",result);
   } catch (error) {

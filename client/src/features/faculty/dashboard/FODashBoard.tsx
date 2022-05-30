@@ -47,16 +47,28 @@ function FODashBoard() {
             }}
             placeholder="Status"
             options={[
-              { value: "", label: "ALL" },
-              { value: "AWAITING FO APPROVAL", label: "AWAITING FO APPROVAL" },
+              { value: null, label: "ALL" },
               {
-                value: "CHANGES REQUESTED BY FO",
-                label: "CHANGES REQUESTED BY FO",
+                value: "AWAITING FO APPROVAL",
+                label: "AWAITING FO APPROVAL",
+              },
+
+              {
+                value: "REJECTED BY SAC",
+                label: "REJECTED BY SAC",
+              },
+              { value: "REJECTED BY FO", label: "REJECTED BY FO" },
+              {
+                value: "AWAITING SAC APPROVAL",
+                label: "AWAITING SAC APPROVAL",
               },
               {
-                value: "BUDGET REJECTED BY FO",
-                label: "BUDGET REJECTED BY FO",
+                value: "CHANGES REQUESTED BY SAC",
+                label: "CHANGES REQUESTED BY SAC",
               },
+              { value: "APPROVED", label: "APPROVED" },
+              { value: "COMPLETED", label: "COMPLETED" },
+              { value: "CANCELLED", label: "CANCELLED" },
             ]}
           />
         </div>
@@ -65,12 +77,23 @@ function FODashBoard() {
         api={`${process.env.REACT_APP_SERVER_URL}events/`}
         filter={{
           eventStatus: status,
-          hasBudget: true,
           forumName: forumName,
           name: eventName,
         }}
         onTableRowClick={(id) => {
           navigate(`/faculty/requests/${id}`);
+        }}
+        transformer={(obj) => {
+          obj.forumID.name = (
+            <div className="flex">
+              <img
+                className="w-10 h-10 -mt-1 mr-2"
+                src={`data:image/png;base64, ${obj.logo}`}
+              />
+              {obj.forumID.name}
+            </div>
+          );
+          return obj;
         }}
         headers={headers}
         rowsPerPage={10}

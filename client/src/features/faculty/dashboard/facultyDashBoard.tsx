@@ -101,7 +101,6 @@ function FacultyDashBoard() {
           const eventList = response.data.response;
           // console.log(eventList);
 
-          if (eventList.length !== 0) {
             let data = [];
             for (let i = 0; i < eventList.length; i++) {
               let event: EventInfo = {
@@ -153,10 +152,7 @@ function FacultyDashBoard() {
             setCurrentRequests(data);
             setTodaysEvents(data);
             // setPendingRequests(eventList.length);
-          } else {
-            console.log("No Events");
-            setError("No Event Requests Found");
-          }
+          
           //data :set
         } else {
           console.log("Failure");
