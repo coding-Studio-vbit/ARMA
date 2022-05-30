@@ -59,6 +59,13 @@ const uploadStudentsList = async (req, res) => {
         let newStudent = students(data);
         await newStudent.save();
       }
+      else{
+        await students.findOneAndUpdate(
+          {rollNumber:data.rollNumber},
+          {$set:{year:data.year,
+                 email:data.email}},
+          { new: true });
+      }
     }
     res.json(
       response(
