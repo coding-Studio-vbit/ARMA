@@ -14,12 +14,8 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
   const [roll, setRoll] = useState("");
   const navigate = useNavigate();
   const location: any = useLocation();
-  const [uniqueid, setuniqueid] = useState(location.state?.rollNumber ?? "");
-  const [email, setEmail] = useState(location.state?.email ?? "");
   const [name, setName] = useState(location.state?.name ?? "");
-  const [phone, setPhone] = useState(location.state?.phone ?? "");
   const [uniqueidError, setUniqueidError] = useState<string>();
-  const [emailError, setEmailError] = useState<string>();
   const [nameError, setNameError] = useState<string>();
   const [selectYear, setSelectYear] = useState(location.state?.year ?? null);
   const [selectDepartment, setSelectDepartment] = useState(
@@ -30,20 +26,28 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
   );
   const [selectCourse, setSelectCourse] = useState(null);
 
-  const [courses, setCourses] = useState<any>([{value:null, label:"Any"}]);
-  const [departments, setDepartments] = useState<any>([{value:null, label:"Any"}]);
-  const [yearList, setYearList] = useState<any>([{value:null, label:"Any"}]);
-  const [sections, setSections] = useState<any>([{value:null, label:"Any"}]);
-  let { id } = useParams();
+  const [courses, setCourses] = useState<any>([{ value: null, label: "Any" }]);
+  const [departments, setDepartments] = useState<any>([
+    { value: null, label: "Any" },
+  ]);
+  const [yearList, setYearList] = useState<any>([
+    { value: null, label: "Any" },
+  ]);
+  const [sections, setSections] = useState<any>([
+    { value: null, label: "Any" },
+  ]);
 
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}students/getCourses`)
       .then((resp: any) => {
-        setCourses([...courses,
-          resp.data.response.map((c: any) => {
-            return { value: c, label: c };
-          })].flat()
+        setCourses(
+          [
+            ...courses,
+            resp.data.response.map((c: any) => {
+              return { value: c, label: c };
+            }),
+          ].flat()
         );
       });
   }, []);
@@ -55,10 +59,12 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
       .then((resp: any) => {
         console.log(resp);
         setDepartments(
-          [...departments,
+          [
+            ...departments,
             resp.data.response.map((c: any) => {
               return { value: c, label: c };
-            })].flat()
+            }),
+          ].flat()
         );
         return axios.get(
           `${process.env.REACT_APP_SERVER_URL}students/getTotalYears/${selectCourse}`
@@ -69,7 +75,7 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
         const y = [];
         for (let i = 1; i <= yrs.data.response; i++)
           y.push({ value: i, label: i });
-        setYearList([{value:null, label:"Any"},...y]);
+        setYearList([{ value: null, label: "Any" }, ...y]);
       });
   }, [selectCourse]);
   useEffect(() => {
@@ -83,14 +89,15 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
         let abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()";
         for (let i = 0; i < totalSections; i++)
           y.push({ value: abc[i], label: abc[i] });
-        setSections([{value:null,label:"Any"},...y]);
+        setSections([{ value: null, label: "Any" }, ...y]);
       });
   }, [selectDepartment]);
 
   const validateUniqueid = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uniqueid = e.target.value;
-    setuniqueid(uniqueid);
     var rollNumber = uniqueid.toUpperCase();
+
+    //THIS IS NOT HOW ROLL NUMBER SHOULD BE VALIDATED!!!!!!
     let rollRegex = new RegExp(
       /^(18|19|20|21)(p6|p5)(1|5)(a|A)(01|02|03|04|05|12|56|62|66|67|69|70)[(a-z)|(0-9)][0-9]$/i
     );
@@ -158,7 +165,6 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               }}
             />
 
-            
             <Select
               name="Course"
               placeholder="Course"
@@ -187,7 +193,7 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               className="basic-multi-select"
             />
             <Select
-            isDisabled={selectCourse == null}
+              isDisabled={selectCourse == null}
               name="Year"
               placeholder="Year"
               options={yearList}
@@ -215,8 +221,7 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               className="basic-multi-select"
             />
             <Select
-                        isDisabled={selectCourse == null}
-
+              isDisabled={selectCourse == null}
               name="Branch"
               placeholder="Branch"
               options={departments}
@@ -243,7 +248,6 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               }}
               className="basic-multi-select"
             />
-{console.log("selectDepart is now ", selectDepartment)}
             <Select
               isDisabled={selectCourse == null || selectDepartment == null}
               name="Section"
