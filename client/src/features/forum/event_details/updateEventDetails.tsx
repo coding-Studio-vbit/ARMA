@@ -105,7 +105,7 @@ const UpdateEventDetails = () => {
       {/* Header */}
       <h1 className="font-sans text-arma-dark-blue font-semibold text-xl md:text-4xl inline-block  mt-2">
         {eventName} - Event Details
-        {!isEdit && !(["COMPLETED", "REJECTED", "CANCELLED", "APPROVED"].includes(eventStatus)) && (
+        {!isEdit && !(["COMPLETED", "REJECTED BY SAC", "REJECTED BY FO", "CANCELLED", "APPROVED"].includes(eventStatus)) && (
           <Edit
             className="ml-3 text-black !text-xl md:!text-3xl cursor-pointer"
             onClick={() => {

@@ -16,7 +16,8 @@ const EventCard = ({ event, onClick }: EventCardProps) => {
     case "APPROVED":
       eventStatusColor = "text-green-500";
       break;
-    case "REJECTED":
+    case "REJECTED BY SAC":
+    case "REJECTED BY FO":
     case "BUDGET REJECTED":
     case "CANCELLED":
       eventStatusColor = "text-red-600";

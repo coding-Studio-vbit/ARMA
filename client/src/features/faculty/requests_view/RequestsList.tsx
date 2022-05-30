@@ -34,17 +34,16 @@ const RequestsList = () => {
             },
 
             {
-              value: "BUDGET REJECTED BY SAC",
-              label: "BUDGET REJECTED BY SAC",
+              value: "REJECTED BY SAC",
+              label: "REJECTED BY SAC",
             },
-            { value: "BUDGET REJECTED BY FO", label: "BUDGET REJECTED BY FO" },
+            { value: "REJECTED BY FO", label: "REJECTED BY FO" },
             { value: "AWAITING SAC APPROVAL", label: "AWAITING SAC APPROVAL" },
             {
               value: "CHANGES REQUESTED BY SAC",
               label: "CHANGES REQUESTED BY SAC",
             },
             { value: "APPROVED", label: "APPROVED" },
-            { value: "REJECTED", label: "REJECTED" },
             { value: "COMPLETED", label: "COMPLETED" },
             { value: "CANCELLED", label: "CANCELLED" },
           ]}

@@ -7,7 +7,6 @@ import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { UpdateDatesState } from "../../../redux/actions";
 import { RootState } from "../../../redux/reducers";
-import { log } from "console";
 
 interface SelectedHallsProps {
   show: boolean;
@@ -55,7 +54,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
           </div>
           <div className="flex">
             <button
-            disabled={["COMPLETED","REJECTED", "APPROVED", "CANCELLED"].includes(props.eventStatus)}
+            disabled={["COMPLETED","REJECTED BY SAC", "REJECTED BY FO", "APPROVED", "CANCELLED"].includes(props.eventStatus)}
               className={
                 reservations[hall.toUpperCase()] &&
                 reservations[hall.toUpperCase()].includes("morning") &&
@@ -80,7 +79,7 @@ const SelectHalls = (props: SelectedHallsProps) => {
               <div className="">Morning</div>
             </button>
             <button
-            disabled={["COMPLETED","REJECTED", "APPROVED", "CANCELLED"].includes(props.eventStatus)}
+            disabled={["COMPLETED","REJECTED BY SAC", "REJECTED BY FO", "APPROVED", "CANCELLED"].includes(props.eventStatus)}
               className={
                 reservations[hall.toUpperCase()] &&
                 reservations[hall.toUpperCase()].includes("afternoon") &&

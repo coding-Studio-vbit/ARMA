@@ -219,7 +219,7 @@ const EventVenue = () => {
                   }}
                 >
                   add halls
-                  {!["COMPLETED", "REJECTED", "APPROVED", "CANCELLED"].includes(
+                  {!["COMPLETED", "REJECTED BY FO", "REJECTED BY SAC", "APPROVED", "CANCELLED"].includes(
                     eventObject?.eventStatus
                   ) ? (
                     <img
@@ -382,12 +382,12 @@ const EventVenue = () => {
         className="flex text-arma-title text-4xl font-bold mx-5 text-justify mt-3 mb-3 items-center"
         style={{ color: "#1970A3" }}
       >
-        Update Event Venue
+        Event Venue
         {Object.keys(eventDates).length === 0 &&
         selectedDays.length === 0 ? null : ![
             "COMPLETED",
             "APPROVED",
-            "REJECTED",
+            "REJECTED BY SAC", "REJECTED BY FO",
             "CANCELLED",
           ].includes(eventObject.eventStatus) ? (
           <button
@@ -435,7 +435,7 @@ const EventVenue = () => {
         </div>
       ) : null}
       {DatesList()}
-      {selectedDays.length > 0 ? (
+      {selectedDays.length > 0 ? (!["COMPLETED", "REJECTED BY SAC", "REJECTED BY FO", "CANCELLED", "APPROVED"].find(v=>v==eventObject.eventStatus) ? (
         <div className="sm:w-3/4 flex sm:items-end mx-auto sm:mx-0">
           <button
             className="btn px-8 py-3   text-xl tracking-wide  ml-auto my-8"
@@ -445,7 +445,7 @@ const EventVenue = () => {
           >
             Update
           </button>
-        </div>
+        </div>):null
       ) : null}
     </div>
   );
