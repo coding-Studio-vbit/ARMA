@@ -47,14 +47,14 @@ export const Forum_View = () => {
             <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr] items-center">
               <div className="grid grid-cols-[0.8fr_1fr] md:grid-cols-[0.8fr_1fr] lg:grid-cols-[0.5fr_1fr] items-center">
                 <span className="text-arma-gray text-xl">Email:</span>
-                <span className="text-xl ml-4">{info?.email ?? " "}</span>
+                <span className="text-xl ml-4 overflow-scroll w-48 sm:w-max sm:overflow-clip">{info?.email ?? " "}</span>
               </div>
             </div>
             <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr]  items-center">
               <span className="text-arma-gray text-xl">
                 Faculty Coordinator:
               </span>
-              <span className="text-xl w-min">
+              <span className="text-xl">
                 {info?.facultyCoordinatorID?.name}
               </span>
             </div>
@@ -80,30 +80,29 @@ export const Forum_View = () => {
             headers={[
               {
                 displayName: "NAME",
-                dataPath: "studentID.name",
+                dataPath: "name",
                 sortable: false,
               },
               {
                 displayName: "ROLL NUMBER",
-                dataPath: "studentID.rollNumber",
+                dataPath: "rollNumber",
                 sortable: false,
               },
               {
                 displayName: "DEPARTMENT",
-                dataPath: "studentID.branch",
+                dataPath: "branch",
                 sortable: false,
               },
               {
                 displayName: "YEAR",
-                dataPath: "studentID.year",
+                dataPath: "year",
                 sortable: false,
               },
               {
                 displayName: "SECTION",
-                dataPath: "studentID.section",
+                dataPath: "section",
                 sortable: false,
               },
-              { displayName: "ROLE", dataPath: "designation", sortable: false },
             ]}
           />
         </div>
