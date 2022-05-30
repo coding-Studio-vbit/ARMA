@@ -17,9 +17,11 @@ export const Students_View = () => {
     rollNumber: string;
     branch: string;
     phone: number;
-    coreTeamMember: any[];
+    forumCoreTeamMemberships: any[];
+    forumNonCoreTeamMemberships: any[];
     forumMemberships: any[];
-    attendedEvents: any[];
+    eventsParticipated: any[];
+    eventsOrganized: any[];
   }>();
   useEffect(() => {
     const student = async () => {
@@ -91,10 +93,10 @@ export const Students_View = () => {
 
         <div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[60rem]">
           <p className="text-arma-title width-[90%] mb-5 mt-5 text-2xl">
-            Memberships
+           Core Team Memberships
           </p>
-          {info?.forumMemberships?.length !== 0 ? (
-            info?.forumMemberships?.map((i: any) => {
+          {info?.forumCoreTeamMemberships?.length !== 0 ? (
+            info?.forumCoreTeamMemberships?.map((i: any) => {
               return (
                 <div
                   key={i.forumId}
@@ -107,7 +109,28 @@ export const Students_View = () => {
               );
             })
           ) : (
-            <p>No memberships taken.</p>
+            <p>No core team memberships taken.</p>
+          )}
+        </div>
+        <div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[60rem]">
+          <p className="text-arma-title width-[90%] mb-5 mt-5 text-2xl">
+           Non-Core Team Memberships
+          </p>
+          {info?.forumNonCoreTeamMemberships?.length !== 0 ? (
+            info?.forumNonCoreTeamMemberships?.map((i: any) => {
+              return (
+                <div
+                  key={i._id}
+                  className="shadow-xl border-2 flex flex-col p-4 w-max rounded-[16px]"
+                >
+                  <span>
+                   {i.forumId.name}
+                  </span>
+                </div>
+              );
+            })
+          ) : (
+            <p>No non-core team memberships taken.</p>
           )}
         </div>
 
@@ -125,12 +148,12 @@ export const Students_View = () => {
                 headers={[
                   {
                     displayName: "FORUM",
-                    dataPath: "coreTeamMember.forumID.name",
+                    dataPath: "forumCoreTeamMemberships.forumId.name",
                     sortable: false,
                   },
                   {
                     displayName: "ROLE",
-                    dataPath: "coreTeamMember.role",
+                    dataPath: "forumCoreTeamMemberships.designation",
                     sortable: false,
                   },
                   // {
@@ -154,7 +177,7 @@ export const Students_View = () => {
           <div className="flex flex-wrap gap-4 mb-6 items-center">
             <div className="w-full grow shrink basis-[250px]">
               <DataTable
-                data={info?.attendedEvents}
+                data={info?.eventsParticipated}
                 headers={[
                   {
                     displayName: "FORUM",

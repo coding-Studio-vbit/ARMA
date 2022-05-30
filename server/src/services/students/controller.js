@@ -141,20 +141,22 @@ const studentViewCard = async (req, res) => {
     let { id } = req.body;
     let student = await students
       .findOne({ _id: id })
-      .populate("forumMemberships.forumId")
-      .populate({ path: "eventsParticipated", populate: { path: "forumID" } });
-    let { attendedEvents, ...stu } = student.toObject();
-    for (let i = 0; i < attendedEvents.length; i++) {
-      let set = new Set();
-      for (let j = 0; j < attendedEvents[i].halls.length; j++) {
-        set.add(attendedEvents[i].halls[j].date);
-      }
-      attendedEvents[i]["duration"] = 3; //set.size
-    }
-    stu["attendedEvents"] = null;
-    stu["attendedEvents"] = attendedEvents;
-    console.log(student.attendedEvents);
-    res.json(response(stu, process.env.SUCCESS_CODE));
+      .populate("forumCoreTeamMemberships.forumId")
+      .populate("forumNonCoreTeamMemberships")
+      .populate({ path: "eventsParticipated" })
+      .populate({ path: "eventOrganized" });
+    // let { attendedEvents, ...stu } = student.toObject();
+    // for (let i = 0; i < attendedEvents.length; i++) {
+    //   let set = new Set();
+    //   for (let j = 0; j < attendedEvents[i].halls.length; j++) {
+    //     set.add(attendedEvents[i].halls[j].date);
+    //   }
+    //   attendedEvents[i]["duration"] = 3; //set.size
+    // }
+    // stu["attendedEvents"] = null;
+    // stu["attendedEvents"] = attendedEvents;
+    // console.log(student.attendedEvents);
+    res.json(response(student, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
     res.json(response(err.message, process.env.FAILURE_CODE));
