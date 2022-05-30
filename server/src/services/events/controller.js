@@ -37,7 +37,6 @@ const getEvents = async (req, res) => {
     where.hasBudget = req.query.hasBudget == "true";
   }
   if (req.query.eventStatus) where.eventStatus = req.query.eventStatus;
-  console.log(where);
   //For sorting
   let sort = {};
   if (req.query.orderBy && req.query.order)
@@ -453,7 +452,21 @@ const postAttendance = async (req, res) => {
 
 const getRequests = async (req, res) => {
   try {
-    let result = await events.find({}).populate("forumID");
+    let where = {}
+    if(req.user.role.find(v=>v.name=="SAC"))
+    {
+      where.eventStatus = {$in: ["AWAITING SAC APPROVAL", "CHANGES REQUESTED BY SAC"]};
+    }
+    else if(req.user.role.find(v=>v.name=="FO"))
+    {
+      where.eventStatus = {$in: ["AWAITING FO APPROVAL", "CHANGES REQUESTED BY FO"]};
+    }
+    else
+    {
+      where.eventStatus = {};
+    }
+
+    let result = await events.find(where).populate("forumID").limit(10);
     res.json(response(result, process.env.SUCCESS_CODE));
     //console.log("Get",result);
   } catch (error) {
