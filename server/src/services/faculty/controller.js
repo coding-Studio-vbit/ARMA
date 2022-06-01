@@ -65,7 +65,7 @@ const editProfile = async (req, res) => {
     if(newPassword !== null)
     {
       const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
-      const newHash = bcrypt.hash(newPassword, salt);
+      const newHash = await bcrypt.hash(newPassword, salt);
       user = await faculty
       .findOneAndUpdate(
         { email: email },
