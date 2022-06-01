@@ -60,8 +60,23 @@ const getFacultyList = async (req, res) => {
 
 const editProfile = async (req, res) => {
   try {
-    const { email, designation, phone } = req.body;
-    const user = await faculty
+    const { email, designation, phone, newPassword } = req.body;
+    let user = {};
+    if(newPassword !== null)
+    {
+      const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
+      const newHash = bcrypt.hash(newPassword, salt);
+      user = await faculty
+      .findOneAndUpdate(
+        { email: email },
+        { $set: { designation: designation, phone: phone, password: newHash } },
+        { new: true }
+      )
+      .populate("role")
+      .select("-password");
+    }
+    else{
+      user = await faculty
       .findOneAndUpdate(
         { email: email },
         { $set: { designation: designation, phone: phone } },
@@ -69,6 +84,8 @@ const editProfile = async (req, res) => {
       )
       .populate("role")
       .select("-password");
+    }
+     
     res.json(response(user, process.env.SUCCESS_CODE));
   } catch (error) {
     res.json(

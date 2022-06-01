@@ -3,12 +3,12 @@ const forums = require("../../models/forum");
 const reservations = require("../../models/reservations");
 const response = require("../util/response");
 const base64 = require("../util/base64");
+const bcrypt = require("bcrypt");
 const fs = require("fs");
 const students = require("../../models/student");
 const equipments = require("../../models/equipment");
 const facultyModel = require("../../models/faculty");
 const path = require("path");
-const mongoose = require("mongoose");
 const dashboard = async (req, res) => {
   try {
     let myEvents = await events.find({ forumID: req.user._id });
@@ -274,8 +274,24 @@ const forumEventNumber = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { description, email } = req.body;
-    const user = await forums
+    const { description, email,newPassword } = req.body;
+    let user = {};
+    if(newPassword !== null)
+    {
+      const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
+      const newHash = bcrypt.hash(newPassword, salt);
+      user = await forums
+      .findOneAndUpdate(
+        { email: email },
+        { $set: { description: description, password: newHash } },
+        { new: true }
+      ) 
+      .populate("facultyCoordinatorID name")
+      .populate("role");
+    }
+    else
+    {
+      user = await forums
       .findOneAndUpdate(
         { email: email },
         { $set: { description: description } },
@@ -283,6 +299,7 @@ const updateProfile = async (req, res) => {
       )
       .populate("facultyCoordinatorID name")
       .populate("role");
+    }
     res.json(response(user, process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);

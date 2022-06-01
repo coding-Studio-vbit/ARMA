@@ -38,7 +38,7 @@ const faculty = new mongoose.Schema({
     },
   },
   designation: String,
-  password: String,
+  password: {type:String, required:true},
   phone: {
     type: Number,
     validate: {

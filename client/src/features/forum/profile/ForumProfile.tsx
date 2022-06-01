@@ -1,4 +1,4 @@
-import { Delete, Edit } from "@material-ui/icons";
+import { Delete, Edit, Visibility, VisibilityOff } from "@material-ui/icons";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -61,6 +61,11 @@ export default function ForumProfile() {
   // console.log("Rebuild Profile");
   const [profileObj, setprofileObj] = useState(null);
   const [pictureChanged, setPictureChanged] = useState<boolean>(false);
+
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
+  const [passwordError, setPasswordError] = useState<string>();
+
   const [url, setUrl] = useState("");
   let [name, setName] = useState<string>(" ");
 
@@ -146,6 +151,7 @@ export default function ForumProfile() {
         email: forumEmail,
         description: description,
         facultyCoordinator: facultycoordinator,
+        newPassword: newPassword ? newPassword : null
       }
     );
     if (pictureChanged) {
@@ -178,6 +184,15 @@ export default function ForumProfile() {
     }
     setShow(true);
     setIsEdit(false);
+  };
+  const validatePass = (e: React.ChangeEvent<HTMLInputElement>) => {
+    var password = e.target.value;
+    setNewPassword(password);
+    if (password.length === 0) {
+      setPasswordError("Password field is empty");
+    } else {
+      setPasswordError("");
+    }
   };
 
   useEffect(() => {
@@ -271,6 +286,7 @@ export default function ForumProfile() {
             }}
           />
         </div>
+        
         <div className="flex flex-col w-full md:flex-row gap-y-8 sm:gap-x-8">
           {isEdit ? (
             <Select
@@ -326,6 +342,30 @@ export default function ForumProfile() {
             }}
           />
         </div>
+        {isEdit && <div id="editPassword" className="flex flex-col w-full md:flex-row gap-y-8 sm:gap-x-8">
+          <div className="relative mb-8">
+            <InputField
+              className="mb-3"
+              name="New Password"
+              type={`${!showNewPassword && "password"}`}
+              error={passwordError}
+              onChange={(e) => {
+                validatePass(e);
+              }}
+            />
+            {showNewPassword ? (
+              <Visibility
+                className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
+                onClick={() => setShowNewPassword(false)}
+              />
+            ) : (
+              <VisibilityOff
+                className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
+                onClick={() => setShowNewPassword(true)}
+              />
+            )}
+          </div>
+        </div>}
         <div className="h-12">
           <AnimatePresence initial={false} exitBeforeEnter>
             {isEdit && (
