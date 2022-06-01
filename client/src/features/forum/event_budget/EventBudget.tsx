@@ -33,10 +33,11 @@ export default function EventBudget() {
   return (
     <div className="flex flex-col sm:mt-12 ">
       <Dialog show={showDialog} setShow={setShowDialog} title={dialogMessage} />
-      <div className="flex justify-center items-center mb-16  gap-2">
+      <div className="flex justify-center items-center mb-3  gap-2">
         <span className="sm:text-2xl shrink text-xl font-semibold  text-arma-dark-blue ">
           {event?.name} - Budget
         </span>
+        
         {!isEdit &&
           ["CHANGES REQUESTED BY SAC", "CHANGES REQUESTED BY FO"].includes(
             event?.eventStatus
@@ -47,7 +48,11 @@ export default function EventBudget() {
             />
           )}
       </div>
+      <div className="text-gray-400 text-xs mx-auto w-max mb-4">
+        *The event budget can be changed only when the SAC or the FO requests a change.
+      </div>
       <div className="flex flex-col items-center  sm:mx-auto ">
+      
         <div className="flex flex-col max-w-[80%] w-[600px]">
           <div className="flex gap-2">
             <span className="text-gray-600 text-lg lg:text-xl">

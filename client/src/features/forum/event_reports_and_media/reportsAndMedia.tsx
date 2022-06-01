@@ -24,6 +24,10 @@ export const ReportAndMedia = () => {
       <span className="text-arma-title mb-12 text-3xl md:text-left text-center">
         {"Report & Media"}
       </span>
+      <div className="text-gray-400 text-xs mx-auto w-max mb-4">
+        *The event report and media can be sent only once the event is
+        completed. <br/>These attachments will be used to write about your event in the VBIT website.{" "}
+      </div>
       <div className="flex text-center w-[80%] flex-wrap mx-auto justify-center  gap-x-24 gap-y-12 ">
         <EventReport pdf={pdf} setPdf={setPdf} />
         <EventImages images={images} setImages={setImages} />
@@ -167,13 +171,11 @@ const EventImages: FC<{
           accept="image/*"
           className="file-upload hidden"
           onChange={(e: any) => {
-            console.log(e.target.files[0])
-            if(e.target.files[0].type.substring(0,5) !== "image")
-            {
+            console.log(e.target.files[0]);
+            if (e.target.files[0].type.substring(0, 5) !== "image") {
               setError("You can only upload images.");
               setShow(true);
-            }
-            else if (images.length < 10)
+            } else if (images.length < 10)
               setImages([
                 ...images,
                 {
