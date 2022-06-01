@@ -1,12 +1,12 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog } from "../../Components/Dialog/Dialog";
 import { InputField } from "../../Components/InputField/InputField";
 import Select from "react-select";
 import { containerCSS } from "react-select/dist/declarations/src/components/containers";
-import { Close } from "@material-ui/icons";
 import axios from "../../utils/axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { UploadStudentList } from "./UploadStudentList";
+import {validateRollNumber} from "../../utils/rollNumberValidation";
 
 interface AddStudentsProps {
   isEdit: boolean;
@@ -112,25 +112,7 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
       });
   }, [selectDepartment]);
 
-  const validateUniqueid = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const uniqueid = e.target.value;
-    setuniqueid(uniqueid);
-    var rollNumber = uniqueid.toUpperCase();
-    let rollRegex = new RegExp(
-      /^(18|19|20|21)(p6|p5)(1|5)(a|A)(01|02|03|04|05|12|56|62|66|67|69|70)[(a-z)|(0-9)][0-9]$/i
-    );
-    if (rollNumber.length === 0) {
-      setUniqueidError("roll number cannot be empty");
-    } else if (rollNumber.length < 10) {
-      setUniqueidError("roll number cannot be less than 10 characters");
-    } else if (rollNumber.length > 10) {
-      setUniqueidError("roll number cannot exceed 10 characters");
-    } else if (!rollRegex.test(rollNumber)) {
-      setUniqueidError("roll number invalid");
-    } else {
-      setUniqueidError("");
-    }
-  };
+  
 
   const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
@@ -308,7 +290,7 @@ export const AddStudents = ({ isEdit }: AddStudentsProps) => {
             value={uniqueid}
             error={uniqueidError}
             onChange={(e) => {
-              validateUniqueid(e);
+              setuniqueid(e.target.value);
             }}
           />
         </div>

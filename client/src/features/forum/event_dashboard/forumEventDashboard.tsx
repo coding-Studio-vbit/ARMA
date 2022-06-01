@@ -239,7 +239,7 @@ function ForumEventDashboard() {
               className="btn bg-[#666666] mx-auto"
               onClick={completeEvent}
             >
-              finish event
+              mark event as complete
             </button>
           )}
         </div>

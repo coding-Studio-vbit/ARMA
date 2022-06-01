@@ -400,7 +400,10 @@ const uploadRegistrantsList = async (req, res) => {
     console.log(error);
     res.json(
       response(
-        { message: "Upload of Registrants failed" },
+        {
+          message:
+            "Upload of Registrants failed : " + JSON.stringify(error.message),
+        },
         process.env.FAILURE_CODE
       )
     );

@@ -4,6 +4,7 @@ import { Info } from "@material-ui/icons";
 import { useState } from "react";
 import axios from "../../utils/axios";
 import { useNavigate } from "react-router-dom";
+import { validateRollNumber } from "../../utils/rollNumberValidation";
 
 export const UploadStudentList = () => {
   const nav = useNavigate();
@@ -63,9 +64,6 @@ export const UploadStudentList = () => {
   const validateUniqueid = (val: any) => {
     const uniqueid = val;
     var rollNumber = uniqueid.toUpperCase();
-    let rollRegex = new RegExp(
-      /^(18|19|20|21)(p6|p5)(1|5)(a|A)(01|02|03|04|05|12|56|62|66|67|69|70)[(a-z)|(0-9)][0-9]$/i
-    );
     if (rollNumber.length === 0) {
       setDialogTitle("Roll Number is required in row " + indx);
       setShow(true);
@@ -74,7 +72,7 @@ export const UploadStudentList = () => {
       setDialogTitle("Invalid Roll Number in row " + indx);
       setShow(true);
       throw Error;
-    } else if (!rollRegex.test(rollNumber)) {
+    } else if (validateRollNumber(rollNumber)) {
       setDialogTitle("Invalid Roll Number in row " + indx);
       setShow(true);
       throw Error;

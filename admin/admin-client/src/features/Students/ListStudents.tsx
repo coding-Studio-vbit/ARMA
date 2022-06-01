@@ -93,27 +93,6 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
       });
   }, [selectDepartment]);
 
-  const validateUniqueid = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const uniqueid = e.target.value;
-    var rollNumber = uniqueid.toUpperCase();
-
-    //THIS IS NOT HOW ROLL NUMBER SHOULD BE VALIDATED!!!!!!
-    let rollRegex = new RegExp(
-      /^(18|19|20|21)(p6|p5)(1|5)(a|A)(01|02|03|04|05|12|56|62|66|67|69|70)[(a-z)|(0-9)][0-9]$/i
-    );
-    if (rollNumber.length === 0) {
-      setUniqueidError("roll number cannot be empty");
-    } else if (rollNumber.length < 10) {
-      setUniqueidError("roll number cannot be less than 10 characters");
-    } else if (rollNumber.length > 10) {
-      setUniqueidError("roll number cannot exceed 10 characters");
-    } else if (!rollRegex.test(rollNumber)) {
-      setUniqueidError("roll number invalid");
-    } else {
-      setUniqueidError("");
-    }
-  };
-
   const validateName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value;
     setName(name);
@@ -170,7 +149,6 @@ export const ListStudents = ({ isEdit }: SearchStudentsProps) => {
               error={uniqueidError}
               onChange={(e) => {
                 setRoll(e.target.value);
-                validateUniqueid(e);
               }}
             />
 
