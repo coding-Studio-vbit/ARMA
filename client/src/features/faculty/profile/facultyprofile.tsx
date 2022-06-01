@@ -1,5 +1,5 @@
-import { Edit, ShopTwoTone } from "@material-ui/icons";
-import React, { useState } from "react";
+import { Edit, Visibility, VisibilityOff } from "@material-ui/icons";
+import { useState } from "react";
 import { InputField } from "../../../components/InputField/InputField";
 import { useUser } from "../../../providers/user/UserProvider";
 import { AnimatePresence, motion } from "framer-motion";
@@ -19,10 +19,23 @@ function FacultyProfile() {
   const [phone, setPhone] = useState<string>(faculty?.phone ?? " ");
   const [message, setMessage] = useState("");
   const [show, setShow] = useState(false);
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
+  const [passwordError, setPasswordError] = useState<string>("");
+
+  const validatePass = (e: React.ChangeEvent<HTMLInputElement>) => {
+    var password = e.target.value;
+    setNewPassword(password);
+    if (password.length === 0) {
+      setPasswordError("Password field is empty");
+    } else {
+      setPasswordError("");
+    }
+  };
   const save = async () => {
     const res = await axios.put(
       process.env.REACT_APP_SERVER_URL + "faculty/editProfile",
-      { email: email, designation: designation, phone: phone }
+      { email: email, designation: designation, phone: phone, newPassword: newPassword !== "" ? newPassword : null }
     );
     const data = res.data;
     if (data.status === 1) {
@@ -117,6 +130,35 @@ function FacultyProfile() {
               disabled={!isEdit}
             />
           </div>
+          {isEdit && (
+            <div
+              id="editPassword"
+              className="flex flex-col w-full md:flex-row gap-y-8 sm:gap-x-8"
+            >
+              <div className="relative mb-8">
+                <InputField
+                  className="mb-3"
+                  name="New Password"
+                  type={`${!showNewPassword && "password"}`}
+                  error={passwordError}
+                  onChange={(e) => {
+                    validatePass(e);
+                  }}
+                />
+                {showNewPassword ? (
+                  <Visibility
+                    className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
+                    onClick={() => setShowNewPassword(false)}
+                  />
+                ) : (
+                  <VisibilityOff
+                    className="absolute top-[0.85rem] right-3 text-arma-title cursor-pointer"
+                    onClick={() => setShowNewPassword(true)}
+                  />
+                )}
+              </div>
+            </div>
+          )}
         </div>
         {isEdit && (
           <div className="flex gap-16">

@@ -151,7 +151,7 @@ export default function ForumProfile() {
         email: forumEmail,
         description: description,
         facultyCoordinator: facultycoordinator,
-        newPassword: newPassword ? newPassword : null
+        newPassword: newPassword !== "" ? newPassword : null
       }
     );
     if (pictureChanged) {
