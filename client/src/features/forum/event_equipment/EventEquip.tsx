@@ -42,7 +42,7 @@ export default function EventEquip() {
   return (
     <div className="flex flex-col sm:mx-24 mt-8 md:items-start items-center mb-8 ">
       <span className="text-arma-title sm:text-4xl flex text-2xl mb-8 font-semibold">
-        Choose Equipment 
+        Choose Equipment
         <BusinessCenter fontSize="large" className="text-arma-title" />
       </span>
       <div className="flex gap-2">
@@ -104,8 +104,6 @@ export default function EventEquip() {
         >
           ADD
         </button>
-        
-        
       </div>
       <span className="text-red-500 ml-2 mt-4 mb-4 h-6 ">{addError}</span>
 
@@ -146,7 +144,10 @@ export default function EventEquip() {
              }
 
          </div> */}
-         {showSpinner ? ( <Spinner/>):(<button
+      {showSpinner ? (
+        <Spinner />
+      ) : (
+        <button
           className="btn bg-arma-title mt-4 rounded-[8px] px-6 py-2 my-auto"
           onClick={() => {
             setShowSpinner(true);
@@ -164,7 +165,7 @@ export default function EventEquip() {
               .post(`${process.env.REACT_APP_SERVER_URL}events/`, newData)
               .then((response) => {
                 console.log(response);
-                // navigate("/forum");
+                navigate("/forum");
                 setShowSpinner(false);
               })
               .catch((error) => {
@@ -174,8 +175,8 @@ export default function EventEquip() {
           }}
         >
           submit
-        </button>)}
-       
+        </button>
+      )}
     </div>
   );
 }
