@@ -1,11 +1,9 @@
 const bcrypt = require("bcrypt");
 const students = require("../../models/student");
-const role = require("../../models/role");
 const forums = require("../../models/forum");
 const facultyModel = require("../../models/faculty");
 const response = require("../util/response");
 const admins = require("../../models/admin");
-const pdf = require("html-pdf");
 const roles = require("../../models/role");
 const mongoose = require("mongoose");
 const { readFileSync, writeFileSync } = require("fs");
@@ -70,10 +68,10 @@ const register = async (user, userType) => {
     const password = await bcrypt.hash(user.password, salt);
     if (userType === "FACULTY") {
       const myRole = await roles.findOne({ name: "FACULTY" });
-      let { rolesF, ...newuser } = user;
+      let { role, ...newuser } = user;
       const arr = [];
-      for (let index = 0; index < rolesF.length; index++) {
-       const element = rolesF[index];
+      for (let index = 0; index < role.length; index++) {
+       const element = role[index];
        const rol = await roles.findById(element);
        arr.push(rol);
       }
@@ -87,7 +85,7 @@ const register = async (user, userType) => {
         });
         if (
           currentFacultyWithRole &&
-          rolesF.find((x) => String(x) == String(currentRole._id))
+          role.find((x) => String(x) == String(currentRole._id))
         ) {
           currentFacultyWithRole.role = currentFacultyWithRole.role.filter(
             (v) => String(currentRole._id) !== String(v)
