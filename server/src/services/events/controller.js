@@ -105,10 +105,10 @@ const createEvent = async (req, res) => {
     //Add the forum members as registrants.
 
     const forumMems = await students.find({
-      forumNonCoreTeamMemberships: req.user._id
+      forumNonCoreTeamMemberships: req.user._id,
     });
     const forumCore = await students.find({
-      forumCoreTeamMemberships: req.user._id
+      "forumCoreTeamMemberships.forumId": req.user._id,
     });
 
     newAttendanceDoc.registrantsList = forumMems
