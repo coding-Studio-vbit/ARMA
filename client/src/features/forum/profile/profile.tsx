@@ -3,7 +3,7 @@ import { AccountCircle } from "@material-ui/icons";
 import "./profile.css";
 import axios from "../../../utils/axios";
 
-function Profile({ url, setUrl, isEdit, profileObj, setprofileObj, setPictureChanged }) {
+function Profile({ url, setUrl, isEdit, profileObj, setprofileObj, setPictureChanged,setFile }) {
   async function getProfileURL() {
     const res = await axios.get(
       `${process.env.REACT_APP_SERVER_URL}forum/profilePicture`
@@ -23,6 +23,7 @@ function Profile({ url, setUrl, isEdit, profileObj, setprofileObj, setPictureCha
             name="file"
             onChange={(e) => {
               console.log(URL.createObjectURL(e.target.files[0]));
+              setFile(e.target.files[0]);
               setprofileObj(URL.createObjectURL(e.target.files[0]));
               setPictureChanged(true);
             }}

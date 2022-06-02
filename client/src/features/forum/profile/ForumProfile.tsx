@@ -69,6 +69,8 @@ export default function ForumProfile() {
   const [url, setUrl] = useState("");
   let [name, setName] = useState<string>(" ");
 
+  const [file, setFile] = useState();
+
   const [forumEmail, setForumEmail] = useState<string>(forum?.email ?? " ");
 
   const handelCheckbox = (
@@ -140,7 +142,7 @@ export default function ForumProfile() {
       }
     }
     item.designation = item.forumCoreTeamMemberships.filter((v) => {
-      return v.forumId.name == forum.name;
+      return v.forumId.name === forum.name;
     })[0]?.designation;
     return { ...item };
   };
@@ -156,18 +158,24 @@ export default function ForumProfile() {
     );
     if (pictureChanged) {
       let myFormData = new FormData();
-      console.log(profileObj);
-      myFormData.append("profilePicture", profileObj);
+      // console.log(profileObj);
+      myFormData.append("profilePicture", file);
+      console.log(myFormData.get('profilePicture'));
+      
       axios
         .post(
           `${process.env.REACT_APP_SERVER_URL}forum/profilePicture`,
           myFormData
         )
         .then((response) => {
+          console.log("Hee");
+          
           console.log(response);
           // window.location.reload();
         })
         .catch((err) => {
+        console.log("Eee");
+        
           console.log(err);
         });
     }
@@ -252,7 +260,7 @@ export default function ForumProfile() {
           profileObj={profileObj}
           setprofileObj={setprofileObj}
           setPictureChanged={setPictureChanged}
-        />
+          setFile={setFile}        />
         <span className="text-center  item-center text-2xl font-semibold text-arma-blue">
           {forum?.name}
           <AnimatePresence initial={false} exitBeforeEnter>
