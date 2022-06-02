@@ -432,7 +432,6 @@ const uploadRegistrantsList = async (req, res) => {
 };
 
 const eventAttendance = async (req, res) => {
-  console.log(req.query.eventID);
   try {
     const result = await attendance
       .findOne({ eventID: req.query.eventID })
@@ -462,7 +461,7 @@ const postAttendance = async (req, res) => {
     }
     let attendanceDoc = await attendance.findOne({ eventID: req.body.eventID });
     attendanceDoc.presence.forEach((element) => {
-      element.dates = req.body.studentPresence[element._id];
+      element.dates = req.body.studentPresence[element.studentId];
     });
     await attendanceDoc.save();
     res.json(
