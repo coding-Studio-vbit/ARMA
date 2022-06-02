@@ -188,7 +188,7 @@ function ForumEventDashboard() {
                             sm:flex-wrap md:flex-nowrap justify-center  items-center gap-5 xl:w-5/6 my-5 mx-auto w-5/6 md:w-full"
             >
               {eventInfoList
-                .slice(3, (["APPROVED, COMPLETED"].find(v=>v==eventObject?.eventStatus) ? 6 : 4))
+                .slice(3, (["APPROVED", "COMPLETED"].find(v=>v==eventObject?.eventStatus) ? 6 : 4))
                 .map((eventInfo, index) => {
                   return (
                     <div
