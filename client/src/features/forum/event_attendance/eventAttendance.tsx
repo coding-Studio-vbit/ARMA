@@ -118,7 +118,7 @@ const EventAttendance = () => {
         resp.data.response.data.forEach((data: any) => {
           setStudentPresence((prevStudentPresence: any) => ({
             ...prevStudentPresence,
-            [data._id._id]: data.dates,
+            [data?._id?._id]: data.dates,
           }));
         });
         if (resp.data.response.data.length > 0) {

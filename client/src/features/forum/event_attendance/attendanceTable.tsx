@@ -20,20 +20,21 @@
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-300 ">
                     {tableData.map((value, index)=>{
+                        if(!value._id) return null;
                         return (
                         <tr key = {index} className="odd:bg-white even:bg-arma-light-gray cursor-pointer hover:bg-black/[0.075] ">
-                        <td className="px-6 py-4 text-center ">{value._id.name}</td>
-                        <td className="px-6 py-4 text-center ">{value._id.rollNumber}</td>
-                        <td className="px-6 py-4 text-center ">{value._id.branch}</td>
+                        <td className="px-6 py-4 text-center ">{value._id?.name}</td>
+                        <td className="px-6 py-4 text-center ">{value._id?.rollNumber}</td>
+                        <td className="px-6 py-4 text-center ">{value._id?.branch}</td>
                         {eventDates.map((date)=>(
                             <td 
                             className="px-6 py-4 text-center"
                             key = {date}>
                             <input type="checkbox" 
                             className="w-7 h-7 rounded-none accent-[#0B5B8A] cursor-pointer"
-                            name = {value._id._id} 
+                            name = {value?._id?._id} 
                             value = {date} 
-                            checked =  {studentPresence[value._id._id].indexOf(date)>-1 }
+                            checked =  {studentPresence[value?._id?._id].indexOf(date)>-1 }
                             onChange={(e)=>{
                                let newObj = studentPresence
                                if (e.target.checked){
