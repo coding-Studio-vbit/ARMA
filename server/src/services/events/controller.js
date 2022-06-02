@@ -120,7 +120,7 @@ const createEvent = async (req, res) => {
           return v._id;
         })
       );
-
+    newAttendanceDoc.presence.push({ dates: [], _id: value });
     // Set the required equipment array
     let eqs = [];
     for (let i = 0; i < equipmentList.length; i++) {
