@@ -72,11 +72,11 @@ const register = async (user, userType) => {
       const myRole = await roles.findOne({ name: "FACULTY" });
       let { rolesF, ...newuser } = user;
       const arr = [];
-      //for (let index = 0; index < rolesF.length; index++) {
-      //  const element = rolesF[index];
-      //  const rol = await roles.findById(element);
-      //  arr.push(rol);
-      //}
+      for (let index = 0; index < rolesF.length; index++) {
+       const element = rolesF[index];
+       const rol = await roles.findById(element);
+       arr.push(rol);
+      }
       const singletonRoles = ["SAC", "FO", "MO", "REGISTRAR", "CFI"];
       for (let i = 0; i < singletonRoles.length; i++) {
         const roleName = singletonRoles[i];
