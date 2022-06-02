@@ -82,7 +82,7 @@ const register = async (user, userType) => {
         const roleName = singletonRoles[i];
         const currentRole = await roles.findOne({ name: roleName });
         if (!currentRole) throw new Error(`Role ${roleName} cannot be found!`);
-        const currentFacultyWithRole = await faculty.findOne({
+        const currentFacultyWithRole = await facultyModel.findOne({
           role: currentRole._id,
         });
         if (
