@@ -167,7 +167,7 @@ function ForumEventDashboard() {
                         <span>{eventInfo.name}</span>
                         {((eventInfo.name == "Budget" &&
                           eventObject.hasBudget &&
-                          (eventObject.eventStatus == "AWAITING FO APPROVAL" ||
+                          (eventObject.eventStatus == "CHANGES REQUESTED BY FO" ||
                             eventObject.eventStatus ==
                               "BUDGET REJECTED BY FO")) ||
                           (eventInfo.name == "Event Details" &&

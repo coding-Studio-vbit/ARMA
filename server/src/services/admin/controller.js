@@ -71,15 +71,30 @@ const register = async (user, userType) => {
     if (userType === "FACULTY") {
       const myRole = await roles.findOne({ name: "FACULTY" });
       let { rolesF, ...newuser } = user;
-      console.log(rolesF);
       const arr = [];
       //for (let index = 0; index < rolesF.length; index++) {
       //  const element = rolesF[index];
       //  const rol = await roles.findById(element);
       //  arr.push(rol);
       //}
-
-      console.log(rolesF);
+      const singletonRoles = ["SAC", "FO", "MO", "REGISTRAR", "CFI"];
+      for (let i = 0; i < singletonRoles.length; i++) {
+        const roleName = singletonRoles[i];
+        const currentRole = await roles.findOne({ name: roleName });
+        if (!currentRole) throw new Error(`Role ${roleName} cannot be found!`);
+        const currentFacultyWithRole = await faculty.findOne({
+          role: currentRole._id,
+        });
+        if (
+          currentFacultyWithRole &&
+          myRole.find((x) => String(x) == String(currentRole._id))
+        ) {
+          currentFacultyWithRole.role = currentFacultyWithRole.role.filter(
+            (v) => String(currentRole._id) !== String(v)
+          );
+          await currentFacultyWithRole.save();
+        }
+      }
       let faculty = new facultyModel({
         role: [...arr, myRole._id],
         ...newuser,

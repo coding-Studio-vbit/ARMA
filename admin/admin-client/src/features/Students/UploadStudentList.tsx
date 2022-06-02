@@ -200,10 +200,10 @@ export const UploadStudentList = () => {
           }}
         />
         <Info
-          className="text-arma-blue m-3 cursor-pointer"
+          className="text-arma-blue m-3 cursor-pointer w-full"
           onClick={() => {
             setDialogTitle(
-              "Make sure the header row order in excel sheet is as- Name/Rollnumber/Year/Branch\n/Section/Email/Phone"
+              "Make sure the header row order in excel sheet\n is as- Name/Rollnumber/Year/Branch\n/Section/Email/Phone"
             );
             setShow(true);
           }}

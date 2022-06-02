@@ -101,6 +101,30 @@ const createEvent = async (req, res) => {
     eventHalls = JSON.parse(eventHalls);
     eventDetails = JSON.parse(eventDetails);
     let newAttendanceDoc = new attendance();
+
+    //Add the forum members as registrants.
+
+    const forumMems = await students
+      .find({ forumNonCoreTeamMemberships: req.user._id })
+      .select("_id");
+    const forumCore = await students
+      .find({ forumCoreTeamMemberships: req.user._id })
+      .select("_id");
+
+    newAttendanceDoc.registrantsList = [
+      ...new Set(
+        forumMems
+          .map((v) => {
+            return v._id;
+          })
+          .concat(
+            forumCore.map((v) => {
+              return v._id;
+            })
+          )
+      ),
+    ];
+
     // Set the required equipment array
     let eqs = [];
     for (let i = 0; i < equipmentList.length; i++) {

@@ -40,7 +40,7 @@ const EventAttendance = () => {
   const [show, setShow] = useState<boolean>(false);
   const [message, setMessage] = useState("");
   const [showBtns, setShowBtns] = useState(false);
-  const [loading,setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
   const [dataUploaded, setDataUploaded] = useState(false);
   const [studentPresence, setStudentPresence] = useState<any>({});
 
@@ -56,9 +56,8 @@ const EventAttendance = () => {
         setEvent(res.data.response);
         setEventName(res.data.response.name + " - Attendance");
         let eventD = res.data.response.eventDates;
-        setEventDates((eventDates)=>[...eventD]);
-        setTableHeader((tableHeader)=>[...tableHeader,...eventD]);
-        
+        setEventDates((eventDates) => [...eventD]);
+        setTableHeader((tableHeader) => [...tableHeader, ...eventD]);
       }
     } catch (error) {
       console.log(error);
@@ -110,10 +109,9 @@ const EventAttendance = () => {
         if (resp.data.response.status == -1) {
           setDataUploaded(false);
           setMessage("Student upload failed");
-          setShow(true)
-        }
-        else if (resp.data.response.data.length == 0){
-          setDataUploaded(false)
+          setShow(true);
+        } else if (resp.data.response.data.length == 0) {
+          setDataUploaded(false);
         }
         resp.data.response.data.forEach((data: any) => {
           setStudentPresence((prevStudentPresence: any) => ({
@@ -128,7 +126,6 @@ const EventAttendance = () => {
         }
       });
   }, [dataUploaded]);
-
 
   //Excel sheet valdation functions here
   const validateName = (val: any) => {
@@ -174,7 +171,7 @@ const EventAttendance = () => {
     }
   };
 
-  const validateCourse= (course: any) => {
+  const validateCourse = (course: any) => {
     if (courses.includes(course)) {
       return String(course);
     } else {
@@ -182,14 +179,13 @@ const EventAttendance = () => {
     }
   };
 
-
   function validateBranch(val: any) {
     if (branches.includes(val.toUpperCase())) {
       return String(val);
     } else {
       throw Error;
     }
-  };
+  }
 
   const validateSection = (val: any) => {
     if (typeof val == "number") {
@@ -342,7 +338,7 @@ const EventAttendance = () => {
         show={show}
         setShow={() => setShow(!show)}
         title={message}
-        loading = {loading}
+        loading={loading}
         children={
           showBtns && (
             <div>
@@ -378,7 +374,7 @@ const EventAttendance = () => {
             {eventName}
           </h1>
         </div>
-        <div className="pl-10 pb-10 mt-12">
+        {event?.eventStatus == "APPROVED" && <div className="pl-10 pb-10 mt-12">
           <label htmlFor="upload" className="btn cursor-pointer">
             Upload New Students list
           </label>
@@ -394,12 +390,12 @@ const EventAttendance = () => {
             className="text-arma-blue m-3 cursor-pointer"
             onClick={() => {
               setMessage(
-                "Make sure the header row order is as- Name/Rollnumber/Year/Course/Branch\n/Section/Email/Phone"
+                "Make sure the header row order is as- Name/Rollnumber/Year/Course\n/Branch\n/Section/Email/Phone"
               );
               setShow(true);
             }}
           />
-        </div>
+        </div>}
       </div>
       {dataUploaded ? (
         <>
@@ -412,14 +408,16 @@ const EventAttendance = () => {
               eventDates={eventDates}
             />
             <div>
-              <div className="flex justify-center">
-                <button className="btn m-5" onClick={handleSave}>
-                  Save
-                </button>
-                <button className="btn m-5" onClick={handleReport}>
-                  Get Report
-                </button>
-              </div>
+              {event?.eventStatus == "APPROVED" && (
+                <div className="flex justify-center">
+                  <button className="btn m-5" onClick={handleSave}>
+                    Save
+                  </button>
+                  <button className="btn m-5" onClick={handleReport}>
+                    Get Report
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </>

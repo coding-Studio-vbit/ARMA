@@ -190,6 +190,7 @@ export default function ForumProfile() {
       setDescription(forum?.description ?? "");
       setIsEdit(false);
     }
+    window.location.reload();
     setShow(true);
     setIsEdit(false);
   };
