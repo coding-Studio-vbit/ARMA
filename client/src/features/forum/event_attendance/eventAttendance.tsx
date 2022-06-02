@@ -293,7 +293,7 @@ const EventAttendance = () => {
     if (data.status === 1) {
       setMessage("Attendance successfully saved!");
     } else {
-      setMessage("Attedance Update Failed");
+      setMessage("Attedance Update Failed: " + data.response);
     }
     setShow(true);
   };

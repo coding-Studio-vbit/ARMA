@@ -1,4 +1,4 @@
-const Attendance = (props) =>{
+    const Attendance = (props) =>{
     
     const {tableData,studentPresence,setStudentPresence,tableHeader,eventDates} = props
     
