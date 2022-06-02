@@ -87,7 +87,7 @@ const register = async (user, userType) => {
         });
         if (
           currentFacultyWithRole &&
-          myRole.find((x) => String(x) == String(currentRole._id))
+          rolesF.find((x) => String(x) == String(currentRole._id))
         ) {
           currentFacultyWithRole.role = currentFacultyWithRole.role.filter(
             (v) => String(currentRole._id) !== String(v)
