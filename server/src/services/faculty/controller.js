@@ -301,7 +301,6 @@ const approveEvent = async (req, res) => {
       throw new Error("cannot approve event during current status");
     }
 
-    if (event.equipment.length !== 0) {
       const CFIRole = await roles.findOne({ name: "CFI" });
       if (!CFIRole) throw new Error("No CFI role found!");
       const RegistrarRole = await roles.findOne({ name: "REGISTRAR" });
@@ -310,7 +309,6 @@ const approveEvent = async (req, res) => {
       if (!CFI) throw new Error("No CFI found!");
       const Registrar = await faculty.findOne({ role: RegistrarRole._id });
       if (!Registrar) throw new Error("No Registrar found!");
-    }
 
     if (event.hasBudget) {
       //send a mail to the FO.
