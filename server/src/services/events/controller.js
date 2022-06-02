@@ -104,24 +104,22 @@ const createEvent = async (req, res) => {
 
     //Add the forum members as registrants.
 
-    // const forumMems = await students
-    //   .find({ forumNonCoreTeamMemberships: req.user._id })
-    // const forumCore = await students
-    //   .find({ forumCoreTeamMemberships: req.user._id })
+    const forumMems = await students.find({
+      forumNonCoreTeamMemberships: req.user._id,
+    });
+    const forumCore = await students.find({
+      forumCoreTeamMemberships: req.user._id,
+    });
 
-    // newAttendanceDoc.registrantsList = [
-    //   ...new Set(
-    //     forumMems
-    //       .map((v) => {
-    //         return v._id;
-    //       })
-    //       .concat(
-    //         forumCore.map((v) => {
-    //           return v._id;
-    //         })
-    //       )
-    //   ),
-    // ];
+    newAttendanceDoc.registrantsList = forumMems
+      .map((v) => {
+        return v._id;
+      })
+      .concat(
+        forumCore.map((v) => {
+          return v._id;
+        })
+      );
 
     // Set the required equipment array
     let eqs = [];
