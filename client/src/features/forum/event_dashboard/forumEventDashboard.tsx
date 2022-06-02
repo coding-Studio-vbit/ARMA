@@ -135,7 +135,7 @@ function ForumEventDashboard() {
             <div className="flex flex-col justify-start items-start sm:flex-row sm:justify-start sm:items-center">
               {/* <span className="material-icons md:scale-150 mr-4 ">chevron_left</span> */}
               <span className="ml-4 sm:ml-0 font-normal sm:font-medium  md:font-semibold text-arma-dark-blue text-xl md:text-4xl ">
-                {username + " " + event}
+                {username + "'s " + event}
               </span>
               <span className="sm:mt-0 mt-4 ml-auto mr-4 sm:mr-0 sm:ml-4 btn-green">
                 {status}
@@ -188,7 +188,7 @@ function ForumEventDashboard() {
                             sm:flex-wrap md:flex-nowrap justify-center  items-center gap-5 xl:w-5/6 my-5 mx-auto w-5/6 md:w-full"
             >
               {eventInfoList
-                .slice(3, 6)
+                .slice(3, (["APPROVED, COMPLETED"].find(v=>v==eventObject?.eventStatus) ? 6 : 4))
                 .map((eventInfo, index) => {
                   return (
                     <div
