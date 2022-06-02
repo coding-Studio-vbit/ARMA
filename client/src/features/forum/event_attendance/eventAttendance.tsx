@@ -116,7 +116,7 @@ const EventAttendance = () => {
         resp.data.response.data.forEach((data: any) => {
           setStudentPresence((prevStudentPresence: any) => ({
             ...prevStudentPresence,
-            [data?._id?._id]: data.dates,
+            [data?.studentId?._id]: data.dates,
           }));
         });
         if (resp.data.response.data.length > 0) {
@@ -307,9 +307,9 @@ const EventAttendance = () => {
         try {
           data.forEach((value) => {
             let newObj = {
-              Name: value._id.name,
-              "Roll Number": value._id.rollNumber,
-              Branch: value._id.branch,
+              Name: value.studentId.name,
+              "Roll Number": value.studentId.rollNumber,
+              Branch: value.studentId.branch,
             };
             eventDates.forEach((date) => {
               if (value.dates.indexOf(date) > -1) {
