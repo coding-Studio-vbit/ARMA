@@ -18,7 +18,7 @@ const addStudent = async (data) => {
     return response("Success", process.env.SUCCESS_CODE);
   } catch (error) {
     console.log(error);
-    return response("failure", process.env.FAILURE_CODE);
+    return response("failure: " + error.message, process.env.FAILURE_CODE);
   }
 };
 
