@@ -98,7 +98,7 @@ export default function EventBudget() {
                 type="file"
               ></input>
             </label>
-            {/* {pdf2 && <p className="m-0 p-0 truncate">{pdf2.name}</p>} */}
+            {newFile && <p className="m-0 p-0 truncate">{newFile.name}</p>}
           </div>
         ) : (
           <div className="flex flex-col mt-10 cursor-pointer">
