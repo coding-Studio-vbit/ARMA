@@ -113,14 +113,15 @@ const createEvent = async (req, res) => {
 
     newAttendanceDoc.registrantsList = forumMems
       .map((v) => {
+        newAttendanceDoc.presence.push({ dates: [], studentId: v._id });
         return v._id;
       })
       .concat(
         forumCore.map((v) => {
+          newAttendanceDoc.presence.push({ dates: [], studentId: v._id });
           return v._id;
         })
       );
-    newAttendanceDoc.presence.push({ dates: [], _id: value });
     // Set the required equipment array
     let eqs = [];
     for (let i = 0; i < equipmentList.length; i++) {
@@ -406,7 +407,7 @@ const uploadRegistrantsList = async (req, res) => {
     idList.map((value) => {
       if (!attendanceDoc.registrantsList.includes(value)) {
         attendanceDoc.registrantsList.push(value);
-        attendanceDoc.presence.push({ dates: [], _id: value });
+        attendanceDoc.presence.push({ dates: [], studentId: value });
       }
     });
     await attendanceDoc.save();
@@ -435,7 +436,7 @@ const eventAttendance = async (req, res) => {
   try {
     const result = await attendance
       .findOne({ eventID: req.query.eventID })
-      .populate({ path: "presence._id", model: "students" });
+      .populate({ path: "presence.studentId", model: "students" });
     if (result == null)
       throw new Error("Could not find the attendance document");
     const total = await attendance.count({ eventID: req.query.eventID });
