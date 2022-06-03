@@ -142,7 +142,7 @@ const studentViewCard = async (req, res) => {
       .findOne({ _id: id })
       .populate("forumCoreTeamMemberships.forumId")
       .populate("forumNonCoreTeamMemberships")
-      .populate({ path: "eventsParticipated", populate: {path: "forumID"} });
+      .populate({ path: "eventsParticipated", populate: {path: "forumID"} })
       .populate({ path: "eventsOrganized", populate: {path: "forumID"} });
     // let { attendedEvents, ...stu } = student.toObject();
     // for (let i = 0; i < attendedEvents.length; i++) {

@@ -191,10 +191,8 @@ const acceptBudget = async (req, res) => {
       forumCoreTeamMemberships: event.forumID._id,
     });
     for (let i = 0; i < forumCoreTeamMembers.length; i++) {
-      console.log(forumCoreTeamMembers);
       const stu = forumCoreTeamMembers[i];
-      stu.eventsOrganized.push(eventId);
-      console.log(stu);
+      stu.eventsOrganized.push(event._id);
       await stu.save();
     }
 
