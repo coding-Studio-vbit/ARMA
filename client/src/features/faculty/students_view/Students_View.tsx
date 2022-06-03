@@ -6,9 +6,6 @@ import axios from "../../../utils/axios";
 
 export const Students_View = () => {
   const { id } = useParams();
-  console.log(id);
-
-  const [roll, setRoll] = useState("");
   const [info, setInfo] = useState<{
     name: string;
     email: string;
@@ -124,7 +121,7 @@ export const Students_View = () => {
                   className="shadow-xl border-2 flex flex-col p-4 w-max rounded-[16px]"
                 >
                   <span>
-                   {i.forumId.name}
+                   {i.name}
                   </span>
                 </div>
               );
@@ -156,12 +153,6 @@ export const Students_View = () => {
                     dataPath: "forumCoreTeamMemberships.designation",
                     sortable: false,
                   },
-                  // {
-                  //   displayName: "EVENT NAME",
-                  //   dataPath: "eventname",
-                  //   sortable: false,
-                  // },
-                  // { displayName: "DURATION", dataPath: "duration", sortable: false },
                 ]}
               />
             </div>
@@ -189,11 +180,6 @@ export const Students_View = () => {
                     dataPath: "name",
                     sortable: false,
                   },
-                  // {
-                  //   displayName: "DURATION",
-                  //   dataPath: "duration",
-                  //   sortable: false,
-                  // },
                 ]}
               />
             </div>

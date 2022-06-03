@@ -142,8 +142,8 @@ const studentViewCard = async (req, res) => {
       .findOne({ _id: id })
       .populate("forumCoreTeamMemberships.forumId")
       .populate("forumNonCoreTeamMemberships")
-      .populate({ path: "eventsParticipated" })
-      .populate({ path: "eventsOrganized" });
+      .populate({ path: "eventsParticipated", populate: {path: "forumID"} });
+      .populate({ path: "eventsOrganized", populate: {path: "forumID"} });
     // let { attendedEvents, ...stu } = student.toObject();
     // for (let i = 0; i < attendedEvents.length; i++) {
     //   let set = new Set();
@@ -169,7 +169,10 @@ const generatePDF = async (req, res) => {
       .findById(studentId)
       .populate("eventsOrganized")
       .populate("forumNonCoreTeamMemberships")
-      .populate("forumCoreTeamMemberships.forumId")
+      .populate({
+        path: "forumCoreTeamMemberships",
+        populate: { path: "forumId" },
+      })
       .populate("eventsParticipated");
     const result = await studentReports.generateNewReport(student);
 
