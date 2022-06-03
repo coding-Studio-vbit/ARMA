@@ -167,13 +167,13 @@ const generatePDF = async (req, res) => {
     const { studentId } = req.body;
     const student = await students
       .findById(studentId)
-      .populate("eventsOrganized")
       .populate("forumNonCoreTeamMemberships")
       .populate({
         path: "forumCoreTeamMemberships",
-        populate: { path: "forumId" },
+        populate: { path: "forumId" }
       })
-      .populate("eventsParticipated");
+      .populate({path: "eventsOrganized", populate: {path: "forumID"}})
+      .populate({path: "eventsParticipated", populate: {path: "forumID"}});
     const result = await studentReports.generateNewReport(student);
 
     pdf.create(result.data).toFile(result.filePath, async (err, data) => {
