@@ -101,58 +101,58 @@ function FacultyDashBoard() {
           const eventList = response.data.response;
           // console.log(eventList);
 
-            let data = [];
-            for (let i = 0; i < eventList.length; i++) {
-              let event: EventInfo = {
-                forum: "",
-                event: "",
-                date: [],
-                eventStatus: "",
-                _id: "",
+          let data = [];
+          for (let i = 0; i < eventList.length; i++) {
+            let event: EventInfo = {
+              forum: "",
+              event: "",
+              date: [],
+              eventStatus: "",
+              _id: "",
+            };
+            event.forum = eventList[i].forumID.name;
+            event._id = eventList[i]._id;
+            event.event = eventList[i].name;
+            event.eventStatus = eventList[i].eventStatus;
+            //actual code
+            let dates = eventList[i].eventDates;
+            for (let i = 0; i < dates.length; i++) {
+              let d = new Date(dates[i]);
+              dates[i] = {
+                day: d.getDate(),
+                month: d.getMonth() + 1,
+                year: d.getFullYear(),
               };
-              event.forum = eventList[i].forumID.name;
-              event._id = eventList[i]._id;
-              event.event = eventList[i].name;
-              event.eventStatus = eventList[i].eventStatus;
-              //actual code
-              let dates = eventList[i].eventDates;
-              for (let i = 0; i < dates.length; i++) {
-                let d = new Date(dates[i]);
-                dates[i] = {
-                  day: d.getDate(),
-                  month: d.getMonth() + 1,
-                  year: d.getFullYear(),
-                };
-              }
-              event.date = dates;
-              //  console.log(dates);
-
-              //testing
-              //  event.date=[
-              //    {
-              //       day: 5,
-              //       month: 1,
-              //       year: 2022,
-              //     },
-              //     {
-              //       day: 6,
-              //       month: 1,
-              //       year: 2022,
-              //     },
-              //  ]
-              let eD = eventDays;
-              eD.push.apply(eD, dates);
-              data.push(event);
-              setEventDays(Array.from(new Set(eD)));
-              console.log(eD);
-              console.log(eventDays);
             }
-            // console.log(data);
+            event.date = dates;
+            //  console.log(dates);
 
-            setCurrentRequests(data);
-            setTodaysEvents(data);
-            // setPendingRequests(eventList.length);
-          
+            //testing
+            //  event.date=[
+            //    {
+            //       day: 5,
+            //       month: 1,
+            //       year: 2022,
+            //     },
+            //     {
+            //       day: 6,
+            //       month: 1,
+            //       year: 2022,
+            //     },
+            //  ]
+            let eD = eventDays;
+            eD.push.apply(eD, dates);
+            data.push(event);
+            setEventDays(Array.from(new Set(eD)));
+            console.log(eD);
+            console.log(eventDays);
+          }
+          // console.log(data);
+
+          setCurrentRequests(data);
+          setTodaysEvents(data);
+          // setPendingRequests(eventList.length);
+
           //data :set
         } else {
           console.log("Failure");
@@ -275,10 +275,9 @@ function FacultyDashBoard() {
               {selectedDate != null && filterWithDates().length > 0 ? (
                 <ul className="mt-3 list-disc list-inside text-xl">
                   {filterWithDates().map((e) => {
-                    console.log(e);
                     return (
                       <li key={e._id}>
-                        {e.event} by {e.forum}
+                        {e.event} by {e.forum} - {e.eventStatus}
                       </li>
                     );
                   })}
