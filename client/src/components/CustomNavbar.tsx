@@ -57,7 +57,17 @@ const Navbar = ({ navItems }: NavbarProps) => {
               menu
             </span>
           )}
-          <span onClick={() => nav("/", { replace: true })}>A.R.M.A</span>
+          <span
+            onClick={() => {
+              if (forum) {
+                nav("/forum/", { replace: true });
+              } else if (faculty) {
+                nav("/faculty/", { replace: true });
+              }
+            }}
+          >
+            A.R.M.A
+          </span>
         </div>
 
         {/* Navigation Items */}
