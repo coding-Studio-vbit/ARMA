@@ -333,6 +333,14 @@ const approveEvent = async (req, res) => {
         forumName: event.forumID.name,
       });
     } else {
+   	 const forumCoreTeamMembers = await students.find({
+   	   "forumCoreTeamMemberships.forumId": event.forumID._id,
+   	 });
+   	 for (let i = 0; i < forumCoreTeamMembers.length; i++) {
+   	   const stu = forumCoreTeamMembers[i];
+   	   stu.eventsOrganized.push(event._id);
+   	   await stu.save();
+   	 }
       event.eventStatus = "APPROVED";
     }
     await event.save();
