@@ -165,7 +165,7 @@ export default function EventEquip() {
               .post(`${process.env.REACT_APP_SERVER_URL}events/`, newData)
               .then((response) => {
                 console.log(response);
-                //navigate("/forum");
+                navigate("/forum");
                 setShowSpinner(false);
               })
               .catch((error) => {
