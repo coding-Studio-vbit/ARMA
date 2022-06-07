@@ -110,18 +110,18 @@ const createEvent = async (req, res) => {
     const forumCore = await students.find({
       "forumCoreTeamMemberships.forumId": req.user._id,
     });
+	
+  //There may be common students in the above lists.
+  //So we make a set.
 
-    newAttendanceDoc.registrantsList = forumMems
-      .map((v) => {
-        newAttendanceDoc.presence.push({ dates: [], studentId: v._id });
-        return v._id;
-      })
-      .concat(
-        forumCore.map((v) => {
-          newAttendanceDoc.presence.push({ dates: [], studentId: v._id });
-          return v._id;
-        })
-      );
+  let theSet = [...new Set(forumMems.concat(forumCore).map(stu=>String(stu._id)))];
+  newAttendanceDoc.registrantsList = theSet;
+  for(let i=0;i<theSet.length;i++)
+  {
+	  newAttendanceDoc.presence.push({dates:[], studentId: theSet[i]});
+  }
+
+
     // Set the required equipment array
     let eqs = [];
     for (let i = 0; i < equipmentList.length; i++) {
@@ -928,7 +928,7 @@ const completeEvent = async (req, res) => {
       const stu = await students.findById(qualifiedStudents[i]);
       if (stu) {
         stu.eventsParticipated.push(eventId);
-        stu.save();
+        await stu.save();
       }
     }
     //update the reservations of this event.

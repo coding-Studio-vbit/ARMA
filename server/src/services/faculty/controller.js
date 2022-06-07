@@ -188,7 +188,7 @@ const acceptBudget = async (req, res) => {
     }
     //ADD THIS EVENT AS ORGANISED TO ALL THE FORUM STUDENTS.
     const forumCoreTeamMembers = await students.find({
-      forumCoreTeamMemberships: event.forumID._id,
+      "forumCoreTeamMemberships.forumId": event.forumID._id,
     });
     for (let i = 0; i < forumCoreTeamMembers.length; i++) {
       const stu = forumCoreTeamMembers[i];
@@ -333,6 +333,14 @@ const approveEvent = async (req, res) => {
         forumName: event.forumID.name,
       });
     } else {
+   	 const forumCoreTeamMembers = await students.find({
+   	   "forumCoreTeamMemberships.forumId": event.forumID._id,
+   	 });
+   	 for (let i = 0; i < forumCoreTeamMembers.length; i++) {
+   	   const stu = forumCoreTeamMembers[i];
+   	   stu.eventsOrganized.push(event._id);
+   	   await stu.save();
+   	 }
       event.eventStatus = "APPROVED";
     }
     await event.save();
