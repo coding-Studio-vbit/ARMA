@@ -141,16 +141,16 @@ export const Students_View = () => {
           <div className="flex flex-wrap gap-4 mb-6 items-center">
             <div className="w-full grow shrink basis-[250px]">
               <DataTable
-                data={info}
+                data={info?.eventsOrganized}
                 headers={[
                   {
                     displayName: "FORUM",
-                    dataPath: "forumCoreTeamMemberships.forumId.name",
+                    dataPath: "forumID.name",
                     sortable: false,
                   },
                   {
-                    displayName: "ROLE",
-                    dataPath: "forumCoreTeamMemberships.designation",
+                    displayName: "EVENT",
+                    dataPath: "name",
                     sortable: false,
                   },
                 ]}

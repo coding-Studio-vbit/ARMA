@@ -928,7 +928,7 @@ const completeEvent = async (req, res) => {
       const stu = await students.findById(qualifiedStudents[i]);
       if (stu) {
         stu.eventsParticipated.push(eventId);
-        stu.save();
+        await stu.save();
       }
     }
     //update the reservations of this event.
