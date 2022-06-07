@@ -696,6 +696,7 @@ const updateReservations = async (req, res) => {
         record.dates = obj.dates;
         record.timeSlots = obj.timeSlots;
         event.eventStatus = "AWAITING SAC APPROVAL";
+        event.eventDates = datesList;
         const SACRole = await roles.findOne({ name: "SAC" });
         if (!SACRole) throw new Error("SAC Role not found!");
         const SAC = await faculty.findOne({ role: SACRole._id });
