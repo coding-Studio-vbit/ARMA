@@ -1,12 +1,9 @@
 import { BusinessCenter, Close } from "@material-ui/icons";
-import { Dialog } from "../../../components/Dialog/Dialog";
-import { userInfo } from "os";
 import { useSelector } from "react-redux";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import { InputField } from "../../../components/InputField/InputField";
-import { useUser } from "../../../providers/user/UserProvider";
 import { RootState } from "../../../redux/reducers";
 import axios from "../../../utils/axios";
 import { Spinner } from "../../../components/Spinner/Spinner";
@@ -17,7 +14,6 @@ export default function EventEquip() {
   const [quantity, setQuantity] = useState("");
   const [addError, setAddError] = useState("");
   const [list, setList] = useState<{}[]>([]);
-  const { forum } = useUser();
   const [myequip, setMyequip] = useState<{}[]>();
   const eventDates = useSelector((state: RootState) => state.eventDates);
   const eventDetails = useSelector((state: RootState) => state.eventDetails);
@@ -126,24 +122,6 @@ export default function EventEquip() {
         })}
       </div>
 
-      {/* <div className="flex flex-col sm:w-[40%]">
-             {
-                 list.map((r:any,i) => {
-                     return(
-                         <div className="flex justify-between shadow-md px-4 py-2 hover:bg-black/[0.05]">
-                             <span>{r.equipment}</span>
-                             <span>{r.quantity}</span>
-                             <Close className="cursor-pointer"onClick ={() => {
-                                 let temp = [...list]
-                                 temp.splice(i,1)
-                                 setList(temp)
-                             }}/>
-                         </div>
-                     )
-                 })
-             }
-
-         </div> */}
       {showSpinner ? (
         <Spinner />
       ) : (
@@ -180,21 +158,3 @@ export default function EventEquip() {
     </div>
   );
 }
-
-//   data.response -> [{name:"mic", totalCount:8}, {name:"speaker"}]
-//   ar=[]
-//   loop i
-//   ar.push({value:i.name, label:i.name})
-//   options={ar}
-
-//   const res = await axios.get(env+'forum/getEquipments')
-//   user
-//   const res = await axios.post(env+'forum/profile',{
-//     name: user.name
-//   })
-
-//  const data = await res.data
-
-//   {
-//     "name": "name"
-//   }

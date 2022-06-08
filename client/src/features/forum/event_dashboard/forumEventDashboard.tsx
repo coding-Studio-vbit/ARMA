@@ -5,6 +5,7 @@ import axios from "../../../utils/axios";
 import { useDispatch } from "react-redux";
 import { createDatesState } from "../../../redux/actions";
 import { Dialog } from "../../../components/Dialog/Dialog";
+import ImportantContacts from "./ImportantContacts";
 
 interface EventInfo {
   name: string;
@@ -34,6 +35,7 @@ function ForumEventDashboard() {
   const [event, setEvent] = useState<string>("");
   const [status, setStatus] = useState<string>("");
   const [eventObject, setEventObject] = useState<any>(null);
+  const [showImportantContacts, setShowImportantContacts] = useState(false);
   const [error, setError] = useState(null);
 
   const getEventObject = async () => {
@@ -130,6 +132,10 @@ function ForumEventDashboard() {
           setShow={setShowDialog}
           title={dialogMessage}
         />
+        <ImportantContacts
+          show={showImportantContacts}
+          setShow={setShowImportantContacts}
+        />
         <div id="forumEventPageContent" className="mx-auto my-5">
           <div className="mx-auto w-11/12 md:w-5/6 mt-8 md:mt-16 mb-12">
             <div className="flex flex-col justify-start items-start sm:flex-row sm:justify-start sm:items-center">
@@ -141,8 +147,18 @@ function ForumEventDashboard() {
                 {status}
               </span>
             </div>
-
-            <div className="mt-6 mb-10 border-t-2 w-full mx-auto border-slate-500"></div>
+            <div className="pt-2">
+              <span
+                className="text-blue-500 cursor-pointer"
+                onClick={() => {
+                  setShowImportantContacts(true);
+                }}
+              >
+                {" "}
+                Need some important contacts?
+              </span>
+            </div>
+            <div className="mt-3 mb-10 border-t-2 w-full mx-auto border-slate-500"></div>
 
             <div
               className="flex flex-row flex-wrap 
@@ -167,7 +183,8 @@ function ForumEventDashboard() {
                         <span>{eventInfo.name}</span>
                         {((eventInfo.name == "Budget" &&
                           eventObject.hasBudget &&
-                          (eventObject.eventStatus == "CHANGES REQUESTED BY FO" ||
+                          (eventObject.eventStatus ==
+                            "CHANGES REQUESTED BY FO" ||
                             eventObject.eventStatus ==
                               "BUDGET REJECTED BY FO")) ||
                           (eventInfo.name == "Event Details" &&
@@ -188,7 +205,14 @@ function ForumEventDashboard() {
                             sm:flex-wrap md:flex-nowrap justify-center  items-center gap-5 xl:w-5/6 my-5 mx-auto w-5/6 md:w-full"
             >
               {eventInfoList
-                .slice(3, (["APPROVED", "COMPLETED"].find(v=>v==eventObject?.eventStatus) ? 6 : 4))
+                .slice(
+                  3,
+                  ["APPROVED", "COMPLETED"].find(
+                    (v) => v == eventObject?.eventStatus
+                  )
+                    ? 6
+                    : 4
+                )
                 .map((eventInfo, index) => {
                   return (
                     <div

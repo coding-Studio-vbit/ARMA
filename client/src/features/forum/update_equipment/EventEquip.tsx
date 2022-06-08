@@ -6,6 +6,7 @@ import { InputField } from "../../../components/InputField/InputField";
 import axios from "../../../utils/axios";
 import { Spinner } from "../../../components/Spinner/Spinner";
 import { Dialog } from "../../../components/Dialog/Dialog";
+import ImportantContacts from "../event_dashboard/ImportantContacts";
 
 export default function EventEquip() {
   const navigate = useNavigate();
@@ -88,12 +89,17 @@ export default function EventEquip() {
   return (
     <div className="flex flex-col sm:mx-24 mt-8 md:items-start items-center mb-8 ">
       <Dialog show={showDialog} setShow={setShowDialog} title={dialogMessage} />
+      
       <span className="text-arma-title sm:text-4xl  text-2xl mb-8 font-semibold">
         Equipment
       </span>
-      {!["COMPLETED", "REJECTED BY FO", "REJECTED BY SAC", "APPROVED", "CANCELLED"].includes(
-        event?.eventStatus
-      ) ? (
+      {![
+        "COMPLETED",
+        "REJECTED BY FO",
+        "REJECTED BY SAC",
+        "APPROVED",
+        "CANCELLED",
+      ].includes(event?.eventStatus) ? (
         <div className="flex gap-2">
           <span className="text-arma-gray text-lg mb-8 font-semibold">
             Choose Equipment
@@ -103,9 +109,13 @@ export default function EventEquip() {
       ) : null}
       {loading ? (
         <Spinner />
-      ) : !["COMPLETED", "REJECTED BY FO", "REJECTED BY SAC", "APPROVED", "CANCELLED"].includes(
-          event?.eventStatus
-        ) ? (
+      ) : ![
+          "COMPLETED",
+          "REJECTED BY FO",
+          "REJECTED BY SAC",
+          "APPROVED",
+          "CANCELLED",
+        ].includes(event?.eventStatus) ? (
         <div className="flex flex-col md:flex-row gap-y-6 items-center sm:gap-x-6 ">
           <div className=" flex flex-col gap-y-6  md:flex-row sm:gap-x-8">
             <Select
@@ -170,7 +180,7 @@ export default function EventEquip() {
       ) : (
         <div>
           <Lock fontSize="small" />
-          Your equipment choice has been locked.{" "}
+          Your equipment choice has been locked.
         </div>
       )}
 
@@ -182,9 +192,13 @@ export default function EventEquip() {
             <div className="flex justify-between bg-white shadow-lg py-5 px-4 w-max gap-6 rounded-[8px] basis-[100px] shrink">
               <span>{li.equipment}</span>
               <span>{li.quantity}</span>
-              {!["COMPLETED", "REJECTED BY SAC", "REJECTED BY FO", "APPROVED", "CANCELLED"].includes(
-                event?.eventStatus
-              ) ? (
+              {![
+                "COMPLETED",
+                "REJECTED BY SAC",
+                "REJECTED BY FO",
+                "APPROVED",
+                "CANCELLED",
+              ].includes(event?.eventStatus) ? (
                 <Close
                   className="cursor-pointer"
                   onClick={() => {
