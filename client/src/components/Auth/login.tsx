@@ -18,11 +18,9 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const { login, loading } = useLogin();
   useEffect(() => {
-    
     if (forum) {
       navigate("/forum/", { replace: true });
     } else if (faculty) {
-      
       navigate("/faculty/", { replace: true });
     }
   }, [forum, faculty, navigate]);
@@ -123,7 +121,7 @@ function Login() {
         </div>
         <span className="text-arma-red h-6">{error}</span>
         <LoginButton
-        loading={loading}
+          loading={loading}
           onClick={async () => {
             if (!email || !password || emailError || passwordError) {
               setError("Fill the details!");
@@ -160,6 +158,11 @@ function Login() {
       >
         Forgot Password?
       </button>
+      <div className="absolute bottom-0 text-xs w-max bg-gray-50">
+        <a className="mx-auto text-underline pb-2 opacity-100 text-arma-dark-blue cursor-pointer" href="https://forms.gle/45rY4BDn1ZzpGJPS8">
+          Facing issues? Have suggestions?
+        </a>
+      </div>
     </div>
   );
 }
