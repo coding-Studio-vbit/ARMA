@@ -348,17 +348,7 @@ const forumViewCard = async (req, res) => {
     let forum = await forums
       .findOne({ _id: id })
       .populate("facultyCoordinatorID")
-
-    // forum = forum.toObject();
-    // for (let i = 0; i < forum.events.length; i++) {
-    //   forum.events[i].participants =
-    //     forum.events[i].attendanceDocID.presence.length;
-    //   let set = new Set();
-    //   for (let j = 0; j < forum.events[i].halls.length; j++) {
-    //     set.add(forum.events[i].halls[j].date);
-    //   }
-    //   forum.events[i]["duration"] = 3; //set.size
-    // }
+    
     res.json(response(forum, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);

@@ -14,7 +14,7 @@ export const Forum_View = () => {
     facultyCoordinatorID: { name: string };
     email: string;
     phone: number;
-    events: any[];
+    _id: any;
   }>();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -47,7 +47,9 @@ export const Forum_View = () => {
             <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr] items-center">
               <div className="grid grid-cols-[0.8fr_1fr] md:grid-cols-[0.8fr_1fr] lg:grid-cols-[0.5fr_1fr] items-center">
                 <span className="text-arma-gray text-xl">Email:</span>
-                <span className="text-xl ml-4 overflow-scroll w-48 sm:w-max sm:overflow-clip">{info?.email ?? " "}</span>
+                <span className="text-xl ml-4 overflow-scroll w-48 sm:w-max sm:overflow-clip">
+                  {info?.email ?? " "}
+                </span>
               </div>
             </div>
             <div className="grid grid-cols-[0.5fr_1fr] lg:grid-cols-[0.3fr_1fr]  items-center">
@@ -140,22 +142,16 @@ export const Forum_View = () => {
           <p className="text-arma-title width-[90%] mb-5 mt-5 text-2xl">
             Events Conducted
           </p>{" "}
-          <DataTable
-            data={info?.events}
+          <Table
+            api={`events`}
             headers={[
               { displayName: "EVENT NAME", dataPath: "name", sortable: false },
-              {
-                displayName: "NO. OF PARTICIPANTS",
-                dataPath: "participants",
-                sortable: false,
-              },
-              {
-                displayName: "DURATION",
-                dataPath: "duration",
-                sortable: false,
-              },
-              // { displayName: "ATTENDANCE", dataPath: "attendance", sortable: false },
+              { displayName: "YEAR", dataPath: "eventYear", sortable: false },
             ]}
+            rowsPerPage={5}
+            buttonsCount={3}
+            filter={{ forumID: info._id }}
+            transformer={(data)=>{console.log(data);data.eventYear = data.eventDates[0].split(' ')[3]; return data;}}
           />
         </div>
       </div>
