@@ -385,7 +385,7 @@ export default function RequestsView() {
 
             {/* {event.budgetDocPath} */}
             {
-              eventData.hasBudget ? (<div className="mt-6 flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
+              eventData?.hasBudget ? (<div className="mt-6 flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
                 <span>Budget Document</span>{" "}
                 <a
                   className="!cursor-pointer"
