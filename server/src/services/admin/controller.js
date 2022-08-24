@@ -97,6 +97,7 @@ const register = async (user, userType) => {
         role: [...arr, myRole._id],
         ...newuser,
       });
+      faculty.rollNumber = faculty.rollNumber.toUpperCase();
       faculty.password = password;
       await faculty.save();
     } else if (userType === "FORUM") {

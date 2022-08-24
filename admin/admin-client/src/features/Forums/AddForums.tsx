@@ -15,7 +15,6 @@ interface AddStudentsProps {
 export const AddForums = ({ isEdit }: AddStudentsProps) => {
   const nav = useNavigate();
   let { id } = useParams();
-  console.log(id);
   useEffect(() => {
     const student = async () => {
       const res = await axios.post(
@@ -23,7 +22,6 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
         { id: id }
       );
       const data = res.data.response;
-      console.log(data);
 
       setforumID(data?.name);
       setPhone(data?.phone);
@@ -32,7 +30,7 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
       setSelectHeadLabel(data.forumHeads.map((i: any) => i.name));
       setActualName(data?.facultyInchargeID.name);
       setSelectCoord(data?.facultyCoordinatorID.name);
-      setEvents(data?.events)
+      setEvents(data?.events);
     };
     if (isEdit) {
       student();
@@ -220,7 +218,6 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
         process.env.REACT_APP_SERVER_URL + "students/fetchStudents",
         { rollNumber: rollNumber }
       );
-      console.log(res.data);
       const data = res.data.response;
       let arr = [];
       for (let i = 0; i < data.length; i++) {
@@ -265,298 +262,319 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
     }
   }, [name]);
   const handleInputChange = (characterEntered: SetStateAction<string>) => {
-    if(characterEntered !== "")
-    setName(characterEntered);
+    if (characterEntered !== "") setName(characterEntered);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(selectCoord, "is selectCoord");
-  }, [selectCoord])
+  }, [selectCoord]);
 
   return (
     <div>
-    <div className="flex flex-col grow items-center">
-      <div className="mt-12 w-max">
-        <div className="flex flex-row justify-between">
-          <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
-            {isEdit ? "EDIT FORUM" : "ADD FORUM"}
-          </p>
-          {isEdit && (
-            <button
-              className="btn  bg-arma-red hover:bg-arma-red rounded-[8px] px-2 py-1 mb-12 flex"
-              onClick={() => {
-                setShow1(true);
-              }}
+      <div className="flex flex-col grow items-center">
+        <div className="mt-12 w-max">
+          <div className="flex flex-row justify-between">
+            <p className="text-center lg:text-left text-arma-title text-2xl font-medium mb-12 ml-2 ">
+              {isEdit ? "EDIT FORUM" : "ADD FORUM"}
+            </p>
+            {isEdit && (
+              <button
+                className="btn  bg-arma-red hover:bg-arma-red rounded-[8px] px-2 py-1 mb-12 flex"
+                onClick={() => {
+                  setShow1(true);
+                }}
+              >
+                Delete
+              </button>
+            )}
+            <Dialog
+              show={show1}
+              setShow={setShow1}
+              title="Are you sure you want to proceed?"
             >
-              Delete
-            </button>
-          )}
-          <Dialog
-            show={show1}
-            setShow={setShow1}
-            title="Are you sure you want to proceed?"
-          >
-            <button className="outlineBtn" onClick={() => setShow1(false)}>
-              Cancel
-            </button>
-            <button
-              className="btn"
-              onClick={() => {
-                deleteItem();
+              <button className="outlineBtn" onClick={() => setShow1(false)}>
+                Cancel
+              </button>
+              <button
+                className="btn"
+                onClick={() => {
+                  deleteItem();
+                }}
+              >
+                Proceed
+              </button>
+            </Dialog>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <InputField
+              name="Forum Name"
+              type="text"
+              value={forumID}
+              error={forumIDError}
+              onChange={(e) => {
+                validateforumID(e);
               }}
-            >
-              Proceed
-            </button>
-          </Dialog>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <InputField
-            name="Forum Name"
-            type="text"
-            value={forumID}
-            error={forumIDError}
-            onChange={(e) => {
-              validateforumID(e);
-            }}
-          />
-          <InputField
-            name="Phone Number"
-            type="text"
-            value={phone}
-            error={phoneError}
-            onChange={(e) => {
-              validatePhone(e);
-            }}
-          />
+            />
+            <InputField
+              name="Phone Number"
+              type="text"
+              value={phone}
+              error={phoneError}
+              onChange={(e) => {
+                validatePhone(e);
+              }}
+            />
 
-          <Select
-            name="Forum Head"
-            placeholder="Forum Head"
-            options={mystu}
-            onInputChange={handleInputChange1}
-            noOptionsMessage={() => null}
-            onChange={(e: any) => {
-              for (let i = 0; i < selectHead.length; i++) {
-                if (e?.value === selectHead[i]) return;
+            <Select
+              name="Forum Head"
+              placeholder="Forum Head"
+              options={mystu}
+              onInputChange={handleInputChange1}
+              noOptionsMessage={() => null}
+              onChange={(e: any) => {
+                for (let i = 0; i < selectHead.length; i++) {
+                  if (e?.value === selectHead[i]) return;
+                }
+                setSelectHead([...selectHead, e?.value]);
+                setSelectHeadLabel([
+                  ...selectHeadLabel,
+                  e?.label.split("-")[0],
+                ]);
+                setSpan(true);
+              }}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  minHeight: 52,
+                  minWidth: 270,
+                  borderRadius: "0.5rem",
+                  border: "2px solid rgb(200, 200, 200)",
+                }),
+
+                placeholder: (base) => ({
+                  ...base,
+                }),
+
+                valueContainer: (base) => ({
+                  ...base,
+                  paddingLeft: "16px",
+                }),
+              }}
+              className="basic-multi-select "
+            />
+
+            <Select
+              name="Faculty Coordinator"
+              options={myfac}
+              placeholder="faculty coordinator"
+              onInputChange={(e) => {
+                if (e !== "") handleInputChange(e);
+              }}
+              value={
+                isEdit
+                  ? { value: selectCoord, label: actualName }
+                  : { value: selectCoord, label: actualName }
               }
-              setSelectHead([...selectHead, e?.value]);
-              setSelectHeadLabel([...selectHeadLabel, e?.label.split("-")[0]]);
-              setSpan(true);
-            }}
-            styles={{
-              control: (base) => ({
-                ...base,
-                minHeight: 52,
-                minWidth: 270,
-                borderRadius: "0.5rem",
-                border: "2px solid rgb(200, 200, 200)",
-              }),
+              noOptionsMessage={() => null}
+              onChange={(e: any) => {
+                console.log(e);
+                setSelectCoord(e.value);
+                setActualName(e.label);
+              }}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  minHeight: 52,
+                  minWidth: 270,
+                  borderRadius: "0.5rem",
+                  border: "2px solid rgb(200, 200, 200)",
+                }),
 
-              placeholder: (base) => ({
-                ...base,
-              }),
+                placeholder: (base) => ({
+                  ...base,
+                }),
 
-              valueContainer: (base) => ({
-                ...base,
-                paddingLeft: "16px",
-              }),
-            }}
-            className="basic-multi-select "
-          />
+                valueContainer: (base) => ({
+                  ...base,
+                  paddingLeft: "16px",
+                }),
+              }}
+              className="basic-multi-select "
+            />
+            <div
+              className={`flex flex-col mr-auto w-[270px] ${
+                selectHeadLabel.length === 0 && "hidden"
+              } `}
+            >
+              {span && (
+                <span className="text-arma-title mb-2">Forum Heads:</span>
+              )}
+              {selectHeadLabel.map((r: any, i: any) => {
+                return isEdit ? (
+                  <div
+                    key={i}
+                    className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]"
+                  >
+                    <span>{r.name ? r.name : r}</span>
+                    <Close
+                      className="cursor-pointer"
+                      onClick={() => {
+                        let temp = [...selectHeadLabel];
+                        temp.splice(i, 1);
+                        setSelectHead(temp);
+                        let tempL = [...selectHeadLabel];
+                        tempL.splice(i, 1);
+                        setSelectHeadLabel(tempL);
+                        if (selectHead.length === 1) setSpan(false);
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    key={i}
+                    className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]"
+                  >
+                    <span>{r}</span>
+                    <Close
+                      className="cursor-pointer"
+                      onClick={() => {
+                        let temp = [...selectHead];
+                        temp.splice(i, 1);
+                        setSelectHead(temp);
+                        let tempL = [...selectHeadLabel];
+                        tempL.splice(i, 1);
+                        setSelectHeadLabel(tempL);
+                        if (selectHead.length === 1) setSpan(false);
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
 
-          <Select
-            name="Faculty Coordinator"
-            options={myfac}
-            placeholder="faculty coordinator"
-            onInputChange={(e) => {
-              if (e !== "") handleInputChange(e);
-            }}
-            value={
-              isEdit
-                ? { value: selectCoord, label: actualName }
-                : { value: selectCoord, label: actualName }
-            }
-            noOptionsMessage={() => null}
-            onChange={(e: any) => {
-              console.log(e);
-              setSelectCoord(e.value);
-              setActualName(e.label);
-            }}
-            styles={{
-              control: (base) => ({
-                ...base,
-                minHeight: 52,
-                minWidth: 270,
-                borderRadius: "0.5rem",
-                border: "2px solid rgb(200, 200, 200)",
-              }),
-
-              placeholder: (base) => ({
-                ...base,
-              }),
-
-              valueContainer: (base) => ({
-                ...base,
-                paddingLeft: "16px",
-              }),
-            }}
-            className="basic-multi-select "
-          />
-          <div
-            className={`flex flex-col mr-auto w-[270px] ${
-              selectHeadLabel.length === 0 && "hidden"
-            } `}
-          >
-            {span && <span className="text-arma-title mb-2">Forum Heads:</span>}
-            {selectHeadLabel.map((r: any, i: any) => {
-              return isEdit ? (
-                <div
-                  key={i}
-                  className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]"
-                >
-                  <span>{r.name ? r.name : r}</span>
-                  <Close
-                    className="cursor-pointer"
-                    onClick={() => {
-                      let temp = [...selectHeadLabel];
-                      temp.splice(i, 1);
-                      setSelectHead(temp);
-                      let tempL = [...selectHeadLabel];
-                      tempL.splice(i, 1);
-                      setSelectHeadLabel(tempL);
-                      if (selectHead.length === 1) setSpan(false);
-                    }}
-                  />
-                </div>
-              ) : (
-                <div
-                  key={i}
-                  className="flex justify-between shadow-md px-4 py-2 mb-2 hover:bg-black/[0.05]"
-                >
-                  <span>{r}</span>
-                  <Close
-                    className="cursor-pointer"
-                    onClick={() => {
-                      let temp = [...selectHead];
-                      temp.splice(i, 1);
-                      setSelectHead(temp);
-                      let tempL = [...selectHeadLabel];
-                      tempL.splice(i, 1);
-                      setSelectHeadLabel(tempL);
-                      if (selectHead.length === 1) setSpan(false);
-                    }}
-                  />
-                </div>
-              );
-            })}
+            <InputField
+              name="Login Email"
+              type="text"
+              value={email}
+              error={emailError}
+              onChange={(e) => {
+                validateEmail(e);
+              }}
+            />
+            <InputField
+              name="Password"
+              type="password"
+              error={passwordError}
+              onChange={(e) => {
+                validatePass(e);
+              }}
+            />
+            <InputField
+              name="Confirm Password"
+              type="password"
+              error={passwordConfirmError}
+              onChange={(e) => {
+                validateConfirmPass(e);
+              }}
+            />
           </div>
 
-          <InputField
-            name="Login Email"
-            type="text"
-            value={email}
-            error={emailError}
-            onChange={(e) => {
-              validateEmail(e);
-            }}
-          />
-          <InputField
-            name="Password"
-            type="password"
-            error={passwordError}
-            onChange={(e) => {
-              validatePass(e);
-            }}
-          />
-        <InputField
-            name="Confirm Password"
-            type="password"
-            error={passwordConfirmError}
-            onChange={(e) => {
-              validateConfirmPass(e);
-            }}
-          />
-           </div>
+          <Dialog show={show} setShow={setShow} title={response}>
+            {" "}
+          </Dialog>
 
-        <Dialog show={show} setShow={setShow} title={response}>
-          {" "}
-        </Dialog>
-
-        <button
-          className="btn  bg-arma-title rounded-[8px] px-6 py-2 mt-12 ml-auto mr-auto flex justify-center"
-          onClick={() => {
-            loginValidate();
-          }}
-        >
-          {isEdit ? "SAVE" : "ADD"}
-        </button>
-        {showError.length !== 0 && (
-          <span className="text-red-500 text-sm flex justify-center mt-2">
-            {showError}
-          </span>
-        )}
+          <button
+            className="btn  bg-arma-title rounded-[8px] px-6 py-2 mt-12 ml-auto mr-auto flex justify-center"
+            onClick={() => {
+              loginValidate();
+            }}
+          >
+            {isEdit ? "SAVE" : "ADD"}
+          </button>
+          {showError.length !== 0 && (
+            <span className="text-red-500 text-sm flex justify-center mt-2">
+              {showError}
+            </span>
+          )}
+        </div>
       </div>
-    </div>
-    {isEdit &&
-    <><div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[60rem]">
-         <div className="flex gap-4 mb-2">
-          <span className="text-arma-gray font-semibold text-lg">
-            Forum Core Team
-          </span>
-          <button
-            className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
-            onClick={() => navigate("/Forums/addNewCoreTeamMember/")}
-          >
-            ADD
-          </button>
-          </div>
-          <Table
-            api={`${process.env.REACT_APP_SERVER_URL + "forum/getCoreForumMembers"}`}
-            rowsPerPage={5}
-            buttonsCount={3}
-            filter={{ name: forumID }}
-            headers={[
-              {
-                displayName: "NAME",
-                dataPath: "studentID.name",
-                sortable: false,
-              },
-              {
-                displayName: "ROLL NUMBER",
-                dataPath: "studentID.rollNumber",
-                sortable: false,
-              },
-              {
-                displayName: "DEPARTMENT",
-                dataPath: "studentID.branch",
-                sortable: false,
-              },
-              {
-                displayName: "YEAR",
-                dataPath: "studentID.year",
-                sortable: false,
-              },
-              {
-                displayName: "SECTION",
-                dataPath: "studentID.section",
-                sortable: false,
-              },
-              { displayName: "ROLE", dataPath: "designation", sortable: false },
-            ]} />
-        </div><div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[60rem]">
-        <div className="flex gap-4 mb-2">
-        <span className="text-arma-gray font-semibold text-lg">
-            Forum Members
-          </span>
-          <button
-            className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
-            onClick={() => navigate("/Forums/addNewForumMember")}
-          >
-            ADD
-          </button>
-          </div>
+      {isEdit && (
+        <>
+          <div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[60rem]">
+            <div className="flex gap-4 mb-2">
+              <span className="text-arma-gray font-semibold text-lg">
+                Forum Core Team
+              </span>
+              <button
+                className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
+                onClick={() => navigate("/Forums/addNewCoreTeamMember/")}
+              >
+                ADD
+              </button>
+            </div>
             <Table
-              api={`${process.env.REACT_APP_SERVER_URL + "forum/getForumMembers"}`}
+              api={`${
+                process.env.REACT_APP_SERVER_URL + "forum/getCoreForumMembers"
+              }`}
+              rowsPerPage={5}
+              buttonsCount={3}
+              filter={{ name: forumID }}
+              transformer={(data) => {
+                data.designation = data.forumCoreTeamMemberships.filter((x:any) => {
+                  return String(x.forumId.name) === String(forumID);
+                })[0].designation;
+                return data;
+              }}
+              headers={[
+                {
+                  displayName: "NAME",
+                  dataPath: "name",
+                  sortable: false,
+                },
+                {
+                  displayName: "ROLL NUMBER",
+                  dataPath: "rollNumber",
+                  sortable: false,
+                },
+                {
+                  displayName: "DEPARTMENT",
+                  dataPath: "branch",
+                  sortable: false,
+                },
+                {
+                  displayName: "YEAR",
+                  dataPath: "year",
+                  sortable: false,
+                },
+                {
+                  displayName: "SECTION",
+                  dataPath: "section",
+                  sortable: false,
+                },
+                {
+                  displayName: "Designation",
+                  dataPath: "designation",
+                  sortable: false,
+                },
+              ]}
+            />
+          </div>
+          <div className="flex flex-col mt-16 w-[90%] mx-auto max-w-[60rem]">
+            <div className="flex gap-4 mb-2">
+              <span className="text-arma-gray font-semibold text-lg">
+                Forum Members
+              </span>
+              <button
+                className="btn  bg-arma-blue rounded-[8px] w-max px-6 py-1 "
+                onClick={() => navigate("/Forums/addNewForumMember")}
+              >
+                ADD
+              </button>
+            </div>
+            <Table
+              api={`${
+                process.env.REACT_APP_SERVER_URL + "forum/getForumMembers"
+              }`}
               rowsPerPage={5}
               buttonsCount={3}
               filter={{ name: forumID }}
@@ -573,16 +591,26 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
                   sortable: false,
                 },
                 { displayName: "YEAR", dataPath: "year", sortable: false },
-                { displayName: "SECTION", dataPath: "section", sortable: false },
-              ]} />
-          </div><div className="flex flex-col mt-16 mb-16 w-[90%] mx-auto max-w-[60rem]">
+                {
+                  displayName: "SECTION",
+                  dataPath: "section",
+                  sortable: false,
+                },
+              ]}
+            />
+          </div>
+          <div className="flex flex-col mt-16 mb-16 w-[90%] mx-auto max-w-[60rem]">
             <p className="text-arma-gray font-semibold text-lg mb-2">
               Events Conducted
             </p>{" "}
             <DataTable
               data={events}
               headers={[
-                { displayName: "EVENT NAME", dataPath: "name", sortable: false },
+                {
+                  displayName: "EVENT NAME",
+                  dataPath: "name",
+                  sortable: false,
+                },
                 {
                   displayName: "NO. OF PARTICIPANTS",
                   dataPath: "participants",
@@ -594,10 +622,11 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
                   sortable: false,
                 },
                 // { displayName: "ATTENDANCE", dataPath: "attendance", sortable: false },
-              ]} />
-          </div></>
-}
+              ]}
+            />
+          </div>
+        </>
+      )}
     </div>
-    
   );
 };

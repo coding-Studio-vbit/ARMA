@@ -66,7 +66,7 @@ export default function RequestsView() {
       if (res.data.status === 1) {
         // console.log(res.data.response);
         setEventData(res.data.response);
-        console.log(res.data.response);
+        console.log("Event data is: ", res.data.response);
         let dates = res.data.response.eventDates;
         for (let i = 0; i < dates.length; i++) {
           let d = new Date(dates[i]);
@@ -385,7 +385,7 @@ export default function RequestsView() {
 
             {/* {event.budgetDocPath} */}
             {
-              <div className="mt-6 flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
+              eventData.hasBudget ? (<div className="mt-6 flex w-80 justify-between items-center bg-white border-[1px] border-[#E5E5EA] py-3 px-6 rounded-[24px] break-words">
                 <span>Budget Document</span>{" "}
                 <a
                   className="!cursor-pointer"
@@ -408,7 +408,7 @@ export default function RequestsView() {
                 >
                   <CloudDownload className="cursor-pointer -mt-1" />
                 </a>
-              </div>
+              </div>) : null
             }
           </div>
         </div>
@@ -420,6 +420,7 @@ export default function RequestsView() {
             <Calendar
               value={eventDays}
               colorPrimary="#0047FF"
+              onChange={(e)=>{console.log("The change is:" ,e)}}
               shouldHighlightWeekends
             />
           )}
