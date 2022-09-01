@@ -480,9 +480,7 @@ export default function RequestsView() {
       ></textarea>
       <div className="flex flex-wrap gap-4 xsm:justify-center mt-4 ">
         {(faculty?.role.FO || faculty?.role.ADMIN) &&
-          event.eventStatus !== "APPROVED" &&
-          event.eventStatus !== "CANCELLED" &&
-          event.eventStatus !== "COMPLETED" && (
+          event.eventStatus == "AWAITING FO APPROVAL" && (
             <button
               onClick={() => makeRequest(actions.APPROVE_BUDGET)}
               className="btn bg-arma-title basis-full xsm:basis-auto "
@@ -492,8 +490,7 @@ export default function RequestsView() {
           )}
         {(faculty?.role.FO || faculty?.role.ADMIN) &&
           event.eventStatus !== "APPROVED" &&
-          event.eventStatus !== "CANCELLED" &&
-          event.eventStatus !== "COMPLETED" && (
+          event.eventStatus == "AWAITING FO APPROVAL" &&  (
             <button
               onClick={() => makeRequest(actions.REJECT_BUDGET)}
               className="btn -red bg-arma-title basis-full xsm:basis-auto "
@@ -502,9 +499,7 @@ export default function RequestsView() {
             </button>
           )}
         {(faculty?.role.SAC || faculty?.role.ADMIN) &&
-          event.eventStatus !== "APPROVED" &&
-          event.eventStatus !== "CANCELLED" &&
-          event.eventStatus !== "COMPLETED" && (
+          event.eventStatus == "AWAITING SAC APPROVAL" && (
             <button
               onClick={() => makeRequest(actions.APPROVE_REQUEST)}
               className="btn-green ml-auto xsm:ml-0"
@@ -513,9 +508,7 @@ export default function RequestsView() {
             </button>
           )}
         {(faculty?.role.SAC || faculty?.role.ADMIN) &&
-          event.eventStatus !== "APPROVED" &&
-          event.eventStatus !== "CANCELLED" &&
-          event.eventStatus !== "COMPLETED" && (
+          event.eventStatus == "AWAITING SAC APPROVAL" && (
             <button
               onClick={() => makeRequest(actions.REJECT_REQUEST)}
               className="btn-red mr-auto xsm:mr-0"

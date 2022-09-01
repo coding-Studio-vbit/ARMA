@@ -21,10 +21,10 @@ const newEventFO = {
   template: "Hey there ${FOName}, New event ${eventName} by ${forumName} has been approved by the SAC. Please review the budget document of the event on A.R.M.A"
 }
 const newEventCFI = {
-  template: "Hey there ${CFIName}, New event ${eventName} by ${forumName} has been approved by the SAC. Please review the budget document of the event on A.R.M.A"
+  template: "Hey there ${CFIName}, New event ${eventName} by ${forumName} has been approved by the SAC. Please review the Computational Facilities Requirements of the event on A.R.M.A"
 }
 const newEventRegistrar = {
-  template: "Hey there ${RegistrarName}, New event ${eventName} by ${forumName} has been approved by the SAC. Please review the budget document of the event on A.R.M.A"
+  template: "Hey there ${RegistrarName}, New event ${eventName} by ${forumName} has been approved by the SAC. Please review equipment and other facilities requirement of the event on A.R.M.A"
 }
 
 const eventUpdatedSAC = {

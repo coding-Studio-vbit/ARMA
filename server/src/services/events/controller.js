@@ -9,7 +9,7 @@ const base64 = require("../util/base64");
 const {
   budgetDocUpdateTemplate,
   newEventCreatedForum,
-  newEventCreatedFO,
+  newEventFO,
   newEventCreatedSAC,
   MOReportAndMedia,
   eventUpdatedSAC,
@@ -110,17 +110,17 @@ const createEvent = async (req, res) => {
     const forumCore = await students.find({
       "forumCoreTeamMemberships.forumId": req.user._id,
     });
-	
-  //There may be common students in the above lists.
-  //So we make a set.
 
-  let theSet = [...new Set(forumMems.concat(forumCore).map(stu=>String(stu._id)))];
-  newAttendanceDoc.registrantsList = theSet;
-  for(let i=0;i<theSet.length;i++)
-  {
-	  newAttendanceDoc.presence.push({dates:[], studentId: theSet[i]});
-  }
+    //There may be common students in the above lists.
+    //So we make a set.
 
+    let theSet = [
+      ...new Set(forumMems.concat(forumCore).map((stu) => String(stu._id))),
+    ];
+    newAttendanceDoc.registrantsList = theSet;
+    for (let i = 0; i < theSet.length; i++) {
+      newAttendanceDoc.presence.push({ dates: [], studentId: theSet[i] });
+    }
 
     // Set the required equipment array
     let eqs = [];
@@ -267,24 +267,14 @@ const createEvent = async (req, res) => {
       eventName: newEvent.name,
       equipmentList: equipmentString,
     });
-
-    if (newEvent.hasBudget) {
-      const FORoleID = await roles.findOne().where("name").in(["FO"]);
-      const FO = await faculty.findOne({ role: FORoleID._id });
-      mailer.sendMail(FO.email, newEventCreatedFO, {
-        forumName: req.user.name,
-        eventName: eventDetails.name,
-        FOName: FO.name,
-      });
-    } else {
-      const SACRoleID = await roles.findOne().where("name").in(["SAC"]);
-      const SAC = await faculty.findOne({ role: SACRoleID._id });
-      mailer.sendMail(SAC.email, newEventCreatedSAC, {
-        forumName: req.user.name,
-        eventName: eventDetails.name,
-        SACName: SAC.name,
-      });
-    }
+    //send the mail to the SAC.
+    const SACRoleID = await roles.findOne().where("name").in(["SAC"]);
+    const SAC = await faculty.findOne({ role: SACRoleID._id });
+    mailer.sendMail(SAC.email, newEventCreatedSAC, {
+      forumName: req.user.name,
+      eventName: eventDetails.name,
+      SACName: SAC.name,
+    });
 
     res.json(
       response({ message: "new event created" }, process.env.SUCCESS_CODE)

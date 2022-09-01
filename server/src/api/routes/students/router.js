@@ -3,10 +3,11 @@ const checkRole = require("../../../services/util/checkRole");
 const controller = require("../../../services/students/controller");
 const tokenAuth = require("../../middleware/tokenAuth");
 
+
 router.use(tokenAuth);
 
 // GET STUDENTS
-router.get("/", controller.getStudentsList);
+router.get("/", controller.getStudentsList); 
 
 router.post("/uploadStudentsList", controller.uploadStudentsList);
 router.put(
@@ -28,7 +29,7 @@ router.post(
   controller.deleteStudent
 );
 router.post("/newReport", controller.generatePDF);
-router.get("/getBranches/:course",controller.getBranches)
+router.get("/getBranches/:course",controller.getBranches);
 router.get("/getTotalYears/:course",controller.getTotalYears)
 router.get("/getTotalSections/:course/:branch", controller.getTotalSections);
 router.get("/getCourses", controller.getCourses);

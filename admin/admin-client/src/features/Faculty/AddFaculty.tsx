@@ -218,7 +218,7 @@ export const AddFaculty = ({ isEdit }: AddStudentsProps) => {
           setResponse("New Faculty Added");
           setShow(true);
         } else {
-          setResponse(data.response.message);
+          setResponse(data.response);
           setShow(true);
         }
       } else {

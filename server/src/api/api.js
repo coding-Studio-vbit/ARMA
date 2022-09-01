@@ -18,7 +18,6 @@ const api = () => {
   router.use("/faculty", facultyRouter);
   router.use("/forum", forumRouter);
   router.use("/events", eventRouter);
-  //router.use("/test", testRouter);
   router.use("/admin", adminRouter);
   router.use("/roles", rolesRouter);
   router.use("/halls", hallsRouter);
