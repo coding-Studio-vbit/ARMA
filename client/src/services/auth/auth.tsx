@@ -6,13 +6,14 @@ export class AuthService {
   ): Promise<{ response: any; status: number }> {
     const userAgent = navigator.userAgent;
     try {
-      const res = await fetch(process.env.REACT_APP_SERVER_URL + "login", {
+      const serverUrl = (process.env.REACT_APP_SERVER_URL || "https://armaserver.onrender.com/").trim();
+      const baseUrl = serverUrl.endsWith("/") ? serverUrl : serverUrl + "/";
+      const res = await fetch(baseUrl + "login", {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-
         body: JSON.stringify({
           email: email,
           password: password,
@@ -27,6 +28,7 @@ export class AuthService {
       }
 
       let role = data.response.user.role;
+      localStorage.setItem("arma_token", data.response.token);
       localStorage.setItem("idk", data.response.token);
       data.response.user.role = {
         ADMIN: false,
@@ -35,13 +37,16 @@ export class AuthService {
         FC: false,
         FACULTY: false,
       };
-      role.forEach((element: any) => {
-        data.response.user.role[element.name] = true;
-      });
+      if (Array.isArray(role)) {
+        role.forEach((element: any) => {
+          if (element?.name) {
+            data.response.user.role[element.name] = true;
+          }
+        });
+      }
       return data;
     } catch (error) {
       console.log(error);
-
       return { response: "Server not available. Try again later", status: -1 };
     }
   }

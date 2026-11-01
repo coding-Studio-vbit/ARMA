@@ -1,3 +1,4 @@
+const escapeRegex = require("../util/escapeRegex");
 const events = require("../../models/event");
 const faculty = require("../../models/faculty");
 const reservations = require("../../models/reservations");
@@ -178,8 +179,11 @@ const createEvent = async (req, res) => {
         let info = eventHalls[datesList[i]].halls[j].split(".");
         let slot = info[0];
         let hall = await halls.findOne({
-          name: { $regex: `^${info[1]}`, $options: "i" },
+          name: { $regex: `^${escapeRegex(info[1])}`, $options: "i" },
         });
+        if (!hall) {
+          throw new Error(`Hall "${info[1]}" does not exist`);
+        }
         if (reservationsObject[String(hall._id)]) {
           if (reservationsObject[String(hall._id)][datesList[i]]) {
             reservationsObject[String(hall._id)][datesList[i]].push(slot);
@@ -198,11 +202,13 @@ const createEvent = async (req, res) => {
     for (let i = 0; i < HallsList.length; i++) {
       reservationsList.push({
         HallID: HallsList[i],
-        dates: Object.keys(reservationsObject[HallsList[i]]).map((date) => {
-          const temp = new Date(date);
-          return `${temp.getDate()}-${
-            temp.getMonth() + 1
-          }-${temp.getFullYear()}`;
+        dates: Object.keys(reservationsObject[HallsList[i]]).map((dateStr) => {
+          if (/^\d{4}-\d{1,2}-\d{1,2}/.test(dateStr)) {
+            const parts = dateStr.split("T")[0].split("-");
+            return `${Number(parts[2])}-${Number(parts[1])}-${parts[0]}`;
+          }
+          const temp = new Date(dateStr);
+          return `${temp.getUTCDate()}-${temp.getUTCMonth() + 1}-${temp.getUTCFullYear()}`;
         }),
         timeSlots: Object.keys(reservationsObject[HallsList[i]]).map((date) => {
           return reservationsObject[HallsList[i]][date];
@@ -939,27 +945,28 @@ const completeEvent = async (req, res) => {
       );
     //update student reports
     const attendanceDoc = await attendances.findOne({ eventID: eventId });
-    const totalDays = event.eventDates.length;
+    const totalDays = Math.max(event.eventDates?.length || 1, 1);
     const qualifiedStudents = [];
-    for (let i = 0; i < attendanceDoc.presence.length; i++) {
-      const attendancePercentage =
-        (attendanceDoc.presence[i].dates.length * 100) / totalDays;
-      if (
-        attendancePercentage >=
-        (process.env.MIN_EVENT_PERCENTAGE
-          ? process.env.MIN_EVENT_PERCENTAGE
-          : 50)
-      ) {
-        qualifiedStudents.push(attendanceDoc.presence[i].studentId);
+    if (attendanceDoc && Array.isArray(attendanceDoc.presence)) {
+      for (let i = 0; i < attendanceDoc.presence.length; i++) {
+        const attendancePercentage =
+          (attendanceDoc.presence[i].dates.length * 100) / totalDays;
+        if (
+          attendancePercentage >=
+          (process.env.MIN_EVENT_PERCENTAGE
+            ? Number(process.env.MIN_EVENT_PERCENTAGE)
+            : 50)
+        ) {
+          qualifiedStudents.push(attendanceDoc.presence[i].studentId);
+        }
       }
     }
-    //add this event as participated in for each of the qualified students.
-    for (let i = 0; i < qualifiedStudents.length; i++) {
-      const stu = await students.findById(qualifiedStudents[i]);
-      if (stu) {
-        stu.eventsParticipated.push(eventId);
-        await stu.save();
-      }
+    //add this event as participated in for each qualified student atomically
+    if (qualifiedStudents.length > 0) {
+      await students.updateMany(
+        { _id: { $in: qualifiedStudents } },
+        { $addToSet: { eventsParticipated: eventId } }
+      );
     }
     //update the reservations of this event.
     await reservations.updateMany(

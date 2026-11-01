@@ -1,3 +1,5 @@
+const escapeRegex = require("../util/escapeRegex");
+const courseModel = require("../../models/course");
 const bcrypt = require("bcrypt");
 const students = require("../../models/student");
 const forums = require("../../models/forum");
@@ -145,18 +147,15 @@ const addRole = async (data) => {
 };
 
 const getAdmins = async (req, res) => {
-  //For pagination
-  let page = req.query.page ? Number(req.query.page) : 1;
-  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
-  console.log(req.user);
-  //For filters
+  let page = Math.max(Number(req.query.page) || 1, 1);
+  let limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
+
   let where = {};
-  if (req.query.name) where.name = { $regex: req.query.name, $options: "i" };
-  if (req.query.email) where.email = { $regex: req.query.email, $options: "i" };
-  //For sorting
+  if (req.query.name) where.name = { $regex: escapeRegex(req.query.name), $options: "i" };
+  if (req.query.email) where.email = { $regex: escapeRegex(req.query.email), $options: "i" };
+
   let sort = {};
-  if (req.query.orderBy && req.query.order)
-    sort[req.query.orderBy] = req.query.order;
+  if (req.query.orderBy && req.query.order) sort[req.query.orderBy] = req.query.order;
   else sort = { email: "asc" };
 
   try {
@@ -180,14 +179,26 @@ const getAdmins = async (req, res) => {
 const addCourse = async (req, res) => {
   try {
     const { newCourse } = req.body;
-    const dataObject = JSON.parse(
-      String(readFileSync(path.join(__dirname, "../../static_data/courses.json")))
+    if (!newCourse || !newCourse.name) {
+      return res.json(response("Course name is required", process.env.FAILURE_CODE));
+    }
+    await courseModel.findOneAndUpdate(
+      { name: newCourse.name },
+      { $set: newCourse },
+      { upsert: true, new: true }
     );
-    dataObject[newCourse.name] = newCourse;
-    const r = writeFileSync(
-      path.join(__dirname, "../../static_data/courses.json"),
-      JSON.stringify(dataObject)
-    );
+    try {
+      const dataObject = JSON.parse(
+        String(readFileSync(path.join(__dirname, "../../static_data/courses.json")))
+      );
+      dataObject[newCourse.name] = newCourse;
+      writeFileSync(
+        path.join(__dirname, "../../static_data/courses.json"),
+        JSON.stringify(dataObject, null, 2)
+      );
+    } catch (e) {
+      // Ignored if file system is read-only in cloud
+    }
     res.json(response("added course", process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
@@ -197,19 +208,27 @@ const addCourse = async (req, res) => {
 const editCourse = async (req, res) => {
   try {
     const { courseName, newData } = req.body;
-    const dataObject = JSON.parse(
-      String(readFileSync(path.join(__dirname, "../../static_data/courses.json")))
-    );
-    if (Object.prototype.hasOwnProperty.call(dataObject, courseName)) {
-      dataObject[courseName] = newData;
-      const r = writeFileSync(
-        path.join(__dirname, "../../static_data/courses.json"),
-        JSON.stringify(dataObject)
-      );
-      res.json(response("edited course", process.env.SUCCESS_CODE));
-    } else {
-      res.json(response("no such course", process.env.FAILURE_CODE));
+    if (!courseName) {
+      return res.json(response("Course name is required", process.env.FAILURE_CODE));
     }
+    await courseModel.findOneAndUpdate(
+      { name: courseName },
+      { $set: { ...newData, name: courseName } },
+      { upsert: true, new: true }
+    );
+    try {
+      const dataObject = JSON.parse(
+        String(readFileSync(path.join(__dirname, "../../static_data/courses.json")))
+      );
+      dataObject[courseName] = newData;
+      writeFileSync(
+        path.join(__dirname, "../../static_data/courses.json"),
+        JSON.stringify(dataObject, null, 2)
+      );
+    } catch (e) {
+      // Ignored if file system is read-only
+    }
+    res.json(response("edited course", process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
     res.json(response(error.message, process.env.FAILURE_CODE));

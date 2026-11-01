@@ -157,7 +157,7 @@ function Login() {
         Forgot Password?
       </button>
       <div className="absolute bottom-0 text-xs w-max bg-gray-50">
-        <a className="mx-auto text-underline pb-2 opacity-100 text-arma-dark-blue cursor-pointer" href="https://forms.gle/45rY4BDn1ZzpGJPS8">
+        <a className="mx-auto text-underline pb-2 opacity-100 text-arma-dark-blue cursor-pointer" href="https://forms.gle/45rY4BDn1ZzpGJPS8" target="_blank" rel="noopener noreferrer">
           Facing issues? Have suggestions?
         </a>
       </div>

@@ -1,3 +1,4 @@
+const escapeRegex = require("../util/escapeRegex");
 
 const getCallerForumName = (req, fallbackName) => {
   const isForum = Array.isArray(req.user?.role) && req.user.role.some(r => r.name === "FORUM");
@@ -60,18 +61,14 @@ const getEquipments = async (req, res) => {
 };
 
 const getForumsList = async (req, res) => {
-  //For pagination
-  let page = req.query.page ? Number(req.query.page) : 1;
-  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+  let page = Math.max(Number(req.query.page) || 1, 1);
+  let limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
 
-  //For filters
   let where = {};
-  if (req.query.name) where.name = { $regex: req.query.name, $options: "i" };
+  if (req.query.name) where.name = { $regex: escapeRegex(req.query.name), $options: "i" };
 
-  //For sorting
   let sort = {};
-  if (req.query.orderBy && req.query.order)
-    sort[req.query.orderBy] = req.query.order;
+  if (req.query.orderBy && req.query.order) sort[req.query.orderBy] = req.query.order;
   else sort = { name: "asc" };
 
   try {
@@ -166,32 +163,31 @@ const addNewCoreForumMember = async (req, res) => {
 };
 
 const getCoreForumMembers = async (req, res) => {
-  //For pagination
-  let page = req.query.page ? Number(req.query.page) : 1;
-  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+  let page = Math.max(Number(req.query.page) || 1, 1);
+  let limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
 
-  //For filters
   let where = {};
-  console.log(req.query.name);
   if (req.query.name) where.name = req.query.name;
-  //For sorting
+
   let sort = {};
-  if (req.query.orderBy && req.query.order)
-    sort[req.query.orderBy] = req.query.order;
+  if (req.query.orderBy && req.query.order) sort[req.query.orderBy] = req.query.order;
   else sort = { name: "asc" };
+
   try {
     const forum = await forums.findOne({ name: req.query.name });
     if (!forum) throw new Error(`Forum ${req.query.name} not found!`);
+    const filter = { "forumCoreTeamMemberships.forumId": forum._id };
     const result = await students
-      .find({ "forumCoreTeamMemberships.forumId": forum._id })
+      .find(filter)
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort)
       .populate({
         path: "forumCoreTeamMemberships.forumId",
       });
+    const total = await students.countDocuments(filter);
     res.json(
-      response({ data: result, total: result.length }, process.env.SUCCESS_CODE)
+      response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );
   } catch (error) {
     console.log(error);
@@ -205,30 +201,28 @@ const getCoreForumMembers = async (req, res) => {
 };
 
 const getForumMembers = async (req, res) => {
-  //For pagination
-  let page = req.query.page ? Number(req.query.page) : 1;
-  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+  let page = Math.max(Number(req.query.page) || 1, 1);
+  let limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
 
-  //For filters
   let where = {};
-  console.log(req.query.name);
   if (req.query.name) where.name = req.query.name;
 
-  //For sorting
   let sort = {};
-  if (req.query.orderBy && req.query.order)
-    sort[req.query.orderBy] = req.query.order;
+  if (req.query.orderBy && req.query.order) sort[req.query.orderBy] = req.query.order;
   else sort = { name: "asc" };
+
   try {
     const forum = await forums.findOne({ name: req.query.name });
     if (!forum) throw new Error(`Forum ${req.query.name} not found!`);
+    const filter = { forumNonCoreTeamMemberships: forum._id };
     const result = await students
-      .find({ forumNonCoreTeamMemberships: forum._id })
+      .find(filter)
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort);
+    const total = await students.countDocuments(filter);
     res.json(
-      response({ data: result, total: result.length }, process.env.SUCCESS_CODE)
+      response({ data: result, total: total }, process.env.SUCCESS_CODE)
     );
   } catch (error) {
     console.log(error);

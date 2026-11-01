@@ -1,3 +1,5 @@
+const courseModel = require("../../models/course");
+const escapeRegex = require("../util/escapeRegex");
 const students = require("../../models/student");
 const studentReports = require("../util/studentReports");
 const response = require("../util/response");
@@ -8,23 +10,19 @@ const pdf = require("html-pdf");
 const md5 = require("md5");
 
 const getStudentsList = async (req, res) => {
-  //For pagination
-  let page = req.query.page ? Number(req.query.page) : 1;
-  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
-  console.log(req.user);
-  //For filters
+  let page = Math.max(Number(req.query.page) || 1, 1);
+  let limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
+
   let where = {};
-  if (req.query.name) where.name = { $regex: req.query.name, $options: "i" };
-  if (req.query.rollNumber)
-    where.rollNumber = { $regex: req.query.rollNumber, $options: "i" };
+  if (req.query.name) where.name = { $regex: escapeRegex(req.query.name), $options: "i" };
+  if (req.query.rollNumber) where.rollNumber = { $regex: escapeRegex(req.query.rollNumber), $options: "i" };
   if (req.query.branch) where.branch = req.query.branch;
   if (req.query.year) where.year = req.query.year;
   if (req.query.section) where.section = req.query.section;
   if (req.query.attendedEvents) where.attendedEvents = req.query.attendedEvents;
-  //For sorting
+
   let sort = {};
-  if (req.query.orderBy && req.query.order)
-    sort[req.query.orderBy] = req.query.order;
+  if (req.query.orderBy && req.query.order) sort[req.query.orderBy] = req.query.order;
   else sort = { name: "asc" };
 
   try {
@@ -51,20 +49,30 @@ const getStudentsList = async (req, res) => {
 
 const uploadStudentsList = async (req, res) => {
   try {
-    for (let i = 0; i < req.body.length; i++) {
-      let data = req.body[i];
-      let value = await students.findOne({ rollNumber: data.rollNumber });
-      if (!value) {
-        console.log(data);
-        let newStudent = students(data);
-        await newStudent.save();
-      } else {
-        await students.findOneAndUpdate(
-          { rollNumber: data.rollNumber },
-          { $set: { year: data.year, email: data.email } },
-          { new: true }
-        );
-      }
+    if (!Array.isArray(req.body) || req.body.length === 0) {
+      return res.json(response("No student records provided", process.env.FAILURE_CODE || 0));
+    }
+    const operations = req.body
+      .filter((s) => s && s.rollNumber)
+      .map((data) => ({
+        updateOne: {
+          filter: { rollNumber: String(data.rollNumber).trim().toUpperCase() },
+          update: {
+            $set: {
+              name: data.name,
+              email: data.email,
+              phone: data.phone,
+              branch: data.branch,
+              year: data.year,
+              section: data.section,
+              rollNumber: String(data.rollNumber).trim().toUpperCase(),
+            },
+          },
+          upsert: true,
+        },
+      }));
+    if (operations.length > 0) {
+      await students.bulkWrite(operations, { ordered: false });
     }
     res.json(
       response(
@@ -107,7 +115,7 @@ const editStudent = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(err.message, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -115,7 +123,7 @@ const fetchStudents = async (req, res) => {
   try {
     let { rollNumber } = req.body;
     let student = await students.find({
-      rollNumber: { $regex: `^${rollNumber}`, $options: "i" },
+      rollNumber: { $regex: `^${escapeRegex(rollNumber)}`, $options: "i" },
     });
     res.json(response(student, process.env.SUCCESS_CODE));
   } catch (err) {
@@ -177,13 +185,13 @@ const generatePDF = async (req, res) => {
     const result = await studentReports.generateNewReport(student);
 
     pdf.create(result.data).toFile(result.filePath, async (err, data) => {
-      if (err) throw err;
-      else {
-        student.reportFilePath = result.filePath;
-        console.log(result.filePath);
-        await student.save();
-        res.sendFile(result.filePath);
+      if (err) {
+        console.error("PDF generation failed:", err.message);
+        return res.json(response("PDF generation failed: " + err.message, process.env.FAILURE_CODE));
       }
+      student.reportFilePath = result.filePath;
+      await student.save();
+      res.sendFile(result.filePath);
     });
   } catch (err) {
     console.log(err);
@@ -191,15 +199,32 @@ const generatePDF = async (req, res) => {
   }
 };
 
+const getCoursesData = async () => {
+  try {
+    const dbCourses = await courseModel.find();
+    if (dbCourses && dbCourses.length > 0) {
+      const merged = { ...coursesInfo };
+      dbCourses.forEach((c) => {
+        merged[c.name] = { totalYears: c.totalYears, branches: c.branches };
+      });
+      return merged;
+    }
+  } catch (e) {
+    // fallback to static file
+  }
+  return coursesInfo;
+};
+
 const getBranches = async (req, res) => {
   try {
     const { course } = req.params;
-    if (!course || !coursesInfo[course] || !coursesInfo[course]["branches"]) {
+    const allCourses = await getCoursesData();
+    if (!course || !allCourses[course] || !allCourses[course]["branches"]) {
       return res.json(response([], process.env.SUCCESS_CODE));
     }
     res.json(
       response(
-        Object.keys(coursesInfo[course]["branches"]),
+        Object.keys(allCourses[course]["branches"]),
         process.env.SUCCESS_CODE
       )
     );
@@ -211,11 +236,12 @@ const getBranches = async (req, res) => {
 const getTotalYears = async (req, res) => {
   try {
     const { course } = req.params;
-    if (!course || !coursesInfo[course]) {
+    const allCourses = await getCoursesData();
+    if (!course || !allCourses[course]) {
       return res.json(response(0, process.env.SUCCESS_CODE));
     }
     res.json(
-      response(coursesInfo[course]["totalYears"], process.env.SUCCESS_CODE)
+      response(allCourses[course]["totalYears"], process.env.SUCCESS_CODE)
     );
   } catch (error) {
     console.log(error);
@@ -225,18 +251,19 @@ const getTotalYears = async (req, res) => {
 const getTotalSections = async (req, res) => {
   try {
     const { course, branch } = req.params;
+    const allCourses = await getCoursesData();
     if (
       !course ||
       !branch ||
-      !coursesInfo[course] ||
-      !coursesInfo[course].branches ||
-      !coursesInfo[course].branches[branch]
+      !allCourses[course] ||
+      !allCourses[course].branches ||
+      !allCourses[course].branches[branch]
     ) {
       return res.json(response([], process.env.SUCCESS_CODE));
     }
     res.json(
       response(
-        coursesInfo[course].branches[branch].sections,
+        allCourses[course].branches[branch].sections,
         process.env.SUCCESS_CODE
       )
     );
@@ -247,7 +274,8 @@ const getTotalSections = async (req, res) => {
 };
 const getCourses = async (req, res) => {
   try {
-    res.json(response(Object.keys(coursesInfo), process.env.SUCCESS_CODE));
+    const allCourses = await getCoursesData();
+    res.json(response(Object.keys(allCourses), process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
     res.json(response(error.message, process.env.FAILURE_CODE));
