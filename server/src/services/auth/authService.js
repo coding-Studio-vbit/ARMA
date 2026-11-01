@@ -13,15 +13,22 @@ const login = async (email, password, userAgent, userType) => {
   try {
     let user;
     if (userType === "FACULTY") {
-      user = await facultyModel.findOne({ email: email }).populate("role");
+      user = await facultyModel
+        .findOne({ email: email })
+        .select("+password")
+        .populate("role");
     } else if (userType === "FORUM") {
       user = await forums
         .findOne({ email: email })
+        .select("+password")
         .populate({ path: "role" })
         .populate({ path: "facultyCoordinatorID", select: "name" });
     } else if (userType === "ADMIN") {
       //Admin
-      user = await admins.findOne({ email: email }).populate("role");
+      user = await admins
+        .findOne({ email: email })
+        .select("+password")
+        .populate("role");
     }
 
     const failureCode = process.env.FAILURE_CODE || 0;
@@ -180,9 +187,10 @@ const resetPassword = async (email, password, token, res) => {
     const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
     const encryptedPassword = await bcrypt.hash(password, salt);
 
-    const facultyUser = await facultyModel.findOne({ email: email }).populate("role");
+    const facultyUser = await facultyModel.findOne({ email: email }).select("+password").populate("role");
     const forumUser = await forums
       .findOne({ email: email })
+      .select("+password")
       .populate({ path: "role" })
       .populate({ path: "facultyCoordinatorID", select: "name" });
     const adminUser = await admins.findOne({ email: email }).select("+password");
