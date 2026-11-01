@@ -2,8 +2,8 @@ const nodemailer = require("nodemailer");
 
 const fillTemplateWithData = (template, data) => {
   let temp = template;
-  for (property in data) {
-    temp = temp.replace(`\${${property}}`, data[property]);
+  for (const property in data) {
+    temp = temp.split(`\${${property}}`).join(data[property]);
   }
 
   return temp;

@@ -84,22 +84,27 @@
 
 @keyframes slide {
   from {
-    right: 100%;
-    left: 0px;
+    transform: translateX(0%);
   }
   to {
-    left: 50%;
-    right: 0px;
+    transform: translateX(100%);
   }
 }
 
 @keyframes sliderev {
   from {
-    left: 50%;
-    right: 0px;
+    transform: translateX(100%);
   }
   to {
-    right: 100%;
-    left: 0px;
+    transform: translateX(0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .userdiv,
+  .userdivback {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

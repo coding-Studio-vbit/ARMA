@@ -7,6 +7,7 @@ const admins = require("../../models/admin");
 const roles = require("../../models/role");
 const mongoose = require("mongoose");
 const { readFileSync, writeFileSync } = require("fs");
+const path = require("path");
 
 const addStudent = async (data) => {
   try {
@@ -44,12 +45,11 @@ const editAdmin = async (email, newEmail, newpassword) => {
 
 const viewAdmin = async (id) => {
   try {
-    let admin = await admins.findOne({ _id: id });
-    console.log(admin);
+    let admin = await admins.findOne({ _id: id }).select("-password");
     return response(admin, process.env.SUCCESS_CODE);
   } catch (err) {
     console.log(err);
-    return response(error, process.env.FAILURE_CODE);
+    return response(err.message, process.env.FAILURE_CODE);
   }
 };
 
@@ -59,7 +59,7 @@ const deleteAdmin = async (id) => {
     return response(admin, process.env.SUCCESS_CODE);
   } catch (err) {
     console.log(err);
-    return response(error, process.env.FAILURE_CODE);
+    return response(err.message, process.env.FAILURE_CODE);
   }
 };
 const register = async (user, userType) => {
@@ -107,7 +107,7 @@ const register = async (user, userType) => {
       //   return mongoose.Types.ObjectId(f._id);
       // });
       forumHeads = forumHeads.map((f) => {
-        return mongoose.Types.ObjectId(f._id);
+        return new mongoose.Types.ObjectId(f._id);
       });
       let forum = new forums({
         facultyCoordinatorID,
@@ -160,8 +160,9 @@ const getAdmins = async (req, res) => {
   else sort = { email: "asc" };
 
   try {
-    result = await admins
+    const result = await admins
       .find(where)
+      .select("-password")
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sort);
@@ -180,11 +181,11 @@ const addCourse = async (req, res) => {
   try {
     const { newCourse } = req.body;
     const dataObject = JSON.parse(
-      String(readFileSync("../static_data/courses.json"))
+      String(readFileSync(path.join(__dirname, "../../static_data/courses.json")))
     );
     dataObject[newCourse.name] = newCourse;
     const r = writeFileSync(
-      "../static_data/courses.json",
+      path.join(__dirname, "../../static_data/courses.json"),
       JSON.stringify(dataObject)
     );
     res.json(response("added course", process.env.SUCCESS_CODE));
@@ -197,12 +198,12 @@ const editCourse = async (req, res) => {
   try {
     const { courseName, newData } = req.body;
     const dataObject = JSON.parse(
-      String(readFileSync("../static_data/courses.json"))
+      String(readFileSync(path.join(__dirname, "../../static_data/courses.json")))
     );
-    if (Object.hasOwnProperty(courseName)) {
+    if (Object.prototype.hasOwnProperty.call(dataObject, courseName)) {
       dataObject[courseName] = newData;
       const r = writeFileSync(
-        "../static_data/courses.json",
+        path.join(__dirname, "../../static_data/courses.json"),
         JSON.stringify(dataObject)
       );
       res.json(response("edited course", process.env.SUCCESS_CODE));
@@ -211,7 +212,7 @@ const editCourse = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.json(error.message, process.env.FAILURE_CODE);
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 

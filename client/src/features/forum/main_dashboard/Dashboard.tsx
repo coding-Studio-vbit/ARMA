@@ -1,4 +1,4 @@
-import { Add } from "@material-ui/icons";
+﻿import { Add } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EventCard from "./EventCard";
@@ -79,7 +79,7 @@ const Dashboard = () => {
             </button>
           </div>
 
-          <div className="mt-3 sm:mt-4 h-44 w-48 mx-auto bg-gray-200 rounded-md p-3 drop-shadow-xl border-2">
+          <div className="mt-3 sm:mt-4 h-44 w-48 mx-auto bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
             <h2 className="text-arma-blue mx-auto">Today's Events</h2>
             <ul className="pl-8 list-disc list-outside">
               {todaysEventList.length !== 0 ? (

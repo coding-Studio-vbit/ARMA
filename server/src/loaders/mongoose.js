@@ -1,7 +1,7 @@
 const mongooseLoader = (mongoose) => {
-  console.log(process.env.MONGO_CONNECTION_STRING);
+  console.log("Connecting to database...");
   mongoose.connect(process.env.MONGO_CONNECTION_STRING);
-  
+
   mongoose.connection
     .once("open", () => {
       console.log("Connected to database.");

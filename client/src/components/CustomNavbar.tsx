@@ -136,7 +136,7 @@ const Navbar = ({ navItems }: NavbarProps) => {
             {url?.length > 0 ? (
               <img
                 className="h-10 w-10 rounded-3xl"
-                src={`data:image/png;base64, ${url}`}
+                src={url.startsWith("http") ? url : `data:image/png;base64, ${url}`}
                 alt="profile"
               ></img>
             ) : (

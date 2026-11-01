@@ -40,7 +40,7 @@ export const ReportAndMedia = () => {
               className="relative grow max-h-[300px]   rounded-[2em] shrink basis-[150px]  sm:basis-[30%] overflow-hidden   "
             >
               <img
-                className="w-full h-full rounded-[2em] object-cover transition-all hover:scale-110 	"
+                className="w-full h-full rounded-[2em] object-cover transition-transform duration-200 ease-out hover:scale-105"
                 src={v.imageUrl}
                 alt="Event images"
               />

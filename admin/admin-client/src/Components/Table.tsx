@@ -1,43 +1,44 @@
-import React from "react";
+import React from 'react';
 
 interface header {
-  displayName: string; //Display header name
-  dataPath: string; //property path
-  sortable: boolean; //sortable or not
+  displayName: string;
+  dataPath: string;
+  sortable: boolean;
 }
+
 interface TableProps {
   headers: Array<header>;
   data: any;
   onTableRowClick?: (id: string) => void;
 }
-export default function DataTable({
-  data,
-  headers,
-  onTableRowClick,
-}: TableProps) {
+
+export default function DataTable({ data, headers, onTableRowClick }: TableProps) {
   const getValueFromPath = (object: any, path: string): any => {
+    if (!object) return "-";
     let current = object;
-    path.split(".").forEach((property) => {
-      if (current.hasOwnProperty(property)) {
+    const properties = path.split(".");
+    for (const property of properties) {
+      if (current && typeof current === "object" && property in current) {
         current = current[property];
       } else {
-        throw new Error(`Property ${property} does not exist in the object!`);
+        return "-";
       }
-    });
-    return current;
+    }
+    return current ?? "-";
   };
+
   return (
     <div>
-      <div className="w-full border-2 shadow-md  rounded-[16px] overflow-x-auto ">
-        <table className="w-full ">
-          <thead className="bg-white border-b-2 rounded-[8px] border-black/30  ">
-            <tr className="rounded-[16px]">
+      <div className="w-full border border-gray-200 shadow-sm rounded-lg overflow-x-auto bg-white">
+        <table className="w-full">
+          <thead className="bg-gray-50/80 border-b border-gray-200">
+            <tr>
               {headers.map((header) => {
                 return (
                   <th
                     key={header.displayName}
                     scope="col"
-                    className="px-6 py-3 text-center font-medium text-arma-dark-blue uppercase tracking-wider"
+                    className="px-6 py-3.5 text-left text-xs font-semibold text-gray-700 tracking-normal"
                   >
                     {header.displayName}
                   </th>
@@ -45,36 +46,39 @@ export default function DataTable({
               })}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-300">
-            {data &&
-              (data.length > 0 ? (
-                data.map((item: any, index: number) => {
-                  return (
-                    <tr
-                      key={index}
-                      className="odd:bg-white even:bg-arma-light-gray"
-                      onClick={() => {
-                        if (onTableRowClick) {
-                          onTableRowClick(item._id);
-                        }
-                      }}
-                    >
-                      {headers.map((header) => {
-                        return (
-                          <td
-                            key={header.displayName}
-                            className=" px-6 py-4 text-center whitespace-nowrap"
-                          >
-                            {getValueFromPath(item, header.dataPath)}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })
-              ) : (
-                <p className="text-center p-4">Nothing here :)</p>
-              ))}
+          <tbody className="bg-white divide-y divide-gray-200">
+            {data && data.length > 0 ? (
+              data.map((item: any, index: number) => {
+                return (
+                  <tr
+                    key={index}
+                    className="odd:bg-white even:bg-gray-50/50 hover:bg-sky-50/40 cursor-pointer transition-colors"
+                    onClick={() => {
+                      if (onTableRowClick) {
+                        onTableRowClick(item._id);
+                      }
+                    }}
+                  >
+                    {headers.map((header) => {
+                      return (
+                        <td
+                          key={header.displayName}
+                          className="px-6 py-3.5 text-left text-sm text-gray-800 whitespace-nowrap"
+                        >
+                          {getValueFromPath(item, header.dataPath)}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan={headers.length} className="text-center py-8 text-gray-400 text-sm">
+                  No records found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

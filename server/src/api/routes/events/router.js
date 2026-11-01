@@ -83,7 +83,7 @@ router.put(
   controller.postAttendance
 );
 router.get(
-  "activeEvents",
+  "/activeEvents",
   (req, res, next) => {
     checkRole(req, res, next, ["FORUM"]);
   },
@@ -99,10 +99,36 @@ router.get(
 router.get("/getEvent/:id", controller.getEventById);
 router.get("/getBudgetDocument/:id", controller.getBudgetDocument);
 router.get("/getEventDocument/:id", controller.getEventDocument);
-router.post("/updateEventReservations", controller.updateReservations);
-router.post("/updateEventEquipment", controller.updateEquipment);
+router.post(
+  "/updateEventReservations",
+  (req, res, next) => {
+    checkRole(req, res, next, ["FORUM"]);
+  },
+  controller.updateReservations
+);
+router.post(
+  "/updateEventEquipment",
+  (req, res, next) => {
+    checkRole(req, res, next, ["FORUM"]);
+  },
+  controller.updateEquipment
+);
 router.get("/getEventEquipment/:id", controller.getEventEquipment);
 router.get("/getEventReservations/:id", controller.getEventReservations);
+router.post(
+  "/completeEvent/:eventId",
+  (req, res, next) => {
+    checkRole(req, res, next, ["FORUM"]);
+  },
+  controller.completeEvent
+);
+router.post(
+  "/cancelEvent/:eventId",
+  (req, res, next) => {
+    checkRole(req, res, next, ["FORUM"]);
+  },
+  controller.cancelEvent
+);
 router.get(
   "/completeEvent/:eventId",
   (req, res, next) => {

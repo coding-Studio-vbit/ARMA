@@ -40,7 +40,7 @@ const getRoles = async (req, res) => {
   else sort = { name: "asc" };
 
   try {
-    result = await role
+    const result = await role
       .find(where)
       .skip((page - 1) * limit)
       .limit(limit)
@@ -71,7 +71,7 @@ const editRole = async (req, res) => {
     res.json(response("Role edited successfully!", process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -81,7 +81,7 @@ const fetchRoles = async (req, res) => {
     res.json(response(role, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -92,7 +92,7 @@ const viewRoles = async (req, res) => {
     res.json(response(role, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -103,7 +103,7 @@ const deleteRoles = async (req, res) => {
     res.json(response(role, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 

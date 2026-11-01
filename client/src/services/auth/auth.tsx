@@ -22,7 +22,7 @@ export class AuthService {
       });
       let data = await res.json();
 
-      if (data.status === -1) {
+      if (data.status !== 1 || !data.response?.user) {
         return data;
       }
 

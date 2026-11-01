@@ -74,8 +74,14 @@ const getEvents = async (req, res) => {
     const total = await events.count(where);
     result = result.map((e) => {
       const temp = JSON.parse(JSON.stringify(e));
-      if (e.forumID.profilePictureFilePath) {
-        temp.logo = base64.encode(e.forumID.profilePictureFilePath);
+      if (e.forumID && e.forumID.profilePictureFilePath) {
+        if (e.forumID.profilePictureFilePath.startsWith("http")) {
+          temp.logo = e.forumID.profilePictureFilePath;
+        } else if (require("fs").existsSync(e.forumID.profilePictureFilePath)) {
+          temp.logo = base64.encode(e.forumID.profilePictureFilePath);
+        } else {
+          temp.logo = null;
+        }
       } else {
         temp.logo = null;
       }
@@ -204,7 +210,7 @@ const createEvent = async (req, res) => {
       });
     }
     const eventReservations = reservationsList;
-    eventReservations.forEach(async (obj) => {
+    for (const obj of eventReservations) {
       //first check if the dates are valid
       //see if an already reserved date is being booked again.
       const currentReservations = await reservations.find({
@@ -223,7 +229,7 @@ const createEvent = async (req, res) => {
       eventReservations.forEach((r) => {
         for (let i = 0; i < r.dates.length; i++) {
           for (let j = 0; j < r.timeSlots[i].length; j++) {
-            d = r.dates[i] + "." + r.timeSlots[i][j];
+            const d = r.dates[i] + "." + r.timeSlots[i][j];
             if (blocked.indexOf(d) !== -1) {
               throw new Error("Invalid dates");
             }
@@ -239,7 +245,7 @@ const createEvent = async (req, res) => {
       record.dates = obj.dates;
       record.timeSlots = obj.timeSlots;
       await record.save();
-    });
+    }
 
     await newAttendanceDoc.save();
     await newEvent.save();
@@ -560,6 +566,15 @@ const getBudgetDocument = async (req, res) => {
           type.name == "FO" || type.name == "ADMIN" || type.name == "SAC"
       )
     ) {
+      if (event.budgetDocPath && event.budgetDocPath.startsWith("http")) {
+        return require("https").get(event.budgetDocPath, (fileStream) => {
+          res.setHeader("Content-Type", "application/pdf");
+          fileStream.pipe(res);
+        }).on("error", (err) => {
+          console.error(err);
+          res.json(response("Failed to retrieve document stream", process.env.FAILURE_CODE));
+        });
+      }
       res.sendFile(event.budgetDocPath);
     } else {
       res.json(response("unauthorized", process.env.FAILURE_CODE));
@@ -584,6 +599,15 @@ const getEventDocument = async (req, res) => {
           type.name == "SAC" || type.name == "ADMIN" || type.name == "FO"
       )
     ) {
+      if (event.eventProposalDocPath && event.eventProposalDocPath.startsWith("http")) {
+        return require("https").get(event.eventProposalDocPath, (fileStream) => {
+          res.setHeader("Content-Type", "application/pdf");
+          fileStream.pipe(res);
+        }).on("error", (err) => {
+          console.error(err);
+          res.json(response("Failed to retrieve document stream", process.env.FAILURE_CODE));
+        });
+      }
       res.sendFile(event.eventProposalDocPath);
     } else {
       res.json(response("unauthorized", process.env.FAILURE_CODE));
@@ -651,7 +675,7 @@ const updateReservations = async (req, res) => {
         });
       }
       const eventReservations = reservationsList;
-      eventReservations.forEach(async (obj) => {
+      for (const obj of eventReservations) {
         //first check if the dates are valid
         //see if an already reserved date is being booked again.
         const currentReservations = await reservations.find({
@@ -670,7 +694,7 @@ const updateReservations = async (req, res) => {
         eventReservations.forEach((r) => {
           for (let i = 0; i < r.dates.length; i++) {
             for (let j = 0; j < r.timeSlots[i].length; j++) {
-              d = r.dates[i] + "." + r.timeSlots[i][j];
+              const d = r.dates[i] + "." + r.timeSlots[i][j];
               if (blocked.indexOf(d) !== -1) {
                 throw new Error("Invalid dates");
               }
@@ -696,9 +720,18 @@ const updateReservations = async (req, res) => {
           eventName: event.name,
           forumName: req.user.name,
         });
-        await event.save();
         await record.save();
-      });
+      }
+      event.eventStatus = "AWAITING SAC APPROVAL";
+      event.eventDates = datesList;
+      await event.save();
+      const SACRole = await roles.findOne({ name: "SAC" });
+      if (SACRole) {
+        const SAC = await faculty.findOne({ role: SACRole._id });
+        if (SAC) {
+          mailer.sendMail(SAC.email, eventReservationsUpdateSAC, { SACName: SAC.name, eventName: event.name, forumName: req.user.name });
+        }
+      }
       res.json(
         response("Successfully updated reservations", process.env.SUCCESS_CODE)
       );
@@ -722,6 +755,11 @@ const updateEquipment = async (req, res) => {
   try {
     const { id, equipmentList } = req.body;
     const event = await events.findById(id).populate("forumID");
+    if (!event) throw new Error("Event not found");
+    const eventOwnerId = event.forumID?._id || event.forumID;
+    if (String(eventOwnerId) !== String(req.user._id)) {
+      throw new Error("Unauthorized: you do not own this event");
+    }
     if (
       !["AWAITING SAC APPROVAL", "CHANGES REQUESTED BY SAC"].includes(
         event.eventStatus
@@ -892,6 +930,8 @@ const completeEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
     const event = await events.findById(eventId);
+    if (!event) throw new Error("Event not found");
+    if (String(event.forumID) !== String(req.user._id)) throw new Error("Unauthorized: you do not own this event");
 
     if (event.eventStatus !== "APPROVED")
       throw new Error(
@@ -946,6 +986,8 @@ const cancelEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
     const event = await events.findById(eventId);
+    if (!event) throw new Error("Event not found");
+    if (String(event.forumID) !== String(req.user._id)) throw new Error("Unauthorized: you do not own this event");
     if (event.eventStatus == "CANCELLED" || event.eventStatus == "COMPLETED")
       throw new Error(
         "Cannot cancel this event!, event status is " + event.eventStatus
@@ -956,7 +998,7 @@ const cancelEvent = async (req, res) => {
     await event.save();
     res.json(
       response(
-        "The event hasn't been cancelled yet succesfully.",
+        "Event cancelled successfully.",
         process.env.SUCCESS_CODE
       )
     );

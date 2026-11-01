@@ -366,20 +366,15 @@ export const AddForums = ({ isEdit }: AddStudentsProps) => {
             <Select
               name="Faculty Coordinator"
               options={myfac}
-              placeholder="faculty coordinator"
+              placeholder="Faculty Coordinator"
               onInputChange={(e) => {
                 if (e !== "") handleInputChange(e);
               }}
-              value={
-                isEdit
-                  ? { value: selectCoord, label: actualName }
-                  : { value: selectCoord, label: actualName }
-              }
-              noOptionsMessage={() => null}
+              value={selectCoord && actualName ? { value: selectCoord, label: actualName } : null}
+              noOptionsMessage={() => "No faculty found"}
               onChange={(e: any) => {
-                console.log(e);
-                setSelectCoord(e.value);
-                setActualName(e.label);
+                setSelectCoord(e?.value ?? "");
+                setActualName(e?.label ?? "");
               }}
               styles={{
                 control: (base) => ({

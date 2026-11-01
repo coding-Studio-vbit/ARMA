@@ -12,6 +12,7 @@ const upload = multer({
 router.use(tokenAuth);
 
 router.get("/", controller.getForumsList);
+router.get("/getForums", controller.getForumsList);
 router.get(
   "/dashboard",
   (req, res, next) => {

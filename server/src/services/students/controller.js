@@ -28,7 +28,7 @@ const getStudentsList = async (req, res) => {
   else sort = { name: "asc" };
 
   try {
-    result = await students
+    const result = await students
       .find(where)
       .skip((page - 1) * limit)
       .limit(limit)
@@ -107,7 +107,7 @@ const editStudent = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -115,12 +115,12 @@ const fetchStudents = async (req, res) => {
   try {
     let { rollNumber } = req.body;
     let student = await students.find({
-      name: { $regex: `^${rollNumber}`, $options: "i" },
+      rollNumber: { $regex: `^${rollNumber}`, $options: "i" },
     });
     res.json(response(student, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -131,7 +131,7 @@ const deleteStudent = async (req, res) => {
     res.json(response(student, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -194,6 +194,9 @@ const generatePDF = async (req, res) => {
 const getBranches = async (req, res) => {
   try {
     const { course } = req.params;
+    if (!course || !coursesInfo[course] || !coursesInfo[course]["branches"]) {
+      return res.json(response([], process.env.SUCCESS_CODE));
+    }
     res.json(
       response(
         Object.keys(coursesInfo[course]["branches"]),
@@ -208,6 +211,9 @@ const getBranches = async (req, res) => {
 const getTotalYears = async (req, res) => {
   try {
     const { course } = req.params;
+    if (!course || !coursesInfo[course]) {
+      return res.json(response(0, process.env.SUCCESS_CODE));
+    }
     res.json(
       response(coursesInfo[course]["totalYears"], process.env.SUCCESS_CODE)
     );
@@ -219,7 +225,15 @@ const getTotalYears = async (req, res) => {
 const getTotalSections = async (req, res) => {
   try {
     const { course, branch } = req.params;
-    console.log("hi", course, branch, coursesInfo);
+    if (
+      !course ||
+      !branch ||
+      !coursesInfo[course] ||
+      !coursesInfo[course].branches ||
+      !coursesInfo[course].branches[branch]
+    ) {
+      return res.json(response([], process.env.SUCCESS_CODE));
+    }
     res.json(
       response(
         coursesInfo[course].branches[branch].sections,

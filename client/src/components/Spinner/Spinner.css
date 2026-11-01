@@ -85,3 +85,9 @@
 .lds-roller{
   zoom: 0.65;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .lds-roller div {
+    animation: none !important;
+  }
+}

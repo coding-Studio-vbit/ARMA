@@ -1,3 +1,11 @@
+
+const getCallerForumName = (req, fallbackName) => {
+  const isForum = Array.isArray(req.user?.role) && req.user.role.some(r => r.name === "FORUM");
+  if (isForum && req.user.name) {
+    return req.user.name;
+  }
+  return fallbackName;
+};
 const events = require("../../models/event");
 const forums = require("../../models/forum");
 const reservations = require("../../models/reservations");
@@ -38,7 +46,7 @@ const dashboard = async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 const getEquipments = async (req, res) => {
@@ -47,7 +55,7 @@ const getEquipments = async (req, res) => {
     res.json(response(myEquip, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -67,7 +75,7 @@ const getForumsList = async (req, res) => {
   else sort = { name: "asc" };
 
   try {
-    result = await forums
+    const result = await forums
       .find(where)
       .skip((page - 1) * limit)
       .limit(limit)
@@ -90,7 +98,8 @@ const getForumsList = async (req, res) => {
 
 const addNewForumMembers = async (req, res) => {
   try {
-    const { forumName, ...stuser } = req.body;
+    const { forumName: bodyForumName, ...stuser } = req.body;
+    const forumName = getCallerForumName(req, bodyForumName);
     let stu = await students.findOne({ rollNumber: stuser.rollNumber });
     const forum = await forums.findOne({ name: forumName });
     let studentExists;
@@ -119,7 +128,8 @@ const addNewForumMembers = async (req, res) => {
 
 const addNewCoreForumMember = async (req, res) => {
   try {
-    const { forumName, designation, ...stuser } = req.body;
+    const { forumName: bodyForumName, designation, ...stuser } = req.body;
+    const forumName = getCallerForumName(req, bodyForumName);
     let stu = await students.findOne({ rollNumber: stuser.rollNumber });
     const forum = await forums.findOne({ name: forumName });
 
@@ -252,7 +262,7 @@ const editForum = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -268,21 +278,22 @@ const forumEventNumber = async (req, res) => {
     res.json(response(result, process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
 const updateProfile = async (req, res) => {
   try {
-    const { description, email,newPassword } = req.body;
+    const { description, newPassword } = req.body;
+    const targetEmail = req.user.email; // Enforce caller identity
     let user = {};
-    if(newPassword !== null)
+    if(newPassword)
     {
-      const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
+      const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS || "10"));
       const newHash = await bcrypt.hash(newPassword, salt);
       user = await forums
       .findOneAndUpdate(
-        { email: email },
+        { email: targetEmail },
         { $set: { description: description, password: newHash } },
         { new: true }
       ) 
@@ -293,13 +304,14 @@ const updateProfile = async (req, res) => {
     {
       user = await forums
       .findOneAndUpdate(
-        { email: email },
+        { email: targetEmail },
         { $set: { description: description } },
         { new: true }
       )
       .populate("facultyCoordinatorID name")
       .populate("role");
     }
+    if (user && user.password) user.password = undefined;
     res.json(response(user, process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
@@ -311,7 +323,8 @@ const updateProfile = async (req, res) => {
 
 const deleteforumMember = async (req, res) => {
   try {
-    const { forumName, studentID, userType } = req.body;
+    const { forumName: bodyForumName, studentID, userType } = req.body;
+    const forumName = getCallerForumName(req, bodyForumName);
     const forum = await forums.findOne({ name: forumName });
     if (userType === "core") {
       if (!forum) throw new Error(`Forum ${forumName} couldn't be found!`);
@@ -367,7 +380,7 @@ const uploadProfilePicture = async (req, res) => {
         if (err) {
           throw err;
         } else {
-          if (doc.profilePictureFilePath)
+          if (doc.profilePictureFilePath && !doc.profilePictureFilePath.startsWith("http") && fs.existsSync(doc.profilePictureFilePath))
             fs.unlinkSync(doc.profilePictureFilePath);
           res.json(
             response(
@@ -403,7 +416,14 @@ const getProfilePicture = async (req, res) => {
           process.env.SUCCESS_CODE
         )
       );
-    else {
+    else if (myForum.profilePictureFilePath.startsWith("http")) {
+      res.json(
+        response(
+          myForum.profilePictureFilePath,
+          process.env.SUCCESS_CODE
+        )
+      );
+    } else {
       res.json(
         response(
           base64.encode(myForum.profilePictureFilePath),
@@ -428,7 +448,7 @@ const uploadDashboardCover = async (req, res) => {
         if (err) {
           throw err;
         } else {
-          if (doc.dashboardCoverFilePath)
+          if (doc.dashboardCoverFilePath && !doc.dashboardCoverFilePath.startsWith("http") && fs.existsSync(doc.dashboardCoverFilePath))
             fs.unlinkSync(doc.dashboardCoverFilePath);
           res.json(
             response(
@@ -451,7 +471,14 @@ const getDashboardCover = async (req, res) => {
     const myForum = await forums.findOne({ email: req.user.email });
     if (myForum.dashboardCoverFilePath == undefined)
       res.sendFile("sky.jpg", { root: __dirname });
-    else {
+    else if (myForum.dashboardCoverFilePath.startsWith("http")) {
+      res.json(
+        response(
+          myForum.dashboardCoverFilePath,
+          process.env.SUCCESS_CODE
+        )
+      );
+    } else {
       try {
         const thisFile = fs.readFileSync(myForum.dashboardCoverFilePath);
         res.json(
@@ -480,7 +507,7 @@ const viewForum = async (req, res) => {
     res.json(response(forum, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -491,7 +518,7 @@ const deleteForum = async (req, res) => {
     res.json(response(forum, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 

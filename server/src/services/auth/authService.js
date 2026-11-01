@@ -38,7 +38,8 @@ const login = async (email, password, userAgent, userType) => {
           role: user.role,
           userType: userType === "FACULTY" ? user.role : userType,
         },
-        process.env.JWT_SECRET_KEY
+        process.env.JWT_SECRET_KEY || process.env.JWT_SECRET,
+        { expiresIn: "24h" }
       );
       user.password = "";
       return response({ token: token, user: user }, process.env.SUCCESS_CODE);
@@ -72,10 +73,10 @@ const register = async (user, userType) => {
     } else if (userType === "FORUM") {
       let { facultyCoordinatorID, forumHeads, ...newuser } = user;
       facultyCoordinatorID = facultyCoordinatorID.map((f) => {
-        return mongoose.Types.ObjectId(f._id);
+        return new mongoose.Types.ObjectId(f._id);
       });
       forumHeads = forumHeads.map((f) => {
-        return mongoose.Types.ObjectId(f._id);
+        return new mongoose.Types.ObjectId(f._id);
       });
       let forum = new forums({ facultyCoordinatorID, forumHeads, ...newuser });
       forum.password = password;
@@ -97,16 +98,16 @@ const register = async (user, userType) => {
 
 const resetPasswordMail = async (email, res) => {
   try {
-    facultyUser = await facultyModel.findOne({ email: email }).populate("role");
-    forumUser = await forums
+    const facultyUser = await facultyModel.findOne({ email: email }).populate("role");
+    const forumUser = await forums
       .findOne({ email: email })
       .populate({ path: "role" })
       .populate({ path: "facultyCoordinatorID", select: "name" });
-    adminUser = await admins.findOne({ email: email });
+    const adminUser = await admins.findOne({ email: email });
 
     if (facultyUser) {
       //mail with tokenID
-      const secret = process.env.JWT_SECRET_KEY + facultyUser.password;
+      const secret = (process.env.JWT_SECRET_KEY || process.env.JWT_SECRET) + facultyUser.password;
       const token = jwt.sign(
         {
           email: email,
@@ -120,11 +121,11 @@ const resetPasswordMail = async (email, res) => {
       await mailer.sendMail(email, forgotPasswordTemplate, {
         passwordLink: link,
       });
-      return response(link, process.env.SUCCESS_CODE);
+      return response("Password reset link sent to your registered email.", process.env.SUCCESS_CODE);
     }
     if (forumUser) {
       //mail with tokenID
-      const secret = process.env.JWT_SECRET_KEY + forumUser.password;
+      const secret = (process.env.JWT_SECRET_KEY || process.env.JWT_SECRET) + forumUser.password;
       const token = jwt.sign(
         {
           email: email,
@@ -138,11 +139,11 @@ const resetPasswordMail = async (email, res) => {
       await mailer.sendMail(email, forgotPasswordTemplate, {
         passwordLink: link,
       });
-      return response(link, process.env.SUCCESS_CODE);
+      return response("Password reset link sent to your registered email.", process.env.SUCCESS_CODE);
     }
     if (adminUser) {
       //mail with tokenID
-      const secret = process.env.JWT_SECRET_KEY + adminUser.password;
+      const secret = (process.env.JWT_SECRET_KEY || process.env.JWT_SECRET) + adminUser.password;
       const token = jwt.sign(
         {
           email: email,
@@ -156,13 +157,13 @@ const resetPasswordMail = async (email, res) => {
       await mailer.sendMail(email, forgotPasswordTemplate, {
         passwordLink: link,
       });
-      return response(link, process.env.SUCCESS_CODE);
+      return response("Password reset link sent to your registered email.", process.env.SUCCESS_CODE);
     }
     if (!facultyUser && !forumUser && !adminUser)
-      res.status(404).send({ error: "Email not found" });
+      return response("Email not found", process.env.FAILURE_CODE);
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return response("An error occurred", process.env.FAILURE_CODE);
   }
 };
 
@@ -171,40 +172,39 @@ const resetPassword = async (email, password, token, res) => {
     const salt = await bcrypt.genSalt(parseInt(process.env.SALTROUNDS));
     const encryptedPassword = await bcrypt.hash(password, salt);
 
-    facultyUser = await facultyModel.findOne({ email: email }).populate("role");
-    forumUser = await forums
+    const facultyUser = await facultyModel.findOne({ email: email }).populate("role");
+    const forumUser = await forums
       .findOne({ email: email })
       .populate({ path: "role" })
       .populate({ path: "facultyCoordinatorID", select: "name" });
-    adminUser = await admins.findOne({ email: email });
+    const adminUser = await admins.findOne({ email: email });
 
     if (facultyUser) {
-      const secret = process.env.JWT_SECRET_KEY + facultyUser.password;
+      const secret = (process.env.JWT_SECRET_KEY || process.env.JWT_SECRET) + facultyUser.password;
       const payload = jwt.verify(token, secret);
       facultyUser.password = encryptedPassword;
       await facultyUser.save();
       return response("done", process.env.SUCCESS_CODE);
     }
     if (forumUser) {
-      const secret = process.env.JWT_SECRET_KEY + forumUser.password;
-      console.log({ token, email, password, oldpassword: forumUser.password });
+      const secret = (process.env.JWT_SECRET_KEY || process.env.JWT_SECRET) + forumUser.password;
       const payload = jwt.verify(token, secret);
       forumUser.password = encryptedPassword;
       await forumUser.save();
       return response("done", process.env.SUCCESS_CODE);
     }
     if (adminUser) {
-      const secret = process.env.JWT_SECRET_KEY + adminUser.password;
+      const secret = (process.env.JWT_SECRET_KEY || process.env.JWT_SECRET) + adminUser.password;
       const payload = jwt.verify(token, secret);
       adminUser.password = encryptedPassword;
       await adminUser.save();
       return response("done", process.env.SUCCESS_CODE);
     }
     if (!facultyUser && !forumUser && !adminUser)
-      res.status(404).send({ error: "Email not found" });
+      return response("Email not found", process.env.FAILURE_CODE);
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    return response("An error occurred", process.env.FAILURE_CODE);
   }
 };
 

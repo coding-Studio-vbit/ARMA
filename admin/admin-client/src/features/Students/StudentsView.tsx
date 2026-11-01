@@ -87,7 +87,7 @@ export const StudentView = () => {
 
                     <p className="text mb-5 mt-5 text-2xl">Events Organized</p>
                         <Table
-                        api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                        api={`${process.env.REACT_APP_SERVER_URL + "events"}`}
                         rowsPerPage={5}
                         buttonsCount={3}
                         filter={{rollNumber:roll}}
@@ -108,7 +108,7 @@ export const StudentView = () => {
 
                     <p className="text mb-5 mt-5 text-2xl">Events Participated</p>
                         <Table
-                        api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                        api={`${process.env.REACT_APP_SERVER_URL + "events"}`}
                         rowsPerPage={5}
                         buttonsCount={3}
                         filter={{rollNumber:roll}}

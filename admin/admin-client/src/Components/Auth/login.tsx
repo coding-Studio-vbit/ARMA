@@ -5,6 +5,7 @@ import { login } from "./authService";
 import { VisibilityOff, Visibility } from "@material-ui/icons";
 import { useUser } from "../../Provider/userProvider";
 import Spinner from "../Spinner/Spinner";
+import { setAuthToken } from "../../utils/auth";
 
 function Login() {
   let navigate = useNavigate();
@@ -15,6 +16,7 @@ function Login() {
   const [password, setPassword] = useState<String>("");
   const [error, setError] = useState<String>("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -43,8 +45,35 @@ function Login() {
     setPassword(password);
     if (password.length === 0) {
       setPasswordError("Password field is empty");
+    } else if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters");
     } else {
       setPasswordError("");
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      setIsLoading(true);
+      setError("");
+
+      if (!email || !password || emailError || passwordError) {
+        setError("Please fill in all fields correctly");
+        return;
+      }
+
+      const res = await login(email, password);
+
+      if (res.status === 1) {
+        setAuthToken(res.response.token);
+        setUser(res.response.user);
+      } else {
+        setError(res.response || "Login failed. Please try again.");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -56,24 +85,22 @@ function Login() {
       </p>
 
       <p className="text-4xl mb-8 text-[#6FB4DC]">Admin Portal</p>
-      <form className="flex flex-col items-center">
+      <form className="flex flex-col items-center" onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
         <InputField
           className="mb-5"
           name="Email"
           error={emailError}
-          onChange={(e) => {
-            validateEmail(e);
-          }}
+          onChange={validateEmail}
+          disabled={isLoading}
         />
         <div className="relative mb-8">
           <InputField
             className="mb-3"
             name="Password"
-            type={`${!showPassword && "password"}`}
+            type={showPassword ? "text" : "password"}
             error={passwordError}
-            onChange={(e) => {
-              validatePass(e);
-            }}
+            onChange={validatePass}
+            disabled={isLoading}
           />
           {showPassword ? (
             <Visibility
@@ -87,45 +114,23 @@ function Login() {
             />
           )}
         </div>
-        {error && <span className="text-arma-red mb-3">{error}</span>}
-        <LoginButton
-          onClick={async () => {
-            if (!email || !password || emailError || passwordError) {
-              setError("Fill the details !");
-              return;
-            }
-
-            const res = await login(email, password);
-
-            if (res.status === 1) {
-              setUser(res.response.user);
-            } else {
-              setError(res.response);
-            }
-          }}
-        />
+        {error && <span role="alert" aria-live="polite" className="text-arma-red text-sm font-medium mb-3">{error}</span>}
+        <button
+          className="outlineBtn text-arma-blue border-[1px] rounded-[8px] mb-2"
+          type="submit"
+          disabled={isLoading}
+        >
+          {isLoading ? <Spinner className="mt-4 mb-2" /> : "Login"}
+        </button>
       </form>
-      <p className="text-arma-title font-medium">Forgot Password?</p>
+      <button 
+        className="text-arma-title font-medium hover:text-black"
+        onClick={() => navigate("/forgot-password")}
+      >
+        Forgot Password?
+      </button>
     </div>
   );
 }
-const LoginButton = (props: { onClick: () => Promise<void> }) => {
-  const [loading, setLoading] = useState(false);
-  return loading ? (
-    <Spinner className="mt-4 mb-2" />
-  ) : (
-    <button
-      className="outlineBtn text-arma-blue border-[1px] rounded-[8px] mb-2"
-      type="submit"
-      onClick={async () => {
-        setLoading(true);
-        await props.onClick();
-        setLoading(false);
-      }}
-    >
-      Login
-    </button>
-  );
-};
 
 export { Login };

@@ -17,7 +17,7 @@ const getEquipment = async (req, res) => {
   else sort = { name: "asc" };
 
   try {
-    result = await equipment
+    const result = await equipment
       .find(where)
       .skip((page - 1) * limit)
       .limit(limit)
@@ -55,7 +55,7 @@ const addEquipment = async (req, res) => {
     let newEquipment = new equipment({
       name: req.body.name,
       totalCount: req.body.totalCount,
-      facultyIncharge: mongoose.Types.ObjectId(req.body.facultyIncharge),
+      facultyIncharge: new mongoose.Types.ObjectId(req.body.facultyIncharge),
     });
     await newEquipment.save();
     res.json(
@@ -94,7 +94,7 @@ const editEquipment = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -105,7 +105,7 @@ const viewEquipment = async (req, res) => {
     res.json(response(equip, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -116,7 +116,7 @@ const deleteEquipment = async (req, res) => {
     res.json(response(equip, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
