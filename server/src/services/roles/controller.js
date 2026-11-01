@@ -29,7 +29,6 @@ const addRoles = async (req, res) => {
 //GET ROLES
 
 const getRoles = async (req, res) => {
-  let page = req.query.page ? Number(req.query.page) : 1;
   let page = Math.max(Number(req.query.page) || 1, 1);
   let limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
 
