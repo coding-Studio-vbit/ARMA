@@ -9,15 +9,29 @@ const fillTemplateWithData = (template, data) => {
 };
 
 const getTransporter = () => {
-  const user = process.env.NODEMAILER_EMAIL_ID;
-  const pass = process.env.NODEMAILER_EMAIL_PASSWORD;
+  const host = process.env.SMTP_HOST || (process.env.NODEMAILER_SERVICE ? null : "smtp-relay.brevo.com");
+  const port = Number(process.env.SMTP_PORT) || 587;
+  const user = process.env.SMTP_USER || process.env.NODEMAILER_EMAIL_ID;
+  const pass = process.env.SMTP_PASS || process.env.NODEMAILER_EMAIL_PASSWORD;
 
   if (!user || !pass) {
     return null;
   }
 
+  if (process.env.NODEMAILER_SERVICE) {
+    return nodemailer.createTransport({
+      service: process.env.NODEMAILER_SERVICE,
+      auth: { user, pass },
+      connectionTimeout: 5000,
+      greetingTimeout: 5000,
+      socketTimeout: 5000,
+    });
+  }
+
   return nodemailer.createTransport({
-    service: "yandex",
+    host,
+    port,
+    secure: port === 465,
     auth: { user, pass },
     connectionTimeout: 5000,
     greetingTimeout: 5000,
@@ -34,11 +48,13 @@ const sendMail = (toAddress, emailTemplate, emailData, attachments) => {
       return resolve({ success: false, reason: "SMTP not configured" });
     }
 
+    const fromAddress = process.env.MAIL_FROM || process.env.NODEMAILER_EMAIL_ID || process.env.SMTP_USER;
+
     const mailDetails = {
-      from: process.env.NODEMAILER_EMAIL_ID,
+      from: `A.R.M.A <${fromAddress}>`,
       to: toAddress,
       envelope: {
-        from: `A.R.M.A <${process.env.NODEMAILER_EMAIL_ID}>`,
+        from: fromAddress,
         to: toAddress,
       },
       subject: emailTemplate?.subject || "A.R.M.A Notification",
