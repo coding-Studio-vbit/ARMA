@@ -54,7 +54,13 @@ const expressLoader = (app) => {
 
   // Health check endpoint for monitoring & Render keep-alive pings
   app.get("/health", (req, res) => {
-    res.status(200).json({ status: "ok", uptime: process.uptime(), timestamp: new Date().toISOString() });
+    const mongoose = require("mongoose");
+    res.status(200).json({
+      status: "ok",
+      database: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString()
+    });
   });
 
   app.use("/", api());

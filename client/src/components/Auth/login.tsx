@@ -136,18 +136,16 @@ function Login() {
 
             if (res.status === 1) {
               if (userType === "FACULTY") {
-                // ["ADMIN","SAC",'FC']
-                // {
-                //   ADMIN:true,
-                //   SAC:true,
-                //   FC:true
-                // }
                 setFaculty(res.response.user);
               } else {
                 setForum(res.response.user);
               }
             } else {
-              setError(res.response);
+              const errorMsg =
+                typeof res?.response === "string"
+                  ? res.response
+                  : res?.response?.message || "Login failed. Please check credentials or server connection.";
+              setError(errorMsg);
             }
           }}
         />

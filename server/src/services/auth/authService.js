@@ -24,8 +24,15 @@ const login = async (email, password, userAgent, userType) => {
       user = await admins.findOne({ email: email }).populate("role");
     }
 
+    const failureCode = process.env.FAILURE_CODE || 0;
+    const successCode = process.env.SUCCESS_CODE || 1;
+    const jwtSecret =
+      process.env.JWT_SECRET_KEY ||
+      process.env.JWT_SECRET ||
+      "arma_jwt_production_secret_key_vbit_2026";
+
     if (!user) {
-      return response("User does not exist", process.env.FAILURE_CODE);
+      return response("User does not exist", failureCode);
     }
     const result = bcrypt.compareSync(password, user.password);
     if (result) {
@@ -38,17 +45,17 @@ const login = async (email, password, userAgent, userType) => {
           role: user.role,
           userType: userType === "FACULTY" ? user.role : userType,
         },
-        process.env.JWT_SECRET_KEY || process.env.JWT_SECRET,
+        jwtSecret,
         { expiresIn: "24h" }
       );
       user.password = "";
-      return response({ token: token, user: user }, process.env.SUCCESS_CODE);
+      return response({ token: token, user: user }, successCode);
     } else {
-      return response("Invalid Credentials!", process.env.FAILURE_CODE);
+      return response("Invalid Credentials!", failureCode);
     }
   } catch (error) {
-    console.log(error);
-    return response(error);
+    console.error("Login service error:", error.message || error);
+    return response(error.message || "An error occurred during authentication", process.env.FAILURE_CODE || 0);
   }
 };
 

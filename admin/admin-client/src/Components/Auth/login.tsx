@@ -68,7 +68,11 @@ function Login() {
         setAuthToken(res.response.token);
         setUser(res.response.user);
       } else {
-        setError(res.response || "Login failed. Please try again.");
+        const errorMsg =
+          typeof res?.response === "string"
+            ? res.response
+            : res?.response?.message || "Login failed. Please check credentials or server connection.";
+        setError(errorMsg);
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
