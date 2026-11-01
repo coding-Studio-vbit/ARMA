@@ -50,6 +50,12 @@ const expressLoader = (app) => {
 
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
+
+  // Health check endpoint for monitoring & Render keep-alive pings
+  app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok", uptime: process.uptime(), timestamp: new Date().toISOString() });
+  });
+
   app.use("/", api());
 };
 

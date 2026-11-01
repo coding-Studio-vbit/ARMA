@@ -1,4 +1,8 @@
-require("dotenv").config();
+try {
+  require("dotenv").config();
+} catch (e) {
+  // Production environments inject environment variables directly into process.env
+}
 const express = require("express");
 const mongoose = require("mongoose");
 const loaders = require("./loaders/loaders");

@@ -11,7 +11,6 @@
     "test:local": "node src/scripts/testLocal.js"
   },
   "devDependencies": {
-    "dotenv": "^10.0.0",
     "nodemon": "^2.0.16"
   },
   "keywords": [],
@@ -21,6 +20,7 @@
     "bcrypt": "^5.0.1",
     "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
     "ejs": "^3.1.7",
     "express": "^4.17.2",
     "html-pdf": "^3.0.1",
