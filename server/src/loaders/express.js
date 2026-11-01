@@ -35,6 +35,7 @@ const expressLoader = (app) => {
         if (
           !origin ||
           allowedOrigins.includes(origin) ||
+          origin.endsWith(".codingstudio.co.in") ||
           origin.endsWith(".netlify.app") ||
           origin.endsWith(".vercel.app") ||
           origin.endsWith(".onrender.com")
