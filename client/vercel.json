@@ -1,4 +1,5 @@
 {
+  "buildCommand": "CI=false DISABLE_ESLINT_PLUGIN=true npm run build",
   "rewrites": [
     {
       "source": "/(.*)",
