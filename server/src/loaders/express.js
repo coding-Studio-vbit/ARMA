@@ -58,6 +58,9 @@ const expressLoader = (app) => {
     res.status(200).json({
       status: "ok",
       database: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+      dbState: mongoose.connection.readyState,
+      dbError: global.lastDbError || null,
+      dbPreview: global.dbConnectionStringPreview || null,
       uptime: process.uptime(),
       timestamp: new Date().toISOString()
     });
