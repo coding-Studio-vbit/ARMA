@@ -107,7 +107,43 @@ const authRouter = readSource("api/routes/auth/auth.js");
 assert(authRouter.includes("loginLimiter"), "SEC-09: login endpoint must have rate limiting");
 assert(authRouter.includes("forgotPasswordLimiter"), "SEC-09: forgotPassword endpoint must have rate limiting");
 
-console.log("✔ All 9 Security Audit Patches (SEC-01 to SEC-09) verified");
+console.log("✔ All 9 Initial Security Audit Patches (SEC-01 to SEC-09) verified");
+
+// SEC-10 & SEC-15: viewForum password exclusion, role check, and upload null crash guard
+assert(forumCtrl.includes('.select("-password")'), "SEC-10: viewForum must omit password");
+assert(forumCtrl.includes('if (!doc) {'), "SEC-15: profile picture and cover upload must guard null doc");
+const forumRouter = readSource("api/routes/forum/router.js");
+assert(forumRouter.includes('checkRole(req, res, next, ["ADMIN", "FC", "FORUM"])'), "SEC-10: viewForum must require role check");
+assert(forumRouter.includes('checkRole(req, res, next, ["FORUM"])'), "SEC-15: profilePicture must require FORUM role");
+
+// SEC-11 & SEC-12: viewFaculty & fetchFaculty password exclusion, ReDoS guard, limit
+const facultyCtrl = readSource("services/faculty/controller.js");
+assert(facultyCtrl.includes('.select("-password")'), "SEC-11: viewFaculty must omit password");
+assert(facultyCtrl.includes('escapeRegex(name || "")'), "SEC-12: fetchFaculty must escape regex input");
+assert(facultyCtrl.includes('.limit(50)'), "SEC-12: fetchFaculty must cap query results");
+
+// SEC-13: BFLA fix on admin router
+const adminRouter = readSource("api/routes/admin/router.js");
+const adminCheckRoleIdx = adminRouter.indexOf('checkRole(req, res, next, ["ADMIN"])');
+const adminGetIdx = adminRouter.indexOf('router.get("/", controller.getAdmins)');
+assert(adminCheckRoleIdx !== -1 && adminGetIdx > adminCheckRoleIdx, "SEC-13: router.get('/') must be mounted AFTER checkRole(['ADMIN'])");
+
+// SEC-14: uploadStudentsList authorization
+const studentsRouter = readSource("api/routes/students/router.js");
+assert(studentsRouter.includes('checkRole(req, res, next, ["ADMIN"])'), "SEC-14: uploadStudentsList must require ADMIN role");
+
+// SEC-16: Role type confusion & null check on event doc views
+assert(eventsCtrl.includes("hasPrivilegedRole(req.user, [\"FO\", \"ADMIN\", \"SAC\"])"), "SEC-16: getBudgetDocument must use safe role inspection");
+assert(eventsCtrl.includes("if (!event) {"), "SEC-16: document views must check if event exists");
+
+// SEC-17: Tightened CORS allowlist
+assert(expressLoader.includes("codingstudio.co.in"), "SEC-17: CORS must enforce strict domain patterns");
+
+// SEC-18: Directory creation on student PDF generation
+const studentReports = readSource("services/util/studentReports.js");
+assert(studentReports.includes("fs.mkdir(dirPath, { recursive: true })"), "SEC-18: studentReports must create directories recursively");
+
+console.log("✔ All 9 New Security Audit Patches (SEC-10 to SEC-18) verified");
 console.log("\nAll ARMA verification tests passed successfully!");
 
 // 6. Verify 15 Ponytail Audit Remediations

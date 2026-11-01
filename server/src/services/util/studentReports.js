@@ -26,6 +26,7 @@ const generateNewReport = async (student) => {
     "." +
     "pdf";
 
+  await fs.mkdir(dirPath, { recursive: true });
   const filePath = `${dirPath}/${filename}`;
   //create the new one.
   const data = await ejs.renderFile(

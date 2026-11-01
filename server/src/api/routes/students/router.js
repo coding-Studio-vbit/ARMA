@@ -8,7 +8,13 @@ router.use(tokenAuth);
 // GET STUDENTS
 router.get("/", controller.getStudentsList); 
 
-router.post("/uploadStudentsList", controller.uploadStudentsList);
+router.post(
+  "/uploadStudentsList",
+  (req, res, next) => {
+    checkRole(req, res, next, ["ADMIN"]);
+  },
+  controller.uploadStudentsList
+);
 router.put(
   "/editStudent",
   (req, res, next) => {

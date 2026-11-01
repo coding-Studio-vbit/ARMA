@@ -6,6 +6,19 @@ const response = require("../util/response");
 const attendance = require("../../models/attendance");
 const roles = require("../../models/role");
 const mailer = require("../util/mailer");
+const hasPrivilegedRole = (user, allowedRoles) => {
+  if (!user) return false;
+  if (typeof user.userType === "string" && allowedRoles.includes(user.userType)) return true;
+  if (typeof user.role === "string" && allowedRoles.includes(user.role)) return true;
+  if (Array.isArray(user.userType)) {
+    return user.userType.some((r) => allowedRoles.includes(r?.name || r));
+  }
+  if (Array.isArray(user.role)) {
+    return user.role.some((r) => allowedRoles.includes(r?.name || r));
+  }
+  return false;
+};
+
 const base64 = require("../util/base64");
 const {
   budgetDocUpdateTemplate,
@@ -478,16 +491,18 @@ const postAttendance = async (req, res) => {
 const getRequests = async (req, res) => {
   try {
     let where = {};
-    if (req.user.role.find((v) => v.name == "SAC")) {
+    if (hasPrivilegedRole(req.user, ["SAC"])) {
       where.eventStatus = {
         $in: ["AWAITING SAC APPROVAL", "CHANGES REQUESTED BY SAC"],
       };
-    } else if (req.user.role.find((v) => v.name == "FO")) {
+    } else if (hasPrivilegedRole(req.user, ["FO"])) {
       where.eventStatus = {
         $in: ["AWAITING FO APPROVAL", "CHANGES REQUESTED BY FO"],
       };
+    } else if (hasPrivilegedRole(req.user, ["ADMIN"])) {
+      where = {};
     } else {
-      where.eventStatus = {};
+      where = { eventStatus: "APPROVED" };
     }
 
     let result = await events.find(where).populate("forumID");
@@ -565,13 +580,12 @@ const getBudgetDocument = async (req, res) => {
     const forumId = req.user._id;
     const { id } = req.params;
     const event = await events.findById(id);
-    if (
-      event.forumID == forumId ||
-      req.user.userType.find(
-        (type) =>
-          type.name == "FO" || type.name == "ADMIN" || type.name == "SAC"
-      )
-    ) {
+    if (!event) {
+      return res.json(response("Event not found", process.env.FAILURE_CODE));
+    }
+    const isOwner = String(event.forumID?._id || event.forumID) === String(forumId);
+    const isPrivileged = hasPrivilegedRole(req.user, ["FO", "ADMIN", "SAC"]);
+    if (isOwner || isPrivileged) {
       if (event.budgetDocPath && event.budgetDocPath.startsWith("http")) {
         return require("https").get(event.budgetDocPath, (fileStream) => {
           res.setHeader("Content-Type", "application/pdf");
@@ -598,13 +612,12 @@ const getEventDocument = async (req, res) => {
     const forumId = req.user._id;
     const { id } = req.params;
     const event = await events.findById(id);
-    if (
-      event.forumID == forumId ||
-      req.user.userType.find(
-        (type) =>
-          type.name == "SAC" || type.name == "ADMIN" || type.name == "FO"
-      )
-    ) {
+    if (!event) {
+      return res.json(response("Event not found", process.env.FAILURE_CODE));
+    }
+    const isOwner = String(event.forumID?._id || event.forumID) === String(forumId);
+    const isPrivileged = hasPrivilegedRole(req.user, ["SAC", "ADMIN", "FO"]);
+    if (isOwner || isPrivileged) {
       if (event.eventProposalDocPath && event.eventProposalDocPath.startsWith("http")) {
         return require("https").get(event.eventProposalDocPath, (fileStream) => {
           res.setHeader("Content-Type", "application/pdf");

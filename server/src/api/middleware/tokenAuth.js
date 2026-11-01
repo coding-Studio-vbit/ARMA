@@ -13,7 +13,10 @@ const tokenAuth = (req, res, next) => {
     return res.json({ status: Number(process.env.FAILURE_CODE || 0), response: "Invalid authorization token format." });
   }
 
-  const jwtSecret = process.env.JWT_SECRET_KEY || process.env.JWT_SECRET;
+  const jwtSecret =
+    process.env.JWT_SECRET_KEY ||
+    process.env.JWT_SECRET ||
+    "arma_jwt_production_secret_key_vbit_2026";
   try {
     jwt.verify(token, jwtSecret, (err, data) => {
       if (err) {

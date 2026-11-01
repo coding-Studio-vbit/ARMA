@@ -139,10 +139,13 @@ const editFaculty = async (req, res) => {
 const fetchFaculty = async (req, res) => {
   try {
     let { name } = req.body;
-    console.log(name);
-    let fac = await faculty.find({
-      name: { $regex: `^${name}`, $options: "i" },
-    });
+    const safeName = escapeRegex(name || "");
+    let fac = await faculty
+      .find({
+        name: { $regex: `^${safeName}`, $options: "i" },
+      })
+      .select("-password")
+      .limit(50);
     res.json(response(fac, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
@@ -153,7 +156,7 @@ const fetchFaculty = async (req, res) => {
 const viewFaculty = async (req, res) => {
   try {
     let { id } = req.body;
-    let faculty = await facultyModel.findOne({ _id: id }).populate("role");
+    let faculty = await facultyModel.findOne({ _id: id }).select("-password").populate("role");
     res.json(response(faculty, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);

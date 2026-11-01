@@ -374,6 +374,9 @@ const uploadProfilePicture = async (req, res) => {
         if (err) {
           throw err;
         } else {
+          if (!doc) {
+            return res.json(response("Forum not found", process.env.FAILURE_CODE));
+          }
           if (doc.profilePictureFilePath && !doc.profilePictureFilePath.startsWith("http") && fs.existsSync(doc.profilePictureFilePath))
             fs.unlinkSync(doc.profilePictureFilePath);
           res.json(
@@ -442,6 +445,9 @@ const uploadDashboardCover = async (req, res) => {
         if (err) {
           throw err;
         } else {
+          if (!doc) {
+            return res.json(response("Forum not found", process.env.FAILURE_CODE));
+          }
           if (doc.dashboardCoverFilePath && !doc.dashboardCoverFilePath.startsWith("http") && fs.existsSync(doc.dashboardCoverFilePath))
             fs.unlinkSync(doc.dashboardCoverFilePath);
           res.json(
@@ -496,8 +502,9 @@ const viewForum = async (req, res) => {
     let { id } = req.body;
     let forum = await forums
       .findOne({ _id: id })
-      .populate("facultyCoordinatorID")
-      .populate("forumHeads");
+      .select("-password")
+      .populate("facultyCoordinatorID", "name email rollNumber")
+      .populate("forumHeads", "name rollNumber email");
     res.json(response(forum, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);

@@ -49,6 +49,9 @@ router.put("/updateProfile", controller.updateProfile);
 router.post("/forumViewCard", controller.forumViewCard);
 router.post(
   "/profilePicture",
+  (req, res, next) => {
+    checkRole(req, res, next, ["FORUM"]);
+  },
   upload.fields([{ name: "profilePicture", maxCount: 1 }]),
   controller.uploadProfilePicture
 );
@@ -69,6 +72,12 @@ router.post(
   },
   controller.deleteForum
 );
-router.post("/viewForum", controller.viewForum);
+router.post(
+  "/viewForum",
+  (req, res, next) => {
+    checkRole(req, res, next, ["ADMIN", "FC", "FORUM"]);
+  },
+  controller.viewForum
+);
 
 module.exports = router;

@@ -4,13 +4,14 @@ const router = require("express").Router();
 const checkRole = require("../../../services/util/checkRole");
 const tokenAuth = require("../../middleware/tokenAuth");
 
-router.use(tokenAuth)
-router.get("/", controller.getAdmins);
+router.use(tokenAuth);
 
-//MUST BE ADMIN TO USE THESE.
-router.use((req, res,next)=>{
-  checkRole(req,res,next, ["ADMIN"])
+// MUST BE ADMIN TO USE THESE
+router.use((req, res, next) => {
+  checkRole(req, res, next, ["ADMIN"]);
 });
+
+router.get("/", controller.getAdmins);
 
 router.post("/addAdmin", async (req, res) => {
   const user = req.body;

@@ -25,6 +25,9 @@ const expressLoader = (app) => {
   const allowedOrigins = [
     "https://arma.vbithyd.ac.in",
     "https://codingstudio.co.in",
+    "https://arma.codingstudio.co.in",
+    "https://admin.arma.codingstudio.co.in",
+    "https://armaserver.onrender.com",
     "http://localhost:3000",
     "http://localhost:3001",
   ];
@@ -35,10 +38,7 @@ const expressLoader = (app) => {
         if (
           !origin ||
           allowedOrigins.includes(origin) ||
-          origin.endsWith(".codingstudio.co.in") ||
-          origin.endsWith(".netlify.app") ||
-          origin.endsWith(".vercel.app") ||
-          origin.endsWith(".onrender.com")
+          /^https?:\/\/([a-z0-9-]+\.)*codingstudio\.co\.in$/i.test(origin)
         ) {
           callback(null, true);
         } else {
