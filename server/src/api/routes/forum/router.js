@@ -6,6 +6,7 @@ const multer = require("multer");
 const checkRole = require("../../../services/util/checkRole");
 const upload = multer({
   storage: multerStorage,
+  fileFilter: multerStorage.fileFilter,
   limits: { fileSize: 10 * Math.pow(10, 6) },
 });
 

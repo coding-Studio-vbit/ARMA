@@ -1,3 +1,4 @@
+const escapeRegex = require("../../services/util/escapeRegex");
 const roles = require("../../models/role");
 const role = require("../../models/role");
 const response = require("../../services/util/response");
@@ -29,10 +30,11 @@ const addRoles = async (req, res) => {
 
 const getRoles = async (req, res) => {
   let page = req.query.page ? Number(req.query.page) : 1;
-  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+  let page = Math.max(Number(req.query.page) || 1, 1);
+  let limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
 
   let where = {};
-  if (req.query.name) where.name = { $regex: req.query.name, $options: "i" };
+  if (req.query.name) where.name = { $regex: escapeRegex(req.query.name), $options: "i" };
 
   let sort = {};
   if (req.query.orderBy && req.query.order)
@@ -71,7 +73,7 @@ const editRole = async (req, res) => {
     res.json(response("Role edited successfully!", process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);
-    res.json(response(err.message, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -79,9 +81,9 @@ const fetchRoles = async (req, res) => {
   try {
     let role = await roles.find({});
     res.json(response(role, process.env.SUCCESS_CODE));
-  } catch (err) {
-    console.log(err);
-    res.json(response(err.message, process.env.FAILURE_CODE));
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -90,9 +92,9 @@ const viewRoles = async (req, res) => {
     let { id } = req.body;
     let role = await roles.findOne({ _id: id });
     res.json(response(role, process.env.SUCCESS_CODE));
-  } catch (err) {
-    console.log(err);
-    res.json(response(err.message, process.env.FAILURE_CODE));
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -101,9 +103,9 @@ const deleteRoles = async (req, res) => {
     let { id } = req.body;
     let role = await roles.deleteOne({ _id: id });
     res.json(response(role, process.env.SUCCESS_CODE));
-  } catch (err) {
-    console.log(err);
-    res.json(response(err.message, process.env.FAILURE_CODE));
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 

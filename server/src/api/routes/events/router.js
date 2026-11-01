@@ -4,7 +4,11 @@ const controller = require("../../../services/events/controller");
 const checkRole = require("../../../services/util/checkRole");
 const multerStorage = require("../../../services/util/multerStorage");
 const tokenAuth = require("../../middleware/tokenAuth");
-const upload = multer({ storage: multerStorage, limits:{fileSize: 10 * (Math.pow(10, 6))} });
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerStorage.fileFilter,
+  limits: { fileSize: 10 * Math.pow(10, 6) },
+});
 
 
 router.use(tokenAuth);
@@ -129,18 +133,5 @@ router.post(
   },
   controller.cancelEvent
 );
-router.get(
-  "/completeEvent/:eventId",
-  (req, res, next) => {
-    checkRole(req, res, next, ["FORUM"]);
-  },
-  controller.completeEvent
-);
-router.get(
-  "/cancelEvent/:eventId",
-  (req, res, next) => {
-    checkRole(req, res, next, ["FORUM"]);
-  },
-  controller.cancelEvent
-);
+
 module.exports = router;

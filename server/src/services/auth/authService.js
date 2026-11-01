@@ -105,12 +105,13 @@ const register = async (user, userType) => {
 
 const resetPasswordMail = async (email, res) => {
   try {
-    const facultyUser = await facultyModel.findOne({ email: email }).populate("role");
+    const facultyUser = await facultyModel.findOne({ email: email }).select("+password").populate("role");
     const forumUser = await forums
       .findOne({ email: email })
+      .select("+password")
       .populate({ path: "role" })
       .populate({ path: "facultyCoordinatorID", select: "name" });
-    const adminUser = await admins.findOne({ email: email });
+    const adminUser = await admins.findOne({ email: email }).select("+password");
 
     if (facultyUser) {
       //mail with tokenID
@@ -184,7 +185,7 @@ const resetPassword = async (email, password, token, res) => {
       .findOne({ email: email })
       .populate({ path: "role" })
       .populate({ path: "facultyCoordinatorID", select: "name" });
-    const adminUser = await admins.findOne({ email: email });
+    const adminUser = await admins.findOne({ email: email }).select("+password");
 
     if (facultyUser) {
       const secret = (process.env.JWT_SECRET_KEY || process.env.JWT_SECRET) + facultyUser.password;

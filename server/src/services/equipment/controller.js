@@ -1,3 +1,4 @@
+const escapeRegex = require("../util/escapeRegex");
 const equipment = require("../../models/equipment");
 const response = require("../util/response");
 const mongoose = require("mongoose");
@@ -6,10 +7,11 @@ const mongoose = require("mongoose");
 
 const getEquipment = async (req, res) => {
   let page = req.query.page ? Number(req.query.page) : 1;
-  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+  let page = Math.max(Number(req.query.page) || 1, 1);
+  let limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
 
   let where = {};
-  if (req.query.name) where.name = { $regex: req.query.name, $options: "i" };
+  if (req.query.name) where.name = { $regex: escapeRegex(req.query.name), $options: "i" };
 
   let sort = {};
   if (req.query.orderBy && req.query.order)
@@ -94,7 +96,7 @@ const editEquipment = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(err.message, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -103,9 +105,9 @@ const viewEquipment = async (req, res) => {
     let { id } = req.body;
     let equip = await equipment.findById(id).populate("facultyIncharge");
     res.json(response(equip, process.env.SUCCESS_CODE));
-  } catch (err) {
-    console.log(err);
-    res.json(response(err.message, process.env.FAILURE_CODE));
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -114,9 +116,9 @@ const deleteEquipment = async (req, res) => {
     let { id } = req.body;
     let equip = await equipment.deleteOne({ _id: id });
     res.json(response(equip, process.env.SUCCESS_CODE));
-  } catch (err) {
-    console.log(err);
-    res.json(response(err.message, process.env.FAILURE_CODE));
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 

@@ -26,7 +26,7 @@ const forum = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "faculty",
   },
-  password: { type: String, required: true },
+  password: { type: String, required: true, select: false },
   email: {
     type: String,
     required: true,

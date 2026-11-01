@@ -1,13 +1,15 @@
+const escapeRegex = require("../../services/util/escapeRegex");
 const halls = require("../../models/hall");
 const reservations = require("../../models/reservations");
 const response = require("../../services/util/response");
 // GET HALLS
 const getHalls = async (req, res) => {
   let page = req.query.page ? Number(req.query.page) : 1;
-  let limit = req.query.limit ? Number(req.query.limit) : 1000000;
+  let page = Math.max(Number(req.query.page) || 1, 1);
+  let limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
 
   let where = {};
-  if (req.query.name) where.name = { $regex: req.query.name, $options: "i" };
+  if (req.query.name) where.name = { $regex: escapeRegex(req.query.name), $options: "i" };
   if (req.query.capacity) where.capacity = req.query.capacity;
 
   let sort = {};
@@ -61,7 +63,7 @@ const addHall = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(err.message, process.env.FAILURE_CODE));
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -92,9 +94,9 @@ const viewHall = async (req, res) => {
     let { id } = req.body;
     let hall = await halls.findOne({ _id: id });
     res.json(response(hall, process.env.SUCCESS_CODE));
-  } catch (err) {
-    console.log(err);
-    res.json(response(err.message, process.env.FAILURE_CODE));
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -103,9 +105,9 @@ const deleteHall = async (req, res) => {
     let { id } = req.body;
     let hall = await halls.deleteOne({ _id: id });
     res.json(response(hall, process.env.SUCCESS_CODE));
-  } catch (err) {
-    console.log(err);
-    res.json(response(err.message, process.env.FAILURE_CODE));
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -118,17 +120,20 @@ const getSlots = async (req, res) => {
     const slotsObject = {};
     console.log("reservations are:", result);
     result.forEach((item) => {
+      if (!item || !item.hallId || !item.hallId.name) return;
       if (!slotsObject.hasOwnProperty(item.hallId.name)) {
         slotsObject[item.hallId.name] = [];
       }
       const dateIndex = item.dates.indexOf(date);
-      for (let i = 0; i < item.timeSlots[dateIndex].length; i++)
-        slotsObject[item.hallId.name].push(item.timeSlots[dateIndex][i]);
+      if (dateIndex !== -1 && item.timeSlots[dateIndex]) {
+        for (let i = 0; i < item.timeSlots[dateIndex].length; i++)
+          slotsObject[item.hallId.name].push(item.timeSlots[dateIndex][i]);
+      }
     });
     res.json(response(slotsObject, process.env.SUCCESS_CODE));
-  } catch (err) {
-    console.log(err);
-    res.json(response(err.message, process.env.FAILURE_CODE));
+  } catch (error) {
+    console.log(error);
+    res.json(response(error.message, process.env.FAILURE_CODE));
   }
 };
 

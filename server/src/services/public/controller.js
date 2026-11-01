@@ -10,7 +10,8 @@ const getEvents = async (req, res) => {
           $nin: ["REJECTED BY SAC", "REJECTED BY FO", "CANCELLED"],
         },
       })
-      .populate("forumID");
+      .populate("forumID", "name email description")
+      .limit(100);
     res.json(response(result, process.env.SUCCESS_CODE));
   } catch (error) {
     console.log(error);

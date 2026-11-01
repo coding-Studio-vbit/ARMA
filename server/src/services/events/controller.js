@@ -148,8 +148,11 @@ const createEvent = async (req, res) => {
       let { equipment, quantity } = equipmentList[i];
       quantity = Number(quantity);
       let eq = await equipments.findOne({
-        name: { $regex: `^${equipment}`, $options: "i" },
+        name: { $regex: `^${escapeRegex(equipment)}`, $options: "i" },
       });
+      if (!eq) {
+        throw new Error("Equipment not found: " + equipment);
+      }
       equipmentString = equipmentString.concat(
         `<br/>${equipment} - ${quantity}pcs`
       );
@@ -873,10 +876,16 @@ const getEventEquipment = async (req, res) => {
       .findById(id)
       .populate("forumID")
       .populate("equipment.equipmentType");
-    if (event == null) throw new Error("event not found");
-    if (event.forumID._id == req.user._id) {
-      res.json(response(event.equipment, process.env.SUCCESS_CODE));
+    if (!event) {
+      return res.json(response("Event not found", process.env.FAILURE_CODE));
     }
+    const ownerId = String(event.forumID?._id || event.forumID);
+    const isOwner = ownerId === String(req.user._id);
+    const isPrivileged = hasPrivilegedRole(req.user, ["ADMIN", "SAC", "FO", "FC"]);
+    if (isOwner || isPrivileged) {
+      return res.json(response(event.equipment, process.env.SUCCESS_CODE));
+    }
+    return res.json(response("Unauthorized", process.env.FAILURE_CODE));
   } catch (error) {
     console.log(error);
     res.json(response(error.message, process.env.FAILURE_CODE));

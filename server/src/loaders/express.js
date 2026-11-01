@@ -52,6 +52,26 @@ const expressLoader = (app) => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
+  // NoSQL operator injection defensive sanitizer
+  const sanitizeInput = (obj) => {
+    if (!obj || typeof obj !== "object") return;
+    for (const key of Object.keys(obj)) {
+      if (key.startsWith("$") || key.includes(".")) {
+        delete obj[key];
+      } else {
+        sanitizeInput(obj[key]);
+      }
+    }
+  };
+
+  app.use((req, res, next) => {
+    if (req.body) sanitizeInput(req.body);
+    if (req.query) sanitizeInput(req.query);
+    if (req.params) sanitizeInput(req.params);
+    next();
+  });
+
+
   // Health check endpoint for monitoring & Render keep-alive pings
   app.get("/health", (req, res) => {
     const mongoose = require("mongoose");

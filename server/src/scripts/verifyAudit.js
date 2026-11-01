@@ -144,6 +144,54 @@ const studentReports = readSource("services/util/studentReports.js");
 assert(studentReports.includes("fs.mkdir(dirPath, { recursive: true })"), "SEC-18: studentReports must create directories recursively");
 
 console.log("✔ All 9 New Security Audit Patches (SEC-10 to SEC-18) verified");
+
+// SEC-19: Schema level select: false on password
+const adminModel = readSource("models/admin.js");
+const facultyModelSrc = readSource("models/faculty.js");
+const forumModelSrc = readSource("models/forum.js");
+assert(adminModel.includes("select: false"), "SEC-19: admin.js must specify select: false for password");
+assert(facultyModelSrc.includes("select: false"), "SEC-19: faculty.js must specify select: false for password");
+assert(forumModelSrc.includes("select: false"), "SEC-19: forum.js must specify select: false for password");
+assert(authSvc.includes('.select("+password")'), "SEC-19: authService must explicitly request +password for login");
+
+// SEC-20: Public eventCalendar safe projection & limit
+const publicCtrl = readSource("services/public/controller.js");
+assert(publicCtrl.includes('.populate("forumID", "name email description")'), "SEC-20: public controller must project safe forum fields");
+
+// SEC-21: Multer fileFilter protection
+const multerStorageSrc = readSource("services/util/multerStorage.js");
+assert(multerStorageSrc.includes("fileFilter ="), "SEC-21: multerStorage must export fileFilter");
+const eventsRouterSrc = readSource("api/routes/events/router.js");
+assert(eventsRouterSrc.includes("fileFilter: multerStorage.fileFilter"), "SEC-21: events router must bind fileFilter");
+
+// SEC-22: Non-hanging responses on event equipment & reservations
+assert(eventsCtrl.includes('return res.json(response("Unauthorized", process.env.FAILURE_CODE));'), "SEC-22: getEventEquipment must respond on unauthorized");
+
+// SEC-23: ReferenceError fixes in catch blocks
+const equipCtrl = readSource("services/equipment/controller.js");
+const hallsCtrl = readSource("services/halls/controller.js");
+const rolesCtrl = readSource("services/roles/controller.js");
+assert(!equipCtrl.includes("err.message"), "SEC-23: equipment controller must not reference undefined err");
+assert(!hallsCtrl.includes("err.message"), "SEC-23: halls controller must not reference undefined err");
+assert(!rolesCtrl.includes("err.message"), "SEC-23: roles controller must not reference undefined err");
+
+// SEC-24: Removed GET state mutation routes
+assert(!eventsRouterSrc.includes('router.get(\n  "/completeEvent/:eventId"'), "SEC-24: completeEvent must not be a GET route");
+assert(!eventsRouterSrc.includes('router.get(\n  "/cancelEvent/:eventId"'), "SEC-24: cancelEvent must not be a GET route");
+
+// SEC-25: ReDoS & limit capping in catalogs
+assert(hallsCtrl.includes("Math.min(Math.max(Number(req.query.limit) || 10, 1), 100)"), "SEC-25: halls query limit must be capped");
+assert(equipCtrl.includes("Math.min(Math.max(Number(req.query.limit) || 10, 1), 100)"), "SEC-25: equipment query limit must be capped");
+assert(rolesCtrl.includes("Math.min(Math.max(Number(req.query.limit) || 10, 1), 100)"), "SEC-25: roles query limit must be capped");
+
+// SEC-26 & SEC-27: Null dereference defenses
+assert(eventsCtrl.includes('throw new Error("Equipment not found: " + equipment);'), "SEC-26: createEvent must check equipment existence");
+assert(hallsCtrl.includes("if (!item || !item.hallId || !item.hallId.name) return;"), "SEC-27: getSlots must guard null hallId");
+
+// SEC-28: NoSQL input sanitization
+assert(expressLoader.includes("sanitizeInput"), "SEC-28: expressLoader must sanitize NoSQL query operators");
+
+console.log("✔ All 10 Master Security Patches (SEC-19 to SEC-28) verified");
 console.log("\nAll ARMA verification tests passed successfully!");
 
 // 6. Verify 15 Ponytail Audit Remediations
