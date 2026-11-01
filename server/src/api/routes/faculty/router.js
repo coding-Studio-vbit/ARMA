@@ -50,6 +50,7 @@ router.post(
 );
 router.get("/getForums", controller.getForumsList);
 router.get("/dashboardInfo", eventController.getRequests);
+router.get("/", facultyController.getFacultyList);
 router.get("/getFaculty", facultyController.getFacultyList);
 router.put("/editProfile", facultyController.editProfile);
 router.put(
@@ -59,8 +60,26 @@ router.put(
   },
   facultyController.editFaculty
 );
-router.post("/fetchFaculty", facultyController.fetchFaculty);
-router.post("/deleteFaculty", facultyController.deleteFaculty);
-router.post("/viewFaculty", facultyController.viewFaculty);
+router.post(
+  "/fetchFaculty",
+  (req, res, next) => {
+    checkRole(req, res, next, ["ADMIN", "SAC", "FO", "FC"]);
+  },
+  facultyController.fetchFaculty
+);
+router.post(
+  "/deleteFaculty",
+  (req, res, next) => {
+    checkRole(req, res, next, ["ADMIN"]);
+  },
+  facultyController.deleteFaculty
+);
+router.post(
+  "/viewFaculty",
+  (req, res, next) => {
+    checkRole(req, res, next, ["ADMIN", "SAC", "FO", "FC"]);
+  },
+  facultyController.viewFaculty
+);
 
 module.exports = router;

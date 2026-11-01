@@ -32,7 +32,7 @@ function Profile({ url, setUrl, isEdit, profileObj, setprofileObj, setPictureCha
             url.length > 0 ? (
               <img
                 className="profileImg"
-                src={`data:image/png;base64, ${url}`}
+                src={url.startsWith("http") ? url : `data:image/png;base64, ${url}`}
                 alt="profile"
               ></img>
             ) : (
@@ -45,7 +45,7 @@ function Profile({ url, setUrl, isEdit, profileObj, setprofileObj, setPictureCha
       ) : url.length > 0 ? (
         <img
           className="profileImg"
-          src={`data:image/png;base64, ${url}`}
+          src={url.startsWith("http") ? url : `data:image/png;base64, ${url}`}
           alt="profile"
         ></img>
       ) : (

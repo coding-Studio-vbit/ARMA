@@ -16,7 +16,7 @@ const getHalls = async (req, res) => {
   else sort = { name: "asc" };
 
   try {
-    result = await halls
+    const result = await halls
       .find(where)
       .skip((page - 1) * limit)
       .limit(limit)
@@ -61,7 +61,7 @@ const addHall = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -94,7 +94,7 @@ const viewHall = async (req, res) => {
     res.json(response(hall, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -105,7 +105,7 @@ const deleteHall = async (req, res) => {
     res.json(response(hall, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 

@@ -1,0 +1,16 @@
+# Netlify Configuration for ARMA Client
+[build]
+  base = "client"
+  publish = "build"
+  command = "npm run build"
+
+[build.environment]
+  # Configured for the new codingstudio.co.in domain.
+  # This bakes into the production React bundle at build time on push!
+  REACT_APP_SERVER_URL = "https://armaserver.codingstudio.co.in/"
+
+# SPA routing fallback for React Router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

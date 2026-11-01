@@ -20,6 +20,7 @@ function AllRoutes() {
     </Routes>
   );
 }
+
 const ProtectedRoutes = () => {
   const { user } = useUser();
   const [showSidebar, setShowSidebar] = useState(false);
@@ -28,22 +29,23 @@ const ProtectedRoutes = () => {
     return <Navigate to="/login" />;
   }
   return (
-    <div className="sm:grid grid-cols-[0px_1fr] sm:grid-cols-[190.838px_1fr]">
+    <div className="min-h-screen bg-gray-50/50 flex">
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
 
-      <div className="flex flex-col">
+      <div className="flex flex-col flex-1 min-w-0 sm:pl-64">
         <Topnav showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <Routes>
-        <Route path="/Students/*" element={<StudentsRoutes />} />
-        <Route path="/Admins/*" element={<AdminRoutes />} />
-        <Route path="/Faculty/*" element={<FacultyRoutes />} />
-        <Route path="/Halls/*" element={<HallsRoutes />} />
-        <Route path="/Roles/*" element={<RolesRoutes />} />
-        <Route path="/Facilities/*" element={<FacilitiesRoutes />} />
-        <Route path="/Forums/*" element={<ForumsRoutes />} />
-      </Routes>
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 min-w-0">
+          <Routes>
+            <Route path="/Students/*" element={<StudentsRoutes />} />
+            <Route path="/Admins/*" element={<AdminRoutes />} />
+            <Route path="/Faculty/*" element={<FacultyRoutes />} />
+            <Route path="/Halls/*" element={<HallsRoutes />} />
+            <Route path="/Roles/*" element={<RolesRoutes />} />
+            <Route path="/Facilities/*" element={<FacilitiesRoutes />} />
+            <Route path="/Forums/*" element={<ForumsRoutes />} />
+          </Routes>
+        </main>
       </div>
-      
     </div>
   );
 };

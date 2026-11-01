@@ -39,57 +39,75 @@ export default function StudentsList() {
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}students/getCourses`)
       .then((resp: any) => {
-        setCourses(
-          [
-            ...courses,
-            resp.data.response.map((c: any) => {
-              return { value: c, label: c };
-            }),
-          ].flat()
-        );
-      });
+        if (Array.isArray(resp.data?.response)) {
+          setCourses(
+            [
+              ...courses,
+              resp.data.response.map((c: any) => {
+                return { value: c, label: c };
+              }),
+            ].flat()
+          );
+        }
+      })
+      .catch((err) => console.error("Error fetching courses:", err));
   }, []);
+
   useEffect(() => {
+    if (!selectCourse) {
+      setDepartments([{ value: null, label: "Any" }]);
+      setYearList([{ value: null, label: "Any" }]);
+      return;
+    }
     axios
       .get(
         `${process.env.REACT_APP_SERVER_URL}students/getBranches/${selectCourse}`
       )
       .then((resp: any) => {
-        console.log(resp);
-        setDepartments(
-          [
-            ...departments,
-            resp.data.response.map((c: any) => {
-              return { value: c, label: c };
-            }),
-          ].flat()
-        );
+        if (Array.isArray(resp.data?.response)) {
+          setDepartments(
+            [
+              { value: null, label: "Any" },
+              resp.data.response.map((c: any) => {
+                return { value: c, label: c };
+              }),
+            ].flat()
+          );
+        }
         return axios.get(
           `${process.env.REACT_APP_SERVER_URL}students/getTotalYears/${selectCourse}`
         );
       })
       .then((yrs: any) => {
-        console.log(yrs);
-        const y = [];
-        for (let i = 1; i <= yrs.data.response; i++)
-          y.push({ value: i, label: i });
-        setYearList([{ value: null, label: "Any" }, ...y]);
-      });
+        if (yrs?.data?.response) {
+          const y = [];
+          for (let i = 1; i <= Number(yrs.data.response); i++)
+            y.push({ value: i, label: i });
+          setYearList([{ value: null, label: "Any" }, ...y]);
+        }
+      })
+      .catch((err) => console.error("Error fetching branches/years:", err));
   }, [selectCourse]);
+
   useEffect(() => {
+    if (!selectCourse || !selectDepartment) {
+      setSections([{ value: null, label: "Any" }]);
+      return;
+    }
     axios
       .get(
         `${process.env.REACT_APP_SERVER_URL}students/getTotalSections/${selectCourse}/${selectDepartment}`
       )
       .then((response) => {
-        const totalSections = Number(response.data.response);
+        const totalSections = Number(response.data?.response || 0);
         let y = [];
         let abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()";
         for (let i = 0; i < totalSections; i++)
           y.push({ value: abc[i], label: abc[i] });
         setSections([{ value: null, label: "Any" }, ...y]);
-      });
-  }, [selectDepartment]);
+      })
+      .catch((err) => console.error("Error fetching sections:", err));
+  }, [selectCourse, selectDepartment]);
 
   useEffect(()=>{
     if(selectCourse == null)

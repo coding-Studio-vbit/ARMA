@@ -25,7 +25,7 @@ export const ForumsView = () => {
             {/* Core Team */}
             <p className="text mb-5 mt-5 text-2xl">Core Team</p>
                     <Table
-                    api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                    api={`${process.env.REACT_APP_SERVER_URL + "events"}`}
                     rowsPerPage={5}
                     buttonsCount={3}
                     filter={{rollNumber:roll}}
@@ -41,7 +41,7 @@ export const ForumsView = () => {
             {/* Members */}
                     <p className="text mb-5 mt-5 text-2xl">Members</p>
                     <Table
-                    api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                    api={`${process.env.REACT_APP_SERVER_URL + "events"}`}
                     rowsPerPage={5}
                     buttonsCount={3}
                     filter={{rollNumber:roll}}
@@ -58,7 +58,7 @@ export const ForumsView = () => {
             {/* Events Conducted */}
                     <p className="text mb-5 mt-5 text-2xl">Events Conducted</p>
                     <Table
-                    api={`${process.env.REACT_APP_SERVER_URL + "..."}`}
+                    api={`${process.env.REACT_APP_SERVER_URL + "events"}`}
                     rowsPerPage={5}
                     buttonsCount={3}
                     filter={{rollNumber:roll}}

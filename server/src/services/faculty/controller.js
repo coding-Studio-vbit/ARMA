@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const facultyModel = require("../../models/faculty");
 const faculty = require("../../models/faculty");
 const roles = require("../../models/role");
@@ -39,7 +40,7 @@ const getFacultyList = async (req, res) => {
   else sort = { name: "asc" };
 
   try {
-    result = await faculty
+    const result = await faculty
       .find(where)
       .skip((page - 1) * limit)
       .limit(limit)
@@ -60,7 +61,8 @@ const getFacultyList = async (req, res) => {
 
 const editProfile = async (req, res) => {
   try {
-    const { email, designation, phone, newPassword } = req.body;
+    const { designation, phone, newPassword } = req.body;
+    const email = (req.user && req.user.email) ? req.user.email : req.body.email;
     let user = {};
     if(newPassword !== null)
     {
@@ -129,7 +131,7 @@ const editFaculty = async (req, res) => {
     );
   } catch (error) {
     console.log(error);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -154,7 +156,7 @@ const viewFaculty = async (req, res) => {
     res.json(response(faculty, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -165,7 +167,7 @@ const deleteFaculty = async (req, res) => {
     res.json(response(faculty, process.env.SUCCESS_CODE));
   } catch (err) {
     console.log(err);
-    res.json(response(error.message, process.env.FAILURE_CODE));
+    res.json(response(err.message, process.env.FAILURE_CODE));
   }
 };
 
@@ -271,7 +273,7 @@ const rejectBudget = async (req, res) => {
       .sendMail(event.forumID.email, budgetRejectedForumTemplate, {
         eventName: event.name,
       })
-      .then((response) => {
+      .then((mailResult) => {
         return mailer.sendMail(SAC.email, budgetRejectedSACTemplate, {
           eventName: event.name,
           forumName: event.forumID.name,

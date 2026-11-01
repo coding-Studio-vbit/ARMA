@@ -3,12 +3,12 @@ import logo from "../Assests/cs_white_logo.png";
 import { School, Close , Group, AccountBalance, Router, AccountTree,Security, FaceRounded } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
 
-interface SidebarProps{
-  showSidebar: boolean,
-  setShowSidebar:React.Dispatch<React.SetStateAction<boolean>>
+interface SidebarProps {
+  showSidebar: boolean;
+  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Sidebar: FC<SidebarProps> = ({showSidebar, setShowSidebar}) => {
+export const Sidebar: FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
   let navigate = useNavigate();
   const options = [
     "Students",
@@ -20,47 +20,88 @@ export const Sidebar: FC<SidebarProps> = ({showSidebar, setShowSidebar}) => {
     "Admins",
   ];
 
-  let active = localStorage.getItem("Active")
-  
-  const [activeOption , setActiveOption] = useState<String>(active? active: "Students")
-  
+  let active = localStorage.getItem("Active");
+  const [activeOption, setActiveOption] = useState<String>(active ? active : "Students");
+
+  const handleSelect = (value: string) => {
+    setActiveOption(value);
+    localStorage.setItem("Active", value);
+    navigate(`/${value}/`);
+    if (showSidebar) setShowSidebar(false);
+  };
+
   return (
-  <div className ={`${showSidebar && "bg-black/30 w-full fixed z-[15] h-screen"} `}>
-    <div className={`${!showSidebar && "hidden"} ${showSidebar && "fixed  "} sm:block  sm:fixed sm:overflow-hidden w-max bg-arma-title h-screen pt-4 pb-4`}>
-      <div className="sm:hidden flex justify-end mr-3">
-      <Close className="text-white !text-3xl !cursor-pointer "  onClick = {() => setShowSidebar(false)} />
-      </div>
-      <div className="flex gap-2 items-center px-4 mb-4">
-        <img src={logo} alt="Logo" className="w-16 h-16" />
-        <span className="text-white font-semibold text-xl">A.R.M.A</span>
-      </div>
-      <div className="bg-[#719db6]/50 p-2 py-3 mb-4">
-        <span className="text-white">SITE ADMINISTRATION</span>
-      </div>
-      {options.map((value) => (
-        <div key={value} className={`flex mb-3 mx-2 gap-2 px-4 py-1 cursor-pointer ${value === activeOption && "bg-[#57C3D8]"} `} onClick={() => {setActiveOption(value) 
-          localStorage.setItem("Active", value)
-          navigate(`/${value}/`)
-        }} > 
-          {value == "Students" && 
-          <School className="text-white" />}
-          {value == "Faculty" && 
-          <FaceRounded className="text-white" />}
-          {value == "Forums" && 
-          <Group className="text-white" />}
-          {value == "Halls" && 
-          <AccountBalance className="text-white" />}
-          {value == "Facilities" && 
-          <Router className="text-white" />}
-          {value == "Roles" && 
-          <AccountTree className="text-white" />}
-          {value == "Admins" && 
-          <Security className="text-white" />}
-          <span className="text-white font-normal ">{value}</span>
+    <>
+      {/* Mobile Drawer Backdrop */}
+      {showSidebar && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 sm:hidden transition-opacity"
+          onClick={() => setShowSidebar(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Navigation Sidebar */}
+      <nav
+        aria-label="Admin Navigation"
+        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-arma-title h-screen pt-4 pb-4 select-none transition-transform duration-200 ease-in-out ${
+          showSidebar ? "translate-x-0" : "-translate-x-full sm:translate-x-0"
+        } sm:block overflow-y-auto shadow-sm`}
+      >
+        <div className="sm:hidden flex justify-end mr-3 mb-2">
+          <Close
+            className="text-white !text-3xl !cursor-pointer focus-visible:ring-2 focus-visible:ring-sky-400 rounded"
+            onClick={() => setShowSidebar(false)}
+            aria-label="Close Sidebar"
+            role="button"
+            tabIndex={0}
+          />
         </div>
-      ))}
-    </div>
-    </div>
+        <div className="flex gap-3 items-center px-5 mb-5">
+          <img src={logo} alt="ARMA Logo" className="w-12 h-12 object-contain" />
+          <div>
+            <span className="text-white font-semibold text-lg tracking-wide block">A.R.M.A</span>
+            <span className="text-white/60 text-xs block">Governance Portal</span>
+          </div>
+        </div>
+        <div className="bg-white/10 px-5 py-2 mb-4">
+          <span className="text-white/70 text-xs font-medium tracking-normal">Site administration</span>
+        </div>
+        <div className="space-y-1 px-3">
+          {options.map((value) => {
+            const isActive = value === activeOption;
+            return (
+              <div
+                key={value}
+                role="button"
+                tabIndex={0}
+                aria-current={isActive ? "page" : undefined}
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-md cursor-pointer transition-colors text-sm ${
+                  isActive
+                    ? "bg-white/20 text-white font-medium shadow-sm"
+                    : "text-white/80 hover:bg-white/10 hover:text-white"
+                } focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none`}
+                onClick={() => handleSelect(value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleSelect(value);
+                  }
+                }}
+              >
+                {value === "Students" && <School className="!text-xl" />}
+                {value === "Faculty" && <FaceRounded className="!text-xl" />}
+                {value === "Forums" && <Group className="!text-xl" />}
+                {value === "Halls" && <AccountBalance className="!text-xl" />}
+                {value === "Facilities" && <Router className="!text-xl" />}
+                {value === "Roles" && <AccountTree className="!text-xl" />}
+                {value === "Admins" && <Security className="!text-xl" />}
+                <span>{value}</span>
+              </div>
+            );
+          })}
+        </div>
+      </nav>
+    </>
   );
 };
-

@@ -15,26 +15,21 @@ import RequestsView from "../features/faculty/requests_view/ViewRequest";
 const FacultyRoutes = () => {
   const { faculty } = useUser();
 
-  const navItems:any = [
-    //  { label: "Dashboard", icon: "home", path: "/faculty/" },
-    //  { label: "Forums", icon: "group", path: "/faculty/forums" },
-    // { label: "Students", icon: "person", path: "/faculty/students" },
-  ];
-  
-  const setNavItems = ()=>{
-    if(faculty?.role.SAC || faculty?.role.FC || faculty?.role.FACULTY)
-    navItems.push(  { label: "Dashboard", icon: "home", path: "/faculty/" },
-    { label: "Forums", icon: "group", path: "/faculty/forums" },
-    { label: "Students", icon: "person", path: "/faculty/students" },
-    
-    )
-    return navItems
-  }
+  const getNavItems = () => {
+    if (faculty?.role?.SAC || faculty?.role?.FC || faculty?.role?.FACULTY) {
+      return [
+        { label: "Dashboard", icon: "home", path: "/faculty/" },
+        { label: "Forums", icon: "group", path: "/faculty/forums" },
+        { label: "Students", icon: "person", path: "/faculty/students" },
+      ];
+    }
+    return [];
+  };
 
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar navItems={setNavItems()} />
+      <Navbar navItems={getNavItems()} />
       <div className="flex-1 mt-[80px]">
         <Routes>
           

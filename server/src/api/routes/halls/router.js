@@ -8,6 +8,7 @@ const controller = require("../../../services/halls/controller");
 router.use(tokenAuth);
 
 router.get("/", controller.getHalls);
+router.get("/getHalls", controller.getHalls);
 
 router.post(
   "/addHall",

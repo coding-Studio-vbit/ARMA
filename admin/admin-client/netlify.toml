@@ -1,0 +1,13 @@
+# Netlify Configuration for ARMA Admin Portal
+[build]
+  publish = "build"
+  command = "npm run build"
+
+[build.environment]
+  REACT_APP_SERVER_URL = "https://armaserver.codingstudio.co.in/"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+

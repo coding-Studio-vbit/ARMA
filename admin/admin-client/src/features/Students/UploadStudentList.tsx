@@ -72,7 +72,7 @@ export const UploadStudentList = () => {
       setDialogTitle("Invalid Roll Number in row " + indx);
       setShow(true);
       throw Error;
-    } else if (validateRollNumber(rollNumber)) {
+    } else if (!validateRollNumber(rollNumber)) {
       setDialogTitle("Invalid Roll Number in row " + indx);
       setShow(true);
       throw Error;

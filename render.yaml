@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: arma-server
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ENABLE_LOCAL_SSL
+        value: false
+      - key: MONGO_CONNECTION_STRING
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: SALTROUNDS
+        value: "10"
+      - key: SUCCESS_CODE
+        value: "1"
+      - key: FAILURE_CODE
+        value: "0"
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+

@@ -119,7 +119,7 @@ function Login() {
             />
           )}
         </div>
-        <span className="text-arma-red h-6">{error}</span>
+        <span role="alert" aria-live="polite" className="text-arma-red text-sm font-medium h-6 text-center">{error}</span>
         <LoginButton
           loading={loading}
           onClick={async () => {

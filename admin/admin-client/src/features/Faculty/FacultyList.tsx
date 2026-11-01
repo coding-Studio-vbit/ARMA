@@ -46,7 +46,7 @@ export const FacultyList = ({ isEdit }: SearchStudentsProps) => {
 
           {/* <button className="btn" onClick = {() => navigate('/Faculty/EditFaculty')}>EDIT</button> */}
 
-          <div className=" flex flex-col gap-y-6 mb-6  md:flex-row sm:gap-x-8">
+          <div className="flex flex-wrap gap-4 mb-6 items-start">
             <InputField
               name="Search by name"
               type="text"

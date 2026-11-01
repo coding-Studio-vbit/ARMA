@@ -63,7 +63,7 @@ function ForumCover() {
         url?.length > 0 ? (
           <img
             className="w-full h-[300px] object-cover rounded-sm "
-            src={`data:image/png;base64, ${url}`}
+            src={url.startsWith("http") ? url : `data:image/png;base64, ${url}`}
             alt="profile"
           ></img>
         ) : (
